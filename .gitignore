@@ -1,0 +1,13 @@
+*.8xu
+*.rom
+*.suo
+*.userprefs
+*.out
+*.exe.config
+*.exe.manifest
+*.vshost.exe
+*.pdb
+build/tool/_ReSharper.build/
+bin/
+build/tool/bin/
+build/tool/obj/
