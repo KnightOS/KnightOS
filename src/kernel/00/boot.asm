@@ -28,6 +28,8 @@ _:  di
 	out (7), a
 	#endif
     
+    ld sp, userMemory ; end of kernel garbage
+    
     call Sleep
 
 restart:
@@ -108,6 +110,8 @@ reboot:
 	ld de, $8001
 	ld bc, $7FFF
 	ldir
+    
+    call formatMem
 		
 	; Initialize LCD
 	ld a, 05h

@@ -20,6 +20,9 @@
 #define privledgedPage $7C
 #endif
 ; TODO: More platform-specific defines
+nullThread .equ $FF
+errOutOfMem .equ 1
+
 kernelMem .equ $8000
 kernelGarbage .equ $8100
 userMemory .equ $8200
@@ -27,5 +30,6 @@ userMemory .equ $8200
 
 #include "header.asm"
 #include "boot.asm"
-
+#include "memory.asm"
+#include "thread.asm"
 #include "util.asm"

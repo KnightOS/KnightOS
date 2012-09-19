@@ -58,3 +58,33 @@ _:	in a,($10)
     jr c,-_
     pop af
     ret
+
+; 16-bit Compare routines
+cpHLDE:
+    push hl
+    or a
+    sbc hl,de
+    pop hl
+    ret
+cpHLBC:
+    push hl
+    or a
+    sbc hl,bc
+    pop hl
+    ret
+cpBCDE:
+    push hl
+    ld h,b
+    ld l,c 
+    or a
+    sbc hl,de
+    pop hl
+    ret
+cpDEBC:
+    push hl
+    ld h,d
+    ld l,e 
+    or a
+    sbc hl,bc
+    pop hl
+    ret
