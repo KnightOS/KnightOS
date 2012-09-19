@@ -2,6 +2,7 @@
 *.rom
 *.suo
 *.userprefs
+*.user
 *.out
 *.exe.config
 *.exe.manifest

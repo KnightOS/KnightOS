@@ -44,6 +44,7 @@ namespace build
             Console.WriteLine("Building kernel");
             Labels = new Dictionary<string, ushort>();
             Build("../src/kernel/build.cfg");
+            Console.WriteLine("Complete.");
         }
 
         private static void Build(string file)
@@ -67,6 +68,8 @@ namespace build
                 if (line.StartsWith("asm "))
                 {
                     string[] parts = line.Split(' ');
+                    if (BeVerbose)
+                        Console.WriteLine("Assemling " + parts[1]);
                     Spasm(Path.Combine(directory, parts[1]), Path.Combine(directory, parts[2]), null, Configuration);
                 }
                 else if (line.StartsWith("if "))
@@ -157,9 +160,7 @@ namespace build
         {
             string defineString = " ";
             foreach (string define in defines)
-            {
                 defineString += "-D" + define + " ";
-            }
             ProcessStartInfo info = new ProcessStartInfo("SPASM.exe", "-L -T" + defineString +
                 "\"" + input + "\" \"" + output + "\"" + (string.IsNullOrWhiteSpace(args) ? "" : " ") + args);
             info.RedirectStandardOutput = true;
@@ -171,7 +172,7 @@ namespace build
             string procError = proc.StandardError.ReadToEnd();
             proc.WaitForExit();
             if (BeVerbose || !File.Exists(output))
-                Console.WriteLine(procOutput);
+                Console.Write(procOutput);
         }
 
         static void OutputHelp()
