@@ -23,6 +23,7 @@
 #endif
 nullThread .equ $FF
 errOutOfMem .equ 1
+errTooManyThreads .equ 2
 
 kernelMem .equ $8000
 kernelGarbage .equ $8100
@@ -34,10 +35,12 @@ signalTable .equ $8078
 fileStreamTable .equ $808C
 
 currentThreadIndex .equ $80B4
-loadedThreads .equ $80B5
+activeThreads .equ $80B5
 loadedLibraries .equ $80B6
 activeSignals .equ $80B7
 activeFileStreams .equ $80B8
+
+maxThreads .equ 10
 .list
 
 #include "header.asm"
