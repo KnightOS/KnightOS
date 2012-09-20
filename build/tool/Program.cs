@@ -10,10 +10,11 @@ namespace build
 {
     class Program
     {
-        private static bool BeVerbose = false;
-        private static string Configuration = "TI84pSE";
-        private static Stream Output;
-        private static Dictionary<string, ushort> Labels;
+        private static bool vebose = false;
+        private static string configuration = "TI84pSE";
+        private static Stream output;
+        private static Dictionary<string, ushort> labels;
+        private static List<byte> pages; 
         
         static void Main(string[] args)
         {
@@ -24,26 +25,42 @@ namespace build
                 switch (arg)
                 {
                     case "--configuration":
-                        Configuration = args[++i];
+                        configuration = args[++i];
                         break;
                     case "--help":
                         OutputHelp();
                         break;
                     case "--verbose":
-                        BeVerbose = true;
+                        vebose = true;
                         break;
                     default:
                         Console.WriteLine("Incorrect usage. build.exe --help for help.");
                         return;
                 }
             }
-            Console.WriteLine("Building configuration: " + Configuration);
+            Console.WriteLine("Building configuration: " + configuration);
             Console.WriteLine("Cleaning up previous build");
             CleanUp();
             CreateOutput();
             Console.WriteLine("Building kernel");
-            Labels = new Dictionary<string, ushort>();
+            labels = new Dictionary<string, ushort>();
             Build("../src/kernel/build.cfg");
+            Console.WriteLine("Buildling userspace");
+            Console.WriteLine("Creating 8xu");
+            var osBuilder = new OSBuilder();
+            var pageData = new Dictionary<byte, byte[]>();
+            foreach (var page in pages)
+            {
+                output.Seek(page * 0x4000, SeekOrigin.Begin);
+                byte[] data = new byte[0x4000];
+                output.Read(data, 0, data.Length);
+                pageData.Add(page, data);
+            }
+            osBuilder.MaxHardwareVersion = 3;
+            osBuilder.MajorVersion = 0;
+            osBuilder.MinorVersion = 1; // TODO: Pull from some configuration somewhere
+            osBuilder.Write8XU(pageData, Get8XUFile(), GetKeyFile(out osBuilder.Key));
+            output.Close();
             Console.WriteLine("Complete.");
         }
 
@@ -68,21 +85,23 @@ namespace build
                 if (line.StartsWith("asm "))
                 {
                     string[] parts = line.Split(' ');
-                    if (BeVerbose)
+                    if (vebose)
                         Console.WriteLine("Assemling " + parts[1]);
-                    Spasm(Path.Combine(directory, parts[1]), Path.Combine(directory, parts[2]), null, Configuration);
+                    Spasm(Path.Combine(directory, parts[1]), Path.Combine(directory, parts[2]), null, configuration);
                 }
                 else if (line.StartsWith("if "))
-                    waitEndIf = Configuration != line.Substring(3);
+                    waitEndIf = configuration != line.Substring(3);
                 else if (line.StartsWith("link "))
                 {
                     string[] parts = line.Split(' ');
                     byte[] data = new byte[int.Parse(parts[3], NumberStyles.HexNumber)];
+                    for (int i = 0; i < data.Length; i++)
+                        data[i] = 0xFF;
                     using (Stream stream = File.Open(Path.Combine(directory, parts[1]), FileMode.Open))
                         stream.Read(data, 0, (int)stream.Length);
-                    Output.Seek(int.Parse(parts[2], NumberStyles.HexNumber), SeekOrigin.Begin);
-                    Output.Write(data, 0, data.Length);
-                    Output.Flush();
+                    output.Seek(int.Parse(parts[2], NumberStyles.HexNumber), SeekOrigin.Begin);
+                    output.Write(data, 0, data.Length);
+                    output.Flush();
                 }
                 else if (line.StartsWith("echo "))
                     Console.WriteLine(line.Substring(5));
@@ -106,6 +125,12 @@ namespace build
                     foreach (var part in parts)
                         File.Delete(Path.Combine(directory, part));
                 }
+                else if (line.StartsWith("pages "))
+                {
+                    var parts = line.Substring(6).Split(' ');
+                    foreach (var part in parts)
+                        pages.Add(byte.Parse(part, NumberStyles.HexNumber));
+                }
                 else if (line == "endif") { }
                 else
                 {
@@ -121,15 +146,40 @@ namespace build
             foreach (var line in lines)
             {
                 string[] parts = line.Trim().Split('=');
-                Labels.Add(parts[0].Trim(), ushort.Parse(parts[1].Trim().Substring(1), NumberStyles.HexNumber));
+                labels.Add(parts[0].Trim(), ushort.Parse(parts[1].Trim().Substring(1), NumberStyles.HexNumber));
+            }
+        }
+
+        private static string Get8XUFile()
+        {
+            return "../bin/" + configuration + "/KnightOS.8xu";
+        }
+
+        private static string GetKeyFile(out byte keyNumber)
+        {
+            switch (configuration)
+            {
+                case "TI73":
+                    keyNumber = 0x2;
+                    return "02.key";
+                case "TI83p":
+                case "TI83pSE":
+                    keyNumber = 0x4;
+                    return "04.key";
+                case "TI84p":
+                case "TI84pSE":
+                    keyNumber = 0xA;
+                    return "0A.key";
+                default:
+                    throw new InvalidOperationException("Invalid configuration");
             }
         }
 
         private static void CreateOutput()
         {
-            Output = File.Create("../bin/" + Configuration + "/KnightOS.rom");
+            output = File.Create("../bin/" + configuration + "/KnightOS.rom");
             int flashPages;
-            switch (Configuration)
+            switch (configuration)
             {
                 case "TI73":
                 case "TI83p":
@@ -145,15 +195,17 @@ namespace build
                 default:
                     throw new InvalidOperationException("Invalid configuration");
             }
-            Output.Write(new byte[flashPages * 0x4000], 0, flashPages * 0x4000);
-            Output.Seek(0, SeekOrigin.Begin);
+            for (int i = 0; i < flashPages * 0x4000; i++ )
+                output.WriteByte(0xFF); // TODO: Make this better
+            output.Seek(0, SeekOrigin.Begin);
+            pages = new List<byte>();
         }
 
         private static void CleanUp()
         {
-            if (Directory.Exists("../bin/" + Configuration))
-                Directory.Delete("../bin/" + Configuration, true);
-            Directory.CreateDirectory("../bin/" + Configuration);
+            if (Directory.Exists("../bin/" + configuration))
+                Directory.Delete("../bin/" + configuration, true);
+            Directory.CreateDirectory("../bin/" + configuration);
         }
 
         static void Spasm(string input, string output, string args, params string[] defines)
@@ -171,7 +223,7 @@ namespace build
             string procOutput = proc.StandardOutput.ReadToEnd();
             string procError = proc.StandardError.ReadToEnd();
             proc.WaitForExit();
-            if (BeVerbose || !File.Exists(output))
+            if (vebose || !File.Exists(output))
                 Console.Write(procOutput);
         }
 
