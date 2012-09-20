@@ -29,7 +29,7 @@ InterruptResume:
 	jr nz, IntHandleTimer2
 	bit 4, a
 	jr nz, IntHandleLink
-	jr SysInterruptDone ; Special case - RST $38 (TODO: RST $38 is handled as one of the normal interrupts for some reason)
+	jr SysInterruptDone
 IntHandleON:
 	in a, (03h)
 	res 0, a

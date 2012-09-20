@@ -21,13 +21,23 @@
 #define USB
 #define privledgedPage $7C
 #endif
-; TODO: More platform-specific defines
 nullThread .equ $FF
 errOutOfMem .equ 1
 
 kernelMem .equ $8000
 kernelGarbage .equ $8100
 userMemory .equ $8200
+
+threadTable .equ kernelMem
+libraryTable .equ $8050
+signalTable .equ $8078
+fileStreamTable .equ $808C
+
+currentThreadIndex .equ $80B4
+loadedThreads .equ $80B5
+loadedLibraries .equ $80B6
+activeSignals .equ $80B7
+activeFileStreams .equ $80B8
 .list
 
 #include "header.asm"
