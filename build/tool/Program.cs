@@ -73,7 +73,7 @@ namespace build
                     Spasm(Path.Combine(directory, parts[1]), Path.Combine(directory, parts[2]), null, Configuration);
                 }
                 else if (line.StartsWith("if "))
-                    waitEndIf = Configuration == line.Substring(3);
+                    waitEndIf = Configuration != line.Substring(3);
                 else if (line.StartsWith("link "))
                 {
                     string[] parts = line.Split(' ');
