@@ -139,3 +139,6 @@ reboot:
 	out (10h), a ; Contrast
 	
 	jr $
+	IM 1
+	ei
+	jr $

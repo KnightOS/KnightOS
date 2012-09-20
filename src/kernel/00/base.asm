@@ -13,10 +13,12 @@
 #endif
 #ifdef TI84p
 #define CPU15
+#define USB
 #define privledgedPage $3C
 #endif
 #ifdef TI84pSE
 #define CPU15
+#define USB
 #define privledgedPage $7C
 #endif
 ; TODO: More platform-specific defines
@@ -30,6 +32,7 @@ userMemory .equ $8200
 
 #include "header.asm"
 #include "boot.asm"
+#include "interrupt.asm"
 #include "memory.asm"
 #include "thread.asm"
 #include "util.asm"

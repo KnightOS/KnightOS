@@ -78,7 +78,7 @@
 ; $0038
 ; RST $38
 ; SYSTEM INTERRUPT
-    ret
+    jp sysInterrupt
 ; $003B
 
 .fill $53-$
