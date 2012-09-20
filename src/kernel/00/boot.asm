@@ -137,5 +137,5 @@ reboot:
 	ld a, $EF
 	call lcdDelay
 	out (10h), a ; Contrast
-    
-    jp $
+	
+	jr $
