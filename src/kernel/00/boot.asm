@@ -141,67 +141,30 @@ reboot:
     ld a, 0
     ld (nextThreadId), a
     
-    ld hl, threadTest1
+    ld bc, testThread_end - testThread
+    call allocMem
+    push ix \ pop de
+    ld hl, testThread
+    ldir
+    push ix \ pop hl
     ld b, 10
     xor a
     call startThread
     
-    ld hl, threadTest2
-    ld b, 10
-    xor a
-    call startThread
-    
-    ld hl, threadTest3
-    ld b, 10
-    xor a
-    call startThread
-    
-    ld hl, threadTest4
-    ld b, 10
-    xor a
-    call startThread
-    
-    ld hl, threadTest5
-    ld b, 10
-    xor a
-    call startThread
+    ;ld hl, threadTest1
+    ;ld b, 10
+    ;xor a
+    ;call startThread
     
     jp contextSwitch_search
     
-threadTest1:
+testThread:
     ld IY, $9000
 _:  inc a
     ld (IY), a
     call fastCopy
     jr -_
-    
-threadTest2:
-    ld IY, $9000
-    ld a, $80
-_:  inc a
-    ld (IY + 24), a
-    jr -_
-    
-threadTest3:
-    ld IY, $9000
-    ld a, $40
-_:  inc a
-    ld (IY + 48), a
-    jr -_
-    
-threadTest4:
-    ld IY, $9000
-    ld a, $20
-_:  inc a
-    ld (IY + 72), a
-    jr -_
-    
-threadTest5:
-    ld IY, $9000
-    ld a, $A0
-_:  inc a
-    ld (IY + 96), a
-    jr -_
+testThread_end:
     
 BufferToLCD:
 BufCopy:
