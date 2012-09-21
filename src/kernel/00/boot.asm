@@ -140,6 +140,7 @@ reboot:
     
     ld a, 0
     ld (nextThreadId), a
+    ld (nextStreamId), a
     
     ld bc, testThread_end - testThread
     call allocMem

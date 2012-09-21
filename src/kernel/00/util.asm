@@ -88,3 +88,19 @@ cpDEBC:
     sbc hl,bc
     pop hl
     ret
+
+; Inputs:	HL: String
+; Outputs:	BC: String length
+StringLength:
+	push af
+	push hl
+	ld bc, 0
+_:		ld a, (hl)
+		or a
+		jr z, _
+		inc bc
+		inc hl
+		jr -_
+_:	pop hl
+	pop af
+	ret
