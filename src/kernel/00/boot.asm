@@ -138,7 +138,15 @@ reboot:
     call lcdDelay
     out (10h), a ; Contrast
     
+    ld a, 0
+    ld (nextThreadId), a
+    
     ld hl, threadTest1
+    ld b, 10
+    xor a
+    call startThread
+    
+    ld hl, threadTest2
     ld b, 10
     xor a
     call startThread
@@ -146,17 +154,18 @@ reboot:
     jp contextSwitch_search
     
 threadTest1:
-    ld bc, 96 * 64 / 8
-    call allocMem
-    push ix \ pop iy
+    ld IY, $9000
 _:  inc a
     ld (IY), a
     call fastCopy
     jr -_
     
 threadTest2:
-    inc b
-    jr threadTest2
+    ld IY, $9000
+    ld a, $80
+_:  inc a
+    ld (IY + 24), a
+    jr -_
     
 BufferToLCD:
 BufCopy:

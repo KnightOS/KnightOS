@@ -57,6 +57,7 @@ contextSwitch:
         ld hl, 0
         add hl, sp
     ex de, hl
+    ; Save stack pointer
     ld (hl), e
     inc hl
     ld (hl), d
@@ -79,6 +80,7 @@ _:  ld a, b
     
     ld hl, threadTable + 5
     add a, l
+    ld l, a
     ld a, (hl)
     bit 1, a ; May be suspended
     jr nz, _

@@ -39,6 +39,7 @@ activeThreads .equ $80B5
 loadedLibraries .equ $80B6
 activeSignals .equ $80B7
 activeFileStreams .equ $80B8
+nextThreadId .equ $80B9
 
 maxThreads .equ 10
 .list
