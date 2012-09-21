@@ -14,12 +14,12 @@ sysInterrupt:
     push bc
     push de
     push hl
-	
+    
 #ifdef USB
     jp USBInterrupt
 InterruptResume:
 #endif
-	
+    
     in a, (04h)
     bit 0, a
     jr nz, IntHandleON
@@ -125,7 +125,7 @@ SysInterruptDone:
     pop af
     ei
     ret
-	
+    
 #ifdef USB
 USBInterrupt:
     in a, ($55) ; USB Interrupt status
@@ -136,16 +136,16 @@ USBInterrupt:
     bit 4, a
     jr z, USBProtocolEvent
     jp InterruptResume
-	
+    
 USBUnknownEvent:
     jp InterruptResume
-	
+    
 USBLineEvent:
     in a, ($56) ; USB Line Events
     xor $FF
     out ($57), a ; Acknowledge interrupt and disable further interrupts
     jp InterruptResume
-	
+    
 USBProtocolEvent:
     in a, ($82)
     in a, ($83)

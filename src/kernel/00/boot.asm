@@ -72,11 +72,11 @@ reboot:
     ; Set CPU speed to 15 MHz
     ld a, 1
     out ($20), a
-	
+    
     #else ; TI-73, TI-83+
     #ifndef TI73 ; RAM does not have protection on the TI-73
-	
-	; Remove RAM/Flash protection
+    
+    ; Remove RAM/Flash protection
     call unlockFlash
         xor a
         out (5), a
@@ -207,50 +207,50 @@ BufferToLCD:
 BufCopy:
 FastCopy:
 SafeCopy:
-	push hl
-	push bc
-	push af
-	push de
-	ld a, i
-	push af
-	di                 ;DI is only required if an interrupt will alter the lcd.
-	push iy \ pop hl
-	ld c,$10
-	ld a,$80
+    push hl
+    push bc
+    push af
+    push de
+    ld a, i
+    push af
+    di                 ;DI is only required if an interrupt will alter the lcd.
+    push iy \ pop hl
+    ld c,$10
+    ld a,$80
 setrow:
-	in f,(c)
-	jp m,setrow
-	out ($10),a
-	ld de,12
-	ld a,$20
+    in f,(c)
+    jp m,setrow
+    out ($10),a
+    ld de,12
+    ld a,$20
 col:
-	in f,(c)
-	jp m,col
-	out ($10),a
-	push af
-	ld b,64
+    in f,(c)
+    jp m,col
+    out ($10),a
+    push af
+    ld b,64
 row:
-	ld a,(hl)
+    ld a,(hl)
 rowwait:
-	in f,(c)
-	jp m,rowwait
-	out ($11),a
-	add hl,de
-	djnz row
-	pop af
-	dec h
-	dec h
-	dec h
-	inc hl
-	inc a
-	cp $2c
-	jp nz,col
-	pop af
-	jp po, _
-	ei
-_:	
-	pop de
-	pop af
-	pop bc
-	pop hl
-	ret
+    in f,(c)
+    jp m,rowwait
+    out ($11),a
+    add hl,de
+    djnz row
+    pop af
+    dec h
+    dec h
+    dec h
+    inc hl
+    inc a
+    cp $2c
+    jp nz,col
+    pop af
+    jp po, _
+    ei
+_:    
+    pop de
+    pop af
+    pop bc
+    pop hl
+    ret

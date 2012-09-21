@@ -53,7 +53,7 @@ lockFlash:
     
 lcdDelay:
     push af
-_:	in a,($10)
+_:    in a,($10)
     rla
     jr c,-_
     pop af
