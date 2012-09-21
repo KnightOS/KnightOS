@@ -39,14 +39,15 @@ namespace build
                 }
             }
             Console.WriteLine("Building configuration: " + configuration);
-            Console.WriteLine("Cleaning up previous build");
+            Console.WriteLine("Cleaning up previous build...");
             CleanUp();
             CreateOutput();
-            Console.WriteLine("Building kernel");
+            Console.WriteLine("Building kernel...");
             labels = new Dictionary<string, ushort>();
             Build("../src/kernel/build.cfg");
-            Console.WriteLine("Buildling userspace");
-            Console.WriteLine("Creating 8xu");
+            Console.WriteLine("Buildling userspace...");
+            Build("../src/userspace/build.cfg");
+            Console.WriteLine("Creating 8xu...");
             var osBuilder = new OSBuilder();
             var pageData = new Dictionary<byte, byte[]>();
             foreach (var page in pages)
@@ -117,14 +118,23 @@ namespace build
                 }
                 else if (line.StartsWith("jump include"))
                 {
-                    
+
                 }
                 else if (line.StartsWith("rm "))
                 {
                     string[] parts = line.Substring(3).Split(' ');
                     foreach (var part in parts)
-                        File.Delete(Path.Combine(directory, part));
+                    {
+                        if (File.Exists(Path.Combine(directory, part)))
+                            File.Delete(Path.Combine(directory, part));
+                        if (Directory.Exists(Path.Combine(directory, part)))
+                            Directory.Delete(Path.Combine(directory, part), true);
+                    }
                 }
+                else if (line.StartsWith("mkdir "))
+                    Directory.CreateDirectory(Path.Combine(directory, line.Substring(6)));
+                else if (line.StartsWith("fscreate "))
+                    CreateFilesystem(Path.Combine(directory, line.Substring(9)));
                 else if (line.StartsWith("pages "))
                 {
                     var parts = line.Substring(6).Split(' ');
@@ -140,9 +150,134 @@ namespace build
             }
         }
 
+        private static byte allocationTableStart, dataStart = 1, swapSector;
+
+        private struct KDirectory
+        {
+            public ushort DirectoryId, ParentId;
+            public string Name;
+            public List<KFile> Files;
+        }
+
+        private struct KFile
+        {
+            public string Name;
+            public byte[] Contents;
+        }
+
+        private static List<KDirectory> filesystem;
+
+        private static unsafe void CreateFilesystem(string path)
+        {
+            Console.WriteLine("Creating filesystem...");
+            string[] root = Directory.GetDirectories(path);
+            filesystem = new List<KDirectory>();
+            foreach (var directory in root)
+                filesystem.AddRange(CreateDirectory(directory + "/", 0));
+            // Generate filesystem
+            int dataIndex = dataStart * 0x4000;
+            int allocationIndex = allocationTableStart * 0x4000 + 0x4000;
+            byte[] entry;
+            foreach (var directory in filesystem)
+            {
+                // Create directory entry
+                string name = GetName(directory.DirectoryId);
+                Console.WriteLine("Creating entry for " + name);
+                entry = new byte[] { 0xBF, 0x00, 0x00 };
+                entry = entry.Concat(BitConverter.GetBytes(directory.ParentId))
+                    .Concat(BitConverter.GetBytes(directory.DirectoryId))
+                    .Concat(new byte[] { 0xFF }).Concat(Encoding.ASCII.GetBytes(directory.Name))
+                    .Concat(new byte[] { 0 }).ToArray();
+                entry[1] = BitConverter.GetBytes((ushort)entry.Length - 2)[0];
+                entry[2] = BitConverter.GetBytes((ushort)entry.Length - 2)[1];
+                Array.Reverse(entry);
+                allocationIndex -= entry.Length;
+                output.Seek(allocationIndex, SeekOrigin.Begin);
+                output.Write(entry, 0, entry.Length);
+                output.Flush();
+
+                foreach (var file in directory.Files)
+                {
+                    Console.WriteLine("Creating entry for " + name + file.Name);
+                    // Create file entry
+                    int fileSize = file.Contents.Length;
+                    byte[] size = BitConverter.GetBytes(fileSize);
+                    entry = new byte[] { 0x7F, 0x00, 0x00 }.Concat(BitConverter.GetBytes(directory.DirectoryId))
+                        .Concat(new byte[] { 0xFF }).Concat(size.Take(3))
+                        .Concat(new byte[] { (byte)(dataIndex / 0x4000) })
+                        .Concat(BitConverter.GetBytes((ushort)(dataIndex % 0x4000 + 0x4000)))
+                        .Concat(new byte[] { 0xFF, 0xFF, 0xFF })
+                        .Concat(Encoding.ASCII.GetBytes(file.Name)).Concat(new byte[] { 0x00 }).ToArray();
+                    entry[1] = BitConverter.GetBytes((ushort)entry.Length - 2)[0];
+                    entry[2] = BitConverter.GetBytes((ushort)entry.Length - 2)[1];
+                    Array.Reverse(entry);
+                    allocationIndex -= entry.Length;
+                    output.Seek(allocationIndex, SeekOrigin.Begin);
+                    output.Write(entry, 0, entry.Length);
+                    output.Flush();
+                    // Write data
+                    output.Seek(dataIndex, SeekOrigin.Begin);
+                    output.Write(file.Contents, 0, file.Contents.Length);
+                    output.Flush();
+                }
+            }
+        }
+
+        private static string GetName(ushort directoryId)
+        {
+            string name = "";
+            foreach (var directory in filesystem)
+            {
+                if (directory.DirectoryId == directoryId)
+                {
+                    name = directory.Name;
+                    if (directory.ParentId != 0)
+                        name = GetName(directory.ParentId) + "/";
+                    else
+                        name = "/" + name;
+                }
+            }
+            return name + "/";
+        }
+
+        private static ushort nextDirectoryId = 1;
+
+        private static List<KDirectory> CreateDirectory(string path, ushort parent)
+        {
+            var directories = new List<KDirectory>();
+            var id = nextDirectoryId++;
+            var directory = new KDirectory
+                {
+                    DirectoryId = id,
+                    Name = GetDirectoryName(path),
+                    ParentId = parent
+                };
+            directory.Files = new List<KFile>();
+            foreach (var file in Directory.GetFiles(path))
+            {
+                directory.Files.Add(new KFile()
+                    {
+                        Contents = File.ReadAllBytes(file),
+                        Name = Path.GetFileName(file)
+                    });
+            }
+            directories.Add(directory);
+            var subs = Directory.GetDirectories(path);
+            foreach (var sub in subs)
+                directories.AddRange(CreateDirectory(sub, id));
+            return directories;
+        }
+
+        private static string GetDirectoryName(string path)
+        {
+            if (path.EndsWith("/"))
+                path = path.Remove(path.Length - 1);
+            return path.Substring(path.LastIndexOf('/') + 1);
+        }
+
         private static void LoadLabels(string file)
         {
-            string[] lines = File.ReadAllLines(file);
+            string[] lines = File.ReadAllLines(file.Replace(".lab", ".out.lab"));
             foreach (var line in lines)
             {
                 string[] parts = line.Trim().Split('=');
@@ -183,13 +318,19 @@ namespace build
             {
                 case "TI73":
                 case "TI83p":
+                    allocationTableStart = 0x17;
+                    swapSector = 0x18;
                     flashPages = 32;
                     break;
                 case "TI84p":
+                    allocationTableStart = 0x37;
+                    swapSector = 0x38;
                     flashPages = 64;
                     break;
                 case "TI83pSE":
                 case "TI84pSE":
+                    allocationTableStart = 0x77;
+                    swapSector = 0x78;
                     flashPages = 128;
                     break;
                 default:
@@ -211,6 +352,12 @@ namespace build
         static void Spasm(string input, string output, string args, params string[] defines)
         {
             string defineString = " ";
+            bool isBin = true;
+            if (!output.EndsWith(".bin"))
+            {
+                output = output + ".bin";
+                isBin = false;
+            }
             foreach (string define in defines)
                 defineString += "-D" + define + " ";
             ProcessStartInfo info = new ProcessStartInfo("SPASM.exe", "-L -T" + defineString +
@@ -223,6 +370,8 @@ namespace build
             string procOutput = proc.StandardOutput.ReadToEnd();
             string procError = proc.StandardError.ReadToEnd();
             proc.WaitForExit();
+            if (File.Exists(output))
+                File.Move(output, output.Remove(output.Length - 4));
             if (vebose || !File.Exists(output))
                 Console.Write(procOutput);
         }

@@ -138,6 +138,122 @@ reboot:
     call lcdDelay
     out (10h), a ; Contrast
     
+    ; Configure filesystem memory
+    ld hl, 0
+    ld (CurrentDirectoryID), hl
+    ld (EndOfTableAddress), hl
+    ld (EndOfDataPage), hl
+    ld (EndOfDataAddress), hl
+
+    ld a, AllocTableStart
+    out (6), a
+    ld hl, $7FFF
+Boot_FileSystemConfigLoop:
+    ld a, (hl)
+    dec hl
+    ld c, (hl)
+    dec hl
+    ld b, (hl)
+    dec hl
+    cp FSDirectory
+    jr z, Boot_FileSystemConfig_Dir
+    cp FSDeletedDirectory
+    jr z, Boot_FileSystemConfig_Dir
+    cp FSFile
+    jr z, Boot_FileSystemConfig_File
+    cp FSDeletedFile
+    jr z, Boot_FileSystemConfig_File
+    cp FSModifiedFile
+    jr z, Boot_FileSystemConfig_File
+    cp FSEndOfPage
+    jr z, Boot_FileSystemConfig_EoP
+    cp FSEndOfTable
+    jr z, Boot_FileSystemConfig_EoT
+
+    or a
+    sbc hl, bc
+    inc hl
+    jr Boot_FilesystemConfigLoop
+
+Boot_FileSystemConfig_Dir:
+    push hl
+    push bc
+    dec hl \ dec hl
+    ld c, (hl)
+    dec hl
+    ld b, (hl)
+
+    ld hl, (CurrentDirectoryID)
+    call CpHLBC
+    jr nc, _
+    push bc \ pop hl
+    ld (CurrentDirectoryID), hl ; Update the current directory ID if needed
+_:
+    pop bc
+    pop hl
+
+    or a
+    sbc hl, bc
+    inc hl
+    jr Boot_FileSystemConfigLoop
+
+Boot_FileSystemConfig_File:
+    push hl
+    push bc
+    dec hl \ dec hl
+    dec hl
+    ld c, (hl)
+    dec hl
+    ld b, (hl)
+    dec hl
+    ld d, (hl) ; TODO: Handle files larger than 0x4000 bytes
+    dec hl
+
+    push bc
+    ld a, (hl)
+    ld b, a
+    ld a, (EndOfDataPage)
+    cp b
+    jr nc, _
+    ld a, b
+    ld (EndOfDataPage), a
+_:
+    pop bc
+
+    dec hl
+    ld e, (hl)
+    dec hl
+    ld d, (hl)
+
+    ex de, hl
+    add hl, bc
+    ex de, hl
+
+    ld hl, (EndOfDataAddress)
+    call CpHLDE
+    jr nc, _
+    push de \ pop hl
+    ld (EndOfDataAddress), hl
+_:
+    pop bc
+    pop hl
+    or a
+    sbc hl, bc
+    inc hl
+    jp Boot_FileSystemConfigLoop
+
+Boot_FileSystemConfig_EoP:
+    in a, (6)
+    dec a
+    out (6), a
+    jp Boot_FileSystemConfigLoop
+
+Boot_FileSystemConfig_EoT:
+    inc hl \ inc hl \ inc hl
+    ld (EndOfTableAddress), hl
+    in a, (6)
+    ld (EndOfTablePage), a
+    
     ld a, 0
     ld (nextThreadId), a
     ld (nextStreamId), a
@@ -152,7 +268,18 @@ reboot:
     xor a
     call startThread
     
+    ld de, bootFile
+    call openFileRead
+    
+    call streamReadByte
+    ld ($9001), a
+    
+    call closeStream
+    
     jp contextSwitch_search
+    
+bootFile:
+    .db "/bin/init", 0
     
 testThread:
     ld IY, $9000
