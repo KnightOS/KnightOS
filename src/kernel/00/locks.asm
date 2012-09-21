@@ -1,0 +1,3 @@
+hasLCDLock:
+    cp a
+    ret

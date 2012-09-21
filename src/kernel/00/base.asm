@@ -71,6 +71,8 @@ endOfDataPage .equ $80C4
 endOfDataAddress .equ $80C5 ; 2 bytes
 currentContrast .equ $80C7
 
+clip_mask .equ $80C8
+
 maxThreads .equ 10
 maxFileStreams .equ 10
 
@@ -95,4 +97,8 @@ fsDeletedDirectory .equ $1F
 #include "thread.asm"
 #include "flash.asm"
 #include "knightfs.asm"
+#include "locks.asm"
+#include "display.asm"
 #include "util.asm"
+
+.echo "Kernel size: ", $

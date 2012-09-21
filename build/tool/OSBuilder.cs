@@ -9,9 +9,9 @@ namespace build
 {
     public class OSBuilder
     {
-        public OSBuilder()
+        public OSBuilder(bool TI73)
         {
-            DeviceType = 0x73; // TI-73 is 0x74
+            DeviceType = (byte)(TI73 ? 0x74 : 0x73); // TI-73 is 0x74
         }
 
         public byte Key;

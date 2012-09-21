@@ -10,7 +10,7 @@ namespace build
 {
     class Program
     {
-        private static bool vebose = false;
+        private static bool verbose = false;
         private static string configuration = "TI84pSE";
         private static Stream output;
         private static Dictionary<string, ushort> labels;
@@ -31,8 +31,26 @@ namespace build
                         OutputHelp();
                         break;
                     case "--verbose":
-                        vebose = true;
+                        verbose = true;
                         break;
+                    case "--all":
+                        if (verbose)
+                        {
+                            Main(new[] { "--verbose", "--configuration", "TI73" });
+                            Main(new[] { "--verbose", "--configuration", "TI83p" });
+                            Main(new[] { "--verbose", "--configuration", "TI83pSE" });
+                            Main(new[] { "--verbose", "--configuration", "TI84p" });
+                            Main(new[] { "--verbose", "--configuration", "TI84pSE" });
+                        }
+                        else
+                        {
+                            Main(new[] { "--configuration", "TI73" });
+                            Main(new[] { "--configuration", "TI83p" });
+                            Main(new[] { "--configuration", "TI83pSE" });
+                            Main(new[] { "--configuration", "TI84p" });
+                            Main(new[] { "--configuration", "TI84pSE" });
+                        }
+                        return;
                     default:
                         Console.WriteLine("Incorrect usage. build.exe --help for help.");
                         return;
@@ -48,7 +66,7 @@ namespace build
             Console.WriteLine("Buildling userspace...");
             Build("../src/userspace/build.cfg");
             Console.WriteLine("Creating 8xu...");
-            var osBuilder = new OSBuilder();
+            var osBuilder = new OSBuilder(configuration == "TI73");
             var pageData = new Dictionary<byte, byte[]>();
             foreach (var page in pages)
             {
@@ -86,7 +104,7 @@ namespace build
                 if (line.StartsWith("asm "))
                 {
                     string[] parts = line.Split(' ');
-                    if (vebose)
+                    if (verbose)
                         Console.WriteLine("Assemling " + parts[1]);
                     Spasm(Path.Combine(directory, parts[1]), Path.Combine(directory, parts[2]), null, configuration);
                 }
@@ -288,6 +306,8 @@ namespace build
 
         private static string Get8XUFile()
         {
+            if (configuration == "TI73")
+                return "../bin/" + configuration + "/KnightOS.73u";
             return "../bin/" + configuration + "/KnightOS.8xu";
         }
 
@@ -373,7 +393,7 @@ namespace build
             proc.WaitForExit();
             if (File.Exists(output))
                 File.Move(output, output.Remove(output.Length - 4));
-            if (vebose || !File.Exists(output))
+            if (verbose)
                 Console.Write(procOutput);
         }
 
@@ -383,7 +403,9 @@ namespace build
                               "build.exe [parameters]\n" +
                               "    Parameters:\n" +
                               "--configuration [name]: Builds with the target configuration.\n" +
-                              "    Valid values: TI73, TI83p, TI83pSE, TI84p, and TI84pSE");
+                              "    Valid values: TI73, TI83p, TI83pSE, TI84p, and TI84pSE\n" +
+                              "--verbose: Builds in verbose mode with more detailed output.\n" +
+                              "--all: Builds with all possible configurations.");
         }
     }
 }
