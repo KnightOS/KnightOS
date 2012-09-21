@@ -219,6 +219,7 @@ namespace build
                     output.Seek(dataIndex, SeekOrigin.Begin);
                     output.Write(file.Contents, 0, file.Contents.Length);
                     output.Flush();
+                    dataIndex += file.Contents.Length;
                 }
             }
         }
