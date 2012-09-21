@@ -151,19 +151,18 @@ reboot:
     xor a
     call startThread
     
-    ;ld hl, threadTest1
-    ;ld b, 10
-    ;xor a
-    ;call startThread
-    
     jp contextSwitch_search
     
 testThread:
     ld IY, $9000
-_:  inc a
+    rst $08 ; kcall
+    jp testLabel - testThread
+    jr $ ; hang forever, should never happen
+testLabel:
+    inc a
     ld (IY), a
     call fastCopy
-    jr -_
+    jr testLabel
 testThread_end:
     
 BufferToLCD:

@@ -7,53 +7,12 @@
 ; $0005
 .db 0 ; Major version
 .db 1 ; Minor version
-; $0007
-; Build Type
-; Bits 0-2 determine model
-; Bit 3 is set on DEBUG builds
-; Bit 4 is set on USB models only
-; Bit 5 is set on 15 MHz models only
-; Bits 6-7 are unused
-#ifdef DEBUG
 
-#ifdef TI73
-.db %00001000
-#endif
-#ifdef TI83p
-.db %00001001
-#endif
-#ifdef TI83pSE
-.db %00101010
-#endif
-#ifdef TI84p
-.db %00111011
-#endif
-#ifdef TI84pSE
-.db %00111100
-#endif
-
-#else
-
-#ifdef TI73
-.db %00000000
-#endif
-#ifdef TI83Plus
-.db %00000001
-#endif
-#ifdef TI83PlusSE
-.db %00100010
-#endif
-#ifdef TI84Plus
-.db %00110011
-#endif
-#ifdef TI84PlusSE
-.db %00110100
-#endif
-
-#endif
 ; $0008
 ; RST $08
-    ret
+.fill $08-$
+rkcall:
+    jp kcall
 .fill $10-$
 ; $0010
 ; RST $10

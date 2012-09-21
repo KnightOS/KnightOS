@@ -46,6 +46,7 @@ maxThreads .equ 10
 
 #include "header.asm"
 #include "boot.asm"
+#include "restarts.asm"
 #include "interrupt.asm"
 #include "memory.asm"
 #include "thread.asm"
