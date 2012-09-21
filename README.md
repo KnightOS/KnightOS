@@ -24,7 +24,18 @@ Java.
 ## Installing
 
 When you build from source, ROM files for emulation are output to bin/<configuration>/KnightOS.rom.
-If you know how to turn this into an 8xu, you can install it on your calculator. If not, I'll add
-8xu support to the build tool in a few days.
+8xu files are output to bin/<configuration>/KnightOS.8xu, signed and ready for transfer to actual
+hardware. Basically, if you just want an installable version, do this from the command line:
+
+    $ cd build/
+    $ build --configuration <your calculator model>
+
+<your calculator model> can be one of the following values:
+
+* TI73
+* TI83p
+* TI83pSE
+* TI84p
+* TI84pSE
 
 You install KnightOS at your own risk.
