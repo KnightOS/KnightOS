@@ -9,6 +9,7 @@
 *.vshost.exe
 *.pdb
 build/tool/_ReSharper.build/
-bin/
 build/tool/bin/
 build/tool/obj/
+/bin/
+out/
