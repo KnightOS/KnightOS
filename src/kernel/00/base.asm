@@ -42,6 +42,7 @@ errFileNotFound .equ 5
 errTooManyStreams .equ 6
 errNoSuchThread .equ 7
 errTooManyLibraries .equ 8
+errUnsupported .equ 9
 
 kernelMem .equ $8000
 kernelGarbage .equ $8100

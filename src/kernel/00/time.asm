@@ -18,8 +18,13 @@ setClock:
         ld a, 3
         out ($40), a
     pop af
-    #ENDIF
+    cp a
     ret
+    #ELSE
+    ld a, errUnsupported
+    or a
+    ret
+    #ENDIF
     
 ; Time in HLDE
 getTimeInTicks:
@@ -34,8 +39,13 @@ getTimeInTicks:
         in a, ($48)
         ld e, a
     pop af
-    #ENDIF
+    cp a
     ret
+    #ELSE
+    ld a, errUnsupported
+    or a
+    ret
+    #ENDIF
     
 ; Converts HLDE (ticks) to:
 ; H: Day
@@ -73,7 +83,7 @@ convertTimeToTicks:
 ; A: Day of Week
 getTime:
     call getTimeInTicks
-    call convertTime
+    call convertTimeFromTicks
     ret
 
 #undefine ticks
