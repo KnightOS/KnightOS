@@ -1,9 +1,10 @@
 #include "kernel.inc"
+#include "macros.inc"
     .db 0  ; TODO: Thread flags
     .db 10 ; Stack size
 .org 0
-    rst $08
-    ld iy, image
+    jr $
+    kld iy, image
     call fastCopy
     call flushKeys
     call waitKey

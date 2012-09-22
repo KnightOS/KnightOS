@@ -1,0 +1,30 @@
+; Spasm macros don't work correctly, so instead, we use .addinstr
+
+.addinstr KCALL M,*     FCCF   4 NOP 1
+.addinstr KCALL NC,*    D4CF   4 NOP 1
+.addinstr KCALL NZ,*    C4CF   4 NOP 1
+.addinstr KCALL P,*     F4CF   4 NOP 1
+.addinstr KCALL PE,*    ECCF   4 NOP 1
+.addinstr KCALL PO,*    E4CF   4 NOP 1
+.addinstr KCALL Z,*     CCCF   4 NOP 1
+.addinstr KCALL *       CDCF   4 NOP 1
+.addinstr KLD   (*),A   32CF   4 NOP 1
+.addinstr KLD   (*),HL  22CF   4 NOP 1
+.addinstr KLD   (*),IX  22DDCF 5 NOP 1
+.addinstr KLD   (*),IY  22FDCF 5 NOP 1
+.addinstr KLD   A,(*)   3ACF   4 NOP 1
+.addinstr KLD   BC,*    01CF   4 NOP 1
+.addinstr KLD   DE,*    11CF   4 NOP 1
+.addinstr KLD   HL,*    21CF   4 NOP 1
+.addinstr KLD   IX,*    21DDCF 5 NOP 1
+.addinstr KLD   IY,*    21FDCF 5 NOP 1
+.addinstr KLD   SP,*    31CF   4 NOP 1
+.addinstr KJP   C,*     DACF   4 NOP 1
+.addinstr KJP   M,*     FACF   4 NOP 1
+.addinstr KJP   NC,*    D2CF   4 NOP 1
+.addinstr KJP   NZ,*    C2CF   4 NOP 1
+.addinstr KJP   P,*     F2CF   4 NOP 1
+.addinstr KJP   PE,*    EACF   4 NOP 1
+.addinstr KJP   PO,*    E2CF   4 NOP 1
+.addinstr KJP   Z,*     CACF   4 NOP 1
+.addinstr KJP   *       C3CF   4 NOP 1
