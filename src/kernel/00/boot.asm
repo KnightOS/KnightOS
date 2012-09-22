@@ -135,7 +135,12 @@ reboot:
     call lcdDelay
     out (10h), a ; Op-amp control (OPA2) set to max
 
+    #ifdef USB
     ld a, $EF
+    #else
+    ld a, $F4
+    #endif
+    ld (currentContrast), a
     call lcdDelay
     out (10h), a ; Contrast
     
