@@ -39,3 +39,14 @@ hardware. Basically, if you just want an installable version, do this from the c
 * TI84pSE
 
 You install KnightOS at your own risk.
+
+## Contributing
+
+Feel free to make a fork and submit pull requests. This is assembly, so make sure they are very well
+commented - I won't accept anything I don't understand, and I'm not about to read some cryptic,
+uncommented assembly trying to learn what you've changed. However, if you have good comments, clean
+code, and adhere to the coding style, you should be fine. In general, follow these conventions:
+
+* Use four spaces, not tabs. Indent where it makes sense, particularly with respect to the stack.
+* All instructions and registers in lowercase. Labels in camelCase. Use relative labels where you can.
+* For assembly-time math, add spaces between operators. "ld a, 5 * 10 + 7"

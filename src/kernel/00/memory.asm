@@ -27,11 +27,11 @@ MemorySeekToStart_Loop:
         jr nc, ++_
         inc hl \ inc hl
         jr MemorySeekToStart_Loop
-_:    ld ix, 0 ; Error
-    jr ++_
-_:    sbc hl, bc
-    push hl \ pop ix
-_:    pop de
+_:      ld ix, 0 ; Error
+        jr ++_
+_:      sbc hl, bc
+        push hl \ pop ix
+_:  pop de
     pop bc
     pop hl
     ret
@@ -80,7 +80,7 @@ AllocMem_HandleFree:
         ex de, hl
         or a
         push hl
-            sbc hl, bc
+        sbc hl, bc
         pop hl
         ex de, hl
         jr nc, _
@@ -104,83 +104,83 @@ _:        ; Check for dead pockets
             push bc \ push hl \ pop bc \ pop hl ; ex hl, bc
             add hl, bc
             push hl \ pop bc ; ld bc, hl
-_:            ex de, hl
+_:          ex de, hl
         pop de
         
         call CpDEBC
         jr z, AllocMem_SkipNewMeta
         
 AllocMem_DoAllocNormal: ; Not accounting for dead pockets
-        ; Update existing metadata (allocated header)
-        push de
-            push hl
-                push hl \ pop ix ; Set IX for the return value
-                dec hl
-                ld (hl), b
-                dec hl
-                ld (hl), c
-                dec hl
-                call currentThreadID
-                ld (hl), a
-                push hl \ pop de
-            pop hl
-            
-            add hl, bc ; HL points to footer of new section
-            ld (hl), e
-            inc hl
-            ld (hl), d ; Add footer
-        pop de
+    ; Update existing metadata (allocated header)
+    push de
+        push hl
+            push hl \ pop ix ; Set IX for the return value
+            dec hl
+            ld (hl), b
+            dec hl
+            ld (hl), c
+            dec hl
+            call currentThreadID
+            ld (hl), a
+            push hl \ pop de
+        pop hl
         
-        inc hl
-        ld (hl), nullThread ; Add header (thread id)
-        inc hl
-        
-        ex de, hl
-        or a
-        sbc hl, bc
-        dec hl \ dec hl \ dec hl \ dec hl \ dec hl ; Account for meta overhead
-        ex de, hl
-        push hl ; Save location of header
-            ld (hl), e ; Add header (size)
-            inc hl
-            ld (hl), d
-            inc hl
-        
-            ; Update existing metadata (old header)
-            add hl, de
-        pop de
-        dec de
+        add hl, bc ; HL points to footer of new section
         ld (hl), e
         inc hl
+        ld (hl), d ; Add footer
+    pop de
+    
+    inc hl
+    ld (hl), nullThread ; Add header (thread id)
+    inc hl
+    
+    ex de, hl
+    or a
+    sbc hl, bc
+    dec hl \ dec hl \ dec hl \ dec hl \ dec hl ; Account for meta overhead
+    ex de, hl
+    push hl ; Save location of header
+        ld (hl), e ; Add header (size)
+        inc hl
         ld (hl), d
-        
-        pop bc
-        pop de
-        pop hl
-        
-        pop af
-        jp po, _
-        ei
-_:        pop af
-        cp a
-        ret
+        inc hl
+    
+        ; Update existing metadata (old header)
+        add hl, de
+    pop de
+    dec de
+    ld (hl), e
+    inc hl
+    ld (hl), d
+    
+    pop bc
+    pop de
+    pop hl
+    
+    pop af
+    jp po, _
+    ei
+_:  pop af
+    cp a
+    ret
         
 AllocMem_SkipNewMeta:
-        ; Update existing metadata (allocated header)
-        push hl \ pop ix ; Set IX for the return value
-        dec hl \ dec hl \ dec hl
-        call currentThreadID
-        ld (hl), a
-        
-        pop bc
-        pop de
-        pop hl
-        
-        pop af
-        jp po, _
-        ei
-_:        pop af
-        ret
+    ; Update existing metadata (allocated header)
+    push hl \ pop ix ; Set IX for the return value
+    dec hl \ dec hl \ dec hl
+    call currentThreadID
+    ld (hl), a
+    
+    pop bc
+    pop de
+    pop hl
+    
+    pop af
+    jp po, _
+    ei
+_:  pop af
+    ret
         
 AllocMem_OutOfMem:
     pop bc
@@ -190,7 +190,7 @@ AllocMem_OutOfMem:
     pop af
     jp po, _
     ei
-_:    pop af
+_:  pop af
 
     cp 1 ; Set NZ for failure
     ld a, errOutOfMem
@@ -304,5 +304,5 @@ FreeMem_Done:
     pop af
     jp po, _
     ei
-_:    pop af
+_:  pop af
     ret
