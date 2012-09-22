@@ -1,10 +1,9 @@
-#IF CLOCK
-
 #define secsPerHour 60 * 60
 #define secsPerDay secsPerHour * 24
 
 ; Sets the clock to HLDE, in ticks
 setClock:
+    #IF CLOCK
     push af
         ld a, h
         out ($41), a
@@ -19,10 +18,12 @@ setClock:
         ld a, 3
         out ($40), a
     pop af
+    #ENDIF
     ret
     
 ; Time in HLDE
 getTimeInTicks:
+    #IF CLOCK
     push af
         in a, ($45)
         ld h, a
@@ -33,6 +34,7 @@ getTimeInTicks:
         in a, ($48)
         ld e, a
     pop af
+    #ENDIF
     ret
     
 ; Converts HLDE (ticks) to:
@@ -80,5 +82,3 @@ getTime:
 #undefine minute
 #undefine second
 #undefine dayOfWeek
-    
-#ENDIF

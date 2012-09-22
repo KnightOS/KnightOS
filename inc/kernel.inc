@@ -67,3 +67,7 @@ div32By16 .equ $3F3D
 sub16from32 .equ $3F3A
 divHLbyC .equ $3F37
 divACbyDE .equ $3F34
+getTimeInTicks .equ $3F31
+setClock .equ $3F2E
+getTime .equ $3F2B
+convertTimeFromTicks .equ $3F28
