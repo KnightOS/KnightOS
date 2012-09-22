@@ -38,6 +38,7 @@ errStreamNotFound .equ 3
 errEndOfStream .equ 4
 errFileNotFound .equ 5
 errTooManyStreams .equ 6
+errNoSuchThread .equ 7
 
 kernelMem .equ $8000
 kernelGarbage .equ $8100
@@ -46,6 +47,7 @@ userMemory .equ $8200
 
 threadTable .equ kernelMem
 libraryTable .equ $8050
+threadTableSize .equ libraryTable - threadTable
 signalTable .equ $8078
 fileStreamTable .equ $808C
 fileStreamTableSize .equ $28
@@ -99,6 +101,7 @@ fsDeletedDirectory .equ $1F
 #include "knightfs.asm"
 #include "locks.asm"
 #include "display.asm"
+#include "keyboard.asm"
 #include "util.asm"
 
 .echo "Kernel size: ", $

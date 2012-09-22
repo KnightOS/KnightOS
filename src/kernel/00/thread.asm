@@ -55,7 +55,7 @@ _:  di
         push ix \ pop hl
         add hl, bc
         push de
-            ld de, killThread
+            ld de, killCurrentThread
             ld (hl), d \ dec hl \ ld (hl), e ; Put return point on stack
         pop de
         dec hl \ ld (hl), d \ dec hl \ ld (hl), e ; Put entry point on stack
@@ -86,9 +86,161 @@ startThread_mem: ; Out of memory
     or 1
     ret
     
-killThread:
+; Kills the executing thread
+killCurrentThread:
     di
+    ld a, (currentThreadIndex)
+    add a, a
+    add a, a
+    add a, a
+    ld hl, threadTable
+    add a, l
+    ld l, a
+    ld a, (hl)
+    ; HL points to old thread in table
+    push af
+        push hl
+            ld a, (currentThreadIndex)
+            inc a
+            add a, a
+            add a, a
+            add a, a
+            ld hl, threadTable
+            add a, l
+            ld l, a
+            push hl
+                push hl \ pop bc
+                ld hl, threadTable + threadTableSize
+                or a
+                sbc hl, bc
+                push hl \ pop bc
+            pop hl
+        pop de
+        ldir
+
+    pop af
+    ; A = Old thread ID
+    ; Deallocate all memory belonging to the thread
+    ld ix, userMemory
+KillCurrentThread_DeallocationLoop:
+    cp (ix)
+    inc ix
+    ld c, (ix)
+    inc ix
+    ld b, (ix)
+    inc ix
+    jr nz, _
+    call freeMem
+_:  inc ix \ inc ix
+    inc bc \ inc bc
+    add ix, bc
+    dec ix \ dec ix
+    jr c, KillCurrentThread_DeallocationDone
+    jr KillCurrentThread_DeallocationLoop
+
+KillCurrentThread_DeallocationDone:
+    ld hl, activeThreads
+    dec (hl)
+    xor a
+    ld (currentThreadIndex), a
+    jp contextSwitch_search
     
+; Inputs:	A: Thread ID
+; Kills a specific thread
+killThread:
+    push bc
+    ld c, a
+    push af
+    ld a, i
+    push af
+    push hl
+    push de
+    push ix
+    di
+    ld hl, threadTable
+    ld a, (activeThreads)
+    ld b, a
+    ld d, 0
+KillThread_SearchLoop:
+    ld a, (hl)
+    cp c
+    jr z,++_
+    ld a, 8
+    add a, l
+    ld l, a
+    inc d
+    djnz KillThread_SearchLoop
+    ; Thread ID not found
+    pop ix
+    pop de
+    pop hl
+    pop af
+    jp po, _
     ei
+_:  pop af
+    pop bc
+    or a
+    ld a, ErrNoSuchThread
     ret
-    
+		
+_:		; HL points to old thread in table
+    push af
+    push hl
+        ld a, d
+        inc a
+        add a, a
+        add a, a
+        add a, a
+        ld hl, ThreadTable
+        add a, l
+        ld l, a
+        push hl
+            push hl \ pop bc
+            ld hl, ThreadTable + ThreadTableSize
+            or a
+            sbc hl, bc
+            push hl \ pop bc
+        pop hl
+    pop de
+    ldir
+    pop af
+    ; A = Old thread ID
+    ; Deallocate all memory belonging to the thread
+    ld ix, userMemory
+KillThread_DeallocationLoop:
+    cp (ix)
+    inc ix
+    ld c, (ix)
+    inc ix
+    ld b, (ix)
+    inc ix
+    jr nz, _
+    call freeMem
+_:  inc ix \ inc ix
+    inc bc \ inc bc
+    add ix, bc
+    dec ix \ dec ix
+    jr c, KillThread_DeallocationDone
+    jr KillThread_DeallocationLoop
+
+KillThread_DeallocationDone:
+    ld hl, activeThreads
+    dec (hl)
+    ld b, (hl)
+    ld a, (currentThreadIndex)
+    dec b
+    cp a
+    jr nz, _
+    dec a
+    ld (currentThreadIndex), a
+_:  pop ix
+    pop de
+    pop hl
+    pop af
+    jp po, _
+    ei
+_:  pop af
+    pop bc
+    cp a
+    ret
+        
