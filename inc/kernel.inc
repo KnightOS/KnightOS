@@ -61,3 +61,5 @@ deleteDirectory .equ $3F4F
 renameFile .equ $3F4C
 lookUpFile .equ $3F49
 launchProgram .equ $3F46
+allocScreenBuffer .equ $3F43
+loadLibrary .equ $3F40

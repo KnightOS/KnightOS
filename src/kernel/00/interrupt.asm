@@ -67,7 +67,7 @@ contextSwitch_search:
     inc a \ ld (currentThreadIndex), a
     ld b, a
     ld a, (activeThreads)
-    or a \ jp z, reboot ; Reboot when there are no active threads
+    or a \ jp z, boot ; Reboot when there are no active threads
     dec a \ cp b
     jr nc, _
     xor a

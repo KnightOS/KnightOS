@@ -6,6 +6,16 @@ formatMem:
     ld hl, userMemory
     ld ($FFFE), hl
     ret
+    
+allocScreenBuffer:
+    push bc
+    push ix
+        ld bc, 768
+        call allocMem
+        push ix \ pop iy
+    pop ix
+    pop bc
+    ret
 
 ; Inputs:    IX is somewhere within pre-allocated memory
 ; Outputs:    IX points to the start of that memory

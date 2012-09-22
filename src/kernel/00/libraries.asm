@@ -2,7 +2,7 @@
 ; Output:	A: Preserved unless error
 ;			Z: Success
 ;			NZ: Failure
-LoadLibrary:
+loadLibrary:
 	push af
 	ld a, i
 	jp pe, _

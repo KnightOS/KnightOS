@@ -959,6 +959,7 @@ LookUpFile_Loop:
 		ld hl, $7FFF
 _:		
 		or a
+        dec bc ; TODO: Test this more
 		sbc hl, bc
 		; HL points to next entry
 		jr LookUpFile_Loop
