@@ -1,5 +1,5 @@
 
-drawCastleChrome:
+drawChrome:
     call clearBuffer
     ; Castle top
 	xor a
@@ -47,13 +47,56 @@ _:	ld l, 60
 	inc a
 	djnz -_
 _:	
+    #ifdef CLOCK
     ; Get time
     push ix
-    
+        call getTime
+        ; TODO
     pop ix
+    #endif
 
     ret
     
+drawHome:
+	ld hl, $0021
+	ld de, $5F21
+	call DrawLine
+	
+	kld hl, HotkeyPlusSprite
+	ld b, 5
+	ld de, $013A
+	call PutSpriteOR
+	
+	kld hl, HotkeyArrowRightSprite
+	ld de, $593A
+	call PutSpriteOR
+	
+	kld hl, MenuArrowSprite
+	ld b, 3
+	ld de, $353B
+	call PutSpriteOR
+	
+	ld de, $093A
+	kld hl, MoreString
+	; libtext(DrawStr)
+	rst $10
+	.db libtextID
+	call DrawStr
+	
+	ld de, $253A
+	kld hl, MenuString
+	; libtext(DrawStr)
+	rst $10
+	.db libtextID
+	call DrawStr
+	
+	ld de, $3E3A
+	kld hl, RunningString
+	; libtext(DrawStr)
+	rst $10
+	.db libtextID
+	call DrawStr
+	ret
     
 CastleTopSprite: ; 8x3
 	.db %11110000
@@ -168,3 +211,40 @@ DefaultIconSprite: ; 16x16
 	.db %10111110, %00111101
 	.db %10000000, %00000001
 	.db %11111111, %11111111
+
+MoreString:
+	.db "More", 0
+RunningString:
+	.db "Running", 0
+MenuString:
+	.db "Menu", 0
+BackString:
+	.db "Back", 0
+OptionsString:
+	.db "Options", 0
+AddToCastleString:
+	.db "Add to Castle", 0
+RemoveFromCastleString:
+	.db "Remove from Castle", 0
+SleepString:
+	.db "Sleep", 0
+ShutdownString:
+	.db "Shut down", 0
+RestartString:
+	.db "Restart", 0
+ConfirmString1:
+	.db "Are you sure?", 0
+ConfirmString2:
+	.db "Unsaved data may", 0
+ConfirmString3:
+	.db "be lost.", 0
+YesString:
+	.db "Yes", 0
+NoString:
+	.db "No", 0
+NoProgramsInstalledString:
+	.db "No programs installed!", 0
+ProgramIndexPath:
+	.db "etc/.kpg", 0
+ThreadListPath:
+	.db "bin/threadlist", 0

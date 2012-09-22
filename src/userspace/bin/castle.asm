@@ -14,7 +14,8 @@ start:
     kld de, libtext
     call loadLibrary
     
-    kcall drawCastleChrome
+    kcall drawChrome
+    kcall drawHome
     call fastCopy
     
     call waitKey
