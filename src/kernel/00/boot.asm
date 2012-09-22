@@ -1,4 +1,5 @@
 ; Calculator boot-up code
+#include "keys.inc"
 
 boot:
     di
@@ -258,37 +259,10 @@ Boot_FileSystemConfig_EoT:
     ld (nextThreadId), a
     ld (nextStreamId), a
     
-    ld bc, testThread_end - testThread
-    call allocMem
-    push ix \ pop de
-    ld hl, testThread
-    ldir
-    push ix \ pop hl
-    ld b, 10
-    xor a
-    call startThread
-    
     ld de, bootFile
-    call openFileRead
-    
-    call streamReadByte
-    ld ($9001), a
-    
-    call closeStream
+    call launchProgram
     
     jp contextSwitch_search
     
 bootFile:
     .db "/bin/init", 0
-    
-testThread:
-    ld IY, $9000
-    rst $08 ; kcall
-    jp testLabel - testThread
-    jr $ ; hang forever, should never happen
-testLabel:
-    inc a
-    ld (IY), a
-    call fastCopy
-    jr testLabel
-testThread_end:

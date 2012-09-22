@@ -409,7 +409,9 @@ namespace build
             }
             foreach (string define in defines)
                 defineString += "-D" + define + " ";
-            ProcessStartInfo info = new ProcessStartInfo("SPASM.exe", "-L -T" + defineString +
+            ProcessStartInfo info = new ProcessStartInfo("SPASM.exe", "-I " + 
+                Path.Combine(Directory.GetCurrentDirectory(), "..", "inc")
+                + " -L -T" + defineString +
                 "\"" + input + "\" \"" + output + "\"" + (string.IsNullOrWhiteSpace(args) ? "" : " ") + args);
             info.RedirectStandardOutput = true;
             info.RedirectStandardError = true;

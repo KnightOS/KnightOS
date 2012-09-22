@@ -1,6 +1,8 @@
 currentThreadID:
     push hl
         ld a, (currentThreadIndex)
+        cp $FF
+        jr z, _
         add a, a
         add a, a
         add a, a
@@ -8,6 +10,9 @@ currentThreadID:
         ld l, a
         ld a, (hl)
     pop hl
+    ret
+_:  pop hl
+    ld a, (nextThreadId)
     ret
     
 ; Inputs:
@@ -243,4 +248,56 @@ _:  pop af
     pop bc
     cp a
     ret
-        
+
+; Inputs:	DE: Pointer to full path of program
+; Outputs: 	A: Thread ID
+; Launches program in new thread
+launchProgram:
+	push bc
+	ld a, i
+	push af
+	di
+	push hl
+	push de
+	push ix
+		call openFileRead
+		
+		push de
+			call getStreamInfo
+			dec bc
+			dec bc
+			ld a, (currentThreadIndex)
+			push af
+				ld a, $FF
+				ld (currentThreadIndex), a ; The null thread will allocate memory to the next thread
+				call allocMem
+			pop af
+			ld (currentThreadIndex), a
+		pop de
+		
+		push ix
+			call streamReadByte ; Thread flags
+			push af
+				call streamReadByte ; Stack size
+				ld c, a
+				push bc
+					call streamReadToEnd ; Read entire file into memory
+					call closeStream
+				pop bc
+				ld b, c
+			pop af
+		pop hl
+		
+		ld a, 0
+		call startThread
+	ld b, a
+	pop ix
+	pop de
+	pop hl
+	pop af
+	jp po, _
+	ei
+_:	ld a, b
+	pop bc
+	ret
+    
