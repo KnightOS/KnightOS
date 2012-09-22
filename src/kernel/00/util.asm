@@ -1,4 +1,4 @@
-Sleep:
+suspendDevice:
     ld a, i
     push af
     ld a, 2

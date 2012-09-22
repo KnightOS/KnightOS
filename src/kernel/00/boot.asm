@@ -30,7 +30,7 @@ _:  di
 
     ld sp, userMemory ; end of kernel garbage
 
-    call Sleep
+    call suspendDevice
 
 restart:
 reboot:
