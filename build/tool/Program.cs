@@ -13,7 +13,7 @@ namespace build
         private static bool verbose = false;
         private static string configuration = "TI84pSE";
         private static Stream output;
-        private static Dictionary<string, ushort> labels;
+        private static Dictionary<string, long> labels;
         private static List<byte> pages; 
         
         static void Main(string[] args)
@@ -61,7 +61,7 @@ namespace build
             CleanUp();
             CreateOutput();
             Console.WriteLine("Building kernel...");
-            labels = new Dictionary<string, ushort>();
+            labels = new Dictionary<string, long>();
             Build("../src/kernel/build.cfg");
             Console.WriteLine("Buildling userspace...");
             Build("../src/userspace/build.cfg");
@@ -149,7 +149,7 @@ namespace build
                     File.WriteAllText(Path.Combine(directory, parts[3]), include);
                 }
                 else if (line.StartsWith("jump include "))
-                    jumpTable.Add(line.Substring(13), labels[line.Substring(13).ToLower()]);
+                    jumpTable.Add(line.Substring(13), (ushort)labels[line.Substring(13).ToLower()]);
                 else if (line.StartsWith("rm "))
                 {
                     string[] parts = line.Substring(3).Split(' ');
@@ -320,7 +320,7 @@ namespace build
             foreach (var line in lines)
             {
                 string[] parts = line.Trim().Split('=');
-                labels.Add(parts[0].Trim().ToLower(), ushort.Parse(parts[1].Trim().Substring(1), NumberStyles.HexNumber));
+                labels.Add(parts[0].Trim().ToLower(), long.Parse(parts[1].Trim().Substring(1), NumberStyles.HexNumber));
             }
         }
 

@@ -246,3 +246,96 @@ endqsort:
 		pop de
 		pop hl
 		ret
+        
+Div32By16:
+; IN:	ACIX=dividend, DE=divisor
+; OUT:	ACIX=quotient, DE=divisor, HL=remainder, B=0
+	ld	hl,0
+	ld	b,32
+Div32By16_Loop:
+	add	ix,ix
+	rl	c
+	rla
+	adc	hl,hl
+	jr	c,Div32By16_Overflow
+	sbc	hl,de
+	jr	nc,Div32By16_SetBit
+	add	hl,de
+	djnz	Div32By16_Loop
+	ret
+Div32By16_Overflow:
+	or	a
+	sbc	hl,de
+Div32By16_SetBit:
+	.db	$DD,$2C		; inc ixl, change to inc ix to avoid undocumented
+	djnz	Div32By16_Loop
+	ret
+    
+; Subtracts DE from ACIX
+sub16from32:
+    push hl
+    push de
+    push bc
+        push ix \ pop hl
+        push de
+            ld d, a
+            ld e, c
+        pop bc
+        
+        or a
+        sbc hl, bc
+        jr nc, _
+        dec de
+_:  push hl \ pop ix
+    ld a, d \ ld c, e
+    pop bc
+    pop de
+    pop hl
+    ret
+    
+; Adds DE to ACIX
+add16to32:
+    push hl
+    push de
+    push bc
+    pop bc
+        push ix \ pop hl
+        push de
+            ld d, a
+            ld e, c
+        pop bc
+        add hl, bc
+        jr nc, _
+        inc de
+_:  push hl \ pop ix
+    ld a, d \ ld c, e
+    pop de
+    pop bc
+    ret
+    
+; remainder in a
+divHLbyC:
+   xor	a
+   ld	b, 16
+_: add	hl, hl
+   rla
+   cp	c
+   jr	c, $+4
+   sub	c
+   inc	l
+   djnz	-_
+   ret
+ 
+; remainder in HL
+divACbyDE:
+   ld	hl, 0
+   ld	b, 16
+_: sll	c
+   rla
+   adc	hl, hl
+   sbc	hl, de
+   jr	nc, $+4
+   add	hl, de
+   dec	c
+   djnz	-_
+   ret

@@ -63,3 +63,7 @@ lookUpFile .equ $3F49
 launchProgram .equ $3F46
 allocScreenBuffer .equ $3F43
 loadLibrary .equ $3F40
+div32By16 .equ $3F3D
+sub16from32 .equ $3F3A
+divHLbyC .equ $3F37
+divACbyDE .equ $3F34

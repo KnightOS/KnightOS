@@ -20,6 +20,7 @@ allocTableStart .equ $77
 #ifdef TI84p
 #define CPU15
 #define USB
+#define CLOCK
 privledgedPage .equ $3C
 swapSector .equ $38
 allocTableStart .equ $37
@@ -27,6 +28,7 @@ allocTableStart .equ $37
 #ifdef TI84pSE
 #define CPU15
 #define USB
+#define CLOCK
 privledgedPage .equ $7C
 swapSector .equ $78
 allocTableStart .equ $77
@@ -105,6 +107,7 @@ fsDeletedDirectory .equ $1F
 #include "locks.asm"
 #include "display.asm"
 #include "keyboard.asm"
+#include "time.asm"
 #include "util.asm"
 
 .echo "Kernel size: ", $
