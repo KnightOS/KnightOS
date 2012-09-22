@@ -68,6 +68,7 @@ namespace build
             Console.WriteLine("Creating 8xu...");
             var osBuilder = new OSBuilder(configuration == "TI73");
             var pageData = new Dictionary<byte, byte[]>();
+            pages.Sort();
             foreach (var page in pages)
             {
                 output.Seek(page * 0x4000, SeekOrigin.Begin);
@@ -157,7 +158,7 @@ namespace build
                 {
                     var parts = line.Substring(6).Split(' ');
                     foreach (var part in parts)
-                        pages.Add(byte.Parse(part, NumberStyles.HexNumber));
+                        AddPage(byte.Parse(part, NumberStyles.HexNumber));
                 }
                 else if (line == "endif") { }
                 else
@@ -185,7 +186,7 @@ namespace build
 
         private static List<KDirectory> filesystem;
 
-        private static unsafe void CreateFilesystem(string path)
+        private static void CreateFilesystem(string path)
         {
             Console.WriteLine("Creating filesystem...");
             string[] root = Directory.GetDirectories(path);
@@ -196,6 +197,9 @@ namespace build
             int dataIndex = dataStart * 0x4000;
             int allocationIndex = allocationTableStart * 0x4000 + 0x4000;
             byte[] entry;
+            // TODO: Dynamic pages
+            AddPage(dataStart);
+            AddPage(allocationTableStart);
             foreach (var directory in filesystem)
             {
                 // Create directory entry
@@ -329,6 +333,14 @@ namespace build
                 default:
                     throw new InvalidOperationException("Invalid configuration");
             }
+        }
+
+        private static void AddPage(byte page)
+        {
+            if (!pages.Contains(page))
+                pages.Add(page);
+            if (!pages.Contains((byte)(page & 0xFC)))
+                pages.Add((byte)(page & 0xFC));
         }
 
         private static void CreateOutput()
