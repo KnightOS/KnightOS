@@ -39,6 +39,7 @@ errEndOfStream .equ 4
 errFileNotFound .equ 5
 errTooManyStreams .equ 6
 errNoSuchThread .equ 7
+errTooManyLibraries .equ 8
 
 kernelMem .equ $8000
 kernelGarbage .equ $8100
@@ -76,7 +77,8 @@ currentContrast .equ $80C7
 clip_mask .equ $80C8
 
 maxThreads .equ 10
-maxFileStreams .equ 10
+maxFileStreams .equ 5
+maxLibraries .equ 10
 
 ; Filesystem stuff
 fsEndOfTable .equ $FF
@@ -97,6 +99,7 @@ fsDeletedDirectory .equ $1F
 #include "interrupt.asm"
 #include "memory.asm"
 #include "thread.asm"
+#include "libraries.asm"
 #include "flash.asm"
 #include "knightfs.asm"
 #include "locks.asm"

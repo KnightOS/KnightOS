@@ -279,7 +279,7 @@ _:	inc sp \ inc sp
 	ret
 
 ; Inputs:	D: Stream ID
-; Outputs:	HL: Byte read (or error)
+; Outputs:	HL: Word read (or error)
 ;			Advances stream
 ;			Z: Success
 ;			NZ: Error

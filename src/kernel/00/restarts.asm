@@ -60,3 +60,61 @@ _:
     pop hl
     ret
     
+lcall:
+    push hl
+    inc sp \ inc sp
+    pop hl
+    push hl
+    dec sp \ dec sp
+    push de
+    push bc
+    push af
+        dec hl
+        ld (hl), 0
+        inc hl
+
+        ld a, (hl)
+        ld (hl), 0
+        ld b, a
+        inc hl
+        ex de, hl
+        ld hl, libraryTable
+lmacro_SearchLoop:
+        ld a, (hl)
+        cp b
+        jr z, _
+        inc hl \ inc hl \ inc hl \ inc hl
+        jr lmacro_SearchLoop
+
+_:      inc hl
+        ld c, (hl)
+        inc hl
+        ld b, (hl)
+		
+        ex de, hl
+
+        ld a, $DD ; Handle IX/IY cases
+        cp (hl)
+        jr z, _
+        ld a, $FD
+        jr nz, ++_
+_:
+        inc hl
+_:
+        inc hl
+        ld e, (hl)
+        inc hl
+        ld d, (hl)
+        ex de, hl
+        add hl, bc		
+        ex de, hl
+        ld (hl), d
+        dec hl
+        ld (hl), e
+	
+    pop af
+    pop bc
+    pop de
+    pop hl
+    ret
+    

@@ -282,8 +282,7 @@ _:
         add hl, bc
         ex de, hl ; DE now has combined size of two blocks
         push de
-            push ix
-            pop de
+            push ix \ pop de
             dec de \ dec de \ dec de
             ld (hl), e
             inc hl
@@ -306,3 +305,4 @@ FreeMem_Done:
     ei
 _:  pop af
     ret
+    

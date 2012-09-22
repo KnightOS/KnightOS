@@ -94,6 +94,8 @@ startThread_mem: ; Out of memory
 ; Kills the executing thread
 killCurrentThread:
     di
+    ; The stack is going to be deallocated, so let's move it
+    ld sp, userMemory ; end of kernelGarbage
     ld a, (currentThreadIndex)
     add a, a
     add a, a
@@ -126,6 +128,7 @@ killCurrentThread:
     pop af
     ; A = Old thread ID
     ; Deallocate all memory belonging to the thread
+KillCurrentThread_Deallocate:
     ld ix, userMemory
 KillCurrentThread_DeallocationLoop:
     cp (ix)
@@ -136,6 +139,7 @@ KillCurrentThread_DeallocationLoop:
     inc ix
     jr nz, _
     call freeMem
+    jr KillCurrentThread_Deallocate
 _:  inc ix \ inc ix
     inc bc \ inc bc
     add ix, bc

@@ -6,11 +6,5 @@
 ; Program
 .org 0
 start:
-    kld de, castlePath
-    call launchProgram
-    ret
-
-castlePath:
-    .db "/bin/castle", 0
-terminalPath:
-    .db "/bin/terminal", 0
+    jr $
+    .db "Hello, world!"

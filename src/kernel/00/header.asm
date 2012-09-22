@@ -16,7 +16,8 @@ rkcall:
 .fill $10-$
 ; $0010
 ; RST $10
-    ret
+rlcall:
+    jp lcall
 .fill $18-$
 ; $0018
 ; RST $18
