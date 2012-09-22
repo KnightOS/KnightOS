@@ -87,6 +87,8 @@ startThread_mem: ; Out of memory
     ret
     
 killThread:
-    ; TODO
+    di
+    
+    ei
     ret
     
