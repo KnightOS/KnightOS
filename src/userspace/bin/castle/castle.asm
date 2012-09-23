@@ -37,6 +37,10 @@ _:  call flushKeys
     jr z, homeDownKey
     cp kZoom
     kjp z, powerMenu
+    cp kEnter
+    jr z, homeSelect
+    cp k2nd
+    jr z, homeSelect
     jr -_
 homeRightKey:
     ld a, 9
@@ -62,6 +66,57 @@ homeDownKey:
     jr c, -_
     inc a \ add a, d \ ld d, a
     jr homeLoop
+    
+homeSelect:
+    ld a, d
+    push af
+        ; Load config
+        kld de, configPath
+        call openFileRead
+        push de
+            call getStreamInfo
+        pop de
+        call allocMem
+        push ix
+            call streamReadToEnd
+            call closeStream
+        pop ix
+    
+        ; IX is the config file
+        ld bc, $0AFF
+_:      inc c
+        ld l, (ix)
+        ld h, (ix + 1)
+        inc ix \ inc ix
+        ld a, $FF
+        cp h \ jr nz, _ \ cp l \ jr nz, _
+        ; Empty slot
+        djnz -_
+_:      pop af \ push af
+        cp c
+        jr nz, _
+        ; This is the correct slot
+        ;jr $
+        ld e, (ix)
+        ld d, (ix + 1)
+        call memSeekToStart
+        push ix \ pop hl
+        add hl, de \ ex de, hl
+        di
+        call launchProgram
+        ld hl, $8205 ; returnToCastle in init
+        call setReturnPoint
+        pop af
+        ret
+_:      push bc
+            ld bc, 34
+            add ix, bc
+        pop bc
+        djnz ---_
+    pop af
+    call memSeekToStart
+    call freeMem
+    kjp homeLoop
     
 powerMenu:
 	kcall drawPowerMenu
