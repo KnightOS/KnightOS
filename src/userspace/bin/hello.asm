@@ -18,7 +18,7 @@ start:
     
     ld b, 0
     ld de, 0
-    kld hl, todoString
+    kld hl, helloString
     ;libtext(drawStr)
     rst $10
     .db libTextId
@@ -28,7 +28,7 @@ start:
     call flushKeys
     call waitKey
     ret
-todoString:
+helloString:
     .db "Hello, world!\nPress any key to exit.", 0
 libTextPath:
     .db "/lib/libtext", 0
