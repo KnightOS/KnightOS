@@ -9,6 +9,12 @@
     .db 50 ; Stack size
 ; Program
 .org 0
+; KnightOS Header
+    jr start
+    .db 'K'
+    .db "Hello, world!", 0
+    .db %00000010
+
 start:
     call allocScreenBuffer
     call clearBuffer
