@@ -17,7 +17,7 @@ start:
     
     kcall drawChrome
     kcall drawHome
-    ld d, 0 ; Selection index, 0-9 (top row, then bottom)
+    ld d, 0 ; Selection index
 homeLoop:
     kcall drawHomeIcons
     call fastCopy
@@ -32,6 +32,7 @@ _:  call flushKeys
     jr -_
 homeRightKey:
     inc d
+    ;jr $
     jr homeLoop
 homeLeftKey:
     dec d

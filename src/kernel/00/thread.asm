@@ -2,7 +2,9 @@ currentThreadID:
     push hl
         ld a, (currentThreadIndex)
         cp $FF
-        jr z, _
+        jr z, +_
+        cp $FE
+        jr z, ++_
         add a, a
         add a, a
         add a, a
@@ -13,6 +15,9 @@ currentThreadID:
     ret
 _:  pop hl
     ld a, (nextThreadId)
+    ret
+_:  pop hl
+    ld a, $FE ; TODO: Dynamic library deallocation
     ret
     
 ; Inputs:
@@ -79,7 +84,9 @@ _:  di
     ld l, a
     ld a, (activeThreads)
     inc a \ ld (activeThreads), a
-    ld a, (nextThreadId) \ inc a \ ld (nextThreadId), a
+    ld a, (nextThreadId) \ inc a
+    cp $FE \ jr nz, $+3 \ inc a \ cp $FF \ jr nz, $+3 \ inc a
+    ld (nextThreadId), a
     ld a, (hl)
     cp a
     ret

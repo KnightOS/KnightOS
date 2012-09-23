@@ -8,7 +8,7 @@
 start:
     kld de, castlePath
     call launchProgram
-    halt
+    ;jr $
     ret
 
 castlePath:
