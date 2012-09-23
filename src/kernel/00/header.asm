@@ -46,3 +46,7 @@ rlcall:
     jp boot
 ; $0056
 .db $FF, $A5, $FF
+#ifdef TI84pSE
+.fill $64-$
+    .db '2' ; For the sake of WabbitEmu
+#endif

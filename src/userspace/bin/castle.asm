@@ -13,7 +13,6 @@ start:
     call allocScreenBuffer
 
     kld de, libtext
-    jr $
     call loadLibrary
     
     kcall drawChrome

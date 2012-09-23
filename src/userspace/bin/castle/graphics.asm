@@ -112,7 +112,6 @@ drawHomeIcons:
         push de
             call getStreamInfo
         pop de
-        ;jr $
         call allocMem
         push ix
             call streamReadToEnd

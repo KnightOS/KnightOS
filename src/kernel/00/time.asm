@@ -3,7 +3,7 @@
 
 ; Sets the clock to HLDE, in ticks
 setClock:
-    #IF CLOCK
+    #IFDEF CLOCK
     push af
         ld a, h
         out ($41), a
@@ -28,7 +28,7 @@ setClock:
     
 ; Time in HLDE
 getTimeInTicks:
-    #IF CLOCK
+    #IFDEF CLOCK
     push af
         in a, ($45)
         ld h, a
