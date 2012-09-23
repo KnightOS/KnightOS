@@ -16,6 +16,7 @@ start:
     call loadLibrary
 resetToHome:
     ld d, 0
+redrawHome:
     push de
         kcall drawChrome
         kcall drawHome
@@ -119,6 +120,7 @@ _:      push bc
     kjp homeLoop
     
 powerMenu:
+    push de
 	kcall drawPowerMenu
 	ld e, 38
 powerMenuLoop:
@@ -166,12 +168,13 @@ powerMenuDown:
 	
 powerMenuSelect:
 	ld a, e
+    pop de
 	cp 44
 	jr z, confirmShutDown
 	cp 50
 	jr z, confirmRestart
 	call suspendDevice
-	kjp resetToHome
+	kjp redrawHome
     
 confirmShutDown:
 	ld hl, boot
