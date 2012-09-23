@@ -71,3 +71,5 @@ getTimeInTicks .equ $3F31
 setClock .equ $3F2E
 getTime .equ $3F2B
 convertTimeFromTicks .equ $3F28
+getThreadEntry .equ $3F25
+setReturnPoint .equ $3F22

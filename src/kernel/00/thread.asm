@@ -313,3 +313,48 @@ _:	ld a, b
 	pop bc
 	ret
     
+; Input:  A: Thread ID
+; Output: HL: Thread entry
+getThreadEntry:
+    push bc
+        ld c, a
+        ld b, maxThreads
+        ld hl, threadTable
+_:      ld a, (hl)
+        cp c
+        jr nz, _
+        pop bc
+        ret
+_:      ld a, 8
+        add a, l
+        ld l, a
+        djnz --_
+    pop bc
+    or a
+    ld a, errNoSuchThread
+    ret
+
+; Input: HL: Return address
+;        A: Thread Id    
+setReturnPoint:
+    push de
+    push bc
+        ex de, hl
+        call getThreadEntry
+        jr z, _
+        pop bc
+        pop de
+        ret
+_:      inc hl \ inc hl \ inc hl
+        ld c, (hl) \ inc hl \ ld b, (hl)
+        push bc \ pop ix
+        call memSeekToStart
+        dec ix \ dec ix
+        ld c, (ix) \ ld b, (ix + 1)
+        add ix, bc
+        ld (ix), e
+        ld (ix + 1), d
+    pop bc
+    pop de
+    ret
+    
