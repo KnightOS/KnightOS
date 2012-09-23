@@ -12,12 +12,17 @@ flushkeys:
     call HasKeypadLock
     ret nz
     push af
-_:  xor a
-    out (1), a
-    nop \ nop
-    in a, (1)
-    inc a
-    jr nz, -_
+    push bc
+    ; Done in a loop; runs far too fast on actual hardware
+        ld b, $80
+_:      xor a
+        out (1), a
+        nop \ nop
+        in a, (1)
+        inc a
+        jr nz, -_
+        djnz -_
+    pop bc
     pop af
     ret
 
@@ -26,9 +31,9 @@ getKey:
     jr _
     xor a
     ret
-_:  ld a, i
+_:  push bc
+    ld a, i
     push af
-    push bc
     push de
     push hl
 gs_GetK2:
@@ -96,15 +101,15 @@ gs_GetK_254:
     cp d \ jr z,gs_getK_end
     ld a,d
     ld (kernelGarbage),a
-
+    
 gs_GetK_end:
+    pop hl
+    pop de
     ld b, a
     pop af
     jp po, _
     ei
 _:  ld a, b
-    pop hl
-    pop de
     pop bc
     ret
 

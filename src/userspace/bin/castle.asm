@@ -21,21 +21,44 @@ start:
 homeLoop:
     kcall drawHomeIcons
     call fastCopy
+    
 _:  call flushKeys
     call waitKey
+    
     cp kClear
     jp z, boot
     cp kRight
     jr z, homeRightKey
     cp kLeft
     jr z, homeLeftKey
+    cp kUp
+    jr z, homeUpKey
+    cp kDown
+    jr z, homeDownKey
     jr -_
 homeRightKey:
+    ld a, 9
+    cp d
+    jr z, -_
     inc d
-    ;jr $
     jr homeLoop
 homeLeftKey:
+    xor a
+    cp d
+    jr z, -_
     dec d
+    jr homeLoop
+homeUpKey:
+    ld a, 4
+    cp d
+    jr nc, -_
+    ld a, d \ sub 5 \ ld d, a
+    jr homeLoop
+homeDownKey:
+    ld a, 4
+    cp d
+    jr c, -_
+    inc a \ add a, d \ ld d, a
     jr homeLoop
     
 libtext:

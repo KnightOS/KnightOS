@@ -99,12 +99,18 @@ drawHomeIcons:
     ld a, d
     push af
         ; Clear away old icons
-        ld e, 0 \ ld l, 12 \ ld bc, $1860
+        ld e, 0 \ ld l, 11 \ ld c, 96 \ ld b, 45
+        call rectAND
+        ld e, 0 \ ld l, 3 \ ld c, 70 \ ld b, 7
         call rectAND
         
         ld hl, $0021
         ld de, $5F21
         call DrawLine
+        
+        jr _
+        pop af \ pop de \ ret
+_:
         
         ; Load config
         kld de, configPath
@@ -178,31 +184,25 @@ _:
         
     pop af
     dec ix
-    ;jr $
     call memSeekToStart
     call freeMem
     pop de
 	ret
     
 drawSelectionRectangle:
-    push de \ push hl \ push bc
+    push de \ push hl \ push bc \ push af
         ; Find name string
         ld c, (ix)
         ld b, (ix + 1)
-        push ix
-            call memSeekToStart
-            add ix, bc
-            push ix \ pop hl
-        pop ix
-        ; Draw name string
-        push de
-            ld de, $0104
-            ; libtext(drawStr)
-            rst $10
-            .db libtextID
-            call drawStr
-        pop de
-        ld a, e ; Get x
+        ld a, $FF
+        cp b
+        jr nz, _
+        cp c
+        jr nz, _
+        kcall drawEmptySlotName
+        jr ++_
+_:      kcall drawSelectedName
+_:      ld a, e ; Get x
         sub 2
         ld l, a
         ld a, d ; Get y
@@ -214,7 +214,34 @@ drawSelectionRectangle:
         pop bc \ pop hl \ pop de
         inc e \ inc l \ dec b \ dec b \ dec c \ dec c
         call rectXOR
-    pop bc \ pop hl \ pop de
+    pop af \ pop bc \ pop hl \ pop de
+    ret
+    
+drawSelectedName:
+    push ix
+        call memSeekToStart
+        add ix, bc
+        push ix \ pop hl
+    pop ix
+    ; Draw name string
+    push de
+        ld de, $0104
+        ; libtext(drawStr)
+        rst $10
+        .db libtextID
+        call drawStr
+    pop de
+    ret
+    
+drawEmptySlotName:
+    push de
+        kld hl, naString
+        ld de, $0104
+        ; libtext(drawStr)
+        rst $10
+        .db libtextID
+        call drawStr
+    pop de
     ret
     
 CastleTopSprite: ; 8x3
