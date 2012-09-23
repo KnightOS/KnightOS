@@ -251,6 +251,131 @@ drawEmptySlotName:
     pop de
     ret
     
+drawPowerMenu:
+    ld e, 27
+    ld l, 36
+    ld c, 67-26
+    ld b, 56-35
+    call RectOR
+    ld e, 28
+    ld l, 37
+    ld c, 66-27
+    ld b, 55-36
+    call RectXOR
+    ld de, $2339
+    ld hl, $233F
+    call DrawLine
+    ld de, $3B39
+    ld hl, $3B3F
+    call DrawLine
+
+    ld e, 36
+    ld l, 56
+    ld c, 23
+    ld b, 1
+    call RectXOR
+
+    kld hl, SleepString
+    ld de, $2126
+    ;libtext(DrawStr)
+    rst $10
+    .db libtextID
+    call DrawStr
+
+    kld hl, ShutdownString
+    ld de, $212C
+    ;libtext(DrawStr)
+    rst $10
+    .db libtextID
+    call DrawStr
+
+    kld hl, RestartString
+    ld de, $2132
+    ;libtext(RestartStr)
+    rst $10
+    .db libtextID
+    call DrawStr
+
+    kld hl, MenuArrowSprite
+    ld de, $353B
+    ld b, 3
+    call PutSpriteXOR
+
+    kld hl, MenuArrowSpriteFlip
+    ld de, $353B
+    ld b, 3
+    call PutSpriteOR
+
+    kld hl, SelectionIndicatorSprite
+    ld de, $1D26
+    ld b, 5
+    call PutSpriteOR
+    ret
+    
+DrawConfirmationDialog:
+	ld e, 18 ; e, l, c, b
+	ld l, 16
+	ld c, 78-17
+	ld b, 49-15
+	call RectOR
+	
+	ld e, 19
+	ld l, 17
+	ld c, 77-18
+	ld b, 48-16
+	call RectXOR
+	
+	kld hl, ExclamationSprite1
+	ld b, 8
+	ld de, $1820
+	call PutSpriteOR
+	
+	kld hl, ExclamationSprite2
+	ld b, 8
+	ld de, $1828
+	call putSpriteOR
+	
+	kld hl, ConfirmString1
+	ld de, $1A12
+	;libtext(DrawStr)
+	rst $10
+	.db libtextID
+	call drawStr
+	
+	kld hl, ConfirmString2
+	ld de, $1418
+	;libtext(DrawStr)
+	rst $10
+	.db libtextID
+	call DrawStr
+	
+	kld hl, ConfirmString3
+	ld de, $241E
+	;libtext(DrawStr)
+	rst $10
+	.db libtextID
+	call drawStr
+	
+	kld hl, YesString
+	ld de, $2C25
+	;libtext(DrawStr)
+	rst $10
+	.db libtextID
+	call drawStr
+	
+	kld hl, NoString
+	ld de, $2C2B
+	;libtext(DrawStr)
+	rst $10
+	.db libtextID
+	call drawStr
+	
+	kld hl, selectionIndicatorSprite
+	ld de, $282B
+	ld b, 5
+	call putSpriteOR
+	ret
+    
 CastleTopSprite: ; 8x3
 	.db %11110000
 	.db %10010000
