@@ -3,6 +3,7 @@
 #include "macros.inc"
 #include "libtext.inc"
 #include "keys.inc"
+#include "defines.inc"
 .list
 ; Header
     .db 0  ; TODO: Thread flags

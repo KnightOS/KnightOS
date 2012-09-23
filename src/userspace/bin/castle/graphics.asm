@@ -48,10 +48,17 @@ _:	ld l, 60
 	djnz -_
 _:	
     #ifdef CLOCK
+    .echo "test"
     ; Get time
     push ix
         call getTime
         ; TODO
+        kld hl, dummyTimeString
+        ld de, 69 << 8 | 4
+        ; libtext(DrawStr)
+        rst $10
+        .db libtextID
+        call DrawStr
     pop ix
     #endif
 
@@ -101,7 +108,7 @@ drawHomeIcons:
         ; Clear away old icons
         ld e, 0 \ ld l, 11 \ ld c, 96 \ ld b, 45
         call rectAND
-        ld e, 0 \ ld l, 3 \ ld c, 70 \ ld b, 7
+        ld e, 0 \ ld l, 3 \ ld c, 69 \ ld b, 7
         call rectAND
         
         ld hl, $0021
@@ -412,3 +419,5 @@ configPath:
     .db "/etc/castle.config", 0
 naString:
     .db "[n/a]", 0
+dummyTimeString:
+    .db "12:00 AM", 0
