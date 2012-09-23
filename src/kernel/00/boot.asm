@@ -70,7 +70,7 @@ reboot:
         out ($22), a ; Flash Lower Limit ; out (22), $FF
     call lockFlash
 
-    ; Set CPU speed to 15 MHz
+    ; Set CPU speed to 15 MHz ; TODO: This doesn't work in WabbitEmu?
     ld a, 1
     out ($20), a
     

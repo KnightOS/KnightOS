@@ -58,6 +58,7 @@ _:  di
         call allocMem
         jr nz, startThread_mem
         push ix \ pop hl
+        dec bc
         add hl, bc
         push de
             ld de, killCurrentThread

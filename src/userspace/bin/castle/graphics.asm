@@ -58,10 +58,6 @@ _:
     ret
     
 drawHome:
-	ld hl, $0021
-	ld de, $5F21
-	call DrawLine
-	
 	kld hl, HotkeyPlusSprite
 	ld b, 5
 	ld de, $013A
@@ -96,7 +92,131 @@ drawHome:
 	rst $10
 	.db libtextID
 	call DrawStr
+    ret
+    
+drawHomeIcons:
+    push de
+    ld a, d
+    push af
+        ; Clear away old icons
+        ld e, 0 \ ld l, 12 \ ld bc, $1860
+        call rectAND
+        
+        ld hl, $0021
+        ld de, $5F21
+        call DrawLine
+        
+        ; Load config
+        kld de, configPath
+        call openFileRead
+        push de
+            call getStreamInfo
+        pop de
+        ;jr $
+        call allocMem
+        push ix
+            call streamReadToEnd
+            call closeStream
+        pop ix
+        
+        ; First row
+        ld de, $020E
+        ld bc, $0500
+_:      ; Check to see if this item is selected
+        pop af \ push af
+        cp c \ kcall z, drawSelectionRectangle \ inc c
+        
+        ld l, (ix)
+        ld h, (ix + 1)
+        ld a, $FF
+        push bc
+            cp h \ jr nz, _ \ cp l \ jr nz, _
+            kld hl, emptySlotIcon
+            inc ix \ inc ix
+            jr ++_
+            
+_:          ld bc, 4
+            add ix, bc
+            push ix \ pop hl
+            ld bc, 32
+            add ix, bc
+_:      
+            ld b, 16
+            call putSprite16OR
+        pop bc
+        ld a, 19
+        add a, d \ ld d, a
+        djnz ---_
+    
+        ; Second row
+        ld de, $0225
+        ld bc, $0505
+_:      ; Check to see if this item is selected
+        pop af \ push af
+        cp c \ kcall z, drawSelectionRectangle \ inc c
+        
+        ld l, (ix)
+        ld h, (ix + 1)
+        ld a, $FF
+        push bc
+            cp h \ jr nz, _ \ cp l \ jr nz, _
+            kld hl, emptySlotIcon
+            inc ix \ inc ix
+            jr ++_
+            
+_:          ld bc, 4
+            add ix, bc
+            push ix \ pop hl
+            ld bc, 32
+            add ix, bc
+_:      
+            ld b, 16
+            call putSprite16OR
+        pop bc
+        ld a, 19
+        add a, d \ ld d, a
+        djnz ---_
+        
+    pop af
+    dec ix
+    ;jr $
+    call memSeekToStart
+    call freeMem
+    pop de
 	ret
+    
+drawSelectionRectangle:
+    push de \ push hl \ push bc
+        ; Find name string
+        ld c, (ix)
+        ld b, (ix + 1)
+        push ix
+            call memSeekToStart
+            add ix, bc
+            push ix \ pop hl
+        pop ix
+        ; Draw name string
+        push de
+            ld de, $0104
+            ; libtext(drawStr)
+            rst $10
+            .db libtextID
+            call drawStr
+        pop de
+        ld a, e ; Get x
+        sub 2
+        ld l, a
+        ld a, d ; Get y
+        sub 2
+        ld e, a
+        ld bc, $1414
+        push de \ push hl \ push bc
+            call rectOR
+        pop bc \ pop hl \ pop de
+        inc e \ inc l \ dec b \ dec b \ dec c \ dec c
+        call rectXOR
+    pop bc \ pop hl \ pop de
+    ret
     
 CastleTopSprite: ; 8x3
 	.db %11110000
@@ -212,6 +332,24 @@ DefaultIconSprite: ; 16x16
 	.db %10000000, %00000001
 	.db %11111111, %11111111
 
+emptySlotIcon: ; 16x16
+    .db %10101010, %10101011
+    .db %00000000, %00000001
+    .db %10101000, %00000000
+    .db %00010000, %00000001
+    .db %10101000, %00000000
+    .db %00000000, %00000001
+    .db %10000000, %00000000
+    .db %00000000, %00000001
+    .db %10000000, %00000000
+    .db %00000000, %00000001
+    .db %10000000, %00000000
+    .db %00000000, %00000001
+    .db %10000000, %00000000
+    .db %00000000, %00000001
+    .db %10000000, %00000000
+    .db %11010101, %01010101
+
 MoreString:
 	.db "More", 0
 RunningString:
@@ -244,7 +382,7 @@ NoString:
 	.db "No", 0
 NoProgramsInstalledString:
 	.db "No programs installed!", 0
-ProgramIndexPath:
-	.db "etc/.kpg", 0
-ThreadListPath:
-	.db "bin/threadlist", 0
+configPath:
+    .db "/etc/castle.config", 0
+naString:
+    .db "[n/a]", 0

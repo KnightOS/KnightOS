@@ -109,7 +109,7 @@ _:        ; Check for dead pockets
             jr nz, _
             ld a, 5
             cp l
-            jr nc, _
+            jr c, _
             ; Fill up pocket
             push bc \ push hl \ pop bc \ pop hl ; ex hl, bc
             add hl, bc
