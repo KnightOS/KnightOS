@@ -130,7 +130,7 @@ AllocMem_DoAllocNormal: ; Not accounting for dead pockets
             dec hl
             ld (hl), c
             dec hl
-            call currentThreadID
+            call getCurrentThreadID
             ld (hl), a
             push hl \ pop de
         pop hl
@@ -179,7 +179,7 @@ AllocMem_SkipNewMeta:
     ; Update existing metadata (allocated header)
     push hl \ pop ix ; Set IX for the return value
     dec hl \ dec hl \ dec hl
-    call currentThreadID
+    call getCurrentThreadID
     ld (hl), a
     
     pop bc
@@ -190,6 +190,7 @@ AllocMem_SkipNewMeta:
     jp po, _
     ei
 _:  pop af
+    cp a
     ret
         
 AllocMem_OutOfMem:

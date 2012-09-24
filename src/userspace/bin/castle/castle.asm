@@ -11,6 +11,9 @@
 ; Program
 .org 0
 start:
+    call getLcdLock
+    call getKeypadLock
+
     call allocScreenBuffer
     kld de, libtext
     call loadLibrary
@@ -42,6 +45,8 @@ _:  call flushKeys
     jr z, homeSelect
     cp k2nd
     jr z, homeSelect
+    cp kGraph
+    kjp z, launchThreadList
     jr -_
 homeRightKey:
     ld a, 9
@@ -97,18 +102,13 @@ _:      pop af \ push af
         cp c
         jr nz, _
         ; This is the correct slot
-        ;jr $
         ld e, (ix)
         ld d, (ix + 1)
         call memSeekToStart
         push ix \ pop hl
         add hl, de \ ex de, hl
-        di
-        call launchProgram
-        ld hl, $8205 ; returnToCastle in init
-        call setReturnPoint
         pop af
-        ret
+        kjp launch
 _:      push bc
             ld bc, 34
             add ix, bc
@@ -118,6 +118,15 @@ _:      push bc
     call memSeekToStart
     call freeMem
     kjp homeLoop
+    
+launchThreadList:
+    kld de, threadlist
+launch:
+    di
+    call launchProgram
+    ld hl, $8205
+    call setReturnPoint
+    ret
     
 powerMenu:
     push de
@@ -227,5 +236,7 @@ confirmSelectionLoop_Select:
     
 libtext:
     .db "/lib/libtext", 0
+threadlist:
+    .db "/bin/threadlist", 0
     
 #include "graphics.asm"

@@ -1,6 +1,3 @@
-; libtext Include File
-; 9/24/2011
-
 libtextId .equ $01
 
 drawChar				.equ $0006

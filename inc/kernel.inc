@@ -7,7 +7,7 @@ formatMem .equ $3FF1
 memSeekToStart .equ $3FEE
 allocMem .equ $3FEB
 freeMem .equ $3FE8
-currentThreadId .equ $3FE5
+getCurrentThreadID .equ $3FE5
 startThread .equ $3FE2
 killCurrentThread .equ $3FDF
 killThread .equ $3FDC
@@ -73,3 +73,13 @@ getTime .equ $3F2B
 convertTimeFromTicks .equ $3F28
 getThreadEntry .equ $3F25
 setReturnPoint .equ $3F22
+suspendCurrentThread .equ $3F1F
+getLcdLock .equ $3F1C
+getKeypadLock .equ $3F19
+getIoLock .equ $3F16
+getUsbLock .equ $3F13
+hasLcdLock .equ $3F10
+hasKeypadLock .equ $3F0D
+hasIoLock .equ $3F0A
+hasUsbLock .equ $3F07
+resumeThread .equ $3F04

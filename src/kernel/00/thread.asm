@@ -1,4 +1,4 @@
-currentThreadID:
+getCurrentThreadID:
     push hl
         ld a, (currentThreadIndex)
         cp $FF
@@ -63,6 +63,8 @@ _:  di
         call allocMem
         jr nz, startThread_mem
         push ix \ pop hl
+        dec ix \ dec ix
+        ld c, (ix) \ ld b, (ix + 1)
         dec bc
         add hl, bc
         push de
@@ -356,5 +358,31 @@ _:      inc hl \ inc hl \ inc hl
         ld (ix + 1), d
     pop bc
     pop de
+    ret
+    
+suspendCurrentThread:
+    push hl
+    push af
+        call getCurrentThreadId
+        call getThreadEntry
+        ld a, 5
+        add a, l
+        ld l, a
+        set 1, (hl)
+        halt
+    pop af
+    pop hl
+    ret
+    
+resumeThread:
+    push hl
+    push af
+        call getThreadEntry
+        ld a, 5
+        add a, l
+        ld l, a
+        res 1, (hl)
+    pop af
+    pop hl
     ret
     

@@ -10,6 +10,9 @@
 ; Program
 .org 0
 start:
+    call getLcdLock
+    call getKeypadLock
+
     call allocScreenBuffer
     call clearBuffer
     
