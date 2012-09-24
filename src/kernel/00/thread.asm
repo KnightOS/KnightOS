@@ -302,7 +302,6 @@ launchProgram:
 			pop af
 		pop hl
 		
-		ld a, 0
 		call startThread
 	ld b, a
 	pop ix
@@ -368,8 +367,8 @@ suspendCurrentThread:
         ld a, 5
         add a, l
         ld l, a
-        set 1, (hl)
-        halt
+        set 2, (hl)
+        ei \ halt
     pop af
     pop hl
     ret
@@ -381,7 +380,7 @@ resumeThread:
         ld a, 5
         add a, l
         ld l, a
-        res 1, (hl)
+        res 2, (hl)
     pop af
     pop hl
     ret

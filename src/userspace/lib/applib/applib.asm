@@ -41,20 +41,26 @@ checkKey:
     ret
     
 launchCastle:
-    ;ild(de, castlePath)
-    rst $10 \ .db libId
-    ld de, castlePath
-    call launchProgram
+    push de
+        ;ild(de, castlePath)
+        rst $10 \ .db libId
+        ld de, castlePath
+        di
+        call launchProgram
+    pop de
     call suspendCurrentThread
     call flushKeys
     xor a
     ret
     
 launchThreadList:
-    ;ild(de, threadListPath)
-    rst $10 \ .db libId
-    ld de, threadListPath
-    call launchProgram
+    push de
+        ;ild(de, threadListPath)
+        rst $10 \ .db libId
+        ld de, threadListPath
+        di
+        call launchProgram
+    pop de
     call suspendCurrentThread
     call flushKeys
     xor a
