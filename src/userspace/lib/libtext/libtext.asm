@@ -236,6 +236,8 @@ dispha:
 dhlet:
    add a,55
 dispdh:
+   ;icall(DrawCharOR)
+   rst $10 \ .db libId
    call DrawCharOR
    ret
    

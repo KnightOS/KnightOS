@@ -8,7 +8,7 @@
 ;   16x16 icon
 
 ; Row 1
-.dw mathStr, todoPath
+.dw countStr, countPath ; TODO
 .db $10, $fe, $38, $80, $12, $be, $02, $94
 .db $3a, $94, $01, $24, $00, $00, $7c, $28
 .db $44, $08, $20, $10, $10, $20, $20, $28
@@ -107,3 +107,8 @@ demoStr:
     .db "Demo", 0
 demoPath:
     .db "/bin/demo", 0
+    
+countStr:
+    .db "Counting Test", 0
+countPath:
+    .db "/bin/count", 0
