@@ -62,6 +62,7 @@ launchThreadList:
         call launchProgram
     pop de
     call suspendCurrentThread
+    ei
     call flushKeys
     xor a
     ret
