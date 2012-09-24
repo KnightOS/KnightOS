@@ -22,7 +22,6 @@ start:
     call getKeypadLock
 
     call allocScreenBuffer
-    call clearBuffer
     
     ; Load dependencies
     kld de, libTextPath
@@ -30,15 +29,21 @@ start:
     kld de, applibPath
     call loadLibrary
     
-    ld b, 0
-    ld de, 0
+    kld hl, windowTitle
+    xor a
+    ;applib(drawWindow)
+    rst $10 \ .db applibId
+    call drawWindow
+    
+    ld b, 2
+    ld de, $0208
     kld hl, helloString
     ;libtext(drawStr)
     rst $10 \ .db libTextId
     call drawStr
-    call fastCopy
     
-_:  call flushKeys
+_:  call fastCopy
+    call flushKeys
     rst $10 \ .db applibId
     call appWaitKey
     cp kClear
@@ -47,6 +52,8 @@ _:  call flushKeys
     
 helloString:
     .db "Hello, world!\nPress [Clear] to exit.", 0
+windowTitle:
+    .db "Hello world", 0
 libTextPath:
     .db "/lib/libtext", 0
 applibPath:
