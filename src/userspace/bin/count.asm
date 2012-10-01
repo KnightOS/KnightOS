@@ -7,7 +7,7 @@
 #include "defines.inc"
 .list
 ; Header
-    .db %00000010  ; TODO: Thread flags
+    .db 0
     .db 50 ; Stack size
 ; Program
 .org 0
