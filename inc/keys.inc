@@ -5,8 +5,8 @@ kLeft          .equ $02
 kRight         .equ $03
 kUp            .equ $04
 kEnter         .equ $09 \kEntry .equ $09 \kSolve .equ $09
-kAdd           .equ $0A \kMem .equ $0A \kQuote .equ $0A
-kSub           .equ $0B \kLSqBracket .equ $0B \kW .equ $0B
+kPlus          .equ $0A \kMem .equ $0A \kQuote .equ $0A
+kMinus         .equ $0B \kLSqBracket .equ $0B \kW .equ $0B
 kMul           .equ $0C \kRSqBracket .equ $0C \kR .equ $0C
 kDiv           .equ $0D \kVarE .equ $0D \kM .equ $0D
 kPower         .equ $0E \kPi .equ $0E \kH .equ $0E

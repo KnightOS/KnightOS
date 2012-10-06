@@ -47,6 +47,10 @@ _:  call flushKeys
     jr z, homeSelect
     cp kGraph
     kjp z, launchThreadList
+    cp kPlus
+    kjp z, incrementContrast
+    cp kMinus
+    kjp z, decrementContrast
     jr -_
 homeRightKey:
     ld a, 9
@@ -117,6 +121,28 @@ _:      push bc
     pop af
     call memSeekToStart
     call freeMem
+    kjp homeLoop
+    
+incrementContrast:
+    ld hl, currentContrast
+    inc (hl)
+    ld a, (hl)
+    or a
+    jr nz, _
+    dec (hl)
+    dec a
+_:  out ($10), a
+    kjp homeLoop
+    
+decrementContrast:
+    ld hl, currentContrast
+    dec (hl)
+    ld a, (hl)
+    cp $DF
+    jr nz, _
+    inc (hl)
+    inc a
+_:  out ($10), a
     kjp homeLoop
     
 launchThreadList:
