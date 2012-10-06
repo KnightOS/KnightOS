@@ -138,7 +138,7 @@ reboot:
     #ifdef USB
     ld a, $EF
     #else
-    #if TI73
+    #ifdef TI73
     ld a, $FB
     #else
     ld a, $F4
