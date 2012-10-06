@@ -114,6 +114,8 @@ _:  call flushKeys
     call waitKey
     cp kClear
     kjp z, redraw
+    cp kGraph
+    kjp z, redraw
     cp k2nd
     jr z, doKill
     cp kEnter
