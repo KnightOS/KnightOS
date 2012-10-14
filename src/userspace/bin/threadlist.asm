@@ -1,4 +1,4 @@
-.nolist
+﻿.nolist
 #include "kernel.inc"
 #include "defines.inc"
 #include "macros.inc"
@@ -335,11 +335,11 @@ backStr:
 optionsStr:
     .db "Options", 0
 runningProgramsStr:
-    .db "Running Programs", 0
+    .db "Programmes lancés", 0
 noProgramsStr:
-    .db "No programs running!", 0
+    .db "Aucun programme lancé", 0
 forceQuitStr:
-    .db "Force Quit", 0
+    .db "Forcer à quitter", 0
     
 libTextPath:
     .db "/lib/libtext", 0

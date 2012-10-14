@@ -1,4 +1,4 @@
-.nolist
+﻿.nolist
 #include "kernel.inc"
 #include "macros.inc"
 #include "libtext.inc"
@@ -78,9 +78,9 @@ threadListPath:
     .db "/bin/threadlist", 0
     
 exitString:
-    .db "Press [Clear] to exit.", 0
+    .db "[Clear] pour quitter.", 0
 windowTitle:
-    .db "Demo", 0
+    .db "Démo", 0
 libTextPath:
     .db "/lib/libtext", 0
 applibPath:

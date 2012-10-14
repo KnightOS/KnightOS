@@ -1,4 +1,4 @@
-
+﻿
 drawChrome:
     call clearBuffer
     ; Castle top
@@ -509,37 +509,37 @@ emptySlotIcon: ; 16x16
     .db %11010101, %01010101
 
 MoreString:
-	.db "More", 0
+	.db "Plus", 0
 RunningString:
-	.db "Running", 0
+	.db "En exécution", 0
 MenuString:
 	.db "Menu", 0
 BackString:
-	.db "Back", 0
+	.db "Retour", 0
 OptionsString:
 	.db "Options", 0
 AddToCastleString:
-	.db "Add to Castle", 0
+	.db "Ajouter au Castle", 0
 RemoveFromCastleString:
-	.db "Remove from Castle", 0
+	.db "Retirer du Castle", 0
 SleepString:
-	.db "Sleep", 0
+	.db "Veille", 0
 ShutdownString:
-	.db "Shut down", 0
+	.db "Eteindre", 0
 RestartString:
-	.db "Restart", 0
+	.db "Redémarrer", 0
 ConfirmString1:
-	.db "Are you sure?", 0
+	.db "Etes-vous sur?", 0
 ConfirmString2:
-	.db "Unsaved data may", 0
+	.db "Les données non sau", 0
 ConfirmString3:
-	.db "be lost.", 0
+	.db "vées seront perdues.", 0
 YesString:
-	.db "Yes", 0
+	.db "Oui", 0
 NoString:
-	.db "No", 0
+	.db "Non", 0
 NoProgramsInstalledString:
-	.db "No programs installed!", 0
+	.db "Aucun programme installé", 0
 configPath:
     .db "/etc/castle.config", 0
 naString:

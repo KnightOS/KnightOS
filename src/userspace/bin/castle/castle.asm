@@ -1,4 +1,4 @@
-.nolist
+﻿.nolist
 #include "kernel.inc"
 #include "macros.inc"
 #include "libtext.inc"
