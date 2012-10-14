@@ -1,4 +1,4 @@
-.nolist
+﻿.nolist
 #include "kernel.inc"
 #include "macros.inc"
 #include "libtext.inc"
@@ -51,7 +51,7 @@ _:  call fastCopy
     ret
     
 helloString:
-    .db "Hello, world!\nPress [Clear] to exit.", 0
+    .db "Hello, world!\n [Clear] pour quitter.", 0
 windowTitle:
     .db "Hello world", 0
 libTextPath:

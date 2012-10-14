@@ -1,4 +1,4 @@
-; /etc/castle.config
+﻿; /etc/castle.config
 
 ; Defines the icons on the castle home
 ; Format:
@@ -78,21 +78,21 @@
 graphStr:
     .db "Graph", 0
 mathStr:
-    .db "Math", 0
+    .db "Maths", 0
 blockDudeStr:
     .db "Block Dude", 0
 textEditStr:
-    .db "Text Editor", 0
+    .db "Editeur de Texte", 0
 calendarStr:
-    .db "Calendar", 0
+    .db "Calendrier", 0
 fileBrowserStr:
-    .db "File Browser", 0
+    .db "Explorateur", 0
 matrixEditorStr:
-    .db "Matrix Editor", 0
+    .db "Editeur de Matrice", 0
 connectStr:
-    .db "Connect to PC", 0
+    .db "Connexion au PC", 0
 settingsStr:
-    .db "Settings", 0
+    .db "Options", 0
 terminalStr:
     .db "Terminal", 0
 todoPath:
@@ -104,11 +104,11 @@ helloPath:
     .db "/bin/hello", 0
     
 demoStr:
-    .db "Demo", 0
+    .db "Démo", 0
 demoPath:
     .db "/bin/demo", 0
     
 countStr:
-    .db "Counting Test", 0
+    .db "Test de comptage", 0
 countPath:
     .db "/bin/count", 0

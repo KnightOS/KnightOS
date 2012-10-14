@@ -1,4 +1,4 @@
-.nolist
+﻿.nolist
 #include "kernel.inc"
 #include "macros.inc"
 #include "libtext.inc"
@@ -32,6 +32,6 @@ start:
     call waitKey
     ret
 todoString:
-    .db "This feature has not yet been\nimplemented.\nPress any key to exit.", 0
+    .db "Cette fonctionnalité n'a pas \n encore été implémentée.\nAppuyez sur une touche pour quitter.", 0
 libTextPath:
     .db "/lib/libtext", 0
