@@ -1,4 +1,4 @@
-#include "kernel.inc"
+﻿#include "kernel.inc"
 #include "macros.inc"
 ; Header
     .db 0  ; TODO: Thread flags
