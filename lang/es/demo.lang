@@ -1,6 +1,0 @@
-; English language file for /bin/demo
-
-; Text
-#define lang_description "Demostración"
-#define lang_exitString "Pulsa [Clear] para salir."
-#define lang_windowTitle "Demostración"

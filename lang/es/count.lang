@@ -1,6 +1,0 @@
-; French language file for /etc/castle.config
-
-; Text
-#define lang_description "Demostración de contar"
-#define lang_hello "Pulsa [Clear] para salir."
-#define lang_windowTitle "Demostración de contar"

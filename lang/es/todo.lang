@@ -1,4 +1,0 @@
-; English language file for /bin/todo
-
-; Text
-#define lang_todo "Esta función todavía no se ha implementado.\nPulsa cualquier tecla para salir."
