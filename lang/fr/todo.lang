@@ -1,0 +1,4 @@
+; French language file for /bin/todo
+
+; Text
+#define lang_todo "Cette fonctionnalité n'a pas\nencore été implémentée.\nAppuyez sur une touche pour\nquitter."

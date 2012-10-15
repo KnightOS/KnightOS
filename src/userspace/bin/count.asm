@@ -5,6 +5,7 @@
 #include "applib.inc"
 #include "keys.inc"
 #include "defines.inc"
+#include "count.lang"
 .list
 ; Header
     .db 0
@@ -14,7 +15,7 @@
 ; KnightOS Header
     jr start
     .db 'K'
-    .db "Counting Demo", 0
+    .db lang_description, 0
     .db %00000010
 
 start:
@@ -58,9 +59,9 @@ _:  push bc
     ret
     
 helloString:
-    .db "Press [Clear] to exit.", 0
+    .db lang_hello, 0
 windowTitle:
-    .db "Counting Demo", 0
+    .db lang_windowTitle, 0
 libTextPath:
     .db "/lib/libtext", 0
 applibPath:

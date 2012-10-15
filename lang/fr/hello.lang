@@ -1,0 +1,6 @@
+; French language file for /bin/hello
+
+; Text
+#define lang_description "Hello world"
+#define lang_helloString "Hello, world!\n[Clear] pour quitter."
+#define lang_windowTitle "Hello world"

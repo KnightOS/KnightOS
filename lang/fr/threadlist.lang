@@ -1,0 +1,15 @@
+; French language file for /bin/threadlist
+
+; Text
+#define lang_castle "Castle"
+#define lang_options "Options"
+#define lang_runningPrograms "Programmes lancés"
+#define lang_noPrograms "Aucun programme lancé!"
+#define lang_forceQuit "Forcer à quitter"
+
+; Positions
+#define lang_forceQuit_position 42 * 256 + 50
+#define lang_runningPrograms_position 1 * 256 + 4
+#define lang_options_position 64 * 256 + 58
+#define lang_castle_position 9 * 256 + 58
+#define lang_noPrograms_position 1 << 8 + 12

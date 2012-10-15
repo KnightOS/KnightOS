@@ -21,6 +21,8 @@ begin translating.
 Do not use Google Translate. You should not participate in a translation effort
 if you are not profecient in the language you are translating.
 
+Note that all files must be encoded in ANSI, which is the character set KnightOS uses.
+
 ## Technical Details
 
 When provided --language when built, the build tool adds /lang/\<language>/ to the include

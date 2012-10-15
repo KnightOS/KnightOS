@@ -1,0 +1,18 @@
+; French language file for /etc/castle.config
+
+; Text
+#define lang_graph "Graph"
+#define lang_math "Math"
+#define lang_blockDude "Block Dude"
+#define lang_textEditor "Editeur de Texte"
+#define lang_calendar "Calendrier"
+#define lang_fileBrowser "Explorateur"
+#define lang_matrixEditor "Editeur de Matrice"
+#define lang_connectToPC "Connexion au PC"
+#define lang_settings "Options"
+#define lang_terminal "Terminal"
+
+; Testing
+#define lang_hello "Hello, world!"
+#define lang_demo "Démo"
+#define lang_countingTest "Test de comptage"

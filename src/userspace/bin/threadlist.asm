@@ -151,6 +151,7 @@ _:	call flushKeys
     jr launchCastle
     
 drawThreads:
+    ;di \ halt \ ei
     ld de, 5 << 8 + 12
     ld hl, threadTable
     ld a, (activeThreads) \ dec a \ ld b, a
@@ -247,14 +248,14 @@ drawOptions:
 	ld de, $593A
 	call putSpriteOR
 	
-	ld e, 55
+	ld e, 55 - (61 - (lang_forceQuit_position >> 8))
 	ld l, 48
-	ld c, 96-54
+	ld c, 96-54 + (61 - (lang_forceQuit_position >> 8))
 	ld b, 56-47
 	call rectOR
-	ld e, 56
+	ld e, 56 - (61 - (lang_forceQuit_position >> 8))
 	ld l, 49
-	ld c, 95-55
+	ld c, 95-55 + (61 - (lang_forceQuit_position >> 8))
 	ld b, 55-48
 	call rectXOR
 	ld e, 87
@@ -274,7 +275,7 @@ drawOptions:
 	
 	kld hl, selectionIndicatorSprite
 	ld b, 5
-	ld de, 57 * 256 + 50
+	ld de, 57  - (61 - (lang_forceQuit_position >> 8)) * 256 + 50
 	call putSpriteOR
 	ret
     
