@@ -2,17 +2,20 @@
 privledgedPage .equ $1C
 swapSector .equ $18
 allocTableStart .equ $17
+bootPage .equ $1F
 #endif
 #ifdef TI83p
 privledgedPage .equ $1C
 swapSector .equ $18
 allocTableStart .equ $17
+bootPage .equ $1F
 #endif
 #ifdef TI83pSE
 #define CPU15
 privledgedPage .equ $7C
 swapSector .equ $78
 allocTableStart .equ $77
+bootPage .equ $7F
 #endif
 #ifdef TI84p
 #define CPU15
@@ -21,6 +24,7 @@ allocTableStart .equ $77
 privledgedPage .equ $3C
 swapSector .equ $38
 allocTableStart .equ $37
+bootPage .equ $3F
 #endif
 #ifdef TI84pSE
 #define CPU15
@@ -29,6 +33,7 @@ allocTableStart .equ $37
 privledgedPage .equ $7C
 swapSector .equ $78
 allocTableStart .equ $77
+bootPage .equ $7F
 #endif
 nullThread .equ $FF
 errOutOfMem .equ 1

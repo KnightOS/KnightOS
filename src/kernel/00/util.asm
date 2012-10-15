@@ -91,7 +91,7 @@ cpDEBC:
 
 ; Inputs:	HL: String
 ; Outputs:	BC: String length
-StringLength:
+stringLength:
 	push af
 	push hl
 	ld bc, 0
@@ -339,3 +339,32 @@ _: sll	c
    dec	c
    djnz	-_
    ret
+   
+; Returns HL as pointer to allocated memory containing version
+; string. Free this memory when you're done with it.
+getBootCodeVersionString:
+    ld a, i
+    push af
+    di
+        push af
+        push bc
+        push ix
+        push de
+            ld a, bootPage
+            out (6), a
+            ld hl, $400F ; Location of boot code version string
+            call stringLength
+            inc bc
+            call allocMem
+            push ix \ pop de
+            ldir
+            push ix \ pop hl
+        pop de
+        pop ix
+        pop bc
+        pop af
+    pop af
+    ret po
+    ei
+    ret
+    

@@ -43,6 +43,19 @@ start:
     rst $10 \ .db libTextId
     call drawStr
     
+    ld de, $0219
+    kld hl, bootCodeString
+    ;libtext(drawStr)
+    rst $10 \ .db libTextId
+    call drawStr
+    call freeMem
+    
+    call getBootCodeVersionString
+    ;libtext(drawStr)
+    rst $10 \ .db libTextId
+    call drawStr
+    call freeMem
+    
 _:  call fastCopy
     call flushKeys
     rst $10 \ .db applibId
@@ -55,6 +68,8 @@ helloString:
     .db lang_helloString, 0
 windowTitle:
     .db lang_windowTitle, 0
+bootCodeString:
+    .db "Boot Code Version: \n", 0
 libTextPath:
     .db "/lib/libtext", 0
 applibPath:

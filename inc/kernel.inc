@@ -83,3 +83,4 @@ hasKeypadLock .equ $3F0D
 hasIoLock .equ $3F0A
 hasUsbLock .equ $3F07
 resumeThread .equ $3F04
+getBootCodeVersionString .equ $3F01
