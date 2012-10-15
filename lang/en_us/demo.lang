@@ -1,0 +1,6 @@
+; English language file for /bin/demo
+
+; Text
+#define lang_description "Demo"
+#define lang_exitString "Press [Clear] to exit."
+#define lang_windowTitle "Demo"

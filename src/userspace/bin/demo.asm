@@ -5,6 +5,7 @@
 #include "applib.inc"
 #include "keys.inc"
 #include "defines.inc"
+#include "demo.lang"
 .list
 ; Header
     .db 0
@@ -14,7 +15,7 @@
 ; KnightOS Header
     jr start
     .db 'K'
-    .db "Demo", 0
+    .db lang_description, 0
     .db %00000010
 
 start:
@@ -78,9 +79,9 @@ threadListPath:
     .db "/bin/threadlist", 0
     
 exitString:
-    .db "Press [Clear] to exit.", 0
+    .db lang_exitString, 0
 windowTitle:
-    .db "Demo", 0
+    .db lang_windowTitle, 0
 libTextPath:
     .db "/lib/libtext", 0
 applibPath:
