@@ -2,7 +2,7 @@
 
 There is an effort to translate KnightOS into various languages. Language files can
 be found in /lang/<language code>/. You can build KnightOS to target a particular
-language by running "build --language <language code>". The default, if not specified,
+language by running "build --language \[language code]". The default, if not specified,
 is "en_us". The current list of locales supported is:
 
 * English (US)
