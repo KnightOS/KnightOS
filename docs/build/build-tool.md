@@ -108,7 +108,7 @@ The build tool will first build [/src/kernel/build.cfg](https://github.com/SirCm
 
 ## Output
 
-The build tool outputs the final files to `/bin/\<configuration\>/KnightOS-\<locale\>.\[rom|8xu|73u]`.
+The build tool outputs the final files to `/bin/<configuration>/KnightOS-<locale>.[rom|8xu|73u]`.
 
 8xu and 73u files are signed with one of the keys in [/build/](https://github.com/SirCmpwn/KnightOS/blob/master/build/), based on
 the configuration value.
