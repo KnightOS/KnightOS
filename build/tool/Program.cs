@@ -14,7 +14,8 @@ namespace build
         private static string configuration = "TI84pSE";
         private static Stream output;
         private static Dictionary<string, long> labels;
-        private static List<byte> pages; 
+        private static List<byte> pages;
+        private static string language = "en-us";
         
         static void Main(string[] args)
         {
@@ -51,6 +52,9 @@ namespace build
                             Main(new[] { "--configuration", "TI84pSE" });
                         }
                         return;
+                    case "--language":
+                        language = args[++i];
+                        break;
                     default:
                         Console.WriteLine("Incorrect usage. build.exe --help for help.");
                         return;
@@ -411,7 +415,7 @@ namespace build
                 defineString += "-D" + define + " ";
             ProcessStartInfo info = new ProcessStartInfo("SPASM.exe", "-I " + 
                 Path.Combine(Directory.GetCurrentDirectory(), "..", "inc") + " -I " +
-                Path.Combine(Directory.GetCurrentDirectory(), "..", "lang")
+                Path.Combine(Directory.GetCurrentDirectory(), "..", "lang", language)
                 + " -L -T" + defineString +
                 "\"" + input + "\" \"" + output + "\"" + (string.IsNullOrWhiteSpace(args) ? "" : " ") + args);
             info.RedirectStandardOutput = true;
