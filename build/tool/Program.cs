@@ -411,6 +411,8 @@ namespace build
                 output = output + ".bin";
                 isBin = false;
             }
+            Array.Resize(ref defines, defines.Length + 1);
+            defines[defines.Length - 1] = "lang_" + language;
             foreach (string define in defines)
                 defineString += "-D" + define + " ";
             ProcessStartInfo info = new ProcessStartInfo("SPASM.exe", "-I " + 

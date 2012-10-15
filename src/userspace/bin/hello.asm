@@ -5,6 +5,7 @@
 #include "applib.inc"
 #include "keys.inc"
 #include "defines.inc"
+#include "hello.lang"
 .list
 ; Header
     .db 0
@@ -14,7 +15,7 @@
 ; KnightOS Header
     jr start
     .db 'K'
-    .db "Hello world", 0
+    .db lang_description, 0
     .db %00000010
 
 start:
@@ -51,9 +52,9 @@ _:  call fastCopy
     ret
     
 helloString:
-    .db "Hello, world!\nPress [Clear] to exit.", 0
+    .db lang_helloString, 0
 windowTitle:
-    .db "Hello world", 0
+    .db lang_windowTitle, 0
 libTextPath:
     .db "/lib/libtext", 0
 applibPath:
