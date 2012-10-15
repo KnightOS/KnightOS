@@ -30,3 +30,8 @@ entries:
     rm out/bin/castle.lab out/bin/castle.lst
 
 Ensure that you remove extraneous files, such as .lab and .lst files.
+
+## Adding to the Castle
+
+If you want your program to appear in the castle, you need to update
+[src/userspace/etc/castle.config](https://github.com/SirCmpwn/KnightOS/blob/master/src/userspace/etc/castle.config).
