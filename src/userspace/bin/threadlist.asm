@@ -4,6 +4,7 @@
 #include "macros.inc"
 #include "libtext.inc"
 #include "keys.inc"
+#include "threadlist.lang"
 .list
 
 ; Header
@@ -129,7 +130,7 @@ launchCastle:
     jp killCurrentThread
     
 noThreads:
-    ld de, 1 << 8 + 12
+    ld de, lang_noPrograms_position
     kld hl, noProgramsStr
 	;libtext(DrawStr)
 	rst $10
@@ -212,21 +213,21 @@ _:	ld a, 8
 	call putSpriteOR
 	
 	kld hl, backStr
-	ld de, 9 * 256 + 58
+	ld de, lang_castle_position
 	;libtext(DrawStr)
 	rst $10
 	.db libtextID
 	call DrawStr
 	
 	kld hl, optionsStr
-	ld de, 64 * 256 + 58
+	ld de, lang_options_position
 	;libtext(DrawStr)
 	rst $10
 	.db libtextID
 	call drawStr
     
     kld hl, runningProgramsStr
-	ld de, 1 * 256 + 4
+	ld de, lang_runningPrograms_position
 	;libtext(DrawStr)
 	rst $10
 	.db libtextID
@@ -266,7 +267,7 @@ drawOptions:
 	call setPixel
 	
 	kld hl, forceQuitStr
-	ld de, 61 * 256 + 50
+	ld de, lang_forceQuit_position
 	;libtext(DrawStr)
 	rst $10 \ .db libtextID
 	call drawStr
@@ -331,15 +332,15 @@ selectionIndicatorSprite: ; 8x5
 	.db %10000000
     
 backStr:
-    .db "Castle", 0
+    .db lang_castle, 0
 optionsStr:
-    .db "Options", 0
+    .db lang_options, 0
 runningProgramsStr:
-    .db "Running Programs", 0
+    .db lang_runningPrograms, 0
 noProgramsStr:
-    .db "No programs running!", 0
+    .db lang_noPrograms, 0
 forceQuitStr:
-    .db "Force Quit", 0
+    .db lang_forceQuit, 0
     
 libTextPath:
     .db "/lib/libtext", 0
