@@ -106,6 +106,11 @@ process. The following commands are available:
 The build tool will first build [src/kernel/build.cfg](https://github.com/SirCmpwn/KnightOS/blob/master/src/kernel/build.cfg), then
 [src/userspace/build.cfg](https://github.com/SirCmpwn/KnightOS/blob/master/src/userspace/build.cfg).
 
+## Include Files
+
+Spasm will be instructed to add [inc/](https://github.com/SirCmpwn/KnightOS/blob/master/inc/) to the include path, as well as the
+selected language folder in [lang/](https://github.com/SirCmpwn/KnightOS/blob/master/lang/).
+
 ## Output
 
 The build tool outputs the final files to `bin/<configuration>/KnightOS-<locale>.[rom|8xu|73u]`.
