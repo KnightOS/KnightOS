@@ -415,7 +415,12 @@ namespace build
             defines[defines.Length - 1] = "lang_" + language;
             foreach (string define in defines)
                 defineString += "-D" + define + " ";
-            ProcessStartInfo info = new ProcessStartInfo("SPASM.exe", "-I " + 
+            string process = "SPASM.exe";
+            if (RuntimeInfo.IsLinux)
+                process = "./spasm_linux";
+            else if (RuntimeInfo.IsMacOSX)
+                process = "./spasm_mac";
+            ProcessStartInfo info = new ProcessStartInfo(process, "-I " + 
                 Path.Combine(Directory.GetCurrentDirectory(), "..", "inc") + " -I " +
                 Path.Combine(Directory.GetCurrentDirectory(), "..", "lang", language)
                 + " -L -T" + defineString +
