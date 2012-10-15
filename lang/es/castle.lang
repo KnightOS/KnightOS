@@ -2,7 +2,7 @@
 
 ; Text
 #define lang_more "Más"
-#define lang_running "Ejecutando"
+#define lang_running "Abierto"
 #define lang_menu "Menú"
 #define lang_back "Atrás"
 #define lang_options "Opciones"
@@ -12,8 +12,8 @@
 #define lang_shutDown "Apagar"
 #define lang_restart "Reiniciar"
 #define lang_areYouSure "¿Estás segurx?"
-#define lang_unsavedData "Puede que los datos no guardados"
-#define lang_beLost "se pierdan."
+#define lang_unsavedData "Datos no guardados"
+#define lang_beLost "se perderán."
 #define lang_yes "Sí"
 #define lang_no "No"
 #define lang_noPrograms "¡Ningún programa instalado!"
