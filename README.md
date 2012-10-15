@@ -7,7 +7,7 @@ KnightOS is a 3rd party operating system for the following Texas Instruments cal
 * TI-83+
 * TI-83+ Silver Edition
 * TI-84+
-* TI-84+ Silver Editio
+* TI-84+ Silver Edition
 * TI-84 Pocket.fr
 
 It aims to provide a unix-like enviornment with multitasking and a tree-based filesystem,
