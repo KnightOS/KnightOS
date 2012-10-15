@@ -3,6 +3,7 @@
 #include "macros.inc"
 #include "libtext.inc"
 #include "defines.inc"
+#include "todo.lang"
 .list
 ; Header
     .db 0
@@ -32,6 +33,6 @@ start:
     call waitKey
     ret
 todoString:
-    .db "This feature has not yet been\nimplemented.\nPress any key to exit.", 0
+    .db lang_todo, 0
 libTextPath:
     .db "/lib/libtext", 0
