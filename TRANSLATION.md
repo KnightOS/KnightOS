@@ -15,8 +15,8 @@ All code and comments must remain in English, only user-visible text should be t
 File names should not be changed. Grammar and spelling are of upmost importance, make sure
 that you get this right.
 
-You should also update various files within the repository, such as the README and
-any documentation.
+If you wish to start a new language, copy all the files from en_us to another folder and
+begin translating.
 
 Do not use Google Translate. You should not participate in a translation effort
 if you are not profecient in the language you are translating.

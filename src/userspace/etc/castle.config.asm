@@ -75,40 +75,42 @@
 .db $80, $01, $80, $01, $80, $01, $80, $01
 .db $80, $01, $80, $01, $80, $01, $ff, $ff
 
+#include "castle.config.lang"
+
 graphStr:
-    .db "Graph", 0
+    .db lang_graph, 0
 mathStr:
-    .db "Math", 0
+    .db lang_math, 0
 blockDudeStr:
-    .db "Block Dude", 0
+    .db lang_blockDude, 0
 textEditStr:
-    .db "Text Editor", 0
+    .db lang_textEditor, 0
 calendarStr:
-    .db "Calendar", 0
+    .db lang_calendar, 0
 fileBrowserStr:
-    .db "File Browser", 0
+    .db lang_fileBrowser, 0
 matrixEditorStr:
-    .db "Matrix Editor", 0
+    .db lang_matrixEditor, 0
 connectStr:
-    .db "Connect to PC", 0
+    .db lang_connectToPC, 0
 settingsStr:
-    .db "Settings", 0
+    .db lang_settings, 0
 terminalStr:
-    .db "Terminal", 0
+    .db lang_terminal, 0
 todoPath:
     .db "/bin/todo", 0
     
 helloStr:
-    .db "Hello, world!", 0
+    .db lang_hello, 0
 helloPath:
     .db "/bin/hello", 0
     
 demoStr:
-    .db "Demo", 0
+    .db lang_demo, 0
 demoPath:
     .db "/bin/demo", 0
     
 countStr:
-    .db "Counting Test", 0
+    .db lang_countingTest, 0
 countPath:
     .db "/bin/count", 0
