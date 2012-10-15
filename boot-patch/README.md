@@ -13,7 +13,7 @@ If your boot code is version 1.03, then you must run this patch before installin
 KnightOS.
 
 **WARNING**: This is a somewhat dangerous activity. While extremely unlikely to encounter problems,
-this patch will modify a section of the calcualtor that is usually protected from modification. If
+this patch will modify a section of the calculator that is usually protected from modification. If
 something were to go wrong, this could potentially permanently render your calculator unusable.
 That being said, such a scenario is extremely unlikely, but proceed at your own risk.
 
