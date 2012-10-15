@@ -508,41 +508,42 @@ emptySlotIcon: ; 16x16
     .db %10000000, %00000000
     .db %11010101, %01010101
 
+    #include "castle.lang"
 MoreString:
-	.db "More", 0
+	.db lang_more, 0
 RunningString:
-	.db "Running", 0
+	.db lang_running, 0
 MenuString:
-	.db "Menu", 0
+	.db lang_menu, 0
 BackString:
-	.db "Back", 0
+	.db lang_back, 0
 OptionsString:
-	.db "Options", 0
+	.db lang_options, 0
 AddToCastleString:
-	.db "Add to Castle", 0
+	.db lang_addToCastle, 0
 RemoveFromCastleString:
-	.db "Remove from Castle", 0
+	.db lang_removeFromCastle, 0
 SleepString:
-	.db "Sleep", 0
+	.db lang_sleep, 0
 ShutdownString:
-	.db "Shut down", 0
+	.db lang_shutDown, 0
 RestartString:
-	.db "Restart", 0
+	.db lang_restart, 0
 ConfirmString1:
-	.db "Are you sure?", 0
+	.db lang_areYouSure, 0
 ConfirmString2:
-	.db "Unsaved data may", 0
+	.db lang_unsavedData, 0
 ConfirmString3:
-	.db "be lost.", 0
+	.db lang_beLost, 0
 YesString:
-	.db "Yes", 0
+	.db lang_Yes, 0
 NoString:
-	.db "No", 0
+	.db lang_no, 0
 NoProgramsInstalledString:
-	.db "No programs installed!", 0
+	.db lang_noPrograms, 0
 configPath:
     .db "/etc/castle.config", 0
 naString:
-    .db "[n/a]", 0
+    .db lang_nonApp, 0
 dummyTimeString:
     .db "12:00 AM", 0
