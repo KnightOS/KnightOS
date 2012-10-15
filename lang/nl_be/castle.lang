@@ -23,7 +23,7 @@
 ; First nibble is X, second nibble is Y
 #define lang_more_position $093A
 #define lang_menu_position $253A
-#define lang_running_position $3E3A
+#define lang_running_position $463A
 #define lang_sleep_position $2126
 #define lang_shutdown_position $212C
 #define lang_restart_position $2132
