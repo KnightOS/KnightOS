@@ -331,8 +331,8 @@ namespace build
         private static string Get8XUFile()
         {
             if (configuration == "TI73")
-                return "../bin/" + configuration + "/KnightOS.73u";
-            return "../bin/" + configuration + "/KnightOS.8xu";
+                return "../bin/" + configuration + "/KnightOS-" + language + ".73u";
+            return "../bin/" + configuration + "/KnightOS-" + language + ".8xu";
         }
 
         private static string GetKeyFile(out byte keyNumber)
@@ -365,7 +365,7 @@ namespace build
 
         private static void CreateOutput()
         {
-            output = File.Create("../bin/" + configuration + "/KnightOS.rom");
+            output = File.Create("../bin/" + configuration + "/KnightOS-" + language + ".rom");
             int flashPages;
             switch (configuration)
             {
