@@ -421,8 +421,8 @@ namespace build
             else if (RuntimeInfo.IsMacOSX)
                 process = "./spasm_mac";
             var info = new ProcessStartInfo(process, "-I " +
-                CombinePaths(Directory.GetCurrentDirectory(), "..", "inc") + " -I " +
-                CombinePaths(Directory.GetCurrentDirectory(), "..", "lang", language)
+                Path.Combine(Directory.GetCurrentDirectory(), "..", "inc") + " -I " +
+                Path.Combine(Directory.GetCurrentDirectory(), "..", "lang", language)
                 + " -L -T" + defineString +
                 "\"" + input + "\" \"" + output + "\"" + (string.IsNullOrEmpty(args) ? "" : " ") + args);
             info.RedirectStandardOutput = true;
@@ -448,15 +448,6 @@ namespace build
                               "    Valid values: TI73, TI83p, TI83pSE, TI84p, and TI84pSE\n" +
                               "--verbose: Builds in verbose mode with more detailed output.\n" +
                               "--all: Builds with all possible configurations.");
-        }
-
-        public static string CombinePaths(params string[] paths)
-        {
-            if (paths == null)
-            {
-                throw new ArgumentNullException("paths");
-            }
-            return paths.Aggregate(Path.Combine);
         }
     }
 }
