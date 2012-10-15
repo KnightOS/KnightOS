@@ -22,13 +22,17 @@ on them. Instructions for doing so may be found
 
 ## Building
 
-In build/, run "build" from the command line. You can use "build --help" for more information.
+In build/, run "build.exe" from the command line. You can use "build.exe --help" for more
+information, or read the
+[documentation](https://github.com/SirCmpwn/KnightOS/blob/master/docs/build/build-tool.md)
 The default configuration is TI84pSE, or TI-84+ Silver Edition. If you have a different
 calculator, refer to --help for information on building for your model.
 
-*Note for Linux/Mac users*: Wait a few days for me to update the build tool. Then, install mono
-and run it the same as you would on Windows, but with "mono" at the start. Think of it like
-Java.
+*Note for Linux/Mac users*: Preface "build.exe" with "mono". Example:
+
+    mono build.exe --verbose --all
+
+Obviously, you will need to install Mono first.
 
 ## Installing
 
