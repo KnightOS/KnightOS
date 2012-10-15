@@ -15,7 +15,7 @@ namespace build
         private static Stream output;
         private static Dictionary<string, long> labels;
         private static List<byte> pages;
-        private static string language = "en-us";
+        private static string language = "en_us";
         
         static void Main(string[] args)
         {
