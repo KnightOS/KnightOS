@@ -17,7 +17,7 @@ in addition to generally being a better experience than the official TIOS.
 
 \***The TI-84 Pocket.fr requires additional effort to install. You must downgrade it to boot
 code 1.02 to send any 3rd party operating system to a TI-84 Pocket.fr. Then, you can send
-the TI-83+ Silver Edition version of KnightOS to your calculator.*
+the TI-84+ version of KnightOS to your calculator.*
 
 ## Building
 
