@@ -6,7 +6,7 @@ KnightOS on such devices, you must first run a tool to patch the boot code. In o
 your boot code, you should do the following tasks from the home screen of the default operating
 system:
 
-1. Press \[MODE], then \[ALPHA], then \[LN]
+1. Press `[MODE]`, then `[ALPHA]`, then `[LN]`
 2. Your boot code version will be shown on the top of the screen.
 
 If your boot code is version 1.03, then you must run this patch before installing
@@ -23,13 +23,13 @@ Please download [patch.8xp](https://github.com/SirCmpwn/KnightOS/tree/master/boo
 and transfer it to your calcultor with TI-Connect, TILP, or a similar program. When the transfer
 completes, do the following from the home screen:
 
-1. Press [2nd]+[0] to open the catalog.
-2. Scroll down with the arrow keys and press [Enter] to select `Asm(`
-3. Press [PRGM] to open the program menu.
-4. Scroll down with the arrow keys and press [Enter] to select `PATCH`
-5. Press [Enter]
-6. Read the information provided. If it is all correct, press [ALPHA]+[1] to confirm.
-   a. You may press [ALPHA]+[LOG] if you choose not to install the patch.
+1. Press `[2nd]+[0]` to open the catalog.
+2. Scroll down with the arrow keys and press `[Enter]` to select `Asm(`
+3. Press `[PRGM]` to open the program menu.
+4. Scroll down with the arrow keys and press `[Enter]` to select `PATCH`
+5. Press `[Enter]`
+6. Read the information provided. If it is all correct, press `[ALPHA]+[1]` to confirm.
+   You may press `[ALPHA]+[LOG]` if you choose not to install the patch.
 
 Once you have completed these instructions, you should be able to install KnightOS normally.
 
