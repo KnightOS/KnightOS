@@ -1,0 +1,18 @@
+; English language file for /etc/castle.config
+
+; Text
+#define lang_graph "Gráfica"
+#define lang_math "Matemática"
+#define lang_blockDude "Tío de los bloques"
+#define lang_textEditor "Editor de textos"
+#define lang_calendar "Calendario"
+#define lang_fileBrowser "Administrador de archivos"
+#define lang_matrixEditor "Editor de matrices"
+#define lang_connectToPC "Conectar al PC"
+#define lang_settings "Ajustes"
+#define lang_terminal "Terminal"
+
+; Testing
+#define lang_hello "¡Hola, mundo!"
+#define lang_demo "Demostración"
+#define lang_countingTest "Demostración de contar"

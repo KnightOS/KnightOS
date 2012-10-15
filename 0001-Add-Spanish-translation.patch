@@ -1,0 +1,156 @@
+From 80706245a7d9ad9c226c16b884ce854c77840c9d Mon Sep 17 00:00:00 2001
+From: chickendude <pokemaster103@gmail.com>
+Date: Tue, 16 Oct 2012 00:12:44 +0800
+Subject: [PATCH] Add Spanish translation
+
+---
+ lang/es/castle.config.lang |   18 ++++++++++++++++++
+ lang/es/castle.lang        |   34 ++++++++++++++++++++++++++++++++++
+ lang/es/count.lang         |    6 ++++++
+ lang/es/demo.lang          |    6 ++++++
+ lang/es/hello.lang         |    6 ++++++
+ lang/es/threadlist.lang    |   15 +++++++++++++++
+ lang/es/todo.lang          |    4 ++++
+ 7 files changed, 89 insertions(+)
+ create mode 100644 lang/es/castle.config.lang
+ create mode 100644 lang/es/castle.lang
+ create mode 100644 lang/es/count.lang
+ create mode 100644 lang/es/demo.lang
+ create mode 100644 lang/es/hello.lang
+ create mode 100644 lang/es/threadlist.lang
+ create mode 100644 lang/es/todo.lang
+
+diff --git a/lang/es/castle.config.lang b/lang/es/castle.config.lang
+new file mode 100644
+index 0000000..2764a63
+--- /dev/null
++++ b/lang/es/castle.config.lang
+@@ -0,0 +1,18 @@
++; English language file for /etc/castle.config
++
++; Text
++#define lang_graph "Gráfica"
++#define lang_math "Matemática"
++#define lang_blockDude "Tío de los bloques"
++#define lang_textEditor "Editor de textos"
++#define lang_calendar "Calendario"
++#define lang_fileBrowser "Administrador de archivos"
++#define lang_matrixEditor "Editor de matrices"
++#define lang_connectToPC "Conectar al PC"
++#define lang_settings "Ajustes"
++#define lang_terminal "Terminal"
++
++; Testing
++#define lang_hello "¡Hola, mundo!"
++#define lang_demo "Demostración"
++#define lang_countingTest "Demostración de contar"
+diff --git a/lang/es/castle.lang b/lang/es/castle.lang
+new file mode 100644
+index 0000000..9bdb6d0
+--- /dev/null
++++ b/lang/es/castle.lang
+@@ -0,0 +1,34 @@
++; English language file for /bin/castle
++
++; Text
++#define lang_more "Más"
++#define lang_running "Ejecutando"
++#define lang_menu "Menú"
++#define lang_back "Atrás"
++#define lang_options "Opciones"
++#define lang_addToCastle "Añadir al castillo"
++#define lang_removeFromCastle "Quitar del castillo"
++#define lang_sleep "Hibernar"
++#define lang_shutDown "Apagar"
++#define lang_restart "Reiniciar"
++#define lang_areYouSure "¿Estás segurx?"
++#define lang_unsavedData "Puede que los datos no guardados"
++#define lang_beLost "se pierdan."
++#define lang_yes "Sí"
++#define lang_no "No"
++#define lang_noPrograms "¡Ningún programa instalado!"
++#define lang_nonApp "[n/a]"
++
++; Text locations
++; First nibble is X, second nibble is Y
++#define lang_more_position $093A
++#define lang_menu_position $253A
++#define lang_running_position $3E3A
++#define lang_sleep_position $2126
++#define lang_shutdown_position $212C
++#define lang_restart_position $2132
++#define lang_areYouSure_position $1A12
++#define lang_unsavedData_position $1418
++#define lang_mayBeLost_position $241E
++#define lang_yes_position $2C25
++#define lang_no_position $2C2B
+diff --git a/lang/es/count.lang b/lang/es/count.lang
+new file mode 100644
+index 0000000..20ff14a
+--- /dev/null
++++ b/lang/es/count.lang
+@@ -0,0 +1,6 @@
++; French language file for /etc/castle.config
++
++; Text
++#define lang_description "Demostración de contar"
++#define lang_hello "Pulsa [Clear] para salir."
++#define lang_windowTitle "Demostración de contar"
+diff --git a/lang/es/demo.lang b/lang/es/demo.lang
+new file mode 100644
+index 0000000..7b8cd4c
+--- /dev/null
++++ b/lang/es/demo.lang
+@@ -0,0 +1,6 @@
++; English language file for /bin/demo
++
++; Text
++#define lang_description "Demostración"
++#define lang_exitString "Pulsa [Clear] para salir."
++#define lang_windowTitle "Demostración"
+diff --git a/lang/es/hello.lang b/lang/es/hello.lang
+new file mode 100644
+index 0000000..89f9d06
+--- /dev/null
++++ b/lang/es/hello.lang
+@@ -0,0 +1,6 @@
++; English language file for /bin/hello
++
++; Text
++#define lang_description "Hola mundo"
++#define lang_helloString "¡Hola, mundo!\nPulsa [Clear] para salir."
++#define lang_windowTitle "Hola mundo"
+diff --git a/lang/es/threadlist.lang b/lang/es/threadlist.lang
+new file mode 100644
+index 0000000..8592920
+--- /dev/null
++++ b/lang/es/threadlist.lang
+@@ -0,0 +1,15 @@
++; English language file for /bin/threadlist
++
++; Text
++#define lang_castle "Castillo"
++#define lang_options "Opciones"
++#define lang_runningPrograms "Programas ejecutándose"		;running programs: a list of programs that are running (programas ejecutándose) or a state (Ejecutando programas)?
++#define lang_noPrograms "¡Ningún programa ejecutándose!"
++#define lang_forceQuit "Forzar salida"
++
++; Positions
++#define lang_forceQuit_position 61 * 256 + 50
++#define lang_runningPrograms_position 1 * 256 + 4
++#define lang_options_position 64 * 256 + 58
++#define lang_castle_position 9 * 256 + 58
++#define lang_noPrograms_position 1 << 8 + 12
+diff --git a/lang/es/todo.lang b/lang/es/todo.lang
+new file mode 100644
+index 0000000..db31c09
+--- /dev/null
++++ b/lang/es/todo.lang
+@@ -0,0 +1,4 @@
++; English language file for /bin/todo
++
++; Text
++#define lang_todo "Esta función todavía no se ha implementado.\nPulsa cualquier tecla para salir."
+-- 
+1.7.9.5
+
