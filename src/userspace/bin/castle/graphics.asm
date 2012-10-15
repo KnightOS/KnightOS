@@ -1,3 +1,4 @@
+#include "castle.lang"
 
 drawChrome:
     call clearBuffer
@@ -79,21 +80,21 @@ drawHome:
 	ld de, $353B
 	call PutSpriteOR
 	
-	ld de, $093A
+	ld de, lang_more_position
 	kld hl, MoreString
 	; libtext(DrawStr)
 	rst $10
 	.db libtextID
 	call DrawStr
 	
-	ld de, $253A
+	ld de, lang_menu_position
 	kld hl, MenuString
 	; libtext(DrawStr)
 	rst $10
 	.db libtextID
 	call DrawStr
 	
-	ld de, $3E3A
+	ld de, lang_running_position
 	kld hl, RunningString
 	; libtext(DrawStr)
 	rst $10
@@ -276,21 +277,21 @@ drawPowerMenu:
     call RectXOR
 
     kld hl, SleepString
-    ld de, $2126
+    ld de, lang_sleep_position
     ;libtext(DrawStr)
     rst $10
     .db libtextID
     call DrawStr
 
     kld hl, ShutdownString
-    ld de, $212C
+    ld de, lang_shutdown_position
     ;libtext(DrawStr)
     rst $10
     .db libtextID
     call DrawStr
 
     kld hl, RestartString
-    ld de, $2132
+    ld de, lang_restart_position
     ;libtext(RestartStr)
     rst $10
     .db libtextID
@@ -336,35 +337,35 @@ DrawConfirmationDialog:
 	call putSpriteOR
 	
 	kld hl, ConfirmString1
-	ld de, $1A12
+	ld de, lang_areYouSure_position
 	;libtext(DrawStr)
 	rst $10
 	.db libtextID
 	call drawStr
 	
 	kld hl, ConfirmString2
-	ld de, $1418
+	ld de, lang_unsavedData_position
 	;libtext(DrawStr)
 	rst $10
 	.db libtextID
 	call DrawStr
 	
 	kld hl, ConfirmString3
-	ld de, $241E
+	ld de, lang_mayBeLost_position
 	;libtext(DrawStr)
 	rst $10
 	.db libtextID
 	call drawStr
 	
 	kld hl, YesString
-	ld de, $2C25
+	ld de, lang_yes_position
 	;libtext(DrawStr)
 	rst $10
 	.db libtextID
 	call drawStr
 	
 	kld hl, NoString
-	ld de, $2C2B
+	ld de, lang_no_position
 	;libtext(DrawStr)
 	rst $10
 	.db libtextID
@@ -508,7 +509,6 @@ emptySlotIcon: ; 16x16
     .db %10000000, %00000000
     .db %11010101, %01010101
 
-    #include "castle.lang"
 MoreString:
 	.db lang_more, 0
 RunningString:
