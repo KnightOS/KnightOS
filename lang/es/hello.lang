@@ -1,0 +1,6 @@
+; English language file for /bin/hello
+
+; Text
+#define lang_description "Hola mundo"
+#define lang_helloString "¡Hola, mundo!\nPulsa [Clear] para salir."
+#define lang_windowTitle "Hola mundo"
