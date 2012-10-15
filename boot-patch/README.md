@@ -34,3 +34,8 @@ completes, do the following from the home screen:
 Once you have completed these instructions, you should be able to install KnightOS normally.
 
 Credit to [Brandon Wilson](http://brandonw.net/) for providing the patch.
+
+## Boot Code 1.04+
+
+If your calculator's boot code version is greater than 1.03, this patch will not work for you. However,
+you may be able to find a patch that will work. Search Google and you may find what you are looking for.
