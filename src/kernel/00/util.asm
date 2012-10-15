@@ -94,14 +94,12 @@ cpDEBC:
 stringLength:
 	push af
 	push hl
-	ld bc, 0
-_:		ld a, (hl)
-		or a
-		jr z, _
-		inc bc
-		inc hl
-		jr -_
-_:	pop hl
+        ld bc, 0
+        xor a
+        cpir
+        ; bc = -bc
+        ld a, b \ xor $FF \ ld b, a \ ld a, c \ xor $FF \ add a, 1 \ jr nc, $+3 \ inc b \ ld c, a
+    pop hl
 	pop af
 	ret
     
