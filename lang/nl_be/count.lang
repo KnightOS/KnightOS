@@ -1,0 +1,6 @@
+; Dutch language file for /etc/castle.config
+
+; Text
+#define lang_description "Tel Demo"
+#define lang_hello "Druk op [clear] om af te sluiten."
+#define lang_windowTitle "Tel Demo"
