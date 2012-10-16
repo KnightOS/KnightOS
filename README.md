@@ -26,7 +26,7 @@ on them. Instructions for doing so may be found
 
 In build/, run "build.exe" from the command line. You can use "build.exe --help" for more
 information, or read the
-[documentation](https://github.com/SirCmpwn/KnightOS/blob/master/docs/build/build-tool.md)
+[documentation](https://github.com/SirCmpwn/KnightOS/blob/master/docs/build/build-tool.md).
 The default configuration is TI84pSE, or TI-84+ Silver Edition. If you have a different
 calculator, refer to --help for information on building for your model.
 
