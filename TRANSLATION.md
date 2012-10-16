@@ -8,6 +8,8 @@ is "en_us". The current list of locales supported is:
 * English (US)
 * French
 * Spanish
+* German
+* Dutch
 
 If you wish to contribute, fork KnightOS and modify the language files for the language you
 wish to contribute to. You should create a pull reqeust every so often to add more content
