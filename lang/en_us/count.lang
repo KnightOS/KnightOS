@@ -1,4 +1,4 @@
-; French language file for /etc/castle.config
+; English language file for /etc/castle.config
 
 ; Text
 #define lang_description "Counting Demo"
