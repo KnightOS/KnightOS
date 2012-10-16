@@ -1,0 +1,34 @@
+; German language file for /bin/castle
+
+; Text
+#define lang_more "Mehr"
+#define lang_running "Laufen"
+#define lang_menu "Menü"
+#define lang_back "Zurück"
+#define lang_options "Optionen"
+#define lang_addToCastle "Zur Burg hinzufügen"
+#define lang_removeFromCastle "Von der Burg entfernen"
+#define lang_sleep "Schlafen"
+#define lang_shutDown "Ausschalten"
+#define lang_restart "Neustarten"
+#define lang_areYouSure "Sind sie sicher?"
+#define lang_unsavedData "Ungesicherte daten könnten"
+#define lang_beLost "verloren gehen."
+#define lang_yes "Ja"
+#define lang_no "Nein"
+#define lang_noPrograms "Keine Programme installiert!"
+#define lang_nonApp "[n/a]"
+
+; Text locations
+; First nibble is X, second nibble is Y
+#define lang_more_position $093A
+#define lang_menu_position $253A
+#define lang_running_position $3E3A
+#define lang_sleep_position $2126
+#define lang_shutdown_position $212C
+#define lang_restart_position $2132
+#define lang_areYouSure_position $1A12
+#define lang_unsavedData_position $1418
+#define lang_mayBeLost_position $241E
+#define lang_yes_position $2C25
+#define lang_no_position $2C2B

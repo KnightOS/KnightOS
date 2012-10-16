@@ -1,0 +1,18 @@
+; German language file for /etc/castle.config
+
+; Text
+#define lang_graph "Graph"
+#define lang_math "Mathematik"
+#define lang_blockDude "Block Dude"
+#define lang_textEditor "Text Editor"
+#define lang_calendar "Kalendar"
+#define lang_fileBrowser "Dateibrowser"
+#define lang_matrixEditor "Matrix Editor"
+#define lang_connectToPC "Mit PC verbinden"
+#define lang_settings "Einstellungen"
+#define lang_terminal "Konsole"
+
+; Testing
+#define lang_hello "Hello, world!"
+#define lang_demo "Demo"
+#define lang_countingTest "Zahlen Test"

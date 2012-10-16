@@ -1,0 +1,6 @@
+; German language file for /etc/castle.config
+
+; Text
+#define lang_description "Zähler Demo"
+#define lang_hello "Drücke [Clear] zum Beenden."
+#define lang_windowTitle "Zähler Demo"
