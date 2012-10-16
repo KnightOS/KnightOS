@@ -2,7 +2,7 @@
 
 ; Text
 #define lang_more "Mehr"
-#define lang_running "Laufen"
+#define lang_running "Aktiv"
 #define lang_menu "Menü"
 #define lang_back "Zurück"
 #define lang_options "Optionen"
