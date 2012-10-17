@@ -45,8 +45,8 @@ This routine will never return. You should run it with RST 0 instead of CALL.
 
 **Address**: 0x3F7F
 
-Compares two zero-delimited strings. May also be used to compare any arbituary zero-
-delimited data.
+Compares two zero-delimited strings. May also be used to compare any arbituary
+zero-delimited data.
 
 *Inputs*
 
