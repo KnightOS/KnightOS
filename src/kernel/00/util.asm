@@ -19,6 +19,7 @@ suspendDevice:
     ei
     ret
     
+    jp 0 ; Safety
 unlockFlash:
     push af
     push bc
