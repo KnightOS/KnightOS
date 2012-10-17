@@ -21,7 +21,7 @@ Allocates memory and assigns it to the current thread.
 
 * **IX**: Pointer to allocated memory
 
-*Errors*
+*Possible Errors*
 
 * errOutOfMem
 
@@ -32,6 +32,10 @@ Allocates 768 bytes of memory, enough to hold one screen buffer.
 *Outputs*
 
 * **IY**: Pointer to allocated memory
+
+*Possible Errors*
+
+* errOutOfMem
 
 ## formatMem
 
