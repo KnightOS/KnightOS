@@ -107,13 +107,8 @@ stringLength:
 ; Outputs:	B: Value from 0-4 indicating battery level (0 is critical)
 getBatteryLevel:
 	push af
-#ifdef TI83p
-	in a, (2)
-	and 1
-	ld b, a
-	pop af
-	ret
-#else
+#ifndef TI83p
+#ifndef TI73
 	ld b, 0
 	ld a, %00000110
 	out (6), a
@@ -146,6 +141,13 @@ getBatteryLevel:
 GetBatteryLevel_Done:
 	ld a, %110
 	out (6), a
+	pop af
+	ret
+#endif
+#else
+    in a, (2)
+	and 1
+	ld b, a
 	pop af
 	ret
 #endif

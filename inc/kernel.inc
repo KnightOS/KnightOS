@@ -91,3 +91,4 @@ eraseFlashPage .equ $3EF5
 writeFlashBuffer .equ $3EF2
 writeFlashByte .equ $3EEF
 eraseSwapSector .equ $3EEC
+convertTimeToTicks .equ $3EE9

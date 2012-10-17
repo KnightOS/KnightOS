@@ -82,8 +82,10 @@ convertTimeToTicks:
 ; E: Seconds
 ; A: Day of Week
 getTime:
+    #IFDEF CLOCK
     call getTimeInTicks
     call convertTimeFromTicks
+    #ENDIF
     ret
 
 #undefine ticks

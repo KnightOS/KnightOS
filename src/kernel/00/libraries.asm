@@ -1,3 +1,8 @@
+; TODO:
+; Unload libraries
+; Allocate space to track usage; use maxThreads so that all threads may
+; use it at once.
+
 ; Inputs:	DE: Pointer to full path of library
 ; Output:	A: Preserved unless error
 ;			Z: Success
