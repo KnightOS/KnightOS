@@ -130,6 +130,11 @@ _:
 	ret
 WriteFlashBuffer_RAM_End:
 
+eraseSwapSector:
+    ld a, swapSector
+    call eraseFlashSector
+    ret
+
 ; Inputs:	A: Any page within the sector to be erased
 ; Outputs:	None
 ; Comments:	Flash must be unlocked

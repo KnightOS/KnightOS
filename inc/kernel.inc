@@ -84,3 +84,10 @@ hasIoLock .equ $3F0A
 hasUsbLock .equ $3F07
 resumeThread .equ $3F04
 getBootCodeVersionString .equ $3F01
+copyFlashPage .equ $3EFE
+copySectorToSwap .equ $3EFB
+eraseFlashSector .equ $3EF8
+eraseFlashPage .equ $3EF5
+writeFlashBuffer .equ $3EF2
+writeFlashByte .equ $3EEF
+eraseSwapSector .equ $3EEC
