@@ -6,8 +6,8 @@ The kernel provides several routines for interfacing with the keyboard.
 [inc/keys.inc](https://github.com/SirCmpwn/KnightOS/blob/master/inc/keys.inc) that
 includes all key codes used by the kernel.
 
-* [flushKeys](#flushKeys)
-* [getKey](#getKey)
+* [flushKeys](#flushkeys)
+* [getKey](#getkey)
 * [waitKey](#waitkey)
 
 The code for these routines may be found in
