@@ -266,6 +266,8 @@ _:  pop af
 ; Inputs:	DE: Pointer to full path of program
 ; Outputs: 	A: Thread ID
 ; Launches program in new thread
+
+; TODO: Errors
 launchProgram:
 	push bc
 	ld a, i
@@ -373,6 +375,7 @@ suspendCurrentThread:
     pop hl
     ret
     
+; TODO: Errors
 resumeThread:
     push hl
     push af
