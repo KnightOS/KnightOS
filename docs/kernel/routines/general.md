@@ -174,6 +174,8 @@ Multiplies DE by A.
 
 ## div32By16
 
+**Address**: 0x3F3D
+
 Divides ACIX by DE and stores the remainder in HL.
 
 *Inputs*
@@ -187,6 +189,8 @@ Divides ACIX by DE and stores the remainder in HL.
 * **HL**: Remainder
 
 ## divACbyDE
+
+**Address**: 0x3F34
 
 Divides AC by DE and stores the remainder in HL.
 
@@ -202,6 +206,8 @@ Divides AC by DE and stores the remainder in HL.
 
 ## divHLbyC
 
+**Address**: 0x3F37
+
 Divides HL by C and stores the remainder in A.
 
 *Inputs*
@@ -215,6 +221,8 @@ Divides HL by C and stores the remainder in A.
 * **A**: Remainder
 
 ## getBatteryLevel
+
+**Address**: 0x3F85
 
 Gets the current battery level.
 
@@ -232,6 +240,8 @@ This is less accurate on the following platforms:
 
 ## getBootCodeVersionString
 
+**Address**: 0x3F01
+
 Gets the boot code version string and loads it into memory.
 
 *Outputs*
@@ -244,12 +254,14 @@ You should call
 [freeMem](https://github.com/SirCmpwn/KnightOS/blob/master/docs/kernel/routines/memory.md#freemem)
 when you are done with the string to free memory.
 
-This assumes that the string is at 0xF of the boot page, which is true for
-all official TI boot codes.
+This assumes that the string is at 0xF of the boot page, which is true for all
+official TI boot codes.
 
 ## getTime
 
 **This routine is only available on the platforms listed [here](#clock-platforms).**
+
+**Address**: 0x3F2B
 
 Gets the current time.
 
@@ -267,11 +279,17 @@ Gets the current time.
 
 **This routine is only available on the platforms listed [here](#clock-platforms).**
 
+**Address**: 0x3F31
+
+Gets the current time in ticks.
+
 *Outputs*
 
 * **HLDE**: Time in ticks
 
 ## quicksort
+
+**Address**: 0x3F7C
 
 Sorts a list of bytes in ascending order.
 
@@ -287,6 +305,8 @@ stack overflow.
 
 ## reboot
 
+**Address**: 0x3FFA
+
 Reboots the device without turning off the screen or waiting for the user to press \[ON].
 
 *Notes*
@@ -294,6 +314,8 @@ Reboots the device without turning off the screen or waiting for the user to pre
 This routine will never return. You should run it with JP instead of CALL.
 
 ## stringLength
+
+**Address**: 0x3F88
 
 Determines the length of a zero-delimited string.
 
@@ -306,6 +328,8 @@ Determines the length of a zero-delimited string.
 * **BC**: String length
 
 ## sub16from32
+
+**Address**: 0x3F3A
 
 Subtracts DE from ACIX.
 
@@ -321,6 +345,8 @@ Subtracts DE from ACIX.
 ## setClock
 
 **This routine is only available on the platforms listed [here](#clock-platforms).**
+
+**Address**: 0x3F2E
 
 Sets the clock to the specified time in ticks.
 
