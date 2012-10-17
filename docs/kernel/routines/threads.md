@@ -54,7 +54,7 @@ Immediately kills the currently executing thread.
 This may be used to kill sub-threads that are under your control. However, the correct
 means of exiting a primary thread is generally to simply use RET. Many programs that
 may launch your thread will set a custom return point, including the KnightOS terminal
-and castle, via [setReturnPoint](#setReturnPoint).
+and castle, via [setReturnPoint](#setreturnpoint).
 
 This routine does not return; you should call it with JP instead of CALL.
 
