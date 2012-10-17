@@ -11,6 +11,8 @@ Several routines are also provided for manipulating pre-allocated memory.
 
 ## allocMem
 
+**Address**: 0x3FEB
+
 Allocates memory and assigns it to the current thread.
 
 *Inputs*
@@ -27,6 +29,8 @@ Allocates memory and assigns it to the current thread.
 
 ## allocScreenBuffer
 
+**Address**: 0x3F43
+
 Allocates 768 bytes of memory, enough to hold one screen buffer.
 
 *Outputs*
@@ -38,6 +42,8 @@ Allocates 768 bytes of memory, enough to hold one screen buffer.
 * errOutOfMem
 
 ## formatMem
+
+**Address**: 0x3FF1
 
 **This routine is not intended for use under normal conditions.**
 
@@ -55,6 +61,8 @@ normal contitions.
 
 ## freeMem
 
+**Address**: 0x3FE8
+
 Frees previously allocated memory.
 
 *Inputs*
@@ -62,6 +70,8 @@ Frees previously allocated memory.
 * **IX**: Pointer to first byte of allocated memory.
 
 ## memSeekToStart
+
+**Address**: 0x3FEE
 
 Seeks the memory pointer to the beginning of the section it points to.
 
