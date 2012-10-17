@@ -1,3 +1,5 @@
+; TODO: Add routines to erase certificate sectors (or add this to eraseFlashSector?)
+
 ; Inputs:	A: Value to write
 ;			HL: Address to write to
 ; Outputs:	None
