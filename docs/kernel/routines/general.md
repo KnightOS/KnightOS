@@ -24,6 +24,13 @@ tasks.
 * [sub16from32](#sub16from32)
 * [setClock](#setclock)
 
+The code for these routines may be found in 
+[src/kernel/00/util.asm](https://github.com/SirCmpwn/KnightOS/blob/master/src/kernel/00/util.asm),
+and in
+[src/kernel/00/time.asm](https://github.com/SirCmpwn/KnightOS/blob/master/src/kernel/00/time.asm),
+and in
+[src/kernel/00/boot.asm](https://github.com/SirCmpwn/KnightOS/blob/master/src/kernel/00/boot.asm).
+
 ## boot
 
 **Address**: 0x3FFD

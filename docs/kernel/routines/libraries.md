@@ -2,6 +2,9 @@
 
 The kernel provides only one routine related to libraries.
 
+The code for these routines may be found in 
+[src/kernel/00/libraries.asm](https://github.com/SirCmpwn/KnightOS/blob/master/src/kernel/00/libraries.asm).
+
 ## loadLibrary
 
 **Address**: 0x3F40
