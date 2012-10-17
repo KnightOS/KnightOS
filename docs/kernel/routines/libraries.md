@@ -33,4 +33,5 @@ exits.
 
 Note: The library mechanism is incomplete. All loaded libraries will persist
 in memory until the device reboots. This behavior will change before the release
-of KnightOS. However, all other functions of library 
+of KnightOS. However, all other functions of library support are in working
+order.
