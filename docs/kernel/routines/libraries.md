@@ -23,7 +23,7 @@ Loads the specified library.
 
 *Notes*
 
-If the library is already noted, this routine instead notes that this thread
+If the library is already in use, this routine instead notes that this thread
 depends on the library.
 
 Once loaded, you will be able to perform LCALLs that use this library.
