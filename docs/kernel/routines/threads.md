@@ -2,15 +2,15 @@
 
 The kernel provides a number of routines for creating, manipulating, and killing threads.
 
-* [getCurrentThreadId](getcurrentthreadid)
-* [getThreadEntry](getthreadentry)
-* [killCurrentThread](killcurrentthread)
-* [killThread](killthread)
-* [launchProgram](launchprogram)
-* [resumeThread](resumethread)
-* [setReturnPoint](setreturnpoint)
-* [startThread](startthread)
-* [suspendCurrentThread](suspendcurrentthread)
+* [getCurrentThreadId](#getcurrentthreadid)
+* [getThreadEntry](#getthreadentry)
+* [killCurrentThread](#killcurrentthread)
+* [killThread](#killthread)
+* [launchProgram](#launchprogram)
+* [resumeThread](#resumethread)
+* [setReturnPoint](#setreturnpoint)
+* [startThread](#startthread)
+* [suspendCurrentThread](#suspendcurrentthread)
 
 ## getCurrentThreadId
 
