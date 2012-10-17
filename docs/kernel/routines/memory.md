@@ -9,6 +9,9 @@ Several routines are also provided for manipulating pre-allocated memory.
 * [freeMem](#freemem)
 * [memSeekToStart](#memseektostart)
 
+The code for these routines may be found in 
+[src/kernel/00/memory.asm](https://github.com/SirCmpwn/KnightOS/blob/master/src/kernel/00/memory.asm).
+
 ## allocMem
 
 **Address**: 0x3FEB
