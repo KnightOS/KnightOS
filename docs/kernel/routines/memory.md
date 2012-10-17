@@ -4,10 +4,10 @@ The kernel provides many routines for manipulating allocation and freeing of mem
 Several routines are also provided for manipulating pre-allocated memory.
 
 * [allocMem](#allocMem)
-* [allocScreenBuffer](#allocScreenBuffer)
-* [formatMem](#formatMem)
-* [freeMem](#freeMem)
-* [memSeekToStart](#memSeekToStart)
+* [allocScreenBuffer](#allocscreenbuffer)
+* [formatMem](#formatmem)
+* [freeMem](#freemem)
+* [memSeekToStart](#memseektostart)
 
 ## allocMem
 
