@@ -3,7 +3,7 @@
 The kernel provides several routines for interfacing with the keyboard.
 
 *Note*: An include file is provided in 
-[inc/keys.inc](https://github.com/SirCmpwn/KnightOS/blob/master/inc/keys.inc] that
+[inc/keys.inc](https://github.com/SirCmpwn/KnightOS/blob/master/inc/keys.inc) that
 includes all key codes used by the kernel.
 
 * [flushKeys](#flushKeys)
