@@ -9,15 +9,15 @@ a novice, and you should not use these if you do not know exactly what they do.
 Additionally, with the exception of [unlockFlash](#unlockflash), none of these
 routines will work properly with flash locked.
 
-* copyFlashPage
-* copySectorToSwap
-* eraseFlashPage
-* eraseFlashSector
-* eraseSwapSector
-* lockFlash
-* unlockFlash
-* writeFlashBuffer
-* writeFlashByte
+* [copyFlashPage](#copyflashpage)
+* [copySectorToSwap](#copysectortoswap)
+* [eraseFlashPage](#eraseflashpage)
+* [eraseFlashSector](#eraseflashsector)
+* [eraseSwapSector](#eraseswapsector)
+* [lockFlash](#lockflash)
+* [unlockFlash](#unlockflash)
+* [writeFlashBuffer](#writeflashbuffer)
+* [writeFlashByte](#writeflashbyte)
 
 ## copyFlashPage
 
