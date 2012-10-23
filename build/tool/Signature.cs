@@ -1,4 +1,4 @@
-﻿// Taken from Build8xu and converted to C# for better non-Windows compatability
+// Taken from Build8xu and converted to C# for better non-Windows compatability
 
 using System;
 using System.Collections.Generic;

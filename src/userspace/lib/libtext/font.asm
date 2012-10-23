@@ -1,4 +1,4 @@
-﻿; KnightOS litext Font
+; KnightOS litext Font
 ; 9/24/2011
 ; Character sprites for the litext font
 
