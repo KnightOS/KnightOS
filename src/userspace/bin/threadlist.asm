@@ -132,22 +132,22 @@ launchCastle:
 noThreads:
     ld de, lang_noPrograms_position
     kld hl, noProgramsStr
-	;libtext(DrawStr)
-	rst $10
-	.db libtextID
-	call drawStr
-	
-	call fastCopy
-	
-_:	call flushKeys
-	call waitKey
-	
-	cp kClear
-	jr z, _
-	cp kYEqu
-	jr nz, -_
-	
-_:	call flushKeys
+    ;libtext(DrawStr)
+    rst $10
+    .db libtextID
+    call drawStr
+    
+    call fastCopy
+    
+_:    call flushKeys
+    call waitKey
+    
+    cp kClear
+    jr z, _
+    cp kYEqu
+    jr nz, -_
+    
+_:    call flushKeys
     jr launchCastle
     
 drawThreads:
@@ -171,166 +171,166 @@ _:  push hl \ push de
     djnz -_
     
     kld hl, selectionIndicatorSprite
-	ld b, 5
-	ld de, 1 * 256 + 12
-	call PutSpriteOR
+    ld b, 5
+    ld de, 1 * 256 + 12
+    call PutSpriteOR
     ret
     
 drawInterface:
     call clearBuffer
     ; Castle top
-	xor a
-	ld l, 2
-	call setPixel
-	kld hl, castleTopSprite
-	ld b, 12
-	ld de, $0100
-_:	ld a, 8
-	push bc
-		ld b, 3
-		call putSpriteOR
-	pop bc
-	add a, d
-	ld d, a
-	djnz -_
+    xor a
+    ld l, 2
+    call setPixel
+    kld hl, castleTopSprite
+    ld b, 12
+    ld de, $0100
+_:    ld a, 8
+    push bc
+        ld b, 3
+        call putSpriteOR
+    pop bc
+    add a, d
+    ld d, a
+    djnz -_
     
     kld hl, hotkeyLeftSprite
-	ld b, 8
-	ld de, $0038
-	call putSpriteOR
-	
-	kld hl, hotkeyRightSprite
-	ld de, $5838
-	call putSpriteOR
-	
-	kld hl, hotkeyArrowLeftSprite
-	ld b, 5
-	ld de, $003A
-	call putSpriteOR
-	
-	kld hl, hotkeyPlusSprite
-	ld b, 5
-	ld de, $5A3A
-	call putSpriteOR
-	
-	kld hl, backStr
-	ld de, lang_castle_position
-	;libtext(DrawStr)
-	rst $10
-	.db libtextID
-	call DrawStr
-	
-	kld hl, optionsStr
-	ld de, lang_options_position
-	;libtext(DrawStr)
-	rst $10
-	.db libtextID
-	call drawStr
+    ld b, 8
+    ld de, $0038
+    call putSpriteOR
+    
+    kld hl, hotkeyRightSprite
+    ld de, $5838
+    call putSpriteOR
+    
+    kld hl, hotkeyArrowLeftSprite
+    ld b, 5
+    ld de, $003A
+    call putSpriteOR
+    
+    kld hl, hotkeyPlusSprite
+    ld b, 5
+    ld de, $5A3A
+    call putSpriteOR
+    
+    kld hl, backStr
+    ld de, lang_castle_position
+    ;libtext(DrawStr)
+    rst $10
+    .db libtextID
+    call DrawStr
+    
+    kld hl, optionsStr
+    ld de, lang_options_position
+    ;libtext(DrawStr)
+    rst $10
+    .db libtextID
+    call drawStr
     
     kld hl, runningProgramsStr
-	ld de, lang_runningPrograms_position
-	;libtext(DrawStr)
-	rst $10
-	.db libtextID
-	call drawStr
-	
-	ld hl, $000A
-	ld de, $5F0A
-	call drawLine
+    ld de, lang_runningPrograms_position
+    ;libtext(DrawStr)
+    rst $10
+    .db libtextID
+    call drawStr
+    
+    ld hl, $000A
+    ld de, $5F0A
+    call drawLine
     ret
     
 drawOptions:
-	kld hl, hotkeyPlusSprite
-	ld de, $5A3A
-	call putSpriteXOR
-	
-	kld hl, hotkeyArrowUpSprite
-	ld de, $593A
-	call putSpriteOR
-	
-	ld e, 55 - (61 - (lang_forceQuit_position >> 8))
-	ld l, 48
-	ld c, 96-54 + (61 - (lang_forceQuit_position >> 8))
-	ld b, 56-47
-	call rectOR
-	ld e, 56 - (61 - (lang_forceQuit_position >> 8))
-	ld l, 49
-	ld c, 95-55 + (61 - (lang_forceQuit_position >> 8))
-	ld b, 55-48
-	call rectXOR
-	ld e, 87
-	ld l, 56
-	ld c, 9
-	ld b, 2
-	call rectAND
-	ld a, 87
-	ld l, 57
-	call setPixel
-	
-	kld hl, forceQuitStr
-	ld de, lang_forceQuit_position
-	;libtext(DrawStr)
-	rst $10 \ .db libtextID
-	call drawStr
-	
-	kld hl, selectionIndicatorSprite
-	ld b, 5
-	ld de, 57  - (61 - (lang_forceQuit_position >> 8)) * 256 + 50
-	call putSpriteOR
-	ret
+    kld hl, hotkeyPlusSprite
+    ld de, $5A3A
+    call putSpriteXOR
+    
+    kld hl, hotkeyArrowUpSprite
+    ld de, $593A
+    call putSpriteOR
+    
+    ld e, 55 - (61 - (lang_forceQuit_position >> 8))
+    ld l, 48
+    ld c, 96-54 + (61 - (lang_forceQuit_position >> 8))
+    ld b, 56-47
+    call rectOR
+    ld e, 56 - (61 - (lang_forceQuit_position >> 8))
+    ld l, 49
+    ld c, 95-55 + (61 - (lang_forceQuit_position >> 8))
+    ld b, 55-48
+    call rectXOR
+    ld e, 87
+    ld l, 56
+    ld c, 9
+    ld b, 2
+    call rectAND
+    ld a, 87
+    ld l, 57
+    call setPixel
+    
+    kld hl, forceQuitStr
+    ld de, lang_forceQuit_position
+    ;libtext(DrawStr)
+    rst $10 \ .db libtextID
+    call drawStr
+    
+    kld hl, selectionIndicatorSprite
+    ld b, 5
+    ld de, 57  - (61 - (lang_forceQuit_position >> 8)) * 256 + 50
+    call putSpriteOR
+    ret
     
 castleTopSprite: ; 8x3
-	.db %11110000
-	.db %10010000
-	.db %10011111
+    .db %11110000
+    .db %10010000
+    .db %10011111
     
 hotkeyLeftSprite: ; 8x8
-	.db %01111100
-	.db %10000010
-	.db %00000001
-	.db %00000001
-	.db %00000001
-	.db %00000001
-	.db %00000001
-	.db %10000010
-	
+    .db %01111100
+    .db %10000010
+    .db %00000001
+    .db %00000001
+    .db %00000001
+    .db %00000001
+    .db %00000001
+    .db %10000010
+    
 hotkeyRightSprite: ; 8x8
-	.db %00111110
-	.db %01000001
-	.db %10000000
-	.db %10000000
-	.db %10000000
-	.db %10000000
-	.db %10000000
-	.db %01000001
-	
+    .db %00111110
+    .db %01000001
+    .db %10000000
+    .db %10000000
+    .db %10000000
+    .db %10000000
+    .db %10000000
+    .db %01000001
+    
 hotkeyPlusSprite: ; 8x5
-	.db %00100000
-	.db %00100000
-	.db %11111000
-	.db %00100000
-	.db %00100000
-	
+    .db %00100000
+    .db %00100000
+    .db %11111000
+    .db %00100000
+    .db %00100000
+    
 hotkeyArrowLeftSprite: ; 8x5
-	.db %0010000
-	.db %0100000
-	.db %1111100
-	.db %0100000
-	.db %0010000
+    .db %0010000
+    .db %0100000
+    .db %1111100
+    .db %0100000
+    .db %0010000
     
 hotkeyArrowUpSprite: ; 8x5
-	.db %0010000
-	.db %0111000
-	.db %1010100
-	.db %0010000
-	.db %0010000
+    .db %0010000
+    .db %0111000
+    .db %1010100
+    .db %0010000
+    .db %0010000
     
 selectionIndicatorSprite: ; 8x5
-	.db %10000000
-	.db %11000000
-	.db %11100000
-	.db %11000000
-	.db %10000000
+    .db %10000000
+    .db %11000000
+    .db %11100000
+    .db %11000000
+    .db %10000000
     
 backStr:
     .db lang_castle, 0

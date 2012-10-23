@@ -90,7 +90,7 @@ _:      inc hl
         ld c, (hl)
         inc hl
         ld b, (hl)
-		
+        
         ex de, hl
 
         ld a, $DD ; Handle IX/IY cases
@@ -106,12 +106,12 @@ _:
         inc hl
         ld d, (hl)
         ex de, hl
-        add hl, bc		
+        add hl, bc        
         ex de, hl
         ld (hl), d
         dec hl
         ld (hl), e
-	
+    
     pop af
     pop bc
     pop de

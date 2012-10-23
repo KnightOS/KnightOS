@@ -156,70 +156,70 @@ launch:
     
 powerMenu:
     push de
-	kcall drawPowerMenu
-	ld e, 38
+    kcall drawPowerMenu
+    ld e, 38
 powerMenuLoop:
-	call fastCopy
-	call flushKeys
-	call waitKey
-	
-	cp kUp
-	jr z, powerMenuUp
-	cp kDown
-	jr z, powerMenuDown
-	cp k2nd
-	jr z, powerMenuSelect
-	cp kEnter
-	jr z, powerMenuSelect
-	cp kClear
-	kjp z, resetToHome
-	cp kZoom
-	kjp z, resetToHome
+    call fastCopy
+    call flushKeys
+    call waitKey
     
-	jr powerMenuLoop
+    cp kUp
+    jr z, powerMenuUp
+    cp kDown
+    jr z, powerMenuDown
+    cp k2nd
+    jr z, powerMenuSelect
+    cp kEnter
+    jr z, powerMenuSelect
+    cp kClear
+    kjp z, resetToHome
+    cp kZoom
+    kjp z, resetToHome
+    
+    jr powerMenuLoop
     
 powerMenuUp:
-	ld a, 38
-	cp e
-	jr z, powerMenuLoop
-	call putSpriteAND
-	ld a, e
-	ld e, 6
-	sub e
-	ld e, a
-	call putSpriteOR
-	jr powerMenuLoop
-	
+    ld a, 38
+    cp e
+    jr z, powerMenuLoop
+    call putSpriteAND
+    ld a, e
+    ld e, 6
+    sub e
+    ld e, a
+    call putSpriteOR
+    jr powerMenuLoop
+    
 powerMenuDown:
-	ld a, 50
-	cp e
-	jr z, powerMenuLoop
-	call putSpriteAND
-	ld a, 6
-	add a, e
-	ld e, a
-	call PutSpriteOR
-	jr powerMenuLoop
-	
+    ld a, 50
+    cp e
+    jr z, powerMenuLoop
+    call putSpriteAND
+    ld a, 6
+    add a, e
+    ld e, a
+    call PutSpriteOR
+    jr powerMenuLoop
+    
 powerMenuSelect:
-	ld a, e
+    ld a, e
     pop de
-	cp 44
-	jr z, confirmShutDown
-	cp 50
-	jr z, confirmRestart
-	call suspendDevice
-	kjp redrawHome
+    cp 44
+    jr z, confirmShutDown
+    cp 50
+    jr z, confirmRestart
+    call suspendDevice
+    kjp redrawHome
     
 confirmShutDown:
-	ld hl, boot
-	jr confirmSelection
+    ld hl, boot
+    jr confirmSelection
 confirmRestart:
-	ld hl, reboot
+    ld hl, reboot
 confirmSelection:
-	push hl
+    push hl
     kcall drawConfirmationDialog
-		
+        
 confirmSelectionLoop:
     call fastCopy
     call flushKeys
@@ -235,13 +235,13 @@ confirmSelectionLoop:
     jr z, confirmSelectionLoop_Select
     cp kClear
     kjp z, resetToHome
-		
+        
 confirmSelectionLoop_Up:
     call putSpriteXOR
     ld de, $2825
     call putSpriteOR
     jr confirmSelectionLoop
-		
+        
 confirmSelectionLoop_Down:
     call putSpriteXOR
     ld de, $282B
