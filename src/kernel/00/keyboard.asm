@@ -6,7 +6,7 @@ _:  call getKey
     or a
     jr z, -_
     ret
-	
+    
 ; Waits for all keys to be released
 flushkeys:
     call HasKeypadLock
