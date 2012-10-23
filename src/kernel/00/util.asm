@@ -90,69 +90,69 @@ cpDEBC:
     pop hl
     ret
 
-; Inputs:	HL: String
-; Outputs:	BC: String length
+; Inputs:    HL: String
+; Outputs:    BC: String length
 stringLength:
-	push af
-	push hl
+    push af
+    push hl
         ld bc, 0
         xor a
         cpir
         ; bc = -bc
         ld a, b \ xor $FF \ ld b, a \ ld a, c \ xor $FF \ add a, 1 \ jr nc, $+3 \ inc b \ ld c, a
     pop hl
-	pop af
-	ret
+    pop af
+    ret
     
-; Outputs:	B: Value from 0-4 indicating battery level (0 is critical)
+; Outputs:    B: Value from 0-4 indicating battery level (0 is critical)
 getBatteryLevel:
-	push af
+    push af
 #ifndef TI83p
 #ifndef TI73
-	ld b, 0
-	ld a, %00000110
-	out (6), a
-	in a, (2)
-	bit 0, a
-	jr z, GetBatteryLevel_Done
-	
-	ld b, 1
-	ld a, %01000110
-	out (6), a
-	in a, (2)
-	bit 0, a
-	jr z, GetBatteryLevel_Done
-	
-	ld b, 2
-	ld a, %10000110
-	out (6), a
-	in a, (2)
-	bit 0, a
-	jr z, GetBatteryLevel_Done
-	
-	ld b, 3
-	ld a, %11000110
-	out (6), a
-	in a, (2)
-	bit 0, a
-	jr z, GetBatteryLevel_Done
-	
-	ld b, 4
+    ld b, 0
+    ld a, %00000110
+    out (6), a
+    in a, (2)
+    bit 0, a
+    jr z, GetBatteryLevel_Done
+    
+    ld b, 1
+    ld a, %01000110
+    out (6), a
+    in a, (2)
+    bit 0, a
+    jr z, GetBatteryLevel_Done
+    
+    ld b, 2
+    ld a, %10000110
+    out (6), a
+    in a, (2)
+    bit 0, a
+    jr z, GetBatteryLevel_Done
+    
+    ld b, 3
+    ld a, %11000110
+    out (6), a
+    in a, (2)
+    bit 0, a
+    jr z, GetBatteryLevel_Done
+    
+    ld b, 4
 GetBatteryLevel_Done:
-	ld a, %110
-	out (6), a
-	pop af
-	ret
+    ld a, %110
+    out (6), a
+    pop af
+    ret
 #endif
 #else
     in a, (2)
-	and 1
-	ld b, a
-	pop af
-	ret
+    and 1
+    ld b, a
+    pop af
+    ret
 #endif
 
-DEMulA:          ; HL = DE × A
+DEMulA:          ; HL = DE ï¿½ A
     LD     HL, 0      ; Use HL to store the product
     LD     B, 8       ; Eight bits to check
 _loop:
@@ -169,18 +169,18 @@ _skip:
 ; Z for equal, NZ for not equal
 ; Inputs: HL and DE are strings to compare
 compareStrings:
-	ld a, (de)
-	or a
-	jr z, CompareStringsEoS
-	cp (hl)
-	ret nz
-	inc hl
-	inc de
-	jr CompareStrings
+    ld a, (de)
+    or a
+    jr z, CompareStringsEoS
+    cp (hl)
+    ret nz
+    inc hl
+    inc de
+    jr CompareStrings
 CompareStringsEoS:
-	ld a, (hl)
-	or a
-	ret
+    ld a, (hl)
+    or a
+    ret
     
 ; >>> Quicksort routine v1.1 <<<
 ; by Frank Yaul 7/14/04
@@ -188,11 +188,11 @@ CompareStringsEoS:
 ; Usage: bc->first, de->last,
 ;        call qsort
 quicksort:
-		push hl
-		push de
-		push bc
-		push af
-		ld      hl,0
+        push hl
+        push de
+        push bc
+        push af
+        ld      hl,0
         push    hl
 qsloop: ld      h,b
         ld      l,c
@@ -242,35 +242,35 @@ next2:  pop     hl      ;restore pivot
         ld      c,l     ;bc=lo,de=right
         jp      qsloop
 endqsort:
-		pop af
-		pop bc
-		pop de
-		pop hl
-		ret
+        pop af
+        pop bc
+        pop de
+        pop hl
+        ret
         
 Div32By16:
-; IN:	ACIX=dividend, DE=divisor
-; OUT:	ACIX=quotient, DE=divisor, HL=remainder, B=0
-	ld	hl,0
-	ld	b,32
+; IN:    ACIX=dividend, DE=divisor
+; OUT:    ACIX=quotient, DE=divisor, HL=remainder, B=0
+    ld    hl,0
+    ld    b,32
 Div32By16_Loop:
-	add	ix,ix
-	rl	c
-	rla
-	adc	hl,hl
-	jr	c,Div32By16_Overflow
-	sbc	hl,de
-	jr	nc,Div32By16_SetBit
-	add	hl,de
-	djnz	Div32By16_Loop
-	ret
+    add    ix,ix
+    rl    c
+    rla
+    adc    hl,hl
+    jr    c,Div32By16_Overflow
+    sbc    hl,de
+    jr    nc,Div32By16_SetBit
+    add    hl,de
+    djnz    Div32By16_Loop
+    ret
 Div32By16_Overflow:
-	or	a
-	sbc	hl,de
+    or    a
+    sbc    hl,de
 Div32By16_SetBit:
-	.db	$DD,$2C		; inc ixl, change to inc ix to avoid undocumented
-	djnz	Div32By16_Loop
-	ret
+    .db    $DD,$2C        ; inc ixl, change to inc ix to avoid undocumented
+    djnz    Div32By16_Loop
+    ret
     
 ; Subtracts DE from ACIX
 sub16from32:
@@ -316,29 +316,29 @@ _:  push hl \ pop ix
     
 ; remainder in a
 divHLbyC:
-   xor	a
-   ld	b, 16
-_: add	hl, hl
+   xor    a
+   ld    b, 16
+_: add    hl, hl
    rla
-   cp	c
-   jr	c, $+4
-   sub	c
-   inc	l
-   djnz	-_
+   cp    c
+   jr    c, $+4
+   sub    c
+   inc    l
+   djnz    -_
    ret
  
 ; remainder in HL
 divACbyDE:
-   ld	hl, 0
-   ld	b, 16
-_: sll	c
+   ld    hl, 0
+   ld    b, 16
+_: sll    c
    rla
-   adc	hl, hl
-   sbc	hl, de
-   jr	nc, $+4
-   add	hl, de
-   dec	c
-   djnz	-_
+   adc    hl, hl
+   sbc    hl, de
+   jr    nc, $+4
+   add    hl, de
+   dec    c
+   djnz    -_
    ret
    
 ; Returns HL as pointer to allocated memory containing version
