@@ -8,7 +8,7 @@
 #define lang_calendar "Kalender"
 #define lang_fileBrowser "Bestanden"
 #define lang_matrixEditor "Matrices"
-#define lang_connectToPC "Verbind met computer"
+#define lang_connectToPC "Verbinden met PC"
 #define lang_settings "Instellingen"
 #define lang_terminal "Terminal"
 
