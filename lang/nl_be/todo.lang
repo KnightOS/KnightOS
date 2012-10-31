@@ -1,4 +1,4 @@
 ; Dutch language file for /bin/todo
 
 ; Text
-#define lang_todo "Deze toepassing is nog niet\nafgewerkt.\nDruk op een knop om af te sluiten."
+#define lang_todo "Deze toepassing is nog niet\nbeschikbaar.Druk op een\nknop om af te sluiten."
