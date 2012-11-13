@@ -199,7 +199,7 @@ _:    pop af
 ; Prints a string from a stream
 DrawStrFromStream:
     push af
-_:        call StreamReadByte
+_:      call StreamReadByte
         jr nz, _
         or a
         jr z, _
@@ -208,7 +208,7 @@ _:        call StreamReadByte
         .db libID
         call DrawChar
         jr -_
-_:    pop hl
+_:    pop af
     ret
     
 DrawHexA:

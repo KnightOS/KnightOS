@@ -165,12 +165,14 @@ _:      pop af \ pop hl \ push hl \ push af
 ; Uses the upper-right hand corner of the screen to display
 ; input information, assumes you have a window chrome prepared.
 ; Possible values include \n and backspace (0x08).
+; Also watches for F1/F5 to launch castle/thread list
 getCharacterInput:
     ; lcall(drawCharacterSetIndicator)
     rst $10 \ .db libID \ call drawCharSetIndicator
     
     ld b, 0
-    call getKey
+    ; lcall(appGetKey)
+    rst $10 \ .db libID \ call appGetKey
     or a
     ret z ; Return if zero
     
