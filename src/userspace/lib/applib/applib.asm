@@ -17,6 +17,10 @@ JumpTable:
     jp appGetKey
     jp appWaitKey
     jp drawWindow
+    jp getCharacterInput
+    jp drawCharSetIndicator
+    jp setCharSet
+    jp getCharSet
     .db $FF
     
 ; Same as kernel getKey, but listens for
@@ -155,6 +159,106 @@ _:      pop af \ pop hl \ push hl \ push af
     pop bc
     pop de
     ret
+    
+; Returns a character (ASCII) in A based on the pressed key.
+; Uses the upper-right hand corner of the screen to display
+; input information, assumes you have a window chrome prepared.
+; Possible values include \n and backspace (0x08).
+; TODO: Add DEL
+getCharacterInput:
+    call getKey
+    or a
+    ret z ; Return if zero
+    
+    ; Check for special keys
+    cp kAlpha
+    jr z, setCharSetFromKey
+    cp k2nd
+    jr z, setCharSetFromKey
+    
+    ret
+    
+setCharSetFromKey:
+    cp kAlpha
+    ; lcall(z, setAlphaKey)
+    rst $10 \ .db libID \ call z, setAlphaKey
+    cp k2nd
+    ; lcall(z, set2ndKey)
+    rst $10 \ .db libID \ call z, set2ndKey
+    xor a
+    ret
+    
+setAlphaKey: ; Switch between alpha charsets
+    ; lld(a, (charSet))
+    rst $10 \ .db libID \ ld a, (charSet)
+    inc a
+    cp 2 ; Clamp to <2
+    jr c, _
+        xor a
+_:  ; lld((charSet), a)
+    rst $10 \ .db libID \ ld (charSet), a
+    ret
+    
+set2ndKey: ; Switch between symbol charsets
+    ; lld(a, (charSet))
+    rst $10 \ .db libID \ ld a, (charSet)
+    inc a
+    cp 2 ; Clamp 1 < A < 4
+    jr nc, _
+        ld a, 2
+    cp 4
+    jr c, _
+        ld a, 2
+_:  ; lld((charSet), a)
+    rst $10 \ .db libID \ ld (charSet), a
+    ret
+    
+; Draws the current character set indicator on a window
+drawCharSetIndicator:
+    push hl
+    push de
+    push bc
+    ; Clear old sprite, if present
+    ; lld(hl, clearCharSetSprite)
+    rst $10 \ .db libID \ ld hl, clearCharSetSprite
+    ld de, $5C02
+    ld b, 4
+    call putSpriteOR
+    
+    ; lld(a, (charSet))
+    rst $10 \ .db libID \ ld a, (charSet)
+        ; Get sprite in HL
+        add a, a \ add a, a ; A * 4
+        ; lld(hl, charSetSprites)
+        rst $10 \ .db libID \ ld hl, charSetSprites
+        add a, l
+        ld l, a
+        jr nc, $+3 \ inc h
+        ; Draw sprite
+        call putSpriteXOR
+    pop bc
+    pop de
+    pop hl
+    ret
+    
+charSet:
+    .db 0
+    
+; Sets the character mapping to A.
+; 0: uppercase \ 1: lowercase \ 2: symbols \ 3: extended
+setCharSet:
+    cp 4
+    ret nc ; Only allow 0-3
+    ; lld((charSet), a)
+    rst $10 \ .db libID \ ld (charSet), a
+    ret
+    
+getCharSet:
+    ; lld(a, (charSet))
+    rst $10 \ .db libID \ ld a, (charSet)
+    ret
+    
+#include "characters.asm"
 
 castlePath:
     .db "/bin/castle", 0
@@ -166,42 +270,57 @@ CastleSprite1: ; 16x4
     .db %11101000, %10101001
     .db %10101000, %10100101
     .db %11100110, %01101100
+    
 CastleSprite2: ; 8x4
     .db %00110010
     .db %10010101
     .db %00010110
     .db %10010011
+    
 ThreadListSprite: ; 8x5
     .db %00000000
     .db %00011100
     .db %00001100
     .db %00010100
     .db %00100000
+    
 MenuSprite1: ; 16x4
     .db %10100100, %11001010
     .db %11101010, %10101010
     .db %11101100, %10101010
     .db %10100110, %10101110
+    
 MenuSprite2: ; 8x3
     .db %00100000
     .db %01110000
     .db %11111000
-UppercaseASprite:
+    
+clearCharSetSprite:
+    .db %11100000
+    .db %11100000
+    .db %11100000
+    .db %11100000
+charSetSprites:
+
+uppercaseASprite:
     .db %01000000
     .db %10100000
     .db %11100000
     .db %10100000
-LowercaseASprite:
+    
+lowercaseASprite:
     .db %00000000
     .db %01100000
     .db %10100000
     .db %01100000
-SymbolSprite:
+    
+symbolSprite:
     .db %01000000
     .db %11000000
     .db %01000000
     .db %11100000
-ExtendedSprite:
+    
+extendedSprite:
     .db %01000000
     .db %01000000
     .db %00000000

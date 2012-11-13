@@ -1,0 +1,5 @@
+; English language file for /bin/terminal
+
+; Text
+#define lang_description "Terminal"
+#define lang_windowTitle "Terminal"

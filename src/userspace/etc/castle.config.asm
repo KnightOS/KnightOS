@@ -69,7 +69,7 @@
 .db $20, $54, $2f, $54, $29, $54, $29, $58
 .db $2f, $50, $20, $40, $2a, $40, $25, $40
 
-.dw terminalStr, todoPath
+.dw terminalStr, terminalPath
 .db $7f, $fe, $ff, $ff, $ff, $ff, $80, $01
 .db $a0, $01, $90, $01, $a0, $01, $87, $01
 .db $80, $01, $80, $01, $80, $01, $80, $01
@@ -99,6 +99,9 @@ terminalStr:
     .db lang_terminal, 0
 todoPath:
     .db "/bin/todo", 0
+
+terminalPath:
+    .db "/bin/terminal", 0
     
 helloStr:
     .db lang_hello, 0
