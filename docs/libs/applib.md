@@ -62,7 +62,7 @@ Draws the standard UI window chrome. Usually called by the built-in UI stack.
 
 *Outputs*
 
-![Sample Window](https://github.com/SirCmpwn/KnightOS/tree/master/docs/libs/sampleWindow.png)
+![Sample Window](http://i.imgur.com/gFnoR.png)
 
 ## getCharacterInput
 
