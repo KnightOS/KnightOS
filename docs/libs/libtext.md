@@ -3,7 +3,7 @@
 libtext is a library for graphically drawing text on an LCD buffer. It is located at `/lib/libtext` on a normal KnightOS installation.
 
 The source for libtext may be found in
-[src/userspace/lib/libtext](https://github.com/SirCmpwn/KnightOS/tree/master/src/userspace/lib/libtext).
+[src/userspace/lib/libtext/](https://github.com/SirCmpwn/KnightOS/tree/master/src/userspace/lib/libtext).
 
 libtext uses the ANSI character set.
 
@@ -22,8 +22,6 @@ The following routines are available:
 
 ## drawChar
 
-**Address**: 0x0006
-
 Draws a single character to the screen with OR logic (black).
 
 *Inputs*
@@ -38,8 +36,6 @@ Draws a single character to the screen with OR logic (black).
 This will advance D, E as required. If \n is printed, D will be updated to B, or the left margin.
 
 ## drawCharAND
-
-**Address**: 0x0006
 
 Draws a single character to the screen with AND logic (white).
 
@@ -56,8 +52,6 @@ This will advance D, E as required. If \n is printed, D will be updated to B, or
 
 ## drawCharXOR
 
-**Address**: 0x000C
-
 Draws a single character to the screen with XOR logic (inverted).
 
 *Inputs*
@@ -72,8 +66,6 @@ Draws a single character to the screen with XOR logic (inverted).
 This will advance D, E as required. If \n is printed, D will be updated to B, or the left margin.
 
 ## drawStr
-
-**Address**: 0x000F
 
 Draws a zero-delimited string to the screen with OR logic (black).
 
@@ -90,8 +82,6 @@ This will advance D, E as required. If \n is printed, D will be updated to B, or
 
 ## drawStrAND
 
-**Address**: 0x0012
-
 Draws a zero-delimited string to the screen with AND logic (white).
 
 *Inputs*
@@ -106,8 +96,6 @@ Draws a zero-delimited string to the screen with AND logic (white).
 This will advance D, E as required. If \n is printed, D will be updated to B, or the left margin.
 
 ## drawStrXOR
-
-**Address**: 0x0015
 
 Draws a zero-delimited string to the screen with XOR logic (inverted).
 
@@ -124,8 +112,6 @@ This will advance D, E as required. If \n is printed, D will be updated to B, or
 
 ## drawStrFromStream
 
-**Address**: 0x0018
-
 Draws a zero-delimited string to the screen from a file stream, with OR logic (black).
 
 *Inputs*
@@ -139,8 +125,6 @@ Draws a zero-delimited string to the screen from a file stream, with OR logic (b
 This advances the stream pointer to the end of the string (the byte after the zero).
 
 ## drawHexA
-
-**Address**: 0x001B
 
 Draws the value of A in hexadecimal notation to the screen, with OR logic (black).
 

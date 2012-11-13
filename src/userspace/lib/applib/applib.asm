@@ -21,6 +21,8 @@ JumpTable:
     jp drawCharSetIndicator
     jp setCharSet
     jp getCharSet
+    jp launchCastle
+    jp launchThreadList
     .db $FF
     
 ; Same as kernel getKey, but listens for
@@ -160,7 +162,7 @@ _:      pop af \ pop hl \ push hl \ push af
     pop de
     ret
     
-; Returns a character (ASCII) in A based on the pressed key.
+; Returns a character (ANSI) in A based on the pressed key.
 ; Returns actual raw keypress in B.
 ; Uses the upper-right hand corner of the screen to display
 ; input information, assumes you have a window chrome prepared.

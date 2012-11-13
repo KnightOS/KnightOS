@@ -7,3 +7,5 @@ getCharacterInput .equ 15
 drawCharSetIndicator .equ 18
 setCharSet .equ 21
 getCharSet .equ 24
+launchCastle .equ 27
+launchThreadList .equ 30
