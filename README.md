@@ -38,14 +38,14 @@ Obviously, you will need to install Mono first.
 
 ## Installing
 
-When you build from source, ROM files for emulation are output to bin/<configuration>/KnightOS.rom.
-8xu files are output to bin/<configuration>/KnightOS.8xu, signed and ready for transfer to actual
+When you build from source, ROM files for emulation are output to bin/\<configuration>/KnightOS.rom.
+8xu files are output to bin/\<configuration>/KnightOS.8xu, signed and ready for transfer to actual
 hardware. Basically, if you just want an installable version, do this from the command line:
 
     $ cd build/
     $ build --configuration <your calculator model>
 
-<your calculator model> can be one of the following values:
+\<your calculator model> can be one of the following values:
 
 * TI73
 * TI83p
