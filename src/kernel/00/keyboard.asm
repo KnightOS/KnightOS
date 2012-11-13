@@ -1,7 +1,7 @@
 ; Waits for a key to be pressed, then returns it
 waitKey:
 _:  call HasKeypadLock
-    jr nz, -_
+    jr nz, -_ ; Loop until a lock is acquired
 _:  call getKey
     or a
     jr z, -_

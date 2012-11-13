@@ -36,10 +36,20 @@ start:
     rst $10 \ .db applibId
     call drawWindow
     
-    call fastCopy
-    
     call flushKeys
-    call waitKey
+   
+_:  call fastCopy
+    
+    ;applib(getCharacterInput)
+    rst $10 \ .db applibId
+    call getCharacterInput
+    
+    or a
+    jr z, -_
+    jr $
+    
+    cp kClear
+    jr nz, -_
     ret
     
 windowTitle:

@@ -166,6 +166,9 @@ _:      pop af \ pop hl \ push hl \ push af
 ; Possible values include \n and backspace (0x08).
 ; TODO: Add DEL
 getCharacterInput:
+    ; lcall(drawCharacterSetIndicator)
+    rst $10 \ .db libID \ call drawCharSetIndicator
+
     call getKey
     or a
     ret z ; Return if zero
@@ -175,7 +178,6 @@ getCharacterInput:
     jr z, setCharSetFromKey
     cp k2nd
     jr z, setCharSetFromKey
-    
     ret
     
 setCharSetFromKey:
@@ -185,6 +187,7 @@ setCharSetFromKey:
     cp k2nd
     ; lcall(z, set2ndKey)
     rst $10 \ .db libID \ call z, set2ndKey
+    call flushKeys
     xor a
     ret
     
@@ -203,11 +206,11 @@ set2ndKey: ; Switch between symbol charsets
     ; lld(a, (charSet))
     rst $10 \ .db libID \ ld a, (charSet)
     inc a
-    cp 2 ; Clamp 1 < A < 4
-    jr nc, _
-        ld a, 2
-    cp 4
+    cp 4 ; Clamp 1 < A < 4
     jr c, _
+        ld a, 2
+_:  cp 2
+    jr nc, _
         ld a, 2
 _:  ; lld((charSet), a)
     rst $10 \ .db libID \ ld (charSet), a
@@ -218,15 +221,16 @@ drawCharSetIndicator:
     push hl
     push de
     push bc
-    ; Clear old sprite, if present
-    ; lld(hl, clearCharSetSprite)
-    rst $10 \ .db libID \ ld hl, clearCharSetSprite
-    ld de, $5C02
-    ld b, 4
-    call putSpriteOR
+    push af
+        ; Clear old sprite, if present
+        ; lld(hl, clearCharSetSprite)
+        rst $10 \ .db libID \ ld hl, clearCharSetSprite
+        ld de, $5C02
+        ld b, 4
+        call putSpriteOR
     
-    ; lld(a, (charSet))
-    rst $10 \ .db libID \ ld a, (charSet)
+        ; lld(a, (charSet))
+        rst $10 \ .db libID \ ld a, (charSet)
         ; Get sprite in HL
         add a, a \ add a, a ; A * 4
         ; lld(hl, charSetSprites)
@@ -236,6 +240,7 @@ drawCharSetIndicator:
         jr nc, $+3 \ inc h
         ; Draw sprite
         call putSpriteXOR
+    pop af
     pop bc
     pop de
     pop hl
