@@ -13,9 +13,9 @@ KnightOS is a 3rd party operating system for the following Texas Instruments cal
 It aims to provide a unix-like enviornment with multitasking and a tree-based filesystem,
 in addition to generally being a better experience than the official TIOS.
 
-\**For the TI-73 Explorer, use the standard TI-73 version of KnightOS.*
+\* *For the TI-73 Explorer, use the standard TI-73 version of KnightOS.*
 
-\*\**For the TI-84 Pocket.fr, use the standard TI-84+ version of KnightOS.*
+\*\* *For the TI-84 Pocket.fr, use the standard TI-84+ version of KnightOS.*
 
 **NOTE**: Newer versions of the TI-84+, TI-84+ SE, and all TI-84 Pocket.fr calculators are shipped
 with boot code 1.03. You must patch these calculators before you will be able to install KnightOS
