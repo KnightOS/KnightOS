@@ -161,23 +161,57 @@ _:      pop af \ pop hl \ push hl \ push af
     ret
     
 ; Returns a character (ASCII) in A based on the pressed key.
+; Returns actual raw keypress in B.
 ; Uses the upper-right hand corner of the screen to display
 ; input information, assumes you have a window chrome prepared.
 ; Possible values include \n and backspace (0x08).
-; TODO: Add DEL
 getCharacterInput:
     ; lcall(drawCharacterSetIndicator)
     rst $10 \ .db libID \ call drawCharSetIndicator
-
+    
+    ld b, 0
     call getKey
     or a
     ret z ; Return if zero
+    
+    ld b, a
     
     ; Check for special keys
     cp kAlpha
     jr z, setCharSetFromKey
     cp k2nd
     jr z, setCharSetFromKey
+    
+    push bc
+    
+    ; Get key value
+    sub 9
+    jr c, _
+    cp 41
+    jr nc, _
+    
+    push hl
+        push af
+            ; lld(a, (charSet))
+            rst $10 \ .db libID \ ld a, (charSet)
+            add a, a \ add a, a \ add a, a \ ld b, a \ add a, a \ add a, a \ add a, b ; A * 40
+            ; lld(hl, characterMapUppercase)
+            rst $10 \ .db libID \ ld hl, characterMapUppercase
+            add a, l
+            ld l, a
+            jr nc, $+3 \ inc h
+        pop af
+        
+        add a, l
+        ld l, a
+        jr nc, $+3 \ inc h
+        ld a, (hl)
+    pop hl
+    pop bc
+    ret
+    
+_:  xor a
+    pop bc
     ret
     
 setCharSetFromKey:

@@ -45,12 +45,26 @@ _:  call fastCopy
     call getCharacterInput
     
     or a
-    jr z, -_
-    jr $
+    jr z, _ ; Check non-character keys
+    push bc
     
+        ; Clear area
+        push af
+            ld e, 2 \ ld l, 8 \ ld bc, $0508 \ call rectAND ; TODO: Make rect routine safe
+        pop af
+    
+        ; Handle characters
+        ld de, $0208
+        ; libtext(drawChar)
+        rst $10 \ .db libTextId
+        call drawChar
+    
+    pop bc
+_:  ld a, b
     cp kClear
-    jr nz, -_
-    ret
+    ret z
+    
+    jr --_ ; Loop
     
 windowTitle:
     .db lang_windowTitle, 0
