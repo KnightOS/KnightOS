@@ -6,7 +6,10 @@
 #include "keys.inc"
 #include "defines.inc"
 #include "terminal.lang"
-bufferSize .equ 256
+bufferSize .equ 512 ; For reading input
+leftMargin .equ 2
+commandChar .equ '$'
+cursorChar .equ '_'
 .list
 ; Header
     .db 0
@@ -34,17 +37,29 @@ start:
     kld hl, windowTitle
     xor a
     ;applib(drawWindow)
-    rst $10 \ .db applibId
-    call drawWindow
+    rst $10 \ .db applibId \ call drawWindow
+    
+    ; Set default character set
+    ld a, charSetLowercase
+    ;applib(setCharSet)
+    rst $10 \ .db applibId \ call setCharSet
     
     call flushKeys
     
     ld bc, bufferSize
     call malloc
+    
+    ld de, leftMargin << 8 | 8
+idleLoop: ; Run when there is no attached program
+    ; Draw out the command character
+    ld a, commandChar
+    kcall term_printChar
+    kcall term_advanceCursor
+    kcall term_readString
+    jr idleLoop
+    
+#include "routines.asm"
    
-idleLoop: ; when there is no attached program
-    
-    
 windowTitle:
     .db lang_windowTitle, 0
 libTextPath:

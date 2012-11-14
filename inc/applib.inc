@@ -9,3 +9,9 @@ setCharSet .equ 21
 getCharSet .equ 24
 launchCastle .equ 27
 launchThreadList .equ 30
+
+; Character sets
+charSetUppercase .equ 0
+charSetLowercase .equ 1
+charSetSymbol .equ 2
+charSetExtended .equ 3
