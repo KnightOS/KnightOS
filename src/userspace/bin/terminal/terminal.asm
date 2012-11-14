@@ -52,11 +52,21 @@ start:
     ld de, leftMargin << 8 | 8
     
 idleLoop: ; Run when there is no attached program
+    call memSeekToStart
     ; Draw out the command character
     ld a, commandChar
     kcall term_printChar
     
+    ; Clear out old input
     xor a \ call memset
+    push de
+        push ix \ pop de
+        kld hl, binPath
+        ld bc, 5
+        ldir
+        push de \ pop ix
+    pop de
+    
     kcall term_readString
     
     ; Special case for "exit" command
@@ -90,3 +100,5 @@ exitStr:
     .db "exit", 0
 commandNotFoundStr:
     .db lang_commandNotFound, 0
+binPath:
+    .db "/bin/"

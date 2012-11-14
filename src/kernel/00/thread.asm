@@ -333,7 +333,7 @@ _:      ld a, 8
         ld l, a
         djnz --_
     pop bc
-    or a
+    or 1
     ld a, errNoSuchThread
     ret
 
