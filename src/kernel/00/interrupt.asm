@@ -1,5 +1,3 @@
-
-
 sysInterrupt:
     di
     push af
