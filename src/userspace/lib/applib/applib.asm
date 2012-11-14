@@ -1,3 +1,6 @@
+; KnightOS applib
+; General purpose application library
+
 .nolist
 libId .equ $02
 #include "kernel.inc"

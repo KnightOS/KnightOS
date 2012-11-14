@@ -10,6 +10,7 @@
 #include "interrupt.asm"
 #include "memory.asm"
 #include "thread.asm"
+#include "signals.asm"
 #include "libraries.asm"
 #include "flash.asm"
 #include "knightfs.asm"

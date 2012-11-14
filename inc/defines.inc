@@ -45,6 +45,7 @@ errTooManyStreams .equ 6
 errNoSuchThread .equ 7
 errTooManyLibraries .equ 8
 errUnsupported .equ 9
+errTooManySignals .equ 10
 
 kernelMem .equ $8000
 kernelGarbage .equ $8100
@@ -84,6 +85,7 @@ clip_mask .equ $80C8
 maxThreads .equ 10
 maxFileStreams .equ 5
 maxLibraries .equ 10
+maxSignals .equ 5 ; Consider increasing this
 
 ; Filesystem stuff
 fsEndOfTable .equ $FF
