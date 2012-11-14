@@ -50,12 +50,31 @@ start:
     call malloc
     
     ld de, leftMargin << 8 | 8
+    
 idleLoop: ; Run when there is no attached program
     ; Draw out the command character
     ld a, commandChar
     kcall term_printChar
-    kcall term_advanceCursor
+    
+    xor a \ call memset
     kcall term_readString
+    
+    ; Special case for "exit" command
+    push de
+        push ix \ pop hl
+        kld de, exitStr
+        call compareStrings
+    pop de
+    ret z
+    
+    ; Interpret given string
+    
+    ; ...
+    
+    ; Display error
+    kld hl, commandNotFoundStr
+    kcall term_printString
+    
     jr idleLoop
     
 #include "routines.asm"
@@ -66,3 +85,7 @@ libTextPath:
     .db "/lib/libtext", 0
 applibPath:
     .db "/lib/applib", 0
+exitStr:
+    .db "exit", 0
+commandNotFoundStr:
+    .db lang_commandNotFound, 0

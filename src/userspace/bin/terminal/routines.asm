@@ -9,7 +9,10 @@ readString_cursorLoop:
         ; on the right properly
         ; Update cursor
         ld a, cursorChar
-        kcall term_printChar
+        push de
+            ; libtext(drawCharXOR)
+            rst $10 \ .db libTextId \ call drawCharXOR
+        pop de
         kld hl, cursorState
         inc (hl)
         
@@ -49,13 +52,15 @@ _:      inc sp \ inc sp
         res 0, a
         kld (cursorState), a
         ld a, cursorChar
-        kcall term_printChar
+        push de
+            ; libtext(drawCharXOR)
+            rst $10 \ .db libTextId \ call drawCharXOR
+        pop de
         
 _:      ld a, c
         kcall term_printChar
         cp '\n'
         jr z, readString_done
-        kcall term_advanceCursor
         ld (ix), a
         inc ix
         
@@ -74,6 +79,7 @@ term_printChar:
         ; libtext(drawCharXOR)
         rst $10 \ .db libTextId \ call drawCharXOR
     pop de
+    kcall term_advanceCursor
     ret
 _:
     pop de
@@ -86,6 +92,8 @@ _:
 
 ; Wraps to the next line if the character is too wide.
 term_advanceCursor:
+    cp '\n'
+    ret z
     ; Measure character
     push af
         ; libtext(measureChar)
@@ -125,6 +133,18 @@ term_checkScroll:
         ld bc, 6 << 8 | 94 ; height << 8 | width
         call rectAND
     pop bc \ pop de \ pop hl
+    ret
+    
+; Prints (hl) to the terminal
+term_printString:
+    push hl
+_:      ld a, (hl)
+        or a
+        jr z, _
+        kcall term_printChar
+        inc hl
+        jr -_
+_:  pop hl
     ret
     
 cursorState:

@@ -3,3 +3,4 @@
 ; Text
 #define lang_description "Terminal"
 #define lang_windowTitle "Terminal"
+#define lang_commandNotFound "Command not found\n"

@@ -16,6 +16,24 @@ allocScreenBuffer:
     pop ix
     pop bc
     ret
+    
+; Sets the entire allocated section to A
+memset:
+    push ix
+    push bc
+    push hl
+    push de
+        call memSeekToStart
+        push ix \ pop hl \ push ix \ pop de
+        inc de
+        ld (hl), a
+        ld c, (IX + -2) \ ld b, (IX + -1)
+        ldir
+    pop de
+    pop hl
+    pop bc
+    pop ix
+    ret
 
 ; Inputs:    IX is somewhere within pre-allocated memory
 ; Outputs:    IX points to the start of that memory
