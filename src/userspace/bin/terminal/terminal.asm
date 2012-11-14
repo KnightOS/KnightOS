@@ -68,8 +68,8 @@ idleLoop: ; Run when there is no attached program
     ret z
     
     ; Interpret given string
-    
-    ; ...
+    kcall parseInput
+    jr z, idleLoop
     
     ; Display error
     kld hl, commandNotFoundStr
@@ -77,6 +77,7 @@ idleLoop: ; Run when there is no attached program
     
     jr idleLoop
     
+#include "parser.asm"
 #include "routines.asm"
    
 windowTitle:

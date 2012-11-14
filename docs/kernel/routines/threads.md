@@ -8,6 +8,8 @@ The kernel provides a number of routines for creating, manipulating, and killing
 * [killThread](#killthread)
 * [launchProgram](#launchprogram)
 * [resumeThread](#resumethread)
+* [setInitialDE](#setinitialde)
+* [setInitialHL](#setinitialhl)
 * [setReturnPoint](#setreturnpoint)
 * [startThread](#startthread)
 * [suspendCurrentThread](#suspendcurrentthread)
@@ -17,8 +19,6 @@ The code for these routines may be found in
 
 ## getCurrentThreadId
 
-**Address**: 0x3FE5
-
 Retrieves the ID of the currently executing thread.
 
 *Outputs*
@@ -26,8 +26,6 @@ Retrieves the ID of the currently executing thread.
 * **A**: Current thread ID
 
 ## getThreadEntry
-
-**Address**: 0x3F25
 
 Gets a pointer to the specified thread in the kernel thread table.
 
@@ -45,8 +43,6 @@ Gets a pointer to the specified thread in the kernel thread table.
 
 ## killCurrentThread
 
-**Address**: 0x3FDF
-
 Immediately kills the currently executing thread.
 
 *Notes*
@@ -60,8 +56,6 @@ This routine does not return; you should call it with JP instead of CALL.
 
 ## killThread
 
-**Address**: 0x3FDC
-
 Immediately kills the specified thread.
 
 *Inputs*
@@ -73,8 +67,6 @@ Immediately kills the specified thread.
 * errNoSuchThread
 
 ## launchProgram
-
-**Address**: 0x3F46
 
 Loads the given file into memory and executes it as a program.
 
@@ -99,8 +91,6 @@ header is used to determine how much stack memory to allocate, and the thread fl
 
 ## resumeThread
 
-**Address**: 0x3F04
-
 Resumes execution of the specified suspended thread.
 
 *Inputs*
@@ -116,9 +106,25 @@ Resumes execution of the specified suspended thread.
 Execution does not begin immediately after this is called. The thread will be resumed
 on the next context switch.
 
-## setReturnPoint
+## setInitialDE
 
-**Address**: 0x3F22
+Sets the value of DE at the time a new thread starts.
+
+*Inputs*
+
+* **A**: Thread ID
+* **DE**: Initial value
+
+## setInitialHL
+
+Sets the value of HL at the time a new thread starts.
+
+*Inputs*
+
+* **A**: Thread ID
+* **HL**: Initial value
+
+## setReturnPoint
 
 Overrides the default return point of the specified thread. The default is
 [killCurrentThread](#killcurrentthread).
@@ -138,10 +144,7 @@ If you wish to set the return point before launching the thread, disable interru
 DI before calling launchProgram or startThread. Re-enable interrupts when you wish for
 context switching to resume, and your thread to be started.
 
-
 ## startThread
-
-**Address**: 0x3FE2
 
 Starts a new thread.
 
@@ -171,8 +174,6 @@ disabled (DI) and it will preserve the interrupt state. When you re-enable inter
 next context switch cycle will begin the new thread.
 
 ## suspendCurrentThread
-
-**Address**: 0x3F1F
 
 Suspends the executing thread.
 
