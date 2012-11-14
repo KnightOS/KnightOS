@@ -356,7 +356,7 @@ getBootCodeVersionString:
             ld hl, $400F ; Location of boot code version string
             call stringLength
             inc bc
-            call allocMem
+            call malloc
             push ix \ pop de
             ldir
             push ix \ pop hl

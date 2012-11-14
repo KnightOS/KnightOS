@@ -61,7 +61,7 @@ _:            pop af
                 push af
                     ld a, $FE
                     ld (currentThreadIndex), a
-                    call allocMem
+                    call malloc
                     jp nz, LoadLibrary_OutOfMem
                 pop af
                 ld (currentThreadIndex), a

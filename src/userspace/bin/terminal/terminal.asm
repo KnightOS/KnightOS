@@ -6,6 +6,7 @@
 #include "keys.inc"
 #include "defines.inc"
 #include "terminal.lang"
+bufferSize .equ 256
 .list
 ; Header
     .db 0
@@ -37,34 +38,12 @@ start:
     call drawWindow
     
     call flushKeys
+    
+    ld bc, bufferSize
+    call malloc
    
-_:  call fastCopy
+idleLoop: ; when there is no attached program
     
-    ;applib(getCharacterInput)
-    rst $10 \ .db applibId
-    call getCharacterInput
-    
-    or a
-    jr z, _ ; Check non-character keys
-    push bc
-    
-        ; Clear area
-        push af
-            ld e, 2 \ ld l, 8 \ ld bc, $0508 \ call rectAND ; TODO: Make rect routine safe
-        pop af
-    
-        ; Handle characters
-        ld de, $0208
-        ; libtext(drawChar)
-        rst $10 \ .db libTextId
-        call drawChar
-    
-    pop bc
-_:  ld a, b
-    cp kClear
-    ret z
-    
-    jr --_ ; Loop
     
 windowTitle:
     .db lang_windowTitle, 0

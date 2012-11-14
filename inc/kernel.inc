@@ -5,8 +5,8 @@ sysInterrupt .equ $3FF7
 contextSwitch .equ $3FF4
 formatMem .equ $3FF1
 memSeekToStart .equ $3FEE
-allocMem .equ $3FEB
-freeMem .equ $3FE8
+malloc .equ $3FEB
+free .equ $3FE8
 getCurrentThreadID .equ $3FE5
 startThread .equ $3FE2
 killCurrentThread .equ $3FDF

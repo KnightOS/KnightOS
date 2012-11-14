@@ -60,7 +60,7 @@ _:  di
         add a, 24 ; Required minimum stack size for system use
         ld c, a
         jr nc, $+3 \ inc b
-        call allocMem
+        call malloc
         jr nz, startThread_mem
         push ix \ pop hl
         dec ix \ dec ix
@@ -148,7 +148,7 @@ KillCurrentThread_DeallocationLoop:
     ld b, (ix)
     inc ix
     jr nz, _
-    call freeMem
+    call free
     jr KillCurrentThread_Deallocate
 _:  inc ix \ inc ix
     inc bc \ inc bc
@@ -234,7 +234,7 @@ KillThread_DeallocationLoop:
     ld b, (ix)
     inc ix
     jr nz, _
-    call freeMem
+    call free
 _:  inc ix \ inc ix
     inc bc \ inc bc
     add ix, bc
@@ -286,7 +286,7 @@ launchProgram:
             push af
                 ld a, $FF
                 ld (currentThreadIndex), a ; The null thread will allocate memory to the next thread
-                call allocMem
+                call malloc
             pop af
             ld (currentThreadIndex), a
         pop de

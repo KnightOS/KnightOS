@@ -86,7 +86,7 @@ homeSelect:
         push de
             call getStreamInfo
         pop de
-        call allocMem
+        call malloc
         push ix
             call streamReadToEnd
             call closeStream
@@ -120,7 +120,7 @@ _:      push bc
         djnz ---_
     pop af
     call memSeekToStart
-    call freeMem
+    call free
     kjp homeLoop
     
 incrementContrast:

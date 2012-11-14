@@ -126,7 +126,7 @@ _:
         push de
             call getStreamInfo
         pop de
-        call allocMem
+        call malloc
         push ix
             call streamReadToEnd
             call closeStream
@@ -193,7 +193,7 @@ _:
     pop af
     dec ix
     call memSeekToStart
-    call freeMem
+    call free
     pop de
     ret
     

@@ -48,13 +48,12 @@ start:
     ;libtext(drawStr)
     rst $10 \ .db libTextId
     call drawStr
-    call freeMem
     
     call getBootCodeVersionString
     ;libtext(drawStr)
     rst $10 \ .db libTextId
     call drawStr
-    call freeMem
+    call free
     
 _:  call fastCopy
     call flushKeys

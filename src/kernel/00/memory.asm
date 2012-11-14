@@ -11,7 +11,7 @@ allocScreenBuffer:
     push bc
     push ix
         ld bc, 768
-        call allocMem
+        call malloc
         push ix \ pop iy
     pop ix
     pop bc
@@ -52,7 +52,7 @@ _:  pop de
 ;            On success, Z is set
 ;            On failure, A is error code
 ;            On failure, Z is reset
-allocMem:
+malloc:
     push af
     ld a, i
     push af
@@ -209,7 +209,7 @@ _:  pop af
     
 ; Inputs:    IX: Pointer to first byte of previously allocated memory
 ; Outputs:    None
-freeMem:
+free:
     push af
     ld a, i
     push af
