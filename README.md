@@ -22,6 +22,10 @@ with boot code 1.03. You must patch these calculators before you will be able to
 on them. Instructions for doing so may be found
 [here](https://github.com/SirCmpwn/KnightOS/tree/master/boot-patch).
 
+### Need help?
+
+Make sure you drop by the official IRC channel if you have questions or need help: #knightos on irc.freenode.net.
+
 ## Building
 
 In build/, run "build.exe" from the command line. You can use "build.exe --help" for more
