@@ -264,6 +264,12 @@ Boot_FileSystemConfig_EoT:
     in a, (6)
     ld (EndOfTablePage), a
     
+    ; Good place to test kernel routines
+    
+    ; ...
+    
+    ; /Good place to test kernel routines
+    
     ld a, 0
     ld (nextThreadId), a
     ld (nextStreamId), a
