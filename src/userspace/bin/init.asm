@@ -14,6 +14,10 @@ returnToCastle:
     jp killCurrentThread
     
 start:
+    ; Boot status codes
+    cp 1 ; ON+MODE pressed
+    jr z, launchCastle
+    
     ; Set init memory to be permenant
     kcall _
 _:  pop ix
@@ -21,6 +25,7 @@ _:  pop ix
     dec ix \ dec ix \ dec ix
     ld (ix), $FE
 
+launchCastle:
     kld de, castlePath
     ld (ix + 6), e
     ld (ix + 7), d

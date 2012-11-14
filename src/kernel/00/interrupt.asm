@@ -36,8 +36,9 @@ IntHandleON:
     out (03h), a
     set 0, a
     out (03h), a
-
-    jr SysInterruptDone
+    
+    ; Check for special keycodes
+    jr handleKeyboard
 IntHandleTimer1:
     in a, (03h)
     res 1, a
@@ -110,7 +111,7 @@ IntHandleLink:
     set 4, a
     out (03h), a
     ; Link interrupt
-SysInterruptDone:
+sysInterruptDone:
     pop hl
     pop de
     pop bc
@@ -125,6 +126,24 @@ SysInterruptDone:
     pop af
     ei
     ret
+    
+handleKeyboard:
+    ld a, $FF
+    out (1), a
+    ; Try ON+MODE
+    ld a, $BF
+    out (1), a
+    in a, (1)
+    bit 6, a
+    jr z, handleOnMODE
+    jr sysInterruptDone
+    
+handleOnMODE:
+    ld de, bootFile
+    call launchProgram
+    ld h, 1
+    call setInitialA
+    jr sysInterruptDone
     
 #ifdef USB
 USBInterrupt:

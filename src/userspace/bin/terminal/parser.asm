@@ -34,10 +34,18 @@ term_launchProgram:
     ld b, a
     ei \ halt
 ioLoop:
+    ; We can be given focus again through the threadlist, so make sure everything
+    ; still looks nice and we are responsive
+    ; TODO: appGetKey appears to break the thread list here
+    ; Probably the same problem as that one problem
+    ; applib(appGetKey)
+    rst $10 \ .db applibId \ call appGetKey
+    call fastCopy
     ; Check if the thread is still alive
     ld a, b
     call getThreadEntry
     jr z, ioLoop
+    ; Reset state
     call getLcdLock
     call getKeypadLock
     call flushKeys

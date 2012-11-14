@@ -410,6 +410,30 @@ _:      inc hl \ inc hl \ inc hl
     pop de
     ret
     
+; Sets the initial value of A on start up.
+; Input: H: Start value
+;        A: Thread Id
+setInitialA:
+    push de
+    push bc
+        ex de, hl
+        call getThreadEntry
+        jr z, _
+        pop bc
+        pop de
+        ret
+_:      inc hl \ inc hl \ inc hl
+        ld c, (hl) \ inc hl \ ld b, (hl)
+        push bc \ pop ix
+        call memSeekToStart
+        dec ix \ dec ix
+        ld c, (ix) \ ld b, (ix + 1)
+        add ix, bc
+        ld (ix + -3), d
+    pop bc
+    pop de
+    ret
+    
 suspendCurrentThread:
     push hl
     push af

@@ -34,6 +34,7 @@ getKey:
 _:  push bc
     ld a, i
     push af
+    di
     push de
     push hl
 gs_GetK2:

@@ -1,10 +1,11 @@
 .nolist
 #include "kernel.inc"
 #include "macros.inc"
-#include "libtext.inc"
-#include "applib.inc"
 #include "keys.inc"
 #include "defines.inc"
+#include "libtext.inc"
+#include "applib.inc"
+#include "stdio.inc"
 #include "terminal.lang"
 bufferSize .equ 512 ; For reading input
 leftMargin .equ 2
@@ -20,6 +21,7 @@ cursorChar .equ '_'
     jr start
     .db 'K'
     .db lang_description, 0
+programFlags:
     .db %00000010
 
 start:
@@ -96,6 +98,8 @@ libTextPath:
     .db "/lib/libtext", 0
 applibPath:
     .db "/lib/applib", 0
+stdioPath:
+    .db "/lib/stdio", 0
 exitStr:
     .db "exit", 0
 commandNotFoundStr:

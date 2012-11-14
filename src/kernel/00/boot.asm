@@ -276,6 +276,8 @@ Boot_FileSystemConfig_EoT:
     
     ld de, bootFile
     call launchProgram
+    ld h, 0
+    call setInitialA
     
     jp contextSwitch_search
     
