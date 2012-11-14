@@ -5,9 +5,9 @@
 .list
 ; Header
     .db 0
-    .db 4 ; Stack size
+    .db 0 ; Stack size
 ; Program
 .org 0
 
 start:
-    ret
+    jp boot
