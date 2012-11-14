@@ -6,20 +6,22 @@
 ;           HL: Message payload
 ; Adds a signal to the signal queue
 createSignal:
-    push af
-    ld a, i
     push de
+    ld d, a ; Save thread ID
+    ld a, i
     push af
-        ex de, hl
-        ld a, (activeSignals)
-        cp maxSignals
-        jr nc, createSignal_tooMany
-        add a, a \ add a, a
-        ld hl, signalTable
-        add a, l
-        ld l, a
-        jr nc, $+3 \ inc h
-        ; HL points to target signal address
+        ld a, d
+        push af
+            ex de, hl
+            ld a, (activeSignals)
+            cp maxSignals
+            jr nc, createSignal_tooMany
+            add a, a \ add a, a
+            ld hl, signalTable
+            add a, l
+            ld l, a
+            jr nc, $+3 \ inc h
+            ; HL points to target signal address
         pop af
         ld (hl), a \ inc hl \ ld (hl), b \ inc hl
         ld (hl), e \ inc hl \ ld (hl), d

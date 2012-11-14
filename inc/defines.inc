@@ -54,7 +54,7 @@ userMemory .equ $8200
 
 threadTable .equ kernelMem
 libraryTable .equ $8050
-threadTableSize .equ libraryTable - threadTable
+threadTableSize .equ libraryTable - threadTable ; TODO: More of these? Less?
 signalTable .equ $8078
 fileStreamTable .equ $808C
 fileStreamTableSize .equ $28
