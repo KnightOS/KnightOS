@@ -3,16 +3,16 @@
 The kernel provides many routines for manipulating allocation and freeing of memory.
 Several routines are also provided for manipulating pre-allocated memory.
 
-* [allocMem](#allocMem)
+* [malloc](#malloc)
 * [allocScreenBuffer](#allocscreenbuffer)
 * [formatMem](#formatmem)
-* [freeMem](#freemem)
+* [free](#free)
 * [memSeekToStart](#memseektostart)
 
 The code for these routines may be found in 
 [src/kernel/00/memory.asm](https://github.com/SirCmpwn/KnightOS/blob/master/src/kernel/00/memory.asm).
 
-## allocMem
+## malloc
 
 **Address**: 0x3FEB
 
@@ -62,7 +62,7 @@ Deallocates all memory and reformats RAM to prepare it for new allocations.
 This routine is used during the boot sequence of KnightOS, and should not be used under
 normal contitions.
 
-## freeMem
+## free
 
 **Address**: 0x3FE8
 
