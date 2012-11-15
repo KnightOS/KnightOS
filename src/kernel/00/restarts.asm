@@ -22,7 +22,6 @@ kcall:
 _:
     inc hl ; Handle IX/IY prefix
 _:
-
     inc hl
 
     ld c, (hl)
