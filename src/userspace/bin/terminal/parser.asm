@@ -27,24 +27,40 @@ parseInput_error:
     pop de
     ret
     
+; Launches a program and attaches to it
+; Blocks until the program exits
 term_launchProgram:
     di
     call launchProgram
+    ;stdio(registerThread)
+    rst $10 \ .db stdioId \ call registerThread
     call setInitialHL
-    ld b, a
     ei \ halt
 ioLoop:
-    ; We can be given focus again through the threadlist, so make sure everything
-    ; still looks nice and we are responsive
-    ; TODO: appGetKey appears to break the thread list here
-    ; Probably the same problem as that one problem
-    ; applib(appGetKey)
-    rst $10 \ .db applibId \ call appGetKey
-    call fastCopy
-    ; Check if the thread is still alive
-    ld a, b
+    push af
+        ; We can be given focus again through the threadlist, so make sure everything
+        ; still looks nice and we are responsive
+        ; TODO: appGetKey appears to break the thread list here
+        ; Probably the same problem as that one problem
+        ; applib(appGetKey)
+        rst $10 \ .db applibId \ call appGetKey
+        call fastCopy
+        
+        ;stdio(readCommand)
+        rst $10 \ .db stdioId \ call readCommand
+        or a
+        jr nz, _
+        ; Handle command
+        ; ...
+_:  ; Check if the thread is still alive
+    pop af
+    ld b, a
     call getThreadEntry
     jr z, ioLoop
+    ; Release thread
+    ld a, b
+    ;stdio(releaseThread)
+    rst $10 \ .db stdioId \ call releaseThread
     ; Reset state
     call getLcdLock
     call getKeypadLock

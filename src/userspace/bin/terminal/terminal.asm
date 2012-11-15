@@ -13,7 +13,7 @@ commandChar .equ '$'
 cursorChar .equ '_'
 .list
 ; Header
-    .db 0
+    .db %00000010
     .db 50 ; Stack size
 ; Program
 .org 0
@@ -34,6 +34,8 @@ start:
     kld de, libTextPath
     call loadLibrary
     kld de, applibPath
+    call loadLibrary
+    kld de, stdioPath
     call loadLibrary
     
     kld hl, windowTitle

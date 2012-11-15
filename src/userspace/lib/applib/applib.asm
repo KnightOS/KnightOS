@@ -68,11 +68,9 @@ launchThreadList:
         rst $10 \ .db libId
         ld de, threadListPath
         di
-        call launchProgram
+        call launchProgram ; This is called several times when it should be called once
     pop de
     call suspendCurrentThread
-    ei
-    call flushKeys
     xor a
     ret
     

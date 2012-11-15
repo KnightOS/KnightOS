@@ -5,9 +5,18 @@
 .list
 ; Header
     .db 0
-    .db 4 ; Stack size
+    .db 10 ; Stack size
 ; Program
 .org 0
 
 start:
+    ; Include stdio
+    kld de, stdioPath
+    call loadLibrary
+    
+    ;stdio(printLine)
+    rst $10 \ .db stdioId \ call printLine
     ret
+
+stdioPath:
+    .db "/lib/stdio", 0

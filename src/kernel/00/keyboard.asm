@@ -1,6 +1,6 @@
 ; Waits for a key to be pressed, then returns it
 waitKey:
-_:  call HasKeypadLock
+_:  call hasKeypadLock
     jr nz, -_ ; Loop until a lock is acquired
 _:  call getKey
     or a
@@ -9,7 +9,7 @@ _:  call getKey
     
 ; Waits for all keys to be released
 flushkeys:
-    call HasKeypadLock
+    call hasKeypadLock
     ret nz
     push af
     push bc
@@ -27,8 +27,8 @@ _:      xor a
     ret
 
 getKey:
-    call HasKeypadLock
-    jr _
+    call hasKeypadLock
+    jr z, _
     xor a
     ret
 _:  push bc
