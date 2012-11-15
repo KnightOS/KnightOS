@@ -9,6 +9,7 @@ KnightOS is a 3rd party operating system for the following Texas Instruments cal
 * TI-84+
 * TI-84+ Silver Edition
 * TI-84 Pocket.fr\*\*
+* TI-84 Plus Pocket SE\*\*\*
 
 It aims to provide a unix-like enviornment with multitasking and a tree-based filesystem,
 in addition to generally being a better experience than the official TIOS.
@@ -17,9 +18,11 @@ in addition to generally being a better experience than the official TIOS.
 
 \*\* *For the TI-84 Pocket.fr, use the standard TI-84+ version of KnightOS.*
 
-**NOTE**: Newer versions of the TI-84+, TI-84+ SE, and all TI-84 Pocket.fr calculators are shipped
-with boot code 1.03. You must patch these calculators before you will be able to install KnightOS
-on them. Instructions for doing so may be found
+\*\*\* *For the TI-84 Plus Pocket SE, use the standard TI-84+ Silver Edition version of KnightOS.*
+
+**NOTE**: Newer versions of the TI-84+, TI-84+ SE, and all TI-84 Pocket.fr and TI-84 Plus Pocket SE
+calculators are shipped with boot code 1.03. You must patch these calculators before you will be able
+to install KnightOS on them. Instructions for doing so may be found
 [here](https://github.com/SirCmpwn/KnightOS/tree/master/boot-patch).
 
 ### Need help?
