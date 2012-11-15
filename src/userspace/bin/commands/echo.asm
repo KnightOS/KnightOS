@@ -10,10 +10,6 @@
 .org 0
 
 start:
-    ; Include stdio
-    kld de, stdioPath
-    call loadLibrary
-    
     ;stdio(printLine)
     rst $10 \ .db stdioId \ call printLine
     ret
