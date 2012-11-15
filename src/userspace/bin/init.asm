@@ -26,6 +26,10 @@ _:  pop ix
     dec ix \ dec ix \ dec ix
     ld (ix), $FE
     
+    ; Load /lib/stdio so that it's always available
+    kld de, stdioPath
+    call loadLibrary
+    
     ; Update returnToCastle
     kld de, castlePath
     ld (ix + 6), e
@@ -53,3 +57,5 @@ castlePath:
     .db "/bin/castle", 0
 terminalPath:
     .db "/bin/terminal", 0
+stdioPath:
+    .db "/lib/stdio", 0
