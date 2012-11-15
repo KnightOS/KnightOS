@@ -8,7 +8,7 @@
 #include "count.lang"
 .list
 ; Header
-    .db 0
+    .db %00000010
     .db 50 ; Stack size
 ; Program
 .org 0
@@ -54,6 +54,7 @@ _:  push bc
     call fastCopy
     rst $10 \ .db applibId
     call appGetKey
+    
     cp kClear
     jr nz, -_
     ret

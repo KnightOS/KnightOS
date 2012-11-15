@@ -2,7 +2,7 @@
 #include "macros.inc"
 #include "keys.inc"
 ; Header
-    .db 0  ; TODO: Thread flags
+    .db 0
     .db 10 ; Stack size
 ; Program
 .org 0
