@@ -26,6 +26,7 @@ _:  pop ix
     dec ix \ dec ix \ dec ix
     ld (ix), $FE
     
+    ; Update returnToCastle
     kld de, castlePath
     ld (ix + 6), e
     ld (ix + 7), d
@@ -35,6 +36,7 @@ _:  pop ix
     jr z, launchTerminal
 
 launchCastle:
+    kld de, castlePath
     call launchProgram
     ret
     
