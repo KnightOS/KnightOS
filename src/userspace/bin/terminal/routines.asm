@@ -153,30 +153,37 @@ term_printDecimal:
     push bc
     push af
     push de
+        ; Put a 6-byte buffer on the stack to hold the ASCII number
+        ; 65535 (5 digits) plus the null terminator
         ex de, hl
         ld hl, -6
         add hl, sp
         ld sp, hl
         ld bc, 6 \ add hl, bc
+        ; Load the null terminator
         xor a \ ld (hl), a \ dec hl
         ex de, hl
         ; (de) is a 5 byte buffer for conversion
         ; hl is the number to print
         ld c, 10
-_:      call divHLbyC
+_:      call divHLbyC ; HL = HL / 10 \ A = HL % 10
         add a, '0'
+            ; Load that value into the buffer
             ex de, hl
             ld (hl), a
             dec hl
             ex de, hl
+        ; Check to see if HL is zero, or loop if not
         ld a, h
         or a \ jr nz, -_
         ld a, l
         or a \ jr nz, -_
         ex de, hl
     pop de
+        ; Draw the string string
         inc hl
         kcall term_printString
+    ; Reset the stack
     ld hl, 6
     add hl, sp
     ld sp, hl
