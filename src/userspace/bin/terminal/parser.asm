@@ -52,7 +52,19 @@ ioLoop:
         or a
         jr z, pingThread
         ; Handle command
-        cp cmdPrintDecimal
+        cp cmdReadLine
+        jr nz, _
+        push ix
+            push hl \ pop ix
+            kcall term_readString
+            push ix \ pop hl
+        pop ix
+        ld b, a
+        pop af \ push af
+        call createSignal
+        ld a, b
+        
+_:      cp cmdPrintDecimal
         jr nz, _
         kcall term_printDecimal
         

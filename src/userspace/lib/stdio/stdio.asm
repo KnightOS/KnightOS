@@ -11,6 +11,7 @@ cmdPrintString .equ 2
 cmdPrintLine .equ 3
 cmdClearTerminal .equ 4
 cmdPrintDecimal .equ 5
+cmdReadLine .equ 6
 .list
 
 .dw $0003
@@ -29,6 +30,7 @@ jumpTable:
     jp clearTerminal
     jp getSupervisor
     jp printDecimal
+    jp readLine
     
 threadRegistration:
     ; Supervisor, Child
@@ -137,6 +139,7 @@ _:  ld a, b
 
 printChar:
     push af
+    push bc
     push hl
         ld h, a
         ld b, cmdPrintChar
@@ -145,51 +148,75 @@ printChar:
         jr nz, _
         call createSignal
 _:  pop hl
+    pop bc
     pop af
     halt
     ret
     
 printString:
     push af
+    push bc
         ld b, cmdPrintString
         ;lcall(getSupervisor)
         rst $10 \ .db libId \ call getSupervisor
         jr nz, _
         call createSignal
-_:  pop af
+_:  pop bc
+    pop af
     halt
     ret
     
 printLine:
     push af
+    push bc
         ld b, cmdPrintLine
         ;lcall(getSupervisor)
         rst $10 \ .db libId \ call getSupervisor
         jr nz, _
         call createSignal
-_:  pop af
+_:  pop bc
+    pop af
     halt
     ret
 
 clearTerminal:
     push af
+    push bc
         ld b, cmdClearTerminal
         ;lcall(getSupervisor)
         rst $10 \ .db libId \ call getSupervisor
         jr nz, _
         call createSignal
-_:  pop af
+_:  pop bc
+    pop af
     halt
     ret
     
 printDecimal:
     push af
+    push bc
         ld b, cmdPrintDecimal
         ;lcall(getSupervisor)
         rst $10 \ .db libId \ call getSupervisor
         jr nz, _
         call createSignal
-_:  pop af
+_:  pop bc
+    pop af
     halt
+    ret
+    
+readLine:
+    push af
+    push bc
+        ld b, cmdReadLine
+        ;lcall(getSupervisor)
+        rst $10 \ .db libId \ call getSupervisor
+        jr nz, ++_
+        call createSignal
+        ; Wait for signal to be consumed
+_:      call readSignal
+        jr nz, -_
+_:  pop bc
+    pop af
     ret
     

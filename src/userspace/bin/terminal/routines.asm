@@ -135,6 +135,8 @@ _:  ld b, 5 ; Erase character
         
 readString_done:
         call flushKeys
+        xor a
+        ld (ix), a
     pop IX
     ret
     
