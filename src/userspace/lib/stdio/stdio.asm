@@ -10,6 +10,7 @@ cmdPrintChar .equ 1
 cmdPrintString .equ 2
 cmdPrintLine .equ 3
 cmdClearTerminal .equ 4
+cmdPrintDecimal .equ 5
 .list
 
 .dw $0003
@@ -27,6 +28,7 @@ jumpTable:
     jp printLine
     jp clearTerminal
     jp getSupervisor
+    jp printDecimal
     
 threadRegistration:
     ; Supervisor, Child
@@ -144,7 +146,7 @@ printChar:
         call createSignal
 _:  pop hl
     pop af
-    halt ; TODO: Wait until signal is read
+    halt
     ret
     
 printString:
@@ -155,7 +157,7 @@ printString:
         jr nz, _
         call createSignal
 _:  pop af
-    halt ; TODO: Wait until signal is read
+    halt
     ret
     
 printLine:
@@ -166,7 +168,7 @@ printLine:
         jr nz, _
         call createSignal
 _:  pop af
-    halt ; TODO: Wait until signal is read
+    halt
     ret
 
 clearTerminal:
@@ -177,5 +179,17 @@ clearTerminal:
         jr nz, _
         call createSignal
 _:  pop af
-    halt ; TODO: Wait until signal is read
+    halt
     ret
+    
+printDecimal:
+    push af
+        ld b, cmdPrintDecimal
+        ;lcall(getSupervisor)
+        rst $10 \ .db libId \ call getSupervisor
+        jr nz, _
+        call createSignal
+_:  pop af
+    halt
+    ret
+    

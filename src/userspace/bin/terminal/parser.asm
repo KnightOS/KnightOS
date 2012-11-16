@@ -52,7 +52,11 @@ ioLoop:
         or a
         jr z, pingThread
         ; Handle command
-        cp cmdClearTerminal
+        cp cmdPrintDecimal
+        jr nz, _
+        kcall term_printDecimal
+        
+_:      cp cmdClearTerminal
         jr nz, _
         ld de, leftMargin << 8 | 8
         push de \ push bc \ push hl \ push af

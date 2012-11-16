@@ -16,7 +16,21 @@ start:
     kld hl, kernelVersion
     ;stdio(printChar)
     rst $10 \ .db stdioId \ call printString
-    ; TODO: Print version number
+    
+    ; Print version number
+    ld h, 0
+    ld a, (5)
+    ld l, a
+    ;stdio(printDecimal)
+    rst $10 \ .db stdioId \ call printDecimal
+    ld a, '.'
+    ;stdio(printChar)
+    rst $10 \ .db stdioId \ call printChar
+    ld a, (6)
+    ld l, a
+    ;stdio(printDecimal)
+    rst $10 \ .db stdioId \ call printDecimal
+    
     ld a, '\n'
     ;stdio(printChar)
     rst $10 \ .db stdioId \ call printChar

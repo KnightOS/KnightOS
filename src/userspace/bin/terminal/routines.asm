@@ -147,5 +147,34 @@ _:      ld a, (hl)
 _:  pop hl
     ret
     
+; Prints a decimal number to the terminal
+term_printDecimal:
+    di
+    push hl
+    push bc
+    push af
+    push de
+        ld de, kernelGarbage
+        ld c, 10
+_:      call divHLbyC
+        add a, '0'
+            ex de, hl
+            ld (hl), a
+            dec hl
+            ex de, hl
+        ld a, h
+        or a \ jr nz, -_
+        ld a, l
+        or a \ jr nz, -_
+        ex de, hl
+    pop de
+        inc hl
+        kcall term_printString
+    pop af
+    pop bc
+    pop hl
+    ei
+    ret
+    
 cursorState:
     .db 0 ; Only the low bit matters
