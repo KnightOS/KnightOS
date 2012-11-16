@@ -95,3 +95,5 @@ convertTimeToTicks .equ $3EE9
 memset .equ $3EE6
 setInitialHL .equ $3EE3
 setInitialDE .equ $3EE0
+createSignal .equ $3EDD
+readSignal .equ $3EDA

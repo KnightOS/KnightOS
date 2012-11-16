@@ -20,8 +20,10 @@ _:      xor a
         call fileExists
         ; TODO: Use $PATH and CD, currently just uses "/bin/"
         jr nz, parseInput_error
+        pop bc \ push bc ; BC is X, Y
         ; File exists, execute it
         kcall term_launchProgram
+        pop bc \ push de ; Update X, Y
         cp a
 parseInput_error:
     pop de
@@ -35,6 +37,7 @@ term_launchProgram:
     ;stdio(registerThread)
     rst $10 \ .db stdioId \ call registerThread
     call setInitialHL
+    ld d, b \ ld e, c ; Terminal X, Y
     ei \ halt
 ioLoop:
     push af
@@ -47,10 +50,16 @@ ioLoop:
         ;stdio(readCommand)
         rst $10 \ .db stdioId \ call readCommand
         or a
-        jr nz, _
+        jr z, pingThread
         ; Handle command
-        ; ...
-_:  ; Check if the thread is still alive
+        cp cmdPrintLine
+        jr nz, _
+        kcall term_printString
+        ld a, '\n'
+        kcall term_printChar
+_:
+pingThread:
+    ; Check if the thread is still alive
     pop af
     ld b, a
     call getThreadEntry

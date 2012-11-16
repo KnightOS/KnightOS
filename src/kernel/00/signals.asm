@@ -62,6 +62,8 @@ readSignal:
     push de
         ld de, 4
         ld a, (activeSignals)
+        or a
+        jr z, readSignal_none
         ld b, a
         call getCurrentThreadId
         ld hl, signalTable
@@ -96,8 +98,8 @@ readSignal_found:
         ld bc, 4 \ add hl, bc
         ld a, (activeSignals)
         dec a ; Note: this will copy more than needed, but it isn't a problem
-        jr z, _
         ld (activeSignals), a
+        jr z, _
         add a, a \ add a, a
         ld c, a \ ld b, 0
         ldir
