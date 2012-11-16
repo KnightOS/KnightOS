@@ -111,7 +111,7 @@ helloPath:
 demoStr:
     .db lang_demo, 0
 demoPath:
-    .db "/bin/demo", 0
+    .db "/bin/gfxdemo", 0
     
 countStr:
     .db lang_countingTest, 0

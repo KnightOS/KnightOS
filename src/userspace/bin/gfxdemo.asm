@@ -5,7 +5,7 @@
 #include "applib.inc"
 #include "keys.inc"
 #include "defines.inc"
-#include "demo.lang"
+#include "gfxdemo.lang"
 .list
 ; Header
     .db 0
