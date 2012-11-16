@@ -166,7 +166,7 @@ term_printDecimal:
         ; (de) is a 5 byte buffer for conversion
         ; hl is the number to print
         ld c, 10
-_:      call divHLbyC ; HL = HL / 10 \ A = HL % 10
+_:      call divHLbyC ; HL = HL / 10; A = HL % 10;
         add a, '0'
             ; Load that value into the buffer
             ex de, hl
@@ -180,7 +180,7 @@ _:      call divHLbyC ; HL = HL / 10 \ A = HL % 10
         or a \ jr nz, -_
         ex de, hl
     pop de
-        ; Draw the string string
+        ; Print the string
         inc hl
         kcall term_printString
     ; Reset the stack
