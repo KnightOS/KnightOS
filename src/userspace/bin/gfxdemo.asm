@@ -5,6 +5,7 @@
 #include "applib.inc"
 #include "keys.inc"
 #include "defines.inc"
+#include "stdio.inc"
 #include "gfxdemo.lang"
 .list
 ; Header
@@ -19,6 +20,10 @@
     .db lang_description, 0
 
 start:
+    kld hl, demoMessage
+    ;stdio(printLine)
+    rst $10 \ .db stdioId \ call printLine
+
     call getLcdLock
     call getKeypadLock
 
@@ -52,7 +57,7 @@ _:  ld b, 5
     call appGetKey
     call putSpriteXor
     cp kClear
-    ret z
+    jr z, exit
     cp kUp
     jr z, doUp
     cp kDown
@@ -75,6 +80,12 @@ doRight:
     inc d
     jr -_
     
+exit:
+    kld hl, goodbyeMessage
+    ;stdio(printLine)
+    rst $10 \ .db stdioId \ call printLine
+    ret
+    
 threadListPath:
     .db "/bin/threadlist", 0
     
@@ -92,3 +103,7 @@ smileySprite:
     .db %00000000
     .db %10001000
     .db %01110000
+goodbyeMessage:
+    .db "Goodbye!", 0
+demoMessage:
+    .db "KnightOS Graphical Demo", 0

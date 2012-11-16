@@ -26,6 +26,7 @@ jumpTable:
     jp printString
     jp printLine
     jp clearTerminal
+    jp getSupervisor
     
 threadRegistration:
     ; Supervisor, Child
@@ -110,12 +111,14 @@ _:  ld a, (hl)
     djnz -_
     pop hl
     pop bc
+    or 1
     ret
 _:  ; Use (hl)
     dec hl
     ld a, (hl)
     pop hl
     pop bc
+    cp a
     ret
     
 ; Reads the latest command
@@ -137,8 +140,9 @@ printChar:
         ld b, cmdPrintChar
         ;lcall(getSupervisor)
         rst $10 \ .db libId \ call getSupervisor
+        jr nz, _
         call createSignal
-    pop hl
+_:  pop hl
     pop af
     halt ; TODO: Wait until signal is read
     ret
@@ -148,8 +152,9 @@ printString:
         ld b, cmdPrintString
         ;lcall(getSupervisor)
         rst $10 \ .db libId \ call getSupervisor
+        jr nz, _
         call createSignal
-    pop af
+_:  pop af
     halt ; TODO: Wait until signal is read
     ret
     
@@ -158,8 +163,9 @@ printLine:
         ld b, cmdPrintLine
         ;lcall(getSupervisor)
         rst $10 \ .db libId \ call getSupervisor
+        jr nz, _
         call createSignal
-    pop af
+_:  pop af
     halt ; TODO: Wait until signal is read
     ret
 
@@ -168,7 +174,8 @@ clearTerminal:
         ld b, cmdClearTerminal
         ;lcall(getSupervisor)
         rst $10 \ .db libId \ call getSupervisor
+        jr nz, _
         call createSignal
-    pop af
+_:  pop af
     halt ; TODO: Wait until signal is read
     ret

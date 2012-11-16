@@ -15,3 +15,4 @@ printChar .equ 15
 printString .equ 18
 printLine .equ 21
 clearTerminal .equ 24
+getSupervisor .equ 27
