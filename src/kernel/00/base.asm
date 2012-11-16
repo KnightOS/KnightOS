@@ -19,5 +19,3 @@
 #include "keyboard.asm"
 #include "time.asm"
 #include "util.asm"
-
-.echo "Kernel size: ", $

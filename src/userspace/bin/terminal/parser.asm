@@ -52,7 +52,17 @@ ioLoop:
         or a
         jr z, pingThread
         ; Handle command
-        cp cmdPrintLine
+        cp cmdPrintChar
+        jr nz, _
+        ld c, a \ ld a, h
+        kcall term_printChar
+        ld a, c
+        
+_:      cp cmdPrintString
+        jr nz, _
+        kcall term_printString
+        
+_:      cp cmdPrintLine
         jr nz, _
         kcall term_printString
         ld a, '\n'
