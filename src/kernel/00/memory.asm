@@ -63,6 +63,21 @@ _:  pop de
     pop bc
     pop hl
     ret
+    
+; Input: IX is somewhere in pre-allocated memory
+; Outputs: IX is the last byte of that memory
+memSeekToEnd:
+    call memSeekToStart
+    push hl
+    push bc
+        push ix \ pop hl
+        dec hl \ ld b, (hl)
+        dec hl \ ld c, (hl)
+        inc hl \ inc hl \ add hl, bc
+        push hl \ pop ix
+    pop bc
+    pop hl
+    ret
 
 ; Inputs:    BC is amount to allocate
 ;            (CurrentThreadID) owns the new memory (set automatically)
