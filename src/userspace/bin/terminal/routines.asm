@@ -149,12 +149,19 @@ _:  pop hl
     
 ; Prints a decimal number to the terminal
 term_printDecimal:
-    di
     push hl
     push bc
     push af
     push de
-        ld de, kernelGarbage
+        ex de, hl
+        ld hl, -6
+        add hl, sp
+        ld sp, hl
+        ld bc, 6 \ add hl, bc
+        xor a \ ld (hl), a \ dec hl
+        ex de, hl
+        ; (de) is a 5 byte buffer for conversion
+        ; hl is the number to print
         ld c, 10
 _:      call divHLbyC
         add a, '0'
@@ -170,10 +177,12 @@ _:      call divHLbyC
     pop de
         inc hl
         kcall term_printString
+    ld hl, 6
+    add hl, sp
+    ld sp, hl
     pop af
     pop bc
     pop hl
-    ei
     ret
     
 cursorState:
