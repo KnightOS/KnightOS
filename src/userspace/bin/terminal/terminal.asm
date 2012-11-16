@@ -7,7 +7,7 @@
 #include "applib.inc"
 #include "stdio.inc"
 #include "terminal.lang"
-bufferSize .equ 512 ; For reading input
+bufferSize .equ 256 ; For reading input
 leftMargin .equ 2
 commandChar .equ '$'
 cursorChar .equ '_'

@@ -3,7 +3,6 @@
 ; Reads a string into (IX)
 term_readString:
     push IX
-    ; TODO: Limit characters input to buffer size
 readString_cursorLoop:
         ; TODO: Try to refactor cursor drawing to use the column
         ; on the right properly
@@ -43,11 +42,26 @@ readString_handleKey:
         pop bc
         jr readString_delay
         
-_:      cp $08 ; Backspace
+_:      inc sp \ inc sp
+        cp $08 ; Backspace
         jr z, readString_handleBackspace
         
-        inc sp \ inc sp
-        kld a, (cursorState)
+        cp '\n'
+        jr z, _
+        
+        ; Ensure it isn't too long
+        push hl
+        push bc
+            push ix
+                call memSeekToEnd
+                push ix \ pop hl
+            pop bc \ push bc \ pop ix
+            call cpHLBC
+        pop bc
+        pop hl
+        jr z, readString_cursorLoop
+        
+_:      kld a, (cursorState)
         bit 0, a
         jr z, _
         ; Get rid of cursor
@@ -71,14 +85,13 @@ _:      ld a, c
         jr readString_cursorLoop
         
 readString_handleBackspace:
-    inc sp \ inc sp
     ; Don't allow it to grow past the start
     pop bc \ push bc ; BC is start of string
     push hl
         push ix \ pop hl
         call cpHLBC
     pop hl
-    jr z, readString_cursorLoop
+    kjp z, readString_cursorLoop
     
     kld a, (cursorState)
     bit 0, a
