@@ -22,12 +22,13 @@ start:
     call allocScreenBuffer
 redraw:
     kcall drawInterface
-    ld a, (activeThreads) \ dec a
-    kjp z, noThreads
     kcall drawThreads
+    ld a, (totalThreads)
+    kjp z, noThreads
     
     ld ix, threadTable
-_:  call fastCopy
+mainLoop:
+    call fastCopy
     call flushKeys
     call waitKey
     
@@ -40,36 +41,52 @@ _:  call fastCopy
     cp kDown
     jr z, doDown
     cp k2nd
-    jr z, doSelect
+    kjp z, doSelect
     cp kEnter
-    jr z, doSelect
+    kjp z, doSelect
     cp kDel
-    jr z, doKill
+    kjp z, doKill
     cp kGraph
-    jr z, doOptions
+    kjp z, doOptions
     
-    jr -_
+    jr mainLoop
     
 doUp:
     ld a, e
     cp 12
-    jr z, -_
+    jr z, mainLoop
     call putSpriteXOR
     sub 6
     ld e, a
     call putSpriteOR
     push hl
+    push de
         push ix \ pop hl
+        ; Loop to the next available thread
+doUp_loop:
         ld a, l
         sub 8
         ld l, a
-        push hl \ pop ix
+        push hl
+            inc hl \ ld e, (hl) \ inc hl \ ld d, (hl)
+            ex de, hl \ inc hl \ inc hl
+            ld a, (hl)
+            cp 'K'
+            jr z, _
+                pop hl \ jr doDown_loop
+_:          inc hl
+            ld a, (hl)
+            bit 1, a
+            jr nz, _
+                pop hl \ jr doUp_loop
+_:      pop ix
+    pop de
     pop hl
-    jr -_
+    jr mainLoop
     
 doDown:
-    ld a, (activeThreads)
-    dec a \ dec a
+    kld a, (totalThreads)
+    dec a
     add a, a
     ld c, a
     add a, a
@@ -78,21 +95,38 @@ doDown:
     ld c, a
     ld a, e
     cp c
-    jr z, -_
+    jr z, mainLoop
     call putSpriteXOR
     add a, 6
     ld e, a
     call putSpriteOR
     push hl
+    push de
         push ix \ pop hl
+        ; Loop to the next available thread
+doDown_loop:
         ld a, 8
         add a, l
         ld l, a
-        push hl \ pop ix
+        push hl
+            inc hl \ ld e, (hl) \ inc hl \ ld d, (hl)
+            ex de, hl \ inc hl \ inc hl
+            ld a, (hl)
+            cp 'K'
+            jr z, _
+                pop hl \ jr doDown_loop
+_:          inc hl
+            ld a, (hl)
+            bit 1, a
+            jr nz, _
+                pop hl \ jr doDown_loop
+_:      pop ix
+    pop de
     pop hl
-    jr -_
+    kjp mainLoop
     
 doSelect:
+    call flushKeys
     di
     ld a, (ix)
     ld (hwLockLcd), a
@@ -130,6 +164,7 @@ launchCastle:
     jp killCurrentThread
     
 noThreads:
+    kcall drawInterface
     ld de, lang_noPrograms_position
     kld hl, noProgramsStr
     ;libtext(DrawStr)
@@ -139,7 +174,7 @@ noThreads:
     
     call fastCopy
     
-_:    call flushKeys
+_:  call flushKeys
     call waitKey
     
     cp kClear
@@ -147,28 +182,44 @@ _:    call flushKeys
     cp kYEqu
     jr nz, -_
     
-_:    call flushKeys
+_:  call flushKeys
     jr launchCastle
     
 drawThreads:
     ;di \ halt \ ei
+    xor a
+    kld (totalThreads), a
     ld de, 5 << 8 + 12
     ld hl, threadTable
     ld a, (activeThreads) \ dec a \ ld b, a
-_:  push hl \ push de
+drawThreads_loop:
+    push hl \ push de
         inc hl
         push de
             ld e, (hl) \ inc hl \ ld d, (hl)
-            ld a, 3 \ add a, e \ ld e, a
+            ld a, 2 \ add a, e \ ld e, a
             ex de, hl
+            ld a, (hl)
+            cp 'K' ; Check magic number
+            jr z, _
+                pop de \ jr skipThread
+_:          inc hl
+            ld a, (hl)
+            bit 1, a ; Check thread visibility
+            jr nz, _
+                pop de \ jr skipThread
+_:      inc hl
         pop de
         ;libtext(drawStr)
         rst $10 \ .db libTextId
         call drawStr
+        kld hl, totalThreads
+        inc (hl)
+skipThread:
     pop de \ pop hl
     ld a, 6 \ add a, e \ ld e, a
     ld a, 8 \ add a, l \ ld l, a
-    djnz -_
+    djnz drawThreads_loop
     
     kld hl, selectionIndicatorSprite
     ld b, 5
@@ -342,6 +393,9 @@ noProgramsStr:
     .db lang_noPrograms, 0
 forceQuitStr:
     .db lang_forceQuit, 0
+    
+totalThreads:
+    .db 0
     
 libTextPath:
     .db "/lib/libtext", 0

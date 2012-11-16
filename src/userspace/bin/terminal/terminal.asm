@@ -20,10 +20,9 @@ cursorChar .equ '_'
 ; KnightOS Header
     jr start
     .db 'K'
-    .db lang_description, 0
-programFlags:
     .db %00000010
-
+    .db lang_description, 0
+    
 start:
     call getLcdLock
     call getKeypadLock
@@ -72,6 +71,10 @@ idleLoop: ; Run when there is no attached program
     pop de
     
     kcall term_readString
+    
+    ; Handle empty string
+    ld a, (ix)
+    or a \ jr z, idleLoop
     
     ; Special case for "exit" command
     push de

@@ -15,8 +15,8 @@
 ; KnightOS Header
     jr start
     .db 'K'
-    .db lang_description, 0
     .db %00000010
+    .db lang_description, 0
 
 start:
     call getLcdLock
