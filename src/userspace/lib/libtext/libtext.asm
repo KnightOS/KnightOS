@@ -218,20 +218,16 @@ DrawHexA:
    rrca
    rrca
    ; icall(dispha)
-   rst $10
-   .db libID
-   call dispha
+   rst $10 \ .db libID \ call dispha
    pop af
    ; icall(dispha)
-   rst $10
-   .db libID
-   call dispha
+   rst $10 \ .db libID \ call dispha
    ret
 dispha:
    and 15
    cp 10
    jr nc,dhlet
-   add a,48
+   add a, 48
    jr dispdh
 dhlet:
    add a,55

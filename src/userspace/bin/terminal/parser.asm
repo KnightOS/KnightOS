@@ -52,7 +52,14 @@ ioLoop:
         or a
         jr z, pingThread
         ; Handle command
-        cp cmdReadLine
+        cp cmdPrintHex
+        jr nz, _
+        push af
+            ld a, h
+            kcall term_printHex
+        pop af
+        
+_:      cp cmdReadLine
         jr nz, _
         push ix
             push hl \ pop ix

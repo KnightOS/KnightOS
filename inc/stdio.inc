@@ -8,6 +8,7 @@ cmdPrintLine .equ 3
 cmdClearTerminal .equ 4
 cmdPrintDecimal .equ 5
 cmdReadLine .equ 6
+cmdPrintHex .equ 7
 
 ; Routines
 registerThread .equ 6
@@ -20,3 +21,4 @@ clearTerminal .equ 24
 getSupervisor .equ 27
 printDecimal .equ 30
 readLine .equ 33
+printHex .equ 36

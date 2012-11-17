@@ -260,5 +260,27 @@ _:      call divHLbyC ; HL = HL / 10; A = HL % 10;
     pop hl
     ret
     
+term_printHex:
+    push af
+        rrca
+        rrca
+        rrca
+        rrca
+        kcall dispha
+    pop af
+    kcall dispha
+    ret
+dispha:
+    and 15
+    cp 10
+    jr nc,dhlet
+    add a, 48
+    jr dispdh
+dhlet:
+    add a,55
+dispdh:
+    kcall term_printChar
+    ret
+    
 cursorState:
     .db 0 ; Only the low bit matters

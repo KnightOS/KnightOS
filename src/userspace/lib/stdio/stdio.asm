@@ -12,6 +12,7 @@ cmdPrintLine .equ 3
 cmdClearTerminal .equ 4
 cmdPrintDecimal .equ 5
 cmdReadLine .equ 6
+cmdPrintHex .equ 7
 .list
 
 .dw $0003
@@ -31,6 +32,7 @@ jumpTable:
     jp getSupervisor
     jp printDecimal
     jp readLine
+    jp printHex
     
 threadRegistration:
     ; Supervisor, Child
@@ -218,5 +220,21 @@ _:      call readSignal
         jr nz, -_
 _:  pop bc
     pop af
+    ret
+    
+printHex:
+    push af
+    push bc
+    push hl
+        ld h, a
+        ld b, cmdPrintHex
+        ;lcall(getSupervisor)
+        rst $10 \ .db libId \ call getSupervisor
+        jr nz, _
+        call createSignal
+_:  pop hl
+    pop bc
+    pop af
+    halt
     ret
     
