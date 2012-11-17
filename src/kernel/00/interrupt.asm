@@ -1,3 +1,19 @@
+contextSwitch:
+    di
+    push af
+    push bc
+    push de
+    push hl
+    push ix
+    push iy
+    exx
+    ex af, af'
+    push af
+    push bc
+    push de
+    push hl
+    jr doContextSwitch
+
 sysInterrupt:
     di
     push af
@@ -27,7 +43,7 @@ InterruptResume:
     jr nz, IntHandleTimer2
     bit 4, a
     jr nz, IntHandleLink
-    jr SysInterruptDone
+    jr doContextSwitch
 IntHandleON:
     in a, (03h)
     res 0, a
@@ -44,7 +60,7 @@ IntHandleTimer1:
     set 1, a
     out (03h), a
     ; Timer 1 interrupt
-contextSwitch:
+doContextSwitch:
     ld a, (currentThreadIndex)
     add a, a
     add a, a

@@ -9,6 +9,8 @@ cmdClearTerminal .equ 4
 cmdPrintDecimal .equ 5
 cmdReadLine .equ 6
 cmdPrintHex .equ 7
+cmdEnableUpdates .equ 8
+cmdDisableUpdates .equ 9
 
 ; Routines
 registerThread .equ 6
@@ -22,3 +24,5 @@ getSupervisor .equ 27
 printDecimal .equ 30
 readLine .equ 33
 printHex .equ 36
+enableUpdates .equ 39
+disableUpdates .equ 42

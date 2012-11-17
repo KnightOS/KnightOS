@@ -34,25 +34,67 @@ parseInput_error:
 term_launchProgram:
     di
     call launchProgram
+    call setInitialHL
     ;stdio(registerThread)
     rst $10 \ .db stdioId \ call registerThread
-    call setInitialHL
     ld d, b \ ld e, c ; Terminal X, Y
     ei \ halt
 ioLoop:
+    di
     push af
         ; We can be given focus again through the threadlist, so make sure everything
         ; still looks nice and we are responsive
         ; applib(appGetKey)
         rst $10 \ .db applibId \ call appGetKey
-        call fastCopy
+        ; Check if LCD updates are enabled
+        push af
+            kld a, (enableLcdUpdates)
+            or a
+            jr z, _
+                call fastCopy
+_:      pop af
         
         ;stdio(readCommand)
         rst $10 \ .db stdioId \ call readCommand
         or a
-        jr z, pingThread
-        ; Handle command
-        cp cmdPrintHex
+        kcall nz, handleCommand
+        call contextSwitch
+    ; Check if the thread is still alive
+    pop af
+    call getThreadEntry
+    jr z, ioLoop
+    push af
+        ; Final command check
+        ;stdio(readCommand)
+        rst $10 \ .db stdioId \ call readCommand
+        or a
+        kcall nz, handleCommand
+    pop af
+    ;stdio(releaseThread)
+    rst $10 \ .db stdioId \ call releaseThread
+    ; Reset state
+    call getLcdLock
+    call getKeypadLock
+    call flushKeys
+    ret
+    
+handleCommand:
+    push bc
+        cp cmdDisableUpdates
+        jr nz, _
+        push af
+            xor a
+            kld (enableLcdUpdates), a
+        pop af
+        
+_:      cp cmdEnableUpdates
+        jr nz, _
+        push af
+            ld a, 1
+            kld (enableLcdUpdates), a
+        pop af
+        
+_:      cp cmdPrintHex
         jr nz, _
         push af
             ld a, h
@@ -99,19 +141,8 @@ _:      cp cmdPrintLine
         kcall term_printString
         ld a, '\n'
         kcall term_printChar
-_:
-pingThread:
-    ; Check if the thread is still alive
-    pop af
-    ld b, a
-    call getThreadEntry
-    jr z, ioLoop
-    ; Release thread
-    ld a, b
-    ;stdio(releaseThread)
-    rst $10 \ .db stdioId \ call releaseThread
-    ; Reset state
-    call getLcdLock
-    call getKeypadLock
-    call flushKeys
+_:  pop bc
     ret
+    
+enableLcdUpdates:
+    .db 1

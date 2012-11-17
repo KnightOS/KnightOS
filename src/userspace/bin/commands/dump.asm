@@ -10,6 +10,9 @@
 ; Code
 start:
     call hexToHL
+    ;stdio(disableUpdates)
+    rst $10 \ .db stdioId \ call disableUpdates
+    
     ;stdio(clearTerminal)
     rst $10 \ .db stdioId \ call clearTerminal
     
@@ -31,4 +34,7 @@ horizLoop:
     rst $10 \ .db stdioId \ call printChar
     pop bc
     djnz verticalLoop
+    
+    ;stdio(enableUpdates)
+    rst $10 \ .db stdioId \ call enableUpdates
     ret

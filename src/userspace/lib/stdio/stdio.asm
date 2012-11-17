@@ -13,6 +13,8 @@ cmdClearTerminal .equ 4
 cmdPrintDecimal .equ 5
 cmdReadLine .equ 6
 cmdPrintHex .equ 7
+cmdEnableUpdates .equ 8
+cmdDisableUpdates .equ 9
 .list
 
 .dw $0003
@@ -33,6 +35,8 @@ jumpTable:
     jp printDecimal
     jp readLine
     jp printHex
+    jp enableUpdates
+    jp disableUpdates
     
 threadRegistration:
     ; Supervisor, Child
@@ -152,7 +156,7 @@ printChar:
 _:  pop hl
     pop bc
     pop af
-    halt
+    call contextSwitch
     ret
     
 printString:
@@ -165,7 +169,7 @@ printString:
         call createSignal
 _:  pop bc
     pop af
-    halt
+    call contextSwitch
     ret
     
 printLine:
@@ -178,7 +182,7 @@ printLine:
         call createSignal
 _:  pop bc
     pop af
-    halt
+    call contextSwitch
     ret
 
 clearTerminal:
@@ -191,7 +195,7 @@ clearTerminal:
         call createSignal
 _:  pop bc
     pop af
-    halt
+    call contextSwitch
     ret
     
 printDecimal:
@@ -204,7 +208,7 @@ printDecimal:
         call createSignal
 _:  pop bc
     pop af
-    halt
+    call contextSwitch
     ret
     
 readLine:
@@ -235,6 +239,32 @@ printHex:
 _:  pop hl
     pop bc
     pop af
-    halt
+    call contextSwitch
+    ret
+    
+enableUpdates:
+    push af
+    push bc
+        ld b, cmdEnableUpdates
+        ;lcall(getSupervisor)
+        rst $10 \ .db libId \ call getSupervisor
+        jr nz, _
+        call createSignal
+_:  pop bc
+    pop af
+    call contextSwitch
+    ret
+    
+disableUpdates:
+    push af
+    push bc
+        ld b, cmdDisableUpdates
+        ;lcall(getSupervisor)
+        rst $10 \ .db libId \ call getSupervisor
+        jr nz, _
+        call createSignal
+_:  pop bc
+    pop af
+    call contextSwitch
     ret
     

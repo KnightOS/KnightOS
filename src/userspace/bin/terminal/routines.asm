@@ -220,13 +220,14 @@ term_printDecimal:
     push hl
     push bc
     push af
-    push de
+    push de \ pop bc
         ; Put a 6-byte buffer on the stack to hold the ASCII number
         ; 65535 (5 digits) plus the null terminator
         ex de, hl
         ld hl, -6
         add hl, sp
         ld sp, hl
+        push bc
         ld bc, 6 \ add hl, bc
         ; Load the null terminator
         xor a \ ld (hl), a \ dec hl
