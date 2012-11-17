@@ -98,3 +98,4 @@ setInitialDE .equ $3EE0
 createSignal .equ $3EDD
 readSignal .equ $3EDA
 memSeekToEnd .equ $3ED7
+hexToA .equ $3ED4
