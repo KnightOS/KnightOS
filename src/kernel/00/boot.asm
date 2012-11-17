@@ -270,7 +270,7 @@ Boot_FileSystemConfig_EoT:
     
     ; /Good place to test kernel routines
     
-    ld a, 0
+    xor a
     ld (nextThreadId), a
     ld (nextStreamId), a
     

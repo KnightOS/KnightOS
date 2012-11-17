@@ -99,3 +99,4 @@ createSignal .equ $3EDD
 readSignal .equ $3EDA
 memSeekToEnd .equ $3ED7
 hexToA .equ $3ED4
+hexToHL .equ $3ED1

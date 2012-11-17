@@ -52,6 +52,42 @@ lockFlash:
     pop af
     ret
     
+; Converts ASCII hex string at (hl) to HL
+; TODO: This could use some improvement
+hexToHL:
+    push de
+    push af
+        ; D
+        ld a, (hl)
+        or a
+        jr z, hexToHL_ret
+        call hexToA_doConvert
+        rla \ rla \ rla \ rla
+        ld d, a \ inc hl
+        ld a, (hl)
+        or a
+        jr z, hexToHL_ret
+        call hexToA_doConvert
+        or d \ ld d, a \ inc hl
+        ; E
+        ld a, (hl)
+        or a
+        jr z, hexToHL_ret
+        call hexToA_doConvert
+        rla \ rla \ rla \ rla
+        ld e, a \ inc hl
+        ld a, (hl)
+        or a
+        jr z, hexToHL_ret
+        call hexToA_doConvert
+        or e
+        ld e, a
+        ex de, hl
+hexToHL_ret:
+    pop af
+    pop de
+    ret
+    
 ; Converts ASCII hex string at (hl) to A
 hexToA:
     push bc
