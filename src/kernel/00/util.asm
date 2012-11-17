@@ -52,6 +52,38 @@ lockFlash:
     pop af
     ret
     
+; Converts ASCII hex string at (hl) to A
+hexToA:
+    push bc
+    push hl
+        ld b, 0
+_:      ld a, (hl)
+        or a
+        jr z, hexToA_ret
+        
+        rl b \ rl b \ rl b \ rl b
+        call hexToA_doConvert
+        or b
+        ld b, a
+        inc hl
+        jr -_
+        
+hexToA_ret:
+        ld a, b
+    pop hl
+    pop bc
+    ret
+        
+hexToA_doConvert:
+    cp 'a' ; Convert to lowercase
+    jr c, _
+        sub 'a' - 'A'
+_:  cp 'A' ; Close gap between numbers and letter
+    jr c, _
+        sub 'A'-('9'+1)
+_:  sub '0' ; To number
+    ret
+    
 lcdDelay:
     push af
 _:    in a,($10)
