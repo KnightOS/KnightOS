@@ -73,14 +73,17 @@ hwLockKeypad .equ $80BD
 hwLockUSB .equ $80BE
 
 ; Misc.
-currentDirectoryID .equ $80BF
+currentDirectoryID .equ $80BF ; 2 bytes?
 endOfTablePage .equ $80C1
 endOfTableAddress .equ $80C2 ; 2 bytes
 endOfDataPage .equ $80C4
 endOfDataAddress .equ $80C5 ; 2 bytes
 currentContrast .equ $80C7
 
+; Used for line drawing
 clip_mask .equ $80C8
+
+priorityHook .equ $80C9
 
 maxThreads .equ 10
 maxFileStreams .equ 5

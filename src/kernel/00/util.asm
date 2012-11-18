@@ -174,52 +174,36 @@ stringLength:
     
 ; Outputs:    B: Value from 0-4 indicating battery level (0 is critical)
 getBatteryLevel:
+#ifdef CPU15
     push af
-#ifndef TI83p
-#ifndef TI73
-    ld b, 0
-    ld a, %00000110
-    out (6), a
-    in a, (2)
-    bit 0, a
-    jr z, GetBatteryLevel_Done
-    
-    ld b, 1
-    ld a, %01000110
-    out (6), a
-    in a, (2)
-    bit 0, a
-    jr z, GetBatteryLevel_Done
-    
-    ld b, 2
-    ld a, %10000110
-    out (6), a
-    in a, (2)
-    bit 0, a
-    jr z, GetBatteryLevel_Done
-    
-    ld b, 3
-    ld a, %11000110
-    out (6), a
-    in a, (2)
-    bit 0, a
-    jr z, GetBatteryLevel_Done
-    
-    ld b, 4
-GetBatteryLevel_Done:
-    ld a, %110
-    out (6), a
-    pop af
+        ld bc, $0403
+        ; Reset battery threshold
+        in a, (4)
+        or %11000000
+        out (4), a
+_:      push bc
+            rrc c \ rrc c
+            in a, (4)
+            and %11000000
+            or c
+            out (4), a
+            in a, (2)
+            bit 0, a
+            jr z, _
+        pop bc
+        dec c
+        djnz _
+_:  pop af
     ret
-#endif
 #else
-    in a, (2)
-    and 1
-    ld b, a
+    push af
+        in a, (2)
+        and %11111110
+        ld b, a
     pop af
     ret
 #endif
-
+    
 DEMulA:          ; HL = DE � A
     LD     HL, 0      ; Use HL to store the product
     LD     B, 8       ; Eight bits to check

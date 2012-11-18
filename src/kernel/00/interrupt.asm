@@ -52,7 +52,7 @@ IntHandleON:
     out (03h), a
     
     ; Check for special keycodes
-    jr handleKeyboard
+    jp handleKeyboard
 IntHandleTimer1:
     in a, (03h)
     res 1, a
@@ -117,7 +117,19 @@ IntHandleTimer2:
     set 2, a
     out (03h), a
     ; Timer 2 interrupt
-    jr SysInterruptDone
+    
+    ; Run priority hook
+    ld hl, (priorityHook)
+    xor a
+    cp h
+    jr z, sysInterruptDone
+    cp l
+    jr z, sysInterruptDone
+    
+    ld de, sysInterruptDone
+    push de
+    jp (hl)    
+    
 IntHandleLink:
     in a, (03h)
     res 4, a
