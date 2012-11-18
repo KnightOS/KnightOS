@@ -102,7 +102,7 @@ reboot:
     #endif
 
     ; Set intterupt mode
-    ld a, %0001011
+    ld a, %00001111
     out (3), a
 
     ; Clear RAM

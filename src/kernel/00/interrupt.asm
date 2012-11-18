@@ -125,7 +125,6 @@ IntHandleTimer2:
     jr z, sysInterruptDone
     cp l
     jr z, sysInterruptDone
-    
     ld de, sysInterruptDone
     push de
     jp (hl)    
