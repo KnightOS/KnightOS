@@ -34,11 +34,30 @@ readString_delay:
         djnz readString_delay
         jr readString_cursorLoop
 readString_handleKey:
-        ; TODO: DEL and such
         ; Check for key and go back if it's not a character        
         ld a, c ; unjuggle registers
         or a
+        jr nz, ++_
+        ; Not a character, handle special keys
+        ld a, b
+        cp kLeft
         jr nz, _
+            ; Handle left scroll
+            ; Don't allow it to grow past the start
+            inc sp \ inc sp \ pop bc \ push bc \ dec sp \ dec sp ; Get start of string in BC (slightly hacky)
+            push hl
+                push ix \ pop hl
+                call cpHLBC
+            pop hl
+            jr z, handleKey_loopBack
+            ; Perform the left scroll
+            kcall readString_doLeftScroll
+            jr handleKey_loopBack
+_:      cp kRight
+        jr nz, handleKey_loopBack
+            ; Handle right scroll
+        
+handleKey_loopBack:
         pop bc
         jr readString_delay
         
@@ -82,7 +101,7 @@ _:      ld a, c
         
         call flushKeys
         
-        jr readString_cursorLoop
+        kjp readString_cursorLoop
         
 readString_handleBackspace:
     ; Don't allow it to grow past the start
@@ -138,6 +157,39 @@ readString_done:
         xor a
         ld (ix), a
     pop IX
+    ret
+    
+readString_doLeftScroll:
+    kld a, (cursorState)
+    bit 0, a
+    jr z, _
+    ; Get rid of cursor
+    res 0, a
+    kld (cursorState), a
+    ld a, cursorChar
+    push de
+        ; libtext(drawCharXOR)
+        rst $10 \ .db libTextId \ call drawCharXOR
+    pop de
+    
+    ; Move display pointer back a character
+_:  jr $
+    ld a, (IX + -1)
+    ;libtext(measureChar)
+    rst $10 \ .db libtextId \ call measureChar
+    ; Back up cursor
+    ld c, a
+    ld a, d
+    sub c
+    ld d, a
+    ; Check for overflow
+    jr nc, _
+    ld a, e
+    sub 6
+    ld e, a
+    ld d, 2
+_:  ; Move text pointer back a character
+    dec ix
     ret
     
 term_printChar:
