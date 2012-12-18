@@ -173,8 +173,7 @@ readString_doLeftScroll:
     pop de
     
     ; Move display pointer back a character
-_:  jr $
-    ld a, (IX + -1)
+_:  ld a, (IX + -1)
     ;libtext(measureChar)
     rst $10 \ .db libtextId \ call measureChar
     ; Back up cursor
