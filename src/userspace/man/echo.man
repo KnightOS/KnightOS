@@ -1,6 +1,6 @@
 NAME
-    echo - display a line of text
-SYNOPSIS
-    echo [text]
+ echo - display a line of textSYNOPSIS
+ echo [text]
 DESCRIPTION
-    Echos [text] into the standard output.
+ Echos [text] to the
+ attached terminal.
