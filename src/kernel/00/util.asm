@@ -205,6 +205,7 @@ _:  pop af
 #endif
     
 DEMulA:          ; HL = DE � A
+    push bc
     LD     HL, 0      ; Use HL to store the product
     LD     B, 8       ; Eight bits to check
 _loop:
@@ -215,6 +216,7 @@ _skip:
     SLA    E         ; Shift DE one bit left
     RL     D
     DJNZ   _loop
+    pop bc
     RET
 
 ; Compare Strings
