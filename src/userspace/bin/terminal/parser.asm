@@ -58,7 +58,7 @@ _:      pop af
         rst $10 \ .db stdioId \ call readCommand
         or a
         kcall nz, handleCommand
-        call contextSwitch
+        call contextSwitch ; TODO: This is too slow, suspend the thread and make stdio wake it up
     ; Check if the thread is still alive
     pop af
     call getThreadEntry

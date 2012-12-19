@@ -233,6 +233,22 @@ CompareStringsEoS:
     ld a, (hl)
     or a
     ret
+
+; String copy
+; Copies string at (hl) to (de)
+stringCopy:
+    push de
+    push hl
+    ex de, hl
+_:  ld a, (de)
+    ld (hl), a
+    or a
+    jr z, _
+    inc hl \ inc de
+    jr -_
+_:  pop de
+    pop hl
+    ret
     
 ; >>> Quicksort routine v1.1 <<<
 ; by Frank Yaul 7/14/04

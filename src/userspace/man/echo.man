@@ -1,0 +1,6 @@
+NAME
+    echo - display a line of text
+SYNOPSIS
+    echo [text]
+DESCRIPTION
+    Echos [text] into the standard output.
