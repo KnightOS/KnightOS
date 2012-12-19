@@ -6,6 +6,7 @@
 
 #include "header.asm"
 #include "boot.asm"
+#include "errors.asm"
 #include "restarts.asm"
 #include "interrupt.asm"
 #include "memory.asm"

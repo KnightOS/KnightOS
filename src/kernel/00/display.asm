@@ -26,7 +26,7 @@ FastCopy:
 SafeCopy:
     call HasLCDLock
     ret nz
-
+fastCopy_skipCheck:
     push hl
     push bc
     push af
@@ -35,8 +35,7 @@ SafeCopy:
     push af
     di                 ;DI is only required if an interrupt will alter the lcd.
     push iy \ pop hl
-    ;ld hl,$8000  ;This can be commented out or another entry placed after it
-                           ;so the buffer can be provided by option.
+    
     ld c,$10
     ld a,$80
 setrow:

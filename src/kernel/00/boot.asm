@@ -275,6 +275,9 @@ Boot_FileSystemConfig_EoT:
     ld (nextStreamId), a
     
     ld de, bootFile
+    call fileExists
+    ld a, %11001100
+    jp nz, kernelError
     call launchProgram
     ld h, 0
     call setInitialA
