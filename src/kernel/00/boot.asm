@@ -1,6 +1,4 @@
 ; Calculator boot-up code
-#include "keys.inc"
-
 boot:
     di
     jr _
