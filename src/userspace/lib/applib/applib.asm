@@ -12,7 +12,7 @@ libId .equ $02
 
 .org 0
 
-JumpTable:
+jumpTable:
     ; Init
     ret \ nop \ nop
     ; Deinit
@@ -309,32 +309,32 @@ castlePath:
 threadlistPath:
     .db "/bin/threadlist", 0
     
-CastleSprite1: ; 16x4
+castleSprite1: ; 16x4
     .db %10100110, %01101101
     .db %11101000, %10101001
     .db %10101000, %10100101
     .db %11100110, %01101100
     
-CastleSprite2: ; 8x4
+castleSprite2: ; 8x4
     .db %00110010
     .db %10010101
     .db %00010110
     .db %10010011
     
-ThreadListSprite: ; 8x5
+threadListSprite: ; 8x5
     .db %00000000
     .db %00011100
     .db %00001100
     .db %00010100
     .db %00100000
     
-MenuSprite1: ; 16x4
+menuSprite1: ; 16x4
     .db %10100100, %11001010
     .db %11101010, %10101010
     .db %11101100, %10101010
     .db %10100110, %10101110
     
-MenuSprite2: ; 8x3
+menuSprite2: ; 8x3
     .db %00100000
     .db %01110000
     .db %11111000

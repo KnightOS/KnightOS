@@ -36,15 +36,15 @@ InterruptResume:
     
     in a, (04h)
     bit 0, a
-    jr nz, IntHandleON
+    jr nz, intHandleON
     bit 1, a
-    jr nz, IntHandleTimer1
+    jr nz, intHandleTimer1
     bit 2, a
-    jr nz, IntHandleTimer2
+    jr nz, intHandleTimer2
     bit 4, a
-    jr nz, IntHandleLink
+    jr nz, intHandleLink
     jr doContextSwitch
-IntHandleON:
+intHandleON:
     in a, (03h)
     res 0, a
     out (03h), a
@@ -53,7 +53,7 @@ IntHandleON:
     
     ; Check for special keycodes
     jp handleKeyboard
-IntHandleTimer1:
+intHandleTimer1:
     in a, (03h)
     res 1, a
     out (03h), a
@@ -109,8 +109,8 @@ _:  dec hl
     ex de, hl
     ld sp, hl
     
-    jr SysInterruptDone
-IntHandleTimer2:
+    jr sysInterruptDone
+intHandleTimer2:
     in a, (03h)
     res 2, a
     out (03h), a
@@ -129,7 +129,7 @@ IntHandleTimer2:
     push de
     jp (hl)    
     
-IntHandleLink:
+intHandleLink:
     in a, (03h)
     res 4, a
     out (03h), a

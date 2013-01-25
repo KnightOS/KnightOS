@@ -51,10 +51,10 @@ MemorySeekToStart_Loop:
         inc hl
         add hl, bc
         jr c, _
-        call CpHLDE
+        call cpHLDE
         jr nc, ++_
         inc hl \ inc hl
-        jr MemorySeekToStart_Loop
+        jr memorySeekToStart_Loop
 _:      ld ix, 0 ; Error
         jr ++_
 _:      sbc hl, bc
@@ -94,7 +94,7 @@ malloc:
     push de
     push bc
         ld hl, userMemory
-AllocMem_SearchLoop:
+allocMem_SearchLoop:
         ld a, (hl)
         inc hl
         ld e, (hl)
@@ -103,16 +103,16 @@ AllocMem_SearchLoop:
         inc hl ; Load owner thread into A, size into DE, HL points to first byte of allocated section
         
         cp nullThread ; Free memory is owned by the null thread ($FF)
-        jr z, AllocMem_HandleFree
+        jr z, allocMem_HandleFree
         inc de
         inc de
-AllocMem_InsufficientFree:
+allocMem_InsufficientFree:
         add hl, de ; Skip non-free section
-        jp c, AllocMem_OutOfMem ; If overflow
+        jp c, allocMem_OutOfMem ; If overflow
         
-        jr AllocMem_SearchLoop
+        jr allocMem_SearchLoop
         
-AllocMem_HandleFree:
+allocMem_HandleFree:
         ; BC = amount to allocate
         ; DE = size of current section
         ; HL = pointer to section start
@@ -130,9 +130,9 @@ AllocMem_HandleFree:
         ; Return to loop
         add hl, de
         inc hl \ inc hl
-        jr AllocMem_SearchLoop
+        jr allocMem_SearchLoop
         
-_:        ; Check for dead pockets
+_:      ; Check for dead pockets
         push de
             ex de, hl
             or a
@@ -150,10 +150,10 @@ _:        ; Check for dead pockets
 _:          ex de, hl
         pop de
         
-        call CpDEBC
-        jr z, AllocMem_SkipNewMeta
+        call cpDEBC
+        jr z, allocMem_SkipNewMeta
         
-AllocMem_DoAllocNormal: ; Not accounting for dead pockets
+allocMem_DoAllocNormal: ; Not accounting for dead pockets
     ; Update existing metadata (allocated header)
     push de
         push hl
@@ -208,7 +208,7 @@ _:  pop af
     cp a
     ret
         
-AllocMem_SkipNewMeta:
+allocMem_SkipNewMeta:
     ; Update existing metadata (allocated header)
     push hl \ pop ix ; Set IX for the return value
     dec hl \ dec hl \ dec hl
@@ -226,7 +226,7 @@ _:  pop af
     cp a
     ret
         
-AllocMem_OutOfMem:
+allocMem_OutOfMem:
     pop bc
     pop de
     pop hl
@@ -270,7 +270,7 @@ free:
         
         ld a, (hl)
         cp nullThread
-        jr nz, FreeMem_TryMergeForward
+        jr nz, freeMem_TryMergeForward
         
         ; Possible to merge backward
         inc bc \ inc bc \ inc bc \ inc bc \ inc bc ; BC += 5
@@ -302,7 +302,7 @@ free:
         push hl
         pop ix
         jr _ ; Skip part of the forward merge code
-FreeMem_TryMergeForward:
+freeMem_TryMergeForward:
         push ix \ pop hl
 _:
         ; HL is the first byte of this block, BC is the size
@@ -314,7 +314,7 @@ _:
         ld e, (hl)
         inc hl
         ld d, (hl) ; DE == size of leading block
-        jr nz, FreeMem_Done
+        jr nz, freeMem_Done
         
         ; Merge forward
         ;inc hl?
@@ -338,7 +338,7 @@ _:
         dec hl
         ld (hl), e ; Update header
         
-FreeMem_Done:
+freeMem_Done:
     pop ix
     pop de
     pop hl

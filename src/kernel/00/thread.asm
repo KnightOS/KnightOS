@@ -138,9 +138,9 @@ killCurrentThread:
     pop af
     ; A = Old thread ID
     ; Deallocate all memory belonging to the thread
-KillCurrentThread_Deallocate:
+killCurrentThread_Deallocate:
     ld ix, userMemory
-KillCurrentThread_DeallocationLoop:
+killCurrentThread_DeallocationLoop:
     cp (ix)
     inc ix
     ld c, (ix)
@@ -149,15 +149,15 @@ KillCurrentThread_DeallocationLoop:
     inc ix
     jr nz, _
     call free
-    jr KillCurrentThread_Deallocate
+    jr killCurrentThread_Deallocate
 _:  inc ix \ inc ix
     inc bc \ inc bc
     add ix, bc
     dec ix \ dec ix
-    jr c, KillCurrentThread_DeallocationDone
-    jr KillCurrentThread_DeallocationLoop
+    jr c, killCurrentThread_DeallocationDone
+    jr killCurrentThread_DeallocationLoop
 
-KillCurrentThread_DeallocationDone:
+killCurrentThread_DeallocationDone:
     ld hl, activeThreads
     dec (hl)
     xor a
@@ -180,7 +180,7 @@ killThread:
     ld a, (activeThreads)
     ld b, a
     ld d, 0
-KillThread_SearchLoop:
+killThread_SearchLoop:
     ld a, (hl)
     cp c
     jr z,++_
@@ -188,7 +188,7 @@ KillThread_SearchLoop:
     add a, l
     ld l, a
     inc d
-    djnz KillThread_SearchLoop
+    djnz killThread_SearchLoop
     ; Thread ID not found
     pop ix
     pop de
@@ -199,10 +199,10 @@ KillThread_SearchLoop:
 _:  pop af
     pop bc
     or a
-    ld a, ErrNoSuchThread
+    ld a, errNoSuchThread
     ret
         
-_:        ; HL points to old thread in table
+_:  ; HL points to old thread in table
     push af
     push hl
         ld a, d
@@ -210,12 +210,12 @@ _:        ; HL points to old thread in table
         add a, a
         add a, a
         add a, a
-        ld hl, ThreadTable
+        ld hl, threadTable
         add a, l
         ld l, a
         push hl
             push hl \ pop bc
-            ld hl, ThreadTable + ThreadTableSize
+            ld hl, threadTable + threadTableSize
             or a
             sbc hl, bc
             push hl \ pop bc
@@ -226,7 +226,7 @@ _:        ; HL points to old thread in table
     ; A = Old thread ID
     ; Deallocate all memory belonging to the thread
     ld ix, userMemory
-KillThread_DeallocationLoop:
+killThread_DeallocationLoop:
     cp (ix)
     inc ix
     ld c, (ix)
@@ -239,10 +239,10 @@ _:  inc ix \ inc ix
     inc bc \ inc bc
     add ix, bc
     dec ix \ dec ix
-    jr c, KillThread_DeallocationDone
-    jr KillThread_DeallocationLoop
+    jr c, killThread_DeallocationDone
+    jr killThread_DeallocationLoop
 
-KillThread_DeallocationDone:
+killThread_DeallocationDone:
     ld hl, activeThreads
     dec (hl)
     ld b, (hl)

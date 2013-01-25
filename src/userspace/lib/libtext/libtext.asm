@@ -11,21 +11,21 @@ libID .equ $01
 
 .org 0
 
-JumpTable:
+jumpTable:
     ; Init
     ret \ nop \ nop
     ; Deinit
     ret \ nop \ nop
-    jp DrawChar
-    jp DrawCharAND
-    jp DrawCharXOR
-    jp DrawStr
-    jp DrawStrAND
-    jp DrawStrXOR
-    jp DrawStrFromStream
-    jp DrawHexA
-    jp MeasureChar
-    jp MeasureStr
+    jp drawChar
+    jp drawCharAND
+    jp drawCharXOR
+    jp drawStr
+    jp drawStrAND
+    jp drawStrXOR
+    jp drawStrFromStream
+    jp drawHexA
+    jp measureChar
+    jp measureStr
     .db $FF
 
 ; Inputs:    A: Character to print
@@ -33,8 +33,8 @@ JumpTable:
 ;            B: Left X (used for \n)
 ;            IY: Buffer
 ; Outputs:    Updates DE
-DrawChar:
-DrawCharOR:
+drawChar:
+drawCharOR:
     push af
     push hl
     push ix
@@ -47,7 +47,7 @@ DrawCharOR:
         ld d, b
         jr ++_
     
-_:        push de
+_:      push de
             ld de, 6
             sub $20
             call DEMulA
@@ -55,22 +55,22 @@ _:        push de
             ; ild(hl, Font)
             rst $10
             .db libID
-            ld hl, Font
+            ld hl, font
             add hl, de
             ld a, (hl)
             inc hl
         pop de
         ld b, 5
-        call PutSpriteOR
+        call putSpriteOR
         add a, d
         ld d, a
-_:    pop bc
+_:  pop bc
     pop ix
     pop hl
     pop af
     ret
     
-DrawCharAND:
+drawCharAND:
     push af
     push hl
     push ix
@@ -83,7 +83,7 @@ DrawCharAND:
         ld d, b
         jr ++_
     
-_:        push de
+_:      push de
             ld de, 6
             sub $20
             call DEMulA
@@ -91,22 +91,22 @@ _:        push de
             ; ild(hl, Font)
             rst $10
             .db libID
-            ld hl, Font
+            ld hl, font
             add hl, de
             ld a, (hl)
             inc hl
         pop de
         ld b, 5
-        call PutSpriteAND
+        call putSpriteAND
         add a, d
         ld d, a
-_:    pop bc
+_:  pop bc
     pop ix
     pop hl
     pop af
     ret
 
-DrawCharXOR:
+drawCharXOR:
     push af
     push hl
     push ix
@@ -127,16 +127,16 @@ _:        push de
             ; ild(hl, Font)
             rst $10
             .db libID
-            ld hl, Font
+            ld hl, font
             add hl, de
             ld a, (hl)
             inc hl
         pop de
         ld b, 5
-        call PutSpriteXOR
+        call putSpriteXOR
         add a, d
         ld d, a
-_:    pop bc
+_:  pop bc
     pop ix
     pop hl
     pop af
@@ -146,72 +146,72 @@ _:    pop bc
 ;            DE: Location
 ;            B (Optional): Left X (Used for \n)
 ;            IY: Buffer
-DrawStr:
+drawStr:
     push hl
     push af
-_:        ld a, (hl)
+_:      ld a, (hl)
         or a
         jr z, _
         ; icall(PutChar)
         rst $10
         .db libID
-        call DrawChar
+        call drawChar
         inc hl
         jr -_
-_:    pop af
+_:  pop af
     pop hl
     ret
 
-DrawStrAND:
+drawStrAND:
     push hl
     push af
-_:        ld a, (hl)
+_:      ld a, (hl)
         or a
         jr z, _
         ; icall(PutChar)
         rst $10
         .db libID
-        call DrawCharAND
+        call drawCharAND
         inc hl
         jr -_
-_:    pop af
+_:  pop af
     pop hl
     ret
     
-DrawStrXOR:
+drawStrXOR:
     push hl
     push af
-_:        ld a, (hl)
+_:      ld a, (hl)
         or a
         jr z, _
         ; icall(PutChar)
         rst $10
         .db libID
-        call DrawCharXOR
+        call drawCharXOR
         inc hl
         jr -_
-_:    pop af
+_:  pop af
     pop hl
     ret
     ret
 
 ; Inputs:    B: Stream ID
 ; Prints a string from a stream
-DrawStrFromStream:
+drawStrFromStream:
     push af
-_:      call StreamReadByte
+_:      call streamReadByte
         jr nz, _
         or a
         jr z, _
         ; icall(PutChar)
         rst $10
         .db libID
-        call DrawChar
+        call drawChar
         jr -_
-_:    pop af
+_:  pop af
     ret
     
-DrawHexA:
+drawHexA:
    push af
    rrca
    rrca
@@ -234,14 +234,14 @@ dhlet:
 dispdh:
    ;icall(DrawCharOR)
    rst $10 \ .db libId
-   call DrawCharOR
+   call drawCharOR
    ret
    
 ; Inputs:    A: Character to measure
 ; Outputs:    A: Width of character (height is always 5)
 ; Note: The width of most characters include a column of
 ; whitespace on the right side.
-MeasureChar:
+measureChar:
     push hl
     push de
         ld de, 6
@@ -251,7 +251,7 @@ MeasureChar:
         ;ild(hl, Font)
         rst $10
         .db libID
-        ld hl, Font
+        ld hl, font
         add hl, de
         ld a, (hl)
     pop de
@@ -260,23 +260,23 @@ MeasureChar:
 
 ; Inputs:    HL: String to measure
 ; Outputs:    A: Width of string
-MeasureStr:
+measureStr:
     push hl
     push bc
-_:        push af
+_:     push af
             ld a, (hl)
             or a
             jr z, _
             ;icall(MeasureChar)
             rst $10
             .db libID
-            call MeasureChar
+            call measureChar
         pop bc
         add a, b
         ld a, b
         inc hl
         jr -_
-_:    pop af
+_:  pop af
     pop bc
     pop hl
     ret

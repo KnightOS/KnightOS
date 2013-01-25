@@ -4,7 +4,7 @@
 ;            HL: Address to write to
 ; Outputs:    None
 ; Comments:    Flash must be unlocked
-WriteFlashByte:
+writeFlashByte:
     push bc
     ld b, a
     push af
@@ -19,9 +19,9 @@ WriteFlashByte:
         push hl
         push de
         push bc
-            ld hl, WriteFlashByte_RAM
+            ld hl, writeFlashByte_RAM
             ld de, kernelGarbage
-            ld bc, WriteFlashByte_RAM_End - WriteFlashByte_RAM
+            ld bc, writeFlashByte_RAM_End - writeFlashByte_RAM
             ldir
         pop bc
         pop de
@@ -39,7 +39,7 @@ _:    pop af
     ret
 
 ; Flash operations must be done from RAM
-WriteFlashByte_RAM:
+writeFlashByte_RAM:
     and (hl) ; Ensure that no bits are set
     ld b, a
         ld a, $AA
@@ -51,24 +51,24 @@ WriteFlashByte_RAM:
     ld (hl), b        ; Data
     
     ; Wait for chip
-_:    ld a, b
+_:  ld a, b
     xor (hl)
     bit 7, a
-    jr z, WriteFlashByte_Done
+    jr z, writeFlashByte_Done
     bit 5, (hl)
     jr z, -_
     ; Error, abort
-WriteFlashByte_Done:
+writeFlashByte_Done:
     ld (hl), $F0
     ret
-WriteFlashByte_RAM_End:
+writeFlashByte_RAM_End:
 
 ; Inputs:    DE: Address to write to
 ;            HL: Address to read from (must be in RAM)
 ;            BC: Size of data to be written
 ; Outputs:    None
 ; Comments:    Flash must be unlocked
-WriteFlashBuffer:
+writeFlashBuffer:
     push af
     ld a, i
     push af
@@ -80,9 +80,9 @@ WriteFlashBuffer:
         push hl
         push de
         push bc
-            ld hl, WriteFlashBuffer_RAM
+            ld hl, writeFlashBuffer_RAM
             ld de, kernelGarbage
-            ld bc, WriteFlashBuffer_RAM_End - WriteFlashBuffer_RAM
+            ld bc, writeFlashBuffer_RAM_End - writeFlashBuffer_RAM
             ldir
         pop bc
         pop de
@@ -95,11 +95,11 @@ WriteFlashBuffer:
     pop af
     jp po, _
     ei
-_:    pop af
+_:  pop af
     ret
     
-WriteFlashBuffer_RAM:
-WriteFlashBuffer_Loop:
+writeFlashBuffer_RAM:
+writeFlashBuffer_Loop:
     ld a, $AA
     ld ($0AAA), a    ; Unlock
     ld a, $55
@@ -112,7 +112,7 @@ WriteFlashBuffer_Loop:
     inc de
     dec bc
     
-_:    xor (hl)
+_:  xor (hl)
     bit 7, a
     jr z, _
     bit 5, a
@@ -125,12 +125,12 @@ _:
     inc hl
     ld a, b
     or a
-    jr nz, WriteFlashBuffer_Loop
+    jr nz, writeFlashBuffer_Loop
     ld a, c
     or a
-    jr nz, WriteFlashBuffer_Loop
+    jr nz, writeFlashBuffer_Loop
     ret
-WriteFlashBuffer_RAM_End:
+writeFlashBuffer_RAM_End:
 
 eraseSwapSector:
     ld a, swapSector
@@ -140,7 +140,7 @@ eraseSwapSector:
 ; Inputs:    A: Any page within the sector to be erased
 ; Outputs:    None
 ; Comments:    Flash must be unlocked
-EraseFlashSector:
+eraseFlashSector:
     push bc
     ld b, a
     push af
@@ -156,9 +156,9 @@ EraseFlashSector:
         push hl
         push de
         push bc
-            ld hl, EraseFlashSector_RAM
+            ld hl, eraseFlashSector_RAM
             ld de, kernelGarbage
-            ld bc, EraseFlashSector_RAM_End - EraseFlashSector_RAM
+            ld bc, eraseFlashSector_RAM_End - eraseFlashSector_RAM
             ldir
         pop bc
         pop de
@@ -171,11 +171,11 @@ EraseFlashSector:
     pop af
     jp po, _
     ei
-_:    pop af
+_:  pop af
     pop bc
     ret
     
-EraseFlashSector_RAM:
+eraseFlashSector_RAM:
     out (6), a
     ld a, $AA
     ld ($0AAA), a ; Unlock
@@ -190,7 +190,7 @@ EraseFlashSector_RAM:
     ld a, $30
     ld ($4000), a ; Erase
     ; Wait for chip
-_:    ld a, ($4000)
+_:  ld a, ($4000)
     bit 7, a
     ret nz
     bit 5, a
@@ -199,27 +199,27 @@ _:    ld a, ($4000)
     ld a, $F0
     ld ($4000), a
     ret
-EraseFlashSector_RAM_End:
+eraseFlashSector_RAM_End:
 
 ; Inputs:    A: Page to erase
 ; Erases a single flash page
-EraseFlashPage:
+eraseFlashPage:
     push af
     push bc
         push af
-            call CopySectorToSwap
+            call copySectorToSwap
         pop af
         push af
-            call EraseFlashSector
+            call eraseFlashSector
         pop af
         
         ld c, a
         and %11111100
-        ld b, SwapSector
+        ld b, swapSector
 _:
         cp c
         jr z, _
-        call CopyFlashPage
+        call copyFlashPage
 _:
         inc b
         inc a
@@ -235,17 +235,13 @@ _:
     pop bc
     pop af
     ret
-    
-EraseFlashPage_RAM:
-    
 
 ; Inputs:    A: Any page within the sector to be copied
 ; Outputs:    None
 ; Comments:    Flash must be unlocked
-CopySectorToSwap:
+copySectorToSwap:
     push af
-    ld a, SwapSector
-    call EraseFlashSector
+    call eraseSwapSector
     pop af
 
     push bc
@@ -261,19 +257,19 @@ CopySectorToSwap:
     
     push hl
     push de
-        ld hl, CopySectorToSwap_RAM
+        ld hl, copySectorToSwap_RAM
 #ifdef CPU15
         push af
             ld a, 1
             out (5), a
         
             ld de, kernelGarbage + $4000 ; By rearranging memory, we can make the routine perform better
-            ld bc, CopySectorToSwap_RAM_End - CopySectorToSwap_RAM
+            ld bc, copySectorToSwap_RAM_End - copySectorToSwap_RAM
             ldir
         pop af
 #else
         ld de, kernelGarbage
-        ld bc, CopySectorToSwap_RAM_End - CopySectorToSwap_RAM
+        ld bc, copySectorToSwap_RAM_End - copySectorToSwap_RAM
         ldir
 #endif
 #ifdef CPU15
@@ -298,21 +294,21 @@ CopySectorToSwap:
     pop af
     jp po, _
     ei
-_:    pop af
+_:  pop af
     pop bc
     ret
     
 #ifdef CPU15
-CopySectorToSwap_RAM:
+copySectorToSwap_RAM:
     out (7), a
-    ld a, SwapSector
+    ld a, swapSector
     out (6), a
     
-CopySectorToSwap_PreLoop:    
+copySectorToSwap_PreLoop:    
     ld hl, $8000
     ld de, $4000
     ld bc, $4000
-CopySectorToSwap_Loop:
+copySectorToSwap_Loop:
     ld a, $AA
     ld ($0AAA), a    ; Unlock
     ld a, $55
@@ -324,7 +320,7 @@ CopySectorToSwap_Loop:
     inc de
     dec bc
     
-_:    xor (hl)
+_:  xor (hl)
     bit 7, a
     jr z, _
     bit 5, a
@@ -339,10 +335,10 @@ _:
     inc hl
     ld a, b
     or a
-    jr nz, CopySectorToSwap_Loop
+    jr nz, copySectorToSwap_Loop
     ld a, c
     or a
-    jr nz, CopySectorToSwap_Loop
+    jr nz, copySectorToSwap_Loop
     
     in a, (7)
     inc a
@@ -353,23 +349,23 @@ _:
     out (6), a
     and %00000011
     or a
-    jr nz, CopySectorToSwap_PreLoop
+    jr nz, copySectorToSwap_PreLoop
     
     ld a, $81
     out (7), a
     ret
-CopySectorToSwap_RAM_End:
+copySectorToSwap_RAM_End:
 
 #else ; Models that don't support placing RAM page 01 in bank 3 (much slower)
-CopySectorToSwap_RAM:
+copySectorToSwap_RAM:
     ld e, a
     
-    ld a, SwapSector
+    ld a, swapSector
     ld (kernelGarbage + kernelGarbageSize - 1), a
-CopySectorToSwap_PreLoop:
+copySectorToSwap_PreLoop:
     ld hl, $4000
     ld bc, $4000
-CopySectorToSwap_Loop:
+copySectorToSwap_Loop:
     push af
         ld a, e
         out (6), a ; The inefficiency on this model comes from swapping pages during the loop
@@ -386,7 +382,7 @@ CopySectorToSwap_Loop:
     ld (hl), d        ; Data
     
     ld a, d
-_:    cp (hl)
+_:  cp (hl)
     jr nz, -_ ; Does this work?
     
     dec bc
@@ -395,11 +391,11 @@ _:    cp (hl)
     ld a, b
     or a
     ld a, (kernelGarbage + kernelGarbageSize - 1)
-    jr nz, CopySectorToSwap_Loop
+    jr nz, copySectorToSwap_Loop
     ld a, c
     or a
     ld a, (kernelGarbage + kernelGarbageSize - 1)
-    jr nz, CopySectorToSwap_Loop
+    jr nz, copySectorToSwap_Loop
     
     inc e
     ld a, (kernelGarbage + kernelGarbageSize - 1)
@@ -408,16 +404,16 @@ _:    cp (hl)
     and %00000011
     or a
     ld a, (kernelGarbage + kernelGarbageSize - 1)
-    jr nz, CopySectorToSwap_PreLoop
+    jr nz, copySectorToSwap_PreLoop
     ret
-CopySectorToSwap_RAM_End:
+copySectorToSwap_RAM_End:
 #endif
 
 ; Inputs:    A: Destination page
 ;            B: Source page
-; Outputs:    None
+; Outputs:   None
 ; Copies the contents of one page to another.  The destination should be cleared to $FF first.
-CopyFlashPage:
+copyFlashPage:
     push de
     ld d, a
     push af
@@ -431,17 +427,17 @@ CopyFlashPage:
     push de
         push af
         push bc
-        ld hl, CopyFlashPage_RAM
+        ld hl, copyFlashPage_RAM
 #ifdef CPU15
             ld a, 1
             out (5), a
         
             ld de, kernelGarbage + $4000 ; By rearranging memory, we can make the routine perform better
-            ld bc, CopyFlashPage_RAM_End - CopyFlashPage_RAM
+            ld bc, copyFlashPage_RAM_End - CopyFlashPage_RAM
             ldir
 #else
         ld de, kernelGarbage
-        ld bc, CopyFlashPage_RAM_End - CopyFlashPage_RAM
+        ld bc, copyFlashPage_RAM_End - CopyFlashPage_RAM
         ldir
 #endif
         pop bc
@@ -473,16 +469,16 @@ _:    pop af
     ret
     
 #ifdef CPU15
-CopyFlashPage_RAM:
+copyFlashPage_RAM:
     out (6), a ; Destination
     ld a, b
     out (7), a ; Source
     
-CopyFlashPage_PreLoop:    
+copyFlashPage_PreLoop:    
     ld hl, $8000
     ld de, $4000
     ld bc, $4000
-CopyFlashPage_Loop:
+copyFlashPage_Loop:
     ld a, $AA
     ld ($0AAA), a    ; Unlock
     ld a, $55
@@ -509,25 +505,25 @@ _:
     inc hl
     ld a, b
     or a
-    jr nz, CopyFlashPage_Loop
+    jr nz, copyFlashPage_Loop
     ld a, c
     or a
-    jr nz, CopyFlashPage_Loop
+    jr nz, copyFlashPage_Loop
     
     ld a, $81
     out (7), a
     ret
-CopyFlashPage_RAM_End:
+copyFlashPage_RAM_End:
 
 #else ; Models that don't support placing RAM page 01 in bank 3 (much slower)
-CopyFlashPage_RAM:
+copyFlashPage_RAM:
     ld e, b
     
     ld (kernelGarbage + kernelGarbageSize - 1), a
-CopyFlashPage_PreLoop:
+copyFlashPage_PreLoop:
     ld hl, $4000
     ld bc, $4000
-CopyFlashPage_Loop:
+copyFlashPage_Loop:
     push af
         ld a, e
         out (6), a ; The inefficiency on this model comes from swapping pages during the loop
@@ -544,7 +540,7 @@ CopyFlashPage_Loop:
     ld (hl), d        ; Data
     
     ld a, d
-_:    cp (hl)
+_:  cp (hl)
     jr nz, -_ ; Does this work?
     
     dec bc
@@ -553,11 +549,11 @@ _:    cp (hl)
     ld a, b
     or a
     ld a, (kernelGarbage + kernelGarbageSize - 1)
-    jr nz, CopyFlashPage_Loop
+    jr nz, copyFlashPage_Loop
     ld a, c
     or a
     ld a, (kernelGarbage + kernelGarbageSize - 1)
-    jr nz, CopyFlashPage_Loop
+    jr nz, copyFlashPage_Loop
     ret
-CopyFlashPage_RAM_End:
+copyFlashPage_RAM_End:
 #endif

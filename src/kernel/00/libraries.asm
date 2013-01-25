@@ -12,7 +12,7 @@ loadLibrary:
     ld a, i
     jp pe, _
     ld a, i
-_:    push af
+_:  push af
     push hl
     push ix
     push bc
@@ -44,15 +44,15 @@ _:    push af
                     jr z, ++_
                     push bc
                         ld b, a
-                        ld hl, LibraryTable
-_:                        ld a, (hl)
+                        ld hl, libraryTable
+_:                      ld a, (hl)
                         cp e
-                        jr z, LoadLibrary_AlreadyLoaded
+                        jr z, loadLibrary_AlreadyLoaded
                         inc hl \ inc hl \ inc hl \ inc hl
                         dec b
                         jr nz, -_
                     pop bc
-_:            pop af
+_:          pop af
             pop bc
             pop hl
             
@@ -62,7 +62,7 @@ _:            pop af
                     ld a, $FE
                     ld (currentThreadIndex), a
                     call malloc
-                    jp nz, LoadLibrary_OutOfMem
+                    jp nz, loadLibrary_OutOfMem
                 pop af
                 ld (currentThreadIndex), a
             pop af
@@ -97,16 +97,16 @@ _:            pop af
         
         push ix \ pop hl
         push ix \ pop bc
-LoadLibrary_JumpTableLoop:
+loadLibrary_JumpTableLoop:
         ld a, (hl)
         inc hl
         cp $FF
-        jr z, LoadLibrary_JumpTableDone
+        jr z, loadLibrary_JumpTableDone
         cp $C9
         jr nz, _
         inc hl \ inc hl
         jr LoadLibrary_JumpTableLoop
-_:        ld e, (hl)
+_:      ld e, (hl)
         inc hl
         ld d, (hl)
         
@@ -118,24 +118,24 @@ _:        ld e, (hl)
         dec hl
         ld (hl), e
         inc hl \ inc hl
-        jr LoadLibrary_JumpTableLoop
+        jr loadLibrary_JumpTableLoop
         
-LoadLibrary_JumpTableDone:
+loadLibrary_JumpTableDone:
         ld hl, _
         push hl
         jp (ix) ; Run the initialization routine
         
-_:    pop bc
+_:  pop bc
     pop ix
     pop hl
     pop af
     jp po, _
     ei
-_:    pop af
+_:  pop af
     cp a
     ret
     
-LoadLibrary_AlreadyLoaded:
+loadLibrary_AlreadyLoaded:
     pop bc
     pop af
     ld d, a
@@ -151,11 +151,11 @@ LoadLibrary_AlreadyLoaded:
     pop af ; This routine is awfully stack-heavy
     jp po, _
     ei
-_:    pop af
+_:  pop af
     cp a
     ret
     
-LoadLibrary_FileNotFound:
+loadLibrary_FileNotFound:
     pop de
     pop ix
     pop bc
@@ -163,12 +163,12 @@ LoadLibrary_FileNotFound:
     pop af
     jp po, _
     ei
-_:    pop af
+_:  pop af
     ld a, ErrFileNotFound
     or a
     ret
     
-LoadLibrary_TooManyLibraries:
+loadLibrary_TooManyLibraries:
     pop de
     pop ix
     pop bc
@@ -176,12 +176,12 @@ LoadLibrary_TooManyLibraries:
     pop af
     jp po, _
     ei
-_:    pop af
+_:  pop af
     ld a, ErrTooManyLibraries
     or a
     ret
     
-LoadLibrary_OutOfMem:
+loadLibrary_OutOfMem:
     pop af
     ld (currentThreadIndex), a
     pop ix
@@ -190,7 +190,7 @@ LoadLibrary_OutOfMem:
     pop af
     jp po, _
     ei
-_:    pop af
+_:  pop af
     ld a, ErrOutOfMem
     or a
     ret

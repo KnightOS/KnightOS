@@ -1,4 +1,3 @@
-
 streamSeekToStart:
     push hl
     push bc
@@ -274,7 +273,7 @@ streamReadToEnd_NoStream:
     jp po, _
     ei
 _:    inc sp \ inc sp
-    ld a, ErrStreamNotFound
+    ld a, errStreamNotFound
     or a
     ret
 
@@ -404,7 +403,7 @@ streamReadWord_EndOfStream:
     pop bc
     pop de
     inc sp \ inc sp
-    ld a, ErrEndOfStream
+    ld a, errEndOfStream
     or a
     ret
     
@@ -514,7 +513,7 @@ streamReadByte_EndOfStream:
     pop de
     pop hl
     inc sp \ inc sp
-    ld a, ErrEndOfStream
+    ld a, errEndOfStream
     or a
     ret
     
@@ -523,7 +522,7 @@ streamReadByte_NoStream:
     pop de
     pop hl
     inc sp \ inc sp
-    ld a, ErrStreamNotFound
+    ld a, errStreamNotFound
     ret
     
 ; Inputs:    DE: Pointer to full path of file
@@ -535,34 +534,34 @@ openFileRead:
     ld a, i
     jp pe, _
     ld a, i
-_:    push af
+_:  push af
     di
     push hl
     push bc
         ld a, (activeFileStreams)
-        cp MaxFileStreams
+        cp maxFileStreams
         jr c, ++_
         pop bc
         pop hl
         pop af
         jp po, _
         ei
-_:        ld a, ErrTooManyStreams
+_:      ld a, errTooManyStreams
         or a
         ret
         
-_:        call lookUpFile
+_:      call lookUpFile
         jr z, ++_
         pop bc
         pop hl
         pop af
         jp po, _
         ei
-_:        ld a, ErrFileNotFound
+_:        ld a, errFileNotFound
         or a
         ret
         
-_:        push de
+_:      push de
         push bc
         ld bc, 6
         or a
@@ -642,14 +641,14 @@ openFileWrite:
     push hl
     push bc
         ld a, (activeFileStreams)
-        cp MaxThreads
+        cp maxThreads
         jr c, ++_
         pop bc
         pop hl
         pop af
         jp po, _
         ei
-_:        ld a, ErrTooManyStreams
+_:        ld a, errTooManyStreams
         or a
         ret
         
@@ -719,7 +718,7 @@ _:    pop af
 ; Outputs:    HL: Stream table entry
 ;            DBC: Space left in stream
 ;            A: Preserved unless error
-GetStreamInfo:
+getStreamInfo:
     push af
         ld hl, fileStreamTable
         
@@ -729,11 +728,11 @@ _:        ld a, (hl)
         ld bc, 8
         add hl, bc
         ld bc, fileStreamTable + fileStreamTableSize + 1
-        call CpHLBC
+        call cpHLBC
         jr c, -_
         pop bc
         pop af
-        ld a, ErrStreamNotFound
+        ld a, errStreamNotFound
         or a
         ret
 _:
@@ -753,11 +752,11 @@ _:
 ; Inputs:    DE: Pointer to full path of file
 ; Outputs:    Z: Exists
 ;            NZ: Does not exist
-FileExists:
+fileExists:
     push hl
     push de
     push bc
-        call LookUpFile
+        call lookUpFile
     pop bc
     pop de
     pop hl
@@ -767,13 +766,13 @@ FileExists:
 ; Outputs:    A: Preserved unless error
 ;            Z: Success
 ;            NZ: Failure
-DeleteFile:
+deleteFile:
     push hl
     push de
     push af
     call LookUpFile
     jr z, _
-    ld a, ErrFileNotFound
+    ld a, errFileNotFound
     inc sp \ inc sp
     pop de
     pop hl
@@ -788,14 +787,14 @@ _:
 
     ld a, FSDeletedFile
     inc hl \ inc hl \ inc hl
-    call UnlockFlash
-    call WriteFlashByte
-    call LockFlash
+    call unlockFlash
+    call writeFlashByte
+    call lockFlash
     
     pop af
     jp po, _
     ei
-_:    pop af
+_:  pop af
     pop de
     pop hl
     ret
@@ -804,7 +803,7 @@ _:    pop af
 ; Outputs:    A: Preserved unless error
 ;            Z: Success
 ;            NZ: Failure
-DeleteDirectory:
+deleteDirectory:
     ret
 
 ; Inputs:    DE: Pointer to full path of file
@@ -812,7 +811,7 @@ DeleteDirectory:
 ; Example: If DE points to "bin/hello" and HL points to "world",
 ; then the file in bin/ called "hello" will be renamed to "world",
 ; and the full path will become "bin/world"
-RenameFile:
+renameFile:
     push bc
     push de
     push hl
@@ -820,16 +819,16 @@ RenameFile:
     ld a, i
     push af
         di
-        call UnlockFlash
+        call unlockFlash
         ld b, h
         ld c, l
         push bc
-            call LookUpFile
+            call lookUpFile
             inc hl \ inc hl \ inc hl ; Move pointer to actual entry data
             ; Mark old entry as renamed
             out (6), a
             ld a, FSModifiedFile
-            call WriteFlashByte
+            call writeFlashByte
             ; Create new entry data in kernelGarbage (15 bytes only)
             ; HL points to entry data
             ld de, kernelGarbage + kernelGarbageSize - 1
@@ -843,9 +842,9 @@ RenameFile:
             ; TODO: Calculate size of entry and add end of page entry if needed
             
             ; Create new entry in file system
-            ld a, (EndOfTablePage)
+            ld a, (endOfTablePage)
             out (6), a
-            ld hl, (EndOfTableAddress)
+            ld hl, (endOfTableAddress)
             ld de, kernelGarbage + kernelGarbageSize - 15
             ld bc, 15
             or a
@@ -853,10 +852,10 @@ RenameFile:
             ex de, hl
             inc de
             
-            call WriteFlashBuffer
+            call writeFlashBuffer
         pop hl ; Pop the name into HL
         dec de
-        call StringLength
+        call stringLength
         ex de, hl
         or a
         sbc hl, bc
@@ -874,7 +873,7 @@ RenameFile:
             add hl, bc
             ex de, hl
             ; HL points to beginning, DE to end
-_:            ld a, (hl)
+_:          ld a, (hl)
             push af
                 ld a, (de)
                 ld (hl), a
@@ -890,18 +889,18 @@ _:            ld a, (hl)
             ld a, c
             or a ; Loop complete
             jr nz, -_
-_:        pop hl
+_:      pop hl
         pop bc
         pop de
         
         inc bc
-        call WriteFlashBuffer
+        call writeFlashBuffer
         
-        call LockFlash
+        call lockFlash
     pop af
     jp po, _
     ei
-_:    pop af
+_:  pop af
     pop hl
     pop de
     pop bc
@@ -911,7 +910,7 @@ _:    pop af
 ; of the table.  If needed, it will also trigger a
 ; garbage collect, and restore the state of the calculator
 ; afterwards.
-CreateEndOfPageEntry:
+createEndOfPageEntry:
     ret
     
 ; Inputs:    DE: Pointer to full path of file
@@ -919,7 +918,7 @@ CreateEndOfPageEntry:
 ;            A: Page of entry in allocation table (or error)
 ;            Z: Success
 ;            NZ: Error
-LookUpFile:
+lookUpFile:
     push de
     push bc
     ld a, i
@@ -933,13 +932,13 @@ _:    push af
         jr nz, _
         inc de
 _:
-        ld a, AllocTableStart
+        ld a, allocTableStart
         out (6), a
         
         ld hl, 0
         ld (kernelGarbage), hl ; current parent ID
         ld hl, $7FFF
-LookUpFile_Loop:
+lookUpFile_Loop:
         ld a, (hl)
         dec hl
         ld c, (hl)
@@ -948,9 +947,9 @@ LookUpFile_Loop:
         dec hl        ; A=ID, BC=Entry length, HL=Entry address
         
         cp FSEndOfTable
-        jp z, LookUpFile_Failed
+        jp z, lookUpFile_Failed
         cp FSDirectory
-        jp z, LookUpFile_Directory
+        jp z, lookUpFile_Directory
         cp FSEndOfPage
         jr nz, _
         in a, (6)
@@ -962,9 +961,9 @@ _:
         dec bc ; TODO: Test this more
         sbc hl, bc
         ; HL points to next entry
-        jr LookUpFile_Loop
+        jr lookUpFile_Loop
     
-LookUpFile_Directory:
+lookUpFile_Directory:
     push de
     ld c, (hl)
     dec hl
@@ -973,8 +972,8 @@ LookUpFile_Directory:
 
     push de
         ld de, (kernelGarbage)
-        call CpBCDE
-        jr nz, LookUpFile_Directory_NotCorrectParent
+        call cpBCDE
+        jr nz, lookUpFile_Directory_NotCorrectParent
     pop de
     ld c, (hl)
     dec hl
@@ -982,8 +981,8 @@ LookUpFile_Directory:
     dec hl
     dec hl ; Skip flags (for future use)
     
-    call CompareDirectories
-    jp nz, LookUpFile_Directory_NotCorrectName
+    call compareDirectories
+    jp nz, lookUpFile_Directory_NotCorrectName
     inc sp
     inc sp ; removes the saved DE from the stack (the new one is correct)
     inc de
@@ -996,20 +995,20 @@ LookUpFile_Directory:
     pop hl
     
     push de
-        call CheckForRemainingSlashes
+        call checkForRemainingSlashes
     pop de
     
-    jp z, LookUpFile_FileLoop
-    jp LookUpFile_Loop
+    jp z, lookUpFile_FileLoop
+    jp lookUpFile_Loop
     
-LookUpFile_Directory_NotCorrectName:
+lookUpFile_Directory_NotCorrectName:
     pop de
     ld bc, $FFFF
     xor a
     cpdr
-    jp LookUpFile_Loop
+    jp lookUpFile_Loop
     
-LookUpFile_Directory_NotCorrectParent:
+lookUpFile_Directory_NotCorrectParent:
     pop de
     pop de
     dec hl \ dec hl \ dec hl
@@ -1017,19 +1016,19 @@ LookUpFile_Directory_NotCorrectParent:
     xor a
     ld bc, $FFFF
     cpdr ; Skip past name string
-    jp LookUpFile_Loop
+    jp lookUpFile_Loop
     
-LookUpFile_Failed:
+lookUpFile_Failed:
     pop af
     jp po, _
     ei
-_:    pop de
+_:  pop de
     pop bc
-    ld a, ErrFileNotFound
+    ld a, errFileNotFound
     or a ; NZ
     ret
     
-LookUpFile_FileLoop:
+lookUpFile_FileLoop:
         ; HL points to next entry
         ld a, (hl)
         dec hl
@@ -1039,9 +1038,9 @@ LookUpFile_FileLoop:
         dec hl
         
         cp FSFile
-        jp z, LookUpFile_File
+        jp z, lookUpFile_File
         cp FSEndOfTable
-        jp z, LookUpFile_Failed
+        jp z, lookUpFile_Failed
         cp FSEndOfPage
         jr nz, _
 _:        
@@ -1049,9 +1048,9 @@ _:
         sbc hl, bc
         inc hl
         ; HL points to next entry
-        jr LookUpFile_FileLoop
+        jr lookUpFile_FileLoop
     
-LookUpFile_File:
+lookUpFile_File:
     push hl ; Preserve the entry, this is what we actually return
     ld c, (hl)
     dec hl
@@ -1059,15 +1058,15 @@ LookUpFile_File:
     dec hl
     push de
         ld de, (kernelGarbage)
-        call CpBCDE
-        jp nz, LookUpFile_File_IncorrectParent
+        call cpBCDE
+        jp nz, lookUpFile_File_IncorrectParent
     pop de
     ; Correct directory
     ld bc, 10
     or a
     sbc hl, bc ; Move to name
     push de
-        call CompareFileStrings
+        call compareFileStrings
     pop de
     jp z, _
     inc sp
@@ -1087,7 +1086,7 @@ _:
     pop af
     jp po, _
     ei
-_:    ld a, b
+_:  ld a, b
     inc sp \ inc sp \ inc sp \ inc sp ; pop de \ pop bc
     push hl
         dec hl \ dec hl \ dec hl
@@ -1100,7 +1099,7 @@ _:    ld a, b
     cp a ; Z for success
     ret
     
-LookUpFile_File_IncorrectParent:
+lookUpFile_File_IncorrectParent:
     pop de
     ld bc, 10
     xor a
@@ -1110,19 +1109,19 @@ LookUpFile_File_IncorrectParent:
     cpdr
     inc sp
     inc sp ; Remove HL from the stack
-    jp LookUpFile_FileLoop
+    jp lookUpFile_FileLoop
     
 ; checks string at (DE) for '/'
 ; Z for no slashes, NZ for slashes
-CheckForRemainingSlashes:
+checkForRemainingSlashes:
     ld a, (de)
     or a ; CP 0
     ret z
     cp '/'
-    jr z, CheckSlashSlashFound
+    jr z, checkSlashSlashFound
     inc de
-    jr CheckForRemainingSlashes
-CheckSlashSlashFound:
+    jr checkForRemainingSlashes
+checkSlashSlashFound:
     or a
     ret
 
@@ -1130,20 +1129,20 @@ CheckSlashSlashFound:
 ; Z for equal, NZ for not equal
 ; HL = backwards string
 ; DE = fowards string
-CompareDirectories:
+compareDirectories:
     ld a, (de)
     or a
-    jr z, CompareDirectoriesEoS
+    jr z, compareDirectoriesEoS
     cp '/'
-    jr z, CompareDirectoriesEoS
+    jr z, compareDirectoriesEoS
     cp ' '
-    jr z, CompareDirectoriesEoS
+    jr z, compareDirectoriesEoS
     cp (hl)
     ret nz
     dec hl
     inc de
-    jr CompareDirectories
-CompareDirectoriesEoS:
+    jr compareDirectories
+compareDirectoriesEoS:
     ld a, (hl)
     or a
     ret
@@ -1151,18 +1150,18 @@ CompareDirectoriesEoS:
 ; Compare File Strings (HL is reverse)
 ; Z for equal, NZ for not equal
 ; Inputs: HL and DE are strings to compare
-CompareFileStrings:
+compareFileStrings:
     ld a, (de)
     or a
-    jr z, CompareFileStringsEoS
+    jr z, compareFileStringsEoS
     cp ' '
-    jr z, CompareFileStringsEoS
+    jr z, compareFileStringsEoS
     cp (hl)
     ret nz
     dec hl
     inc de
-    jr CompareFileStrings
-CompareFileStringsEoS:
+    jr compareFileStrings
+compareFileStringsEoS:
     ld a, (hl)
     or a
     ret

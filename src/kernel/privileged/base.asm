@@ -4,15 +4,14 @@
 .org $4000
 
     rst 00h    ; Safety
-            ; If a program errors out and runs into this code,
-            ; it should help avoid serious problems with outputting
-            ; bad values to protected ports.
-
-UnlockFlash:
+               ; If a program errors out and runs into this code,
+               ; it should help avoid serious problems with outputting
+               ; bad values to protected ports.
+unlockFlash:
     ld a,i
     jp pe, _
     ld a, i
-_:    push af
+_:  push af
     di
     ld a, 1
     nop
@@ -25,11 +24,11 @@ _:    push af
     ei
     ret
     
-LockFlash:
+lockFlash:
     ld a,i
     jp pe, _
     ld a, i
-_:    push af
+_:  push af
     di
     xor a
     nop

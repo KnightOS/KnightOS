@@ -225,13 +225,13 @@ _skip:
 compareStrings:
     ld a, (de)
     or a
-    jr z, CompareStringsEoS
+    jr z, compareStringsEoS
     cp (hl)
     ret nz
     inc hl
     inc de
-    jr CompareStrings
-CompareStringsEoS:
+    jr compareStrings
+compareStringsEoS:
     ld a, (hl)
     or a
     ret
@@ -254,7 +254,6 @@ _:  pop de
     
 ; >>> Quicksort routine v1.1 <<<
 ; by Frank Yaul 7/14/04
-;
 ; Usage: bc->first, de->last,
 ;        call qsort
 quicksort:
@@ -262,55 +261,55 @@ quicksort:
         push de
         push bc
         push af
-        ld      hl,0
-        push    hl
-qsloop: ld      h,b
-        ld      l,c
-        or      a
-        sbc     hl,de
-        jp      c,next1 ;loop until lo<hi
-        pop     bc
-        ld      a,b
-        or      c
+        ld hl,0
+        push hl
+qsloop: ld h,b
+        ld l,c
+        or a
+        sbc hl,de
+        jp c,next1 ;loop until lo<hi
+        pop bc
+        ld a,b
+        or c
         jr z, endqsort
-        pop     de
-        jp      qsloop
-next1:  push    de      ;save hi,lo
-        push    bc
-        ld      a,(bc)  ;pivot
-        ld      h,a
-        dec     bc
-        inc     de
-fleft:  inc     bc      ;do i++ while cur<piv
-        ld      a,(bc)
-        cp      h
-        jp      c,fleft
-fright: dec     de      ;do i-- while cur>piv
-        ld      a,(de)
-        ld      l,a
-        ld      a,h
-        cp      l
-        jp      c,fright
-        push    hl      ;save pivot
-        ld      h,d     ;exit if lo>hi
-        ld      l,e
-        or      a
-        sbc     hl,bc
-        jp      c,next2
-        ld      a,(bc)  ;swap (bc),(de)
-        ld      h,a
-        ld      a,(de)
-        ld      (bc),a
-        ld      a,h
-        ld      (de),a
-        pop     hl      ;restore pivot
-        jp      fleft
-next2:  pop     hl      ;restore pivot
-        pop     hl      ;pop lo
-        push    bc      ;stack=left-hi
-        ld      b,h
-        ld      c,l     ;bc=lo,de=right
-        jp      qsloop
+        pop de
+        jp qsloop
+next1:  push de      ;save hi,lo
+        push bc
+        ld a, (bc)  ;pivot
+        ld h, a
+        dec bc
+        inc de
+fleft:  inc bc      ;do i++ while cur<piv
+        ld a,(bc)
+        cp h
+        jp c,fleft
+fright: dec de      ;do i-- while cur>piv
+        ld a, (de)
+        ld l, a
+        ld a, h
+        cp l
+        jp c, fright
+        push hl      ;save pivot
+        ld h,d     ;exit if lo>hi
+        ld l,e
+        or a
+        sbc hl, bc
+        jp c, next2
+        ld a, (bc)  ;swap (bc),(de)
+        ld h, a
+        ld a, (de)
+        ld (bc), a
+        ld a, h
+        ld (de), a
+        pop hl      ;restore pivot
+        jp fleft
+next2:  pop hl      ;restore pivot
+        pop hl      ;pop lo
+        push bc      ;stack=left-hi
+        ld b, h
+        ld c, l     ;bc=lo,de=right
+        jp qsloop
 endqsort:
         pop af
         pop bc
@@ -318,28 +317,28 @@ endqsort:
         pop hl
         ret
         
-Div32By16:
+div32By16:
 ; IN:    ACIX=dividend, DE=divisor
 ; OUT:    ACIX=quotient, DE=divisor, HL=remainder, B=0
-    ld    hl,0
-    ld    b,32
-Div32By16_Loop:
-    add    ix,ix
-    rl    c
+    ld hl,0
+    ld b,32
+div32By16_Loop:
+    add ix, ix
+    rl c
     rla
-    adc    hl,hl
-    jr    c,Div32By16_Overflow
-    sbc    hl,de
-    jr    nc,Div32By16_SetBit
-    add    hl,de
-    djnz    Div32By16_Loop
+    adc hl,hl
+    jr  c, div32By16_Overflow
+    sbc hl,de
+    jr  nc, div32By16_SetBit
+    add hl,de
+    djnz div32By16_Loop
     ret
-Div32By16_Overflow:
-    or    a
-    sbc    hl,de
-Div32By16_SetBit:
-    .db    $DD,$2C        ; inc ixl, change to inc ix to avoid undocumented
-    djnz    Div32By16_Loop
+div32By16_Overflow:
+    or a
+    sbc hl,de
+div32By16_SetBit:
+    .db $DD, $2C        ; inc ixl, change to inc ix to avoid undocumented
+    djnz div32By16_Loop
     ret
     
 ; Subtracts DE from ACIX
@@ -386,29 +385,29 @@ _:  push hl \ pop ix
     
 ; remainder in a
 divHLbyC:
-   xor    a
-   ld    b, 16
-_: add    hl, hl
+   xor a
+   ld b, 16
+_: add hl, hl
    rla
-   cp    c
-   jr    c, $+4
-   sub    c
-   inc    l
-   djnz    -_
+   cp c
+   jr c, $+4
+   sub c
+   inc l
+   djnz -_
    ret
  
 ; remainder in HL
 divACbyDE:
-   ld    hl, 0
-   ld    b, 16
-_: sll    c
+   ld hl, 0
+   ld b, 16
+_: sll c
    rla
-   adc    hl, hl
-   sbc    hl, de
-   jr    nc, $+4
-   add    hl, de
-   dec    c
-   djnz    -_
+   adc hl, hl
+   sbc hl, de
+   jr nc, $+4
+   add hl, de
+   dec c
+   djnz -_
    ret
    
 ; Returns HL as pointer to allocated memory containing version

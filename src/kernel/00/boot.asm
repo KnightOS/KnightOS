@@ -148,15 +148,15 @@ reboot:
     
     ; Configure filesystem memory
     ld hl, 0
-    ld (CurrentDirectoryID), hl
-    ld (EndOfTableAddress), hl
-    ld (EndOfDataPage), hl
-    ld (EndOfDataAddress), hl
+    ld (currentDirectoryID), hl
+    ld (endOfTableAddress), hl
+    ld (endOfDataPage), hl
+    ld (endOfDataAddress), hl
 
-    ld a, AllocTableStart
+    ld a, allocTableStart
     out (6), a
     ld hl, $7FFF
-Boot_FileSystemConfigLoop:
+boot_FileSystemConfigLoop:
     ld a, (hl)
     dec hl
     ld c, (hl)
@@ -164,26 +164,26 @@ Boot_FileSystemConfigLoop:
     ld b, (hl)
     dec hl
     cp FSDirectory
-    jr z, Boot_FileSystemConfig_Dir
+    jr z, boot_FileSystemConfig_Dir
     cp FSDeletedDirectory
-    jr z, Boot_FileSystemConfig_Dir
+    jr z, boot_FileSystemConfig_Dir
     cp FSFile
-    jr z, Boot_FileSystemConfig_File
+    jr z, boot_FileSystemConfig_File
     cp FSDeletedFile
-    jr z, Boot_FileSystemConfig_File
+    jr z, boot_FileSystemConfig_File
     cp FSModifiedFile
-    jr z, Boot_FileSystemConfig_File
+    jr z, boot_FileSystemConfig_File
     cp FSEndOfPage
-    jr z, Boot_FileSystemConfig_EoP
+    jr z, boot_FileSystemConfig_EoP
     cp FSEndOfTable
-    jr z, Boot_FileSystemConfig_EoT
+    jr z, boot_FileSystemConfig_EoT
 
     or a
     sbc hl, bc
     inc hl
-    jr Boot_FilesystemConfigLoop
+    jr boot_FilesystemConfigLoop
 
-Boot_FileSystemConfig_Dir:
+boot_FileSystemConfig_Dir:
     push hl
     push bc
     dec hl \ dec hl
@@ -191,11 +191,11 @@ Boot_FileSystemConfig_Dir:
     dec hl
     ld b, (hl)
 
-    ld hl, (CurrentDirectoryID)
-    call CpHLBC
+    ld hl, (currentDirectoryID)
+    call cpHLBC
     jr nc, _
     push bc \ pop hl
-    ld (CurrentDirectoryID), hl ; Update the current directory ID if needed
+    ld (currentDirectoryID), hl ; Update the current directory ID if needed
 _:
     pop bc
     pop hl
@@ -203,9 +203,9 @@ _:
     or a
     sbc hl, bc
     inc hl
-    jr Boot_FileSystemConfigLoop
+    jr boot_FileSystemConfigLoop
 
-Boot_FileSystemConfig_File:
+boot_FileSystemConfig_File:
     push hl
     push bc
     dec hl \ dec hl
@@ -220,11 +220,11 @@ Boot_FileSystemConfig_File:
     push bc
     ld a, (hl)
     ld b, a
-    ld a, (EndOfDataPage)
+    ld a, (endOfDataPage)
     cp b
     jr nc, _
     ld a, b
-    ld (EndOfDataPage), a
+    ld (endOfDataPage), a
 _:
     pop bc
 
@@ -237,30 +237,30 @@ _:
     add hl, bc
     ex de, hl
 
-    ld hl, (EndOfDataAddress)
-    call CpHLDE
+    ld hl, (endOfDataAddress)
+    call cpHLDE
     jr nc, _
     push de \ pop hl
-    ld (EndOfDataAddress), hl
+    ld (endOfDataAddress), hl
 _:
     pop bc
     pop hl
     or a
     sbc hl, bc
     inc hl
-    jp Boot_FileSystemConfigLoop
+    jp boot_FileSystemConfigLoop
 
-Boot_FileSystemConfig_EoP:
+boot_FileSystemConfig_EoP:
     in a, (6)
     dec a
     out (6), a
-    jp Boot_FileSystemConfigLoop
+    jp boot_FileSystemConfigLoop
 
-Boot_FileSystemConfig_EoT:
+boot_FileSystemConfig_EoT:
     inc hl \ inc hl \ inc hl
-    ld (EndOfTableAddress), hl
+    ld (endOfTableAddress), hl
     in a, (6)
-    ld (EndOfTablePage), a
+    ld (endOfTablePage), a
     
     ; Good place to test kernel routines
     

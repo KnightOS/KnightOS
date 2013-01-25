@@ -6,42 +6,42 @@ drawChrome:
     xor a
     ld l, 2
     call setPixel
-    kld hl, CastleTopSprite
+    kld hl, castleTopSprite
     ld b, 12
     ld de, $0100
-_:    ld a, 8
+_:  ld a, 8
     push bc
         ld b, 3
-        call PutSpriteOR
+        call putSpriteOR
     pop bc
     add a, d
     ld d, a
     djnz -_
     
-    kld hl, HotkeyLeftSprite
+    kld hl, hotkeyLeftSprite
     ld b, 8
     ld de, $0038
-    call PutSpriteOR
+    call putSpriteOR
     
-    kld hl, HotkeyRightSprite
+    kld hl, hotkeyRightSprite
     ld de, $5838
-    call PutSpriteOR
+    call putSpriteOR
     
     ld hl, $000A
     ld de, $5F0A
-    call DrawLine
+    call drawLine
     
-    kld hl, BatteryIndicatorSprite
+    kld hl, batteryIndicatorSprite
     ld b, 4
     ld de, $193B
-    call PutSpriteOR
+    call putSpriteOR
     
-    call GetBatteryLevel
+    call getBatteryLevel
     xor a
     cp b
     jr z, ++_
     ld a, 26
-_:    ld l, 60
+_:  ld l, 60
     call setPixel
     inc l
     call setPixel
@@ -59,47 +59,47 @@ _:
         ; libtext(DrawStr)
         rst $10
         .db libtextID
-        call DrawStr
+        call drawStr
     pop ix
     #endif
 
     ret
     
 drawHome:
-    kld hl, HotkeyPlusSprite
+    kld hl, hotkeyPlusSprite
     ld b, 5
     ld de, $013A
-    call PutSpriteOR
+    call putSpriteOR
     
-    kld hl, HotkeyArrowRightSprite
+    kld hl, hotkeyArrowRightSprite
     ld de, $593A
-    call PutSpriteOR
+    call putSpriteOR
     
-    kld hl, MenuArrowSprite
+    kld hl, menuArrowSprite
     ld b, 3
     ld de, $353B
-    call PutSpriteOR
+    call putSpriteOR
     
     ld de, lang_more_position
     kld hl, MoreString
     ; libtext(DrawStr)
     rst $10
     .db libtextID
-    call DrawStr
+    call drawStr
     
     ld de, lang_menu_position
-    kld hl, MenuString
+    kld hl, menuString
     ; libtext(DrawStr)
     rst $10
     .db libtextID
-    call DrawStr
+    call drawStr
     
     ld de, lang_running_position
-    kld hl, RunningString
+    kld hl, runningString
     ; libtext(DrawStr)
     rst $10
     .db libtextID
-    call DrawStr
+    call drawStr
     ret
     
 drawHomeIcons:
@@ -114,12 +114,11 @@ drawHomeIcons:
         
         ld hl, $0021
         ld de, $5F21
-        call DrawLine
+        call drawLine
         
         jr _
         pop af \ pop de \ ret
 _:
-        
         ; Load config
         kld de, configPath
         call openFileRead
@@ -257,114 +256,114 @@ drawPowerMenu:
     ld l, 36
     ld c, 67-26
     ld b, 56-35
-    call RectOR
+    call rectOR
     ld e, 28
     ld l, 37
     ld c, 66-27
     ld b, 55-36
-    call RectXOR
+    call rectXOR
     ld de, $2339
     ld hl, $233F
-    call DrawLine
+    call drawLine
     ld de, $3B39
     ld hl, $3B3F
-    call DrawLine
+    call drawLine
 
     ld e, 36
     ld l, 56
     ld c, 23
     ld b, 1
-    call RectXOR
+    call rectXOR
 
-    kld hl, SleepString
+    kld hl, sleepString
     ld de, lang_sleep_position
     ;libtext(DrawStr)
     rst $10
     .db libtextID
-    call DrawStr
+    call drawStr
 
-    kld hl, ShutdownString
+    kld hl, shutdownString
     ld de, lang_shutdown_position
     ;libtext(DrawStr)
     rst $10
     .db libtextID
-    call DrawStr
+    call drawStr
 
-    kld hl, RestartString
+    kld hl, restartString
     ld de, lang_restart_position
     ;libtext(RestartStr)
     rst $10
     .db libtextID
-    call DrawStr
+    call drawStr
 
-    kld hl, MenuArrowSprite
+    kld hl, menuArrowSprite
     ld de, $353B
     ld b, 3
-    call PutSpriteXOR
+    call putSpriteXOR
 
-    kld hl, MenuArrowSpriteFlip
+    kld hl, menuArrowSpriteFlip
     ld de, $353B
     ld b, 3
-    call PutSpriteOR
+    call putSpriteOR
 
-    kld hl, SelectionIndicatorSprite
+    kld hl, selectionIndicatorSprite
     ld de, $1D26
     ld b, 5
-    call PutSpriteOR
+    call putSpriteOR
     ret
     
-DrawConfirmationDialog:
+drawConfirmationDialog:
     ld e, 18 ; e, l, c, b
     ld l, 16
     ld c, 78-17
     ld b, 49-15
-    call RectOR
+    call rectOR
     
     ld e, 19
     ld l, 17
     ld c, 77-18
     ld b, 48-16
-    call RectXOR
+    call rectXOR
     
-    kld hl, ExclamationSprite1
+    kld hl, exclamationSprite1
     ld b, 8
     ld de, $1820
-    call PutSpriteOR
+    call putSpriteOR
     
-    kld hl, ExclamationSprite2
+    kld hl, exclamationSprite2
     ld b, 8
     ld de, $1828
     call putSpriteOR
     
-    kld hl, ConfirmString1
+    kld hl, confirmString1
     ld de, lang_areYouSure_position
     ;libtext(DrawStr)
     rst $10
     .db libtextID
     call drawStr
     
-    kld hl, ConfirmString2
+    kld hl, confirmString2
     ld de, lang_unsavedData_position
     ;libtext(DrawStr)
     rst $10
     .db libtextID
-    call DrawStr
+    call drawStr
     
-    kld hl, ConfirmString3
+    kld hl, confirmString3
     ld de, lang_mayBeLost_position
     ;libtext(DrawStr)
     rst $10
     .db libtextID
     call drawStr
     
-    kld hl, YesString
+    kld hl, yesString
     ld de, lang_yes_position
     ;libtext(DrawStr)
     rst $10
     .db libtextID
     call drawStr
     
-    kld hl, NoString
+    kld hl, noString
     ld de, lang_no_position
     ;libtext(DrawStr)
     rst $10
@@ -377,12 +376,12 @@ DrawConfirmationDialog:
     call putSpriteOR
     ret
     
-CastleTopSprite: ; 8x3
+castleTopSprite: ; 8x3
     .db %11110000
     .db %10010000
     .db %10011111
     
-HotkeyLeftSprite: ; 8x8
+hotkeyLeftSprite: ; 8x8
     .db %01111100
     .db %10000010
     .db %00000001
@@ -392,7 +391,7 @@ HotkeyLeftSprite: ; 8x8
     .db %00000001
     .db %10000010
     
-HotkeyRightSprite: ; 8x8
+hotkeyRightSprite: ; 8x8
     .db %00111110
     .db %01000001
     .db %10000000
@@ -402,58 +401,58 @@ HotkeyRightSprite: ; 8x8
     .db %10000000
     .db %01000001
     
-HotkeyPlusSprite: ; 8x5
+hotkeyPlusSprite: ; 8x5
     .db %00100000
     .db %00100000
     .db %11111000
     .db %00100000
     .db %00100000
     
-HotkeyArrowLeftSprite: ; 8x5
+hotkeyArrowLeftSprite: ; 8x5
     .db %0010000
     .db %0100000
     .db %1111100
     .db %0100000
     .db %0010000
     
-HotkeyArrowRightSprite: ; 8x5
+hotkeyArrowRightSprite: ; 8x5
     .db %0010000
     .db %0001000
     .db %1111100
     .db %0001000
     .db %0010000
     
-HotkeyArrowUpSprite: ; 8x5
+hotkeyArrowUpSprite: ; 8x5
     .db %0010000
     .db %0111000
     .db %1010100
     .db %0010000
     .db %0010000
     
-MenuArrowSprite: ; 8x3
+menuArrowSprite: ; 8x3
     .db %00100000
     .db %01110000
     .db %11111000
     
-MenuArrowSpriteFlip: ; 8x3
+menuArrowSpriteFlip: ; 8x3
     .db %11111000
     .db %01110000
     .db %00100000
     
-BatteryIndicatorSprite: ; 8x4
+batteryIndicatorSprite: ; 8x4
     .db %11111100
     .db %10000110
     .db %10000110
     .db %11111100
 
-SelectionIndicatorSprite: ; 8x5
+selectionIndicatorSprite: ; 8x5
     .db %10000000
     .db %11000000
     .db %11100000
     .db %11000000
     .db %10000000
     
-ExclamationSprite1: ; 8x8
+exclamationSprite1: ; 8x8
     .db %01110000
     .db %10001000
     .db %10001000
@@ -463,7 +462,7 @@ ExclamationSprite1: ; 8x8
     .db %10001000
     .db %10001000
 
-ExclamationSprite2: ; 8x8
+exclamationSprite2: ; 8x8
     .db %10001000
     .db %01110000
     .db %00000000
@@ -473,7 +472,7 @@ ExclamationSprite2: ; 8x8
     .db %10001000
     .db %01110000
     
-DefaultIconSprite: ; 16x16
+defaultIconSprite: ; 16x16
     .db %01111111, %11111110
     .db %11111111, %11111111
     .db %11111111, %11111111
@@ -509,37 +508,37 @@ emptySlotIcon: ; 16x16
     .db %10000000, %00000000
     .db %11010101, %01010101
 
-MoreString:
+moreString:
     .db lang_more, 0
-RunningString:
+runningString:
     .db lang_running, 0
-MenuString:
+menuString:
     .db lang_menu, 0
-BackString:
+backString:
     .db lang_back, 0
-OptionsString:
+optionsString:
     .db lang_options, 0
-AddToCastleString:
+addToCastleString:
     .db lang_addToCastle, 0
-RemoveFromCastleString:
+removeFromCastleString:
     .db lang_removeFromCastle, 0
-SleepString:
+sleepString:
     .db lang_sleep, 0
-ShutdownString:
+shutdownString:
     .db lang_shutDown, 0
-RestartString:
+restartString:
     .db lang_restart, 0
-ConfirmString1:
+confirmString1:
     .db lang_areYouSure, 0
-ConfirmString2:
+confirmString2:
     .db lang_unsavedData, 0
-ConfirmString3:
+confirmString3:
     .db lang_beLost, 0
-YesString:
+yesString:
     .db lang_Yes, 0
-NoString:
+noString:
     .db lang_no, 0
-NoProgramsInstalledString:
+noProgramsInstalledString:
     .db lang_noPrograms, 0
 configPath:
     .db "/etc/castle.config", 0
