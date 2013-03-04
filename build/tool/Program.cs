@@ -111,7 +111,7 @@ namespace build
                     string[] parts = line.Split(' ');
                     if (verbose)
                         Console.WriteLine("Assemling " + parts[1]);
-                    Spasm(Path.Combine(directory, parts[1]), Path.Combine(directory, parts[2]), null, configuration);
+                    Assemble(Path.Combine(directory, parts[1]), Path.Combine(directory, parts[2]), null, configuration);
                 }
                 else if (line.StartsWith("if "))
                     waitEndIf = configuration != line.Substring(3);
@@ -402,33 +402,33 @@ namespace build
             Directory.CreateDirectory("../bin/" + configuration);
         }
 
-        static void Spasm(string input, string output, string args, params string[] defines)
+        static void Assemble(string input, string output, string args, params string[] defines)
         {
-            string defineString = " ";
+            string defineString = string.Empty;
             bool isBin = true;
             if (!output.EndsWith(".bin"))
             {
                 output = output + ".bin";
                 isBin = false;
             }
+            var listingFile = Path.Combine(Path.GetDirectoryName(output), Path.GetFileNameWithoutExtension(output) + ".lst");
+            var symbolFile = Path.Combine(Path.GetDirectoryName(output), Path.GetFileNameWithoutExtension(output) + ".sym");
             Array.Resize(ref defines, defines.Length + 1);
             defines[defines.Length - 1] = "lang_" + language;
             foreach (string define in defines)
-                defineString += "-D" + define + " ";
-            string process = "SPASM.exe";
-            if (RuntimeInfo.IsLinux)
-                process = "./spasm_linux";
-            else if (RuntimeInfo.IsMacOSX)
-                process = "./spasm_mac";
-            var info = new ProcessStartInfo(process, "-I " +
-                Path.Combine(Directory.GetCurrentDirectory(), "..", "inc") + " -I " +
-                Path.Combine(Directory.GetCurrentDirectory(), "..", "lang", language)
-                + " -L -T" + defineString +
-                "\"" + input + "\" \"" + output + "\"" + (string.IsNullOrEmpty(args) ? "" : " ") + args);
+                defineString += "," + define;
+            defineString = defineString.Substring(1);
+            string process = "sass.exe";
+            var info = new ProcessStartInfo(process, "--debug-mode --include \"" +
+                Path.Combine(Directory.GetCurrentDirectory(), "..", "inc") + ";" +
+                Path.Combine(Directory.GetCurrentDirectory(), "..", "lang", language) + "\""
+                + " --listing \"" + listingFile + "\" --symbols \"" + symbolFile + "\" --define \"" + defineString +
+                "\" \"" + input + "\" \"" + output + "\"" + (string.IsNullOrEmpty(args) ? "" : " ") + args);
             info.RedirectStandardOutput = true;
             info.RedirectStandardError = true;
             info.UseShellExecute = false;
             info.WindowStyle = ProcessWindowStyle.Hidden;
+            info.WorkingDirectory = Path.GetDirectoryName(input);
             Process proc = Process.Start(info);
             string procOutput = proc.StandardOutput.ReadToEnd();
             string procError = proc.StandardError.ReadToEnd();
