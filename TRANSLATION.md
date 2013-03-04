@@ -24,7 +24,8 @@ begin translating.
 Do not use Google Translate. You should not participate in a translation effort
 if you are not profecient in the language you are translating.
 
-Note that all files must be encoded in ANSI, which is the character set KnightOS uses.
+Note that all files must be encoded in ANSI (Windows 1252), which is the character set KnightOS
+uses (best selection of non-English characters among 8-bit character sets).
 
 ## Technical Details
 

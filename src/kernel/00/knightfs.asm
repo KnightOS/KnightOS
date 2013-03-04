@@ -707,7 +707,7 @@ _:        push af
         pop af
         jp po, _
         ei
-_:    pop af
+_:  pop af
     pop de
     pop bc
     pop hl
