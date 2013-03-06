@@ -56,47 +56,47 @@ reboot:
     
     ; Manipulate protection states
     #ifdef CPU15 ; TI-83+ SE, TI-84+, TI-84+ SE
-    call unlockFlash
-        ; Remove RAM Execution Protection
-        xor a
-        out ($25), a ; RAM Lower Limit ; out (25), 0
-        dec a
-        out ($26), a ; RAM Upper Limit ; out (26), $FF
+        call unlockFlash
+            ; Remove RAM Execution Protection
+            xor a
+            out ($25), a ; RAM Lower Limit ; out (25), 0
+            dec a
+            out ($26), a ; RAM Upper Limit ; out (26), $FF
 
-        ; Remove Flash Execution Protection
-        out ($23), a ; Flash Upper Limit ; out (23), $FF
-        out ($22), a ; Flash Lower Limit ; out (22), $FF
-    call lockFlash
+            ; Remove Flash Execution Protection
+            out ($23), a ; Flash Upper Limit ; out (23), $FF
+            out ($22), a ; Flash Lower Limit ; out (22), $FF
+        call lockFlash
 
-    ; Set CPU speed to 15 MHz
-    ld a, 1
-    out ($20), a
+        ; Set CPU speed to 15 MHz
+        ld a, 1
+        out ($20), a
     
     #else ; TI-73, TI-83+
-    #ifndef TI73 ; RAM does not have protection on the TI-73
-    
-    ; Remove RAM/Flash protection
-    call unlockFlash
-        xor a
-        out (5), a
-        out ($16), a
+        #ifndef TI73 ; RAM does not have protection on the TI-73
+        
+        ; Remove RAM/Flash protection
+        call unlockFlash
+            xor a
+            out (5), a
+            out ($16), a
 
-        ld a, %00000001
-        out (5), a
-        xor a
-        out ($16), a
+            ld a, %00000001
+            out (5), a
+            xor a
+            out ($16), a
 
-        ld a, %00000010
-        out (5), a
-        xor a
-        out ($16), a
+            ld a, %00000010
+            out (5), a
+            xor a
+            out ($16), a
 
-        ld a, %00000111
-        out (5), a
-        xor a
-        out ($16), a
-    call lockFlash
-    #endif
+            ld a, %00000111
+            out (5), a
+            xor a
+            out ($16), a
+        call lockFlash
+        #endif
     #endif
 
     ; Set intterupt mode

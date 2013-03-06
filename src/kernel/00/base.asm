@@ -1,8 +1,6 @@
 ; Base file for KnightOS kernel
 
-.nolist
 #include "defines.inc"
-.list
 
 #include "header.asm"
 #include "boot.asm"

@@ -320,11 +320,13 @@ namespace build
 
         private static void LoadLabels(string file)
         {
-            string[] lines = File.ReadAllLines(file.Replace(".lab", ".out.lab"));
+            string[] lines = File.ReadAllLines(file);
             foreach (var line in lines)
             {
-                string[] parts = line.Trim().Split('=');
-                labels.Add(parts[0].Trim().ToLower(), long.Parse(parts[1].Trim().Substring(1), NumberStyles.HexNumber));
+                if (line.StartsWith(";"))
+                    continue;
+                string[] parts = line.Trim().Split(' ');
+                labels.Add(parts[1].Trim().ToLower(), long.Parse(parts[2].Trim().Substring(2), NumberStyles.HexNumber));
             }
         }
 
@@ -419,7 +421,7 @@ namespace build
                 defineString += "," + define;
             defineString = defineString.Substring(1);
             string process = "sass.exe";
-            var info = new ProcessStartInfo(process, "--debug-mode --include \"" +
+            var info = new ProcessStartInfo(process, "--include \"" +
                 Path.Combine(Directory.GetCurrentDirectory(), "..", "inc") + ";" +
                 Path.Combine(Directory.GetCurrentDirectory(), "..", "lang", language) + "\""
                 + " --listing \"" + listingFile + "\" --symbols \"" + symbolFile + "\" --define \"" + defineString +
@@ -433,8 +435,6 @@ namespace build
             string procOutput = proc.StandardOutput.ReadToEnd();
             string procError = proc.StandardError.ReadToEnd();
             proc.WaitForExit();
-            if (File.Exists(output))
-                File.Move(output, output.Remove(output.Length - 4));
             if (verbose)
                 Console.Write(procOutput);
         }

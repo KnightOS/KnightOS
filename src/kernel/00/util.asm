@@ -400,7 +400,7 @@ _: add hl, hl
 divACbyDE:
    ld hl, 0
    ld b, 16
-_: sll c
+_: srl c
    rla
    adc hl, hl
    sbc hl, de
