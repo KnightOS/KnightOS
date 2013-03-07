@@ -13,6 +13,7 @@ Use of the system bcall hook is simple. Here's an example:
 
         #include "macros.inc"
         #include "defines.inc"
+        #include "kernel.inc"
         #include "stdio.inc"
         
         kld(hl, hook)
