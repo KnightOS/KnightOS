@@ -9,41 +9,34 @@
     .org 0
 ; Code
 start:
-    kld hl, versionString
-    ;stdio(printLine)
-    rst $10 \ .db stdioId \ call printLine
+    kld(hl, versionString)
+    stdio(printLine)
     
-    kld hl, kernelVersion
-    ;stdio(printChar)
-    rst $10 \ .db stdioId \ call printString
+    kld(hl, kernelVersion)
+    stdio(printChar)
     
     ; Print version number
     ld h, 0
     ld a, (5)
     ld l, a
-    ;stdio(printDecimal)
-    rst $10 \ .db stdioId \ call printDecimal
+    stdio(printDecimal)
     ld a, '.'
-    ;stdio(printChar)
-    rst $10 \ .db stdioId \ call printChar
+    stdio(printChar)
     ld a, (6)
     ld l, a
-    ;stdio(printDecimal)
-    rst $10 \ .db stdioId \ call printDecimal
+    stdio(printDecimal)
     
     ld a, '\n'
-    ;stdio(printChar)
-    rst $10 \ .db stdioId \ call printChar
+    stdio(printChar)
     
-    kld hl, bootCodeVersion
-    ;stdio(printString)
-    rst $10 \ .db stdioId \ call printString
+    kld(hl, bootCodeVersion)
+    stdio(printString)
     
     call getBootCodeVersionString
-    ;stdio(printLine)
-    rst $10 \ .db stdioId \ call printLine
+    stdio(printLine)
     ret
     
+; TODO: Localize
 versionString:
     .db "KnightOS 0.1 Indev", 0
 kernelVersion:

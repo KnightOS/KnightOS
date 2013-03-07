@@ -16,15 +16,15 @@ start:
     call getLcdLock
     call getKeypadLock
     
-    kld de, libTextPath
+    kld(de, libTextPath)
     call loadLibrary
     
     call allocScreenBuffer
 redraw:
-    kcall drawInterface
-    kcall drawThreads
+    kcall(drawInterface)
+    kcall(drawThreads)
     ld a, (totalThreads)
-    kjp z, noThreads
+    kjp(z, noThreads)
     
     ld ix, threadTable
 mainLoop:
@@ -33,21 +33,21 @@ mainLoop:
     call waitKey
     
     cp kClear
-    kjp z, launchCastle
+    kjp(z, launchCastle)
     cp kYEqu
-    kjp z, launchCastle
+    kjp(z, launchCastle)
     cp kUp
     jr z, doUp
     cp kDown
     jr z, doDown
     cp k2nd
-    kjp z, doSelect
+    kjp(z, doSelect)
     cp kEnter
-    kjp z, doSelect
+    kjp(z, doSelect)
     cp kDel
-    kjp z, doKill
+    kjp(z, doKill)
     cp kGraph
-    kjp z, doOptions
+    kjp(z, doOptions)
     
     jr mainLoop
     
@@ -85,7 +85,7 @@ _:      pop ix
     jr mainLoop
     
 doDown:
-    kld a, (totalThreads)
+    kld(a, (totalThreads))
     dec a
     add a, a
     ld c, a
@@ -123,7 +123,7 @@ _:          inc hl
 _:      pop ix
     pop de
     pop hl
-    kjp mainLoop
+    kjp(mainLoop)
     
 doSelect:
     call flushKeys
@@ -139,18 +139,18 @@ doKill:
     ld a, (ix)
     call killThread
     ei
-    kjp redraw
+    kjp(redraw)
     
 doOptions:
-    kcall drawOptions
+    kcall(drawOptions)
     call fastCopy
 
 _:  call flushKeys
     call waitKey
     cp kClear
-    kjp z, redraw
+    kjp(z, redraw)
     cp kGraph
-    kjp z, redraw
+    kjp(z, redraw)
     cp k2nd
     jr z, doKill
     cp kEnter
@@ -158,19 +158,16 @@ _:  call flushKeys
     jr -_
 
 launchCastle:
-    kld de, castlePath
+    kld(de, castlePath)
     di
     call launchProgram
     jp killCurrentThread
     
 noThreads:
-    kcall drawInterface
+    kcall(drawInterface)
     ld de, lang_noPrograms_position
-    kld hl, noProgramsStr
-    ;libtext(DrawStr)
-    rst $10
-    .db libtextID
-    call drawStr
+    kld(hl, noProgramsStr)
+    libtext(drawStr)
     
     call fastCopy
     
@@ -186,9 +183,8 @@ _:  call flushKeys
     jr launchCastle
     
 drawThreads:
-    ;di \ halt \ ei
     xor a
-    kld (totalThreads), a
+    kld((totalThreads), a)
     ld de, 5 << 8 + 12
     ld hl, threadTable
     ld a, (activeThreads) \ dec a \ ld b, a
@@ -210,10 +206,8 @@ _:          inc hl
                 pop de \ jr skipThread
 _:      inc hl
         pop de
-        ;libtext(drawStr)
-        rst $10 \ .db libTextId
-        call drawStr
-        kld hl, totalThreads
+        libtext(drawStr)
+        kld(hl, totalThreads)
         inc (hl)
 skipThread:
     pop de \ pop hl
@@ -221,7 +215,7 @@ skipThread:
     ld a, 8 \ add a, l \ ld l, a
     djnz drawThreads_loop
     
-    kld hl, selectionIndicatorSprite
+    kld(hl, selectionIndicatorSprite)
     ld b, 5
     ld de, 1 * 256 + 12
     call PutSpriteOR
@@ -233,7 +227,7 @@ drawInterface:
     xor a
     ld l, 2
     call setPixel
-    kld hl, castleTopSprite
+    kld(hl, castleTopSprite)
     ld b, 12
     ld de, $0100
 _:    ld a, 8
@@ -245,45 +239,36 @@ _:    ld a, 8
     ld d, a
     djnz -_
     
-    kld hl, hotkeyLeftSprite
+    kld(hl, hotkeyLeftSprite)
     ld b, 8
     ld de, $0038
     call putSpriteOR
     
-    kld hl, hotkeyRightSprite
+    kld(hl, hotkeyRightSprite)
     ld de, $5838
     call putSpriteOR
     
-    kld hl, hotkeyArrowLeftSprite
+    kld(hl, hotkeyArrowLeftSprite)
     ld b, 5
     ld de, $003A
     call putSpriteOR
     
-    kld hl, hotkeyPlusSprite
+    kld(hl, hotkeyPlusSprite)
     ld b, 5
     ld de, $5A3A
     call putSpriteOR
     
-    kld hl, backStr
+    kld(hl, backStr)
     ld de, lang_castle_position
-    ;libtext(DrawStr)
-    rst $10
-    .db libtextID
-    call DrawStr
+    libtext(drawStr)
     
     kld hl, optionsStr
     ld de, lang_options_position
-    ;libtext(DrawStr)
-    rst $10
-    .db libtextID
-    call drawStr
-    
-    kld hl, runningProgramsStr
+    libtext(drawStr)
+        
+    kld(hl, runningProgramsStr)
     ld de, lang_runningPrograms_position
-    ;libtext(DrawStr)
-    rst $10
-    .db libtextID
-    call drawStr
+    libtext(drawStr)
     
     ld hl, $000A
     ld de, $5F0A
@@ -291,11 +276,11 @@ _:    ld a, 8
     ret
     
 drawOptions:
-    kld hl, hotkeyPlusSprite
+    kld(hl, hotkeyPlusSprite)
     ld de, $5A3A
     call putSpriteXOR
     
-    kld hl, hotkeyArrowUpSprite
+    kld(hl, hotkeyArrowUpSprite)
     ld de, $593A
     call putSpriteOR
     
@@ -318,13 +303,11 @@ drawOptions:
     ld l, 57
     call setPixel
     
-    kld hl, forceQuitStr
+    kld(hl, forceQuitStr)
     ld de, lang_forceQuit_position
-    ;libtext(DrawStr)
-    rst $10 \ .db libtextID
-    call drawStr
+    libtext(drawStr)
     
-    kld hl, selectionIndicatorSprite
+    kld(hl, selectionIndicatorSprite)
     ld b, 5
     ld de, 57  - (61 - (lang_forceQuit_position >> 8)) * 256 + 50
     call putSpriteOR

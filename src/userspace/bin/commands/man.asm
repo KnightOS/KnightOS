@@ -13,7 +13,7 @@ maxPages .equ 16
 
 start:
     push hl
-        kld hl, manDirectory
+        kld(hl, manDirectory)
         ld bc, 128
         call malloc
         push ix \ pop de
@@ -28,19 +28,17 @@ start:
         call fileExists
         jr z, _
         ; File doesn't exist
-        kld hl, commandNotFoundText
-        ;stdio(printString)
-        rst $10 \ .db stdioId \ call printString
+        kld(hl, commandNotFoundText)
+        stdio(printString)
     pop hl
-    rst $10 \ .db stdioId \ call printLine
+    stdio(printLine)
     call free
     ret
     
 _:  inc sp \ inc sp ; Discard this
     call free
     ; Display manual entry
-    ;stdio(clearTerminal)
-    rst $10 \ .db stdioId \ call clearTerminal
+    stdio(clearTerminal)
     ; Load man file into memory
     call openFileRead
     push de
@@ -59,7 +57,7 @@ _:      call malloc
     ld b, l \ ld c, h ; Load the file size in CB
     call memSeekToStart
     ; We need libtext to do some calculations for displaying text in the terminal
-    kld de, libTextPath
+    kld(de, libTextPath)
     call loadLibrary
     ; We calculate the space required on the terminal and insert zeroes for pagination.
     ; D, E is X, Y for the cursor location (starts at 2, 8)
@@ -95,8 +93,7 @@ format_done:
     ; Display file
     call memSeekToStart
     push ix \ pop hl
-    ;stdio(printString)
-    rst $10 \ .db stdioId \ call printLine
+    stdio(printString)
     ; TODO: Paging
     call flushKeys
     call waitKey

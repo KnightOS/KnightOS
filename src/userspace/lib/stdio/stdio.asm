@@ -57,8 +57,7 @@ registerThread:
     push af
     ; Find a suitible registration entry
     ld b, 6
-    ;lld(hl, threadRegistration)
-    rst $10 \ .db libId \ ld hl, threadRegistration
+    ild(hl, threadRegistration)
 _:  ld a, (hl)
     cp $FF
     jr z, _
@@ -86,8 +85,7 @@ releaseThread:
     push af
     ld c, a
     ld b, 6
-    ;lld(hl, threadRegistration)
-    rst $10 \ .db libId \ ld hl, threadRegistration + 1
+    ild(hl, threadRegistration + 1)
 _:  ld a, (hl)
     cp c
     jr z, _
@@ -112,8 +110,7 @@ getSupervisor:
     ld b, 6
     call getCurrentThreadId
     ld c, a
-    ;lld(hl, threadRegistration)
-    rst $10 \ .db libId \ ld hl, threadRegistration + 1
+    ild(hl, threadRegistration + 1)
 _:  ld a, (hl)
     cp c
     jr z, _
@@ -149,8 +146,7 @@ printChar:
     push hl
         ld h, a
         ld b, cmdPrintChar
-        ;lcall(getSupervisor)
-        rst $10 \ .db libId \ call getSupervisor
+        icall(getSupervisor)
         jr nz, _
         call createSignal
 _:  pop hl
@@ -163,8 +159,7 @@ printString:
     push af
     push bc
         ld b, cmdPrintString
-        ;lcall(getSupervisor)
-        rst $10 \ .db libId \ call getSupervisor
+        icall(getSupervisor)
         jr nz, _
         call createSignal
 _:  pop bc
@@ -176,8 +171,7 @@ printLine:
     push af
     push bc
         ld b, cmdPrintLine
-        ;lcall(getSupervisor)
-        rst $10 \ .db libId \ call getSupervisor
+        icall(getSupervisor)
         jr nz, _
         call createSignal
 _:  pop bc
@@ -189,8 +183,7 @@ clearTerminal:
     push af
     push bc
         ld b, cmdClearTerminal
-        ;lcall(getSupervisor)
-        rst $10 \ .db libId \ call getSupervisor
+        icall(getSupervisor)
         jr nz, _
         call createSignal
 _:  pop bc
@@ -202,8 +195,7 @@ printDecimal:
     push af
     push bc
         ld b, cmdPrintDecimal
-        ;lcall(getSupervisor)
-        rst $10 \ .db libId \ call getSupervisor
+        icall(getSupervisor)
         jr nz, _
         call createSignal
 _:  pop bc
@@ -215,8 +207,7 @@ readLine:
     push af
     push bc
         ld b, cmdReadLine
-        ;lcall(getSupervisor)
-        rst $10 \ .db libId \ call getSupervisor
+        icall(getSupervisor)
         jr nz, ++_
         call createSignal
         ; Wait for signal to be consumed
@@ -232,8 +223,7 @@ printHex:
     push hl
         ld h, a
         ld b, cmdPrintHex
-        ;lcall(getSupervisor)
-        rst $10 \ .db libId \ call getSupervisor
+        icall(getSupervisor)
         jr nz, _
         call createSignal
 _:  pop hl
@@ -246,8 +236,7 @@ enableUpdates:
     push af
     push bc
         ld b, cmdEnableUpdates
-        ;lcall(getSupervisor)
-        rst $10 \ .db libId \ call getSupervisor
+        icall(getSupervisor)
         jr nz, _
         call createSignal
 _:  pop bc
@@ -259,8 +248,7 @@ disableUpdates:
     push af
     push bc
         ld b, cmdDisableUpdates
-        ;lcall(getSupervisor)
-        rst $10 \ .db libId \ call getSupervisor
+        icall(getSupervisor)
         jr nz, _
         call createSignal
 _:  pop bc

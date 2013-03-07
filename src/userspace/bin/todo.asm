@@ -17,16 +17,13 @@ start:
     call allocScreenBuffer
     call clearBuffer
     
-    kld de, libTextPath
+    kld(de, libTextPath)
     call loadLibrary
     
     ld b, 0
     ld de, 0
     kld hl, todoString
-    ;libtext(drawStr)
-    rst $10
-    .db libTextId
-    call drawStr
+    libtext(drawStr)
     call fastCopy
     
     call flushKeys

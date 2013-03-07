@@ -11,8 +11,8 @@
 start:
     call getKeypadLock
     call getIOLock
-    kcall hook
-    kld hl, hook
+    kcall(hook)
+    kld(hl, hook)
     ld (priorityHook), hl
 _:  ld a, $FF
     out (1), a
@@ -28,10 +28,10 @@ _:  ld a, $FF
     ret
 
 hook:
-    kld a, (state)
+    kld(a, (state))
     out (0), a
     xor %11
-    kld (state), a
+    kld((state), a)
     ret
     
 state:

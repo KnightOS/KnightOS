@@ -1,4 +1,4 @@
-; KnightOS version command
+; KnightOS clear command
 .nolist
 #include "macros.inc"
 #include "stdio.inc"
@@ -8,7 +8,4 @@
     .org 0
 ; Code
 start:
-    ;stdio(clearTerminal)
-    rst $10 \ .db stdioId \ call clearTerminal
-    ret
-    
+    ljp(stdioId, clearTerminal)

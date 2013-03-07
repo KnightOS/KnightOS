@@ -15,17 +15,17 @@ start:
     call getKeypadLock
 
     call allocScreenBuffer
-    kld de, libtext
+    kld(de, libtext)
     call loadLibrary
 resetToHome:
     ld d, 0
 redrawHome:
     push de
-        kcall drawChrome
-        kcall drawHome
+        kcall(drawChrome)
+        kcall(drawHome)
     pop de
 homeLoop:
-    kcall drawHomeIcons
+    kcall(drawHomeIcons)
     call fastCopy
     
 _:  call flushKeys
@@ -40,17 +40,17 @@ _:  call flushKeys
     cp kDown
     jr z, homeDownKey
     cp kZoom
-    kjp z, powerMenu
+    kjp(z, powerMenu)
     cp kEnter
     jr z, homeSelect
     cp k2nd
     jr z, homeSelect
     cp kGraph
-    kjp z, launchThreadList
+    kjp(z, launchThreadList)
     cp kPlus
-    kjp z, incrementContrast
+    kjp(z, incrementContrast)
     cp kMinus
-    kjp z, decrementContrast
+    kjp(z, decrementContrast)
     jr -_
 homeRightKey:
     ld a, 9
@@ -81,7 +81,7 @@ homeSelect:
     ld a, d
     push af
         ; Load config
-        kld de, configPath
+        kld(de, configPath)
         call openFileRead
         push de
             call getStreamInfo
@@ -112,7 +112,7 @@ _:      pop af \ push af
         push ix \ pop hl
         add hl, de \ ex de, hl
         pop af
-        kjp launch
+        kjp(launch)
 _:      push bc
             ld bc, 34
             add ix, bc
@@ -121,7 +121,7 @@ _:      push bc
     pop af
     call memSeekToStart
     call free
-    kjp homeLoop
+    kjp(homeLoop)
     
 incrementContrast:
     ld hl, currentContrast
@@ -132,7 +132,7 @@ incrementContrast:
     dec (hl)
     dec a
 _:  out ($10), a
-    kjp homeLoop
+    kjp(homeLoop)
     
 decrementContrast:
     ld hl, currentContrast
@@ -143,10 +143,10 @@ decrementContrast:
     inc (hl)
     inc a
 _:  out ($10), a
-    kjp homeLoop
+    kjp(homeLoop)
     
 launchThreadList:
-    kld de, threadlist
+    kld(de, threadlist)
 launch:
     di
     call launchProgram
@@ -156,7 +156,7 @@ launch:
     
 powerMenu:
     push de
-    kcall drawPowerMenu
+    kcall(drawPowerMenu)
     ld e, 38
 powerMenuLoop:
     call fastCopy
@@ -172,9 +172,9 @@ powerMenuLoop:
     cp kEnter
     jr z, powerMenuSelect
     cp kClear
-    kjp z, resetToHome
+    kjp(z, resetToHome)
     cp kZoom
-    kjp z, resetToHome
+    kjp(z, resetToHome)
     
     jr powerMenuLoop
     
@@ -209,7 +209,7 @@ powerMenuSelect:
     cp 50
     jr z, confirmRestart
     call suspendDevice
-    kjp redrawHome
+    kjp(redrawHome)
     
 confirmShutDown:
     ld hl, boot
@@ -218,7 +218,7 @@ confirmRestart:
     ld hl, reboot
 confirmSelection:
     push hl
-    kcall drawConfirmationDialog
+    kcall(drawConfirmationDialog)
         
 confirmSelectionLoop:
     call fastCopy
@@ -234,7 +234,7 @@ confirmSelectionLoop:
     cp k2nd
     jr z, confirmSelectionLoop_Select
     cp kClear
-    kjp z, resetToHome
+    kjp(z, resetToHome)
         
 confirmSelectionLoop_Up:
     call putSpriteXOR
@@ -252,7 +252,7 @@ confirmSelectionLoop_Select:
     pop hl
     ld a, $2B
     cp e
-    kjp z, resetToHome
+    kjp(z, resetToHome)
     ; Before restarting, shut off the screen for a moment
     ; This was added because some people had the impression
     ; that restarting the calculator didn't do anything

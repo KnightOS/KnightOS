@@ -25,35 +25,28 @@ start:
     call allocScreenBuffer
     
     ; Load dependencies
-    kld de, libTextPath
+    kld(de, libTextPath)
     call loadLibrary
-    kld de, applibPath
+    kld(de, applibPath)
     call loadLibrary
     ld b, 0
 _:  push bc
-        kld hl, windowTitle
+        kld(hl, windowTitle)
         xor a
-        ;applib(drawWindow)
-        rst $10 \ .db applibId
-        call drawWindow
+        applib(drawWindow)
         
         ld b, 2
         ld de, $0208
         kld hl, helloString
-        ;libtext(drawStr)
-        rst $10 \ .db libTextId
-        call drawStr
+        libtext(drawStr)
     pop bc
     
     ld a, b \ inc b
     ld de, $0210
-    ;libtext(drawHexA)
-    rst $10 \ .db libTextId
-    call drawHexA
+    libtext(drawHexA)
     
     call fastCopy
-    rst $10 \ .db applibId
-    call appGetKey
+    applib(appGetKey)
     
     cp kClear
     jr nz, -_

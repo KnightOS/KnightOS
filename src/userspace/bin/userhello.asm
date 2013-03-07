@@ -8,29 +8,24 @@
 ; Code
 .org 0
 start:
-    kld hl, message
-    ;stdio(printString)
-    rst $10 \ .db stdioId \ call printString
+    kld(hl, message)
+    stdio(printString)
     
     ld bc, 128
     call malloc
     push ix \ pop hl
     
-    ;stdio(readLine)
-    rst $10 \ .db stdioId \ call readLine
+    stdio(readLine)
     
     push hl
-        kld hl, message2
-        ;stido(printString)
-        rst $10 \ .db stdioId \ call printString
+        kld(hl, message2)
+        stido(printString)
     pop hl
     
-    ;stido(printString)
-    rst $10 \ .db stdioId \ call printString
+    stido(printString)
     
-    kld hl, message3
-    ;stido(printString)
-    rst $10 \ .db stdioId \ call printString
+    kld(hl, message3)
+    stido(printString)
     ret
     
 message:

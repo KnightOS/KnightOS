@@ -40,20 +40,14 @@ appWaitKey:
     
 checkKey:
     cp kYEqu
-    ;ijp(z, launchCastle)
-    rst $10 \ .db libId
-    jp z, launchCastle
+    ijp(z, launchCastle)
     cp kGraph
-    ;ijp(z, launchThreadList)
-    rst $10 \ .db libId
-    jp z, launchThreadList
+    ijp(z, launchThreadList)
     ret
     
 launchCastle:
     push de
-        ;ild(de, castlePath)
-        rst $10 \ .db libId
-        ld de, castlePath
+        ild(de, castlePath)
         di
         call launchProgram
     pop de
@@ -64,9 +58,7 @@ launchCastle:
     
 launchThreadList:
     push de
-        ;ild(de, threadListPath)
-        rst $10 \ .db libId
-        ld de, threadListPath
+        ild(de, threadListPath)
         di
         call launchProgram ; This is called several times when it should be called once
     pop de
@@ -109,54 +101,36 @@ drawWindow:
         
         bit 0, a
         jr nz, _        
-            ;ild(hl, CastleSprite1)
-            rst $10
-            .db libID
-            ld hl, castleSprite1
+            ild(hl, castleSprite1)
             ld b, 4
             ld de, $003C
             call putSprite16OR
             
-            ;ild(hl, CastleSprite2)
-            rst $10
-            .db libID
-            ld hl, castleSprite2
+            ild(hl, castleSprite2)
             ld d, 16
             call putSpriteOR
 _:      pop af \ push af
         bit 1, a
         jr nz, _
-            ;ild(hl, ThreadListSprite)
-            rst $10
-            .db libID
-            ld hl, threadListSprite
+            ild(hl, threadListSprite)
             ld de, 89 * 256 + 59
             ld b, 5
             call putSpriteOR
 _:      pop af \ push af
         bit 2, a
         jr z, _
-            ;ild(hl, MenuSprite1)
-            rst $10
-            .db libID
-            ld hl, menuSprite1
+            ild(hl, menuSprite1)
             ld b, 4
             ld de, 40 * 256 + 60
             call putSprite16OR
             
-            ;ild(hl, MenuSprite2)
-            rst $10
-            .db libID
-            ld hl, menuSprite2
+            ild(hl, menuSprite2)
             ld d, 56
             dec b
             call PutSpriteOR
 _:      pop af \ pop hl \ push hl \ push af
         ld de, $0201
-        ;libtext(DrawStrXOR)
-        rst $10
-        .db libtextID
-        call drawStrXOR
+        libtext(DrawStrXOR)
     pop af
     pop hl
     pop bc
@@ -170,12 +144,10 @@ _:      pop af \ pop hl \ push hl \ push af
 ; Possible values include \n and backspace (0x08).
 ; Also watches for F1/F5 to launch castle/thread list
 getCharacterInput:
-    ; lcall(drawCharacterSetIndicator)
-    rst $10 \ .db libID \ call drawCharSetIndicator
+    icall(drawCharacterSetIndicator)
     
     ld b, 0
-    ; lcall(appGetKey)
-    rst $10 \ .db libID \ call appGetKey
+    icall(appGetKey)
     or a
     ret z ; Return if zero
     
@@ -197,11 +169,9 @@ getCharacterInput:
     
     push hl
         push af
-            ; lld(a, (charSet))
-            rst $10 \ .db libID \ ld a, (charSet)
+            ild(a, (charSet))
             add a, a \ add a, a \ add a, a \ ld b, a \ add a, a \ add a, a \ add a, b ; A * 40
-            ; lld(hl, characterMapUppercase)
-            rst $10 \ .db libID \ ld hl, characterMapUppercase
+            ild(hl, characterMapUppercase)
             add a, l
             ld l, a
             jr nc, $+3 \ inc h
@@ -221,29 +191,24 @@ _:  xor a
     
 setCharSetFromKey:
     cp kAlpha
-    ; lcall(z, setAlphaKey)
-    rst $10 \ .db libID \ call z, setAlphaKey
+    icall(z, setAlphaKey)
     cp k2nd
-    ; lcall(z, set2ndKey)
-    rst $10 \ .db libID \ call z, set2ndKey
+    icall(z, set2ndKey)
     call flushKeys
     xor a
     ret
     
 setAlphaKey: ; Switch between alpha charsets
-    ; lld(a, (charSet))
-    rst $10 \ .db libID \ ld a, (charSet)
+    ild(a, (charSet))
     inc a
     cp 2 ; Clamp to <2
     jr c, _
         xor a
-_:  ; lld((charSet), a)
-    rst $10 \ .db libID \ ld (charSet), a
+_:  ild((charSet), a)
     ret
     
 set2ndKey: ; Switch between symbol charsets
-    ; lld(a, (charSet))
-    rst $10 \ .db libID \ ld a, (charSet)
+    ild(a, (charSet))
     inc a
     cp 4 ; Clamp 1 < A < 4
     jr c, _
@@ -251,8 +216,7 @@ set2ndKey: ; Switch between symbol charsets
 _:  cp 2
     jr nc, _
         ld a, 2
-_:  ; lld((charSet), a)
-    rst $10 \ .db libID \ ld (charSet), a
+_:  ild((charSet), a)
     ret
     
 ; Draws the current character set indicator on a window
@@ -262,18 +226,15 @@ drawCharSetIndicator:
     push bc
     push af
         ; Clear old sprite, if present
-        ; lld(hl, clearCharSetSprite)
-        rst $10 \ .db libID \ ld hl, clearCharSetSprite
+        ild(hl, clearCharSetSprite)
         ld de, $5C02
         ld b, 4
         call putSpriteOR
     
-        ; lld(a, (charSet))
-        rst $10 \ .db libID \ ld a, (charSet)
+        ild(a, (charSet))
         ; Get sprite in HL
         add a, a \ add a, a ; A * 4
-        ; lld(hl, charSetSprites)
-        rst $10 \ .db libID \ ld hl, charSetSprites
+        ild(hl, charSetSprites)
         add a, l
         ld l, a
         jr nc, $+3 \ inc h
@@ -293,13 +254,11 @@ charSet:
 setCharSet:
     cp 4
     ret nc ; Only allow 0-3
-    ; lld((charSet), a)
-    rst $10 \ .db libID \ ld (charSet), a
+    ild((charSet), a)
     ret
     
 getCharSet:
-    ; lld(a, (charSet))
-    rst $10 \ .db libID \ ld a, (charSet)
+    ild(a, (charSet))
     ret
     
 #include "characters.asm"

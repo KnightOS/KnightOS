@@ -10,11 +10,9 @@
 ; Code
 start:
     call hexToHL
-    ;stdio(disableUpdates)
-    rst $10 \ .db stdioId \ call disableUpdates
+    stdio(disableUpdates)
     
-    ;stdio(clearTerminal)
-    rst $10 \ .db stdioId \ call clearTerminal
+    stdio(clearTerminal)
     
     ld b, 7
 verticalLoop:
@@ -22,19 +20,14 @@ verticalLoop:
         ld b, 8
 horizLoop:
         ld a, (hl)
-        ;stdio(printHex)
-        rst $10 \ .db stdioId \ call printHex
+        stdio(printHex)
         ld a, ' '
-        ;stdio(printChar)
-        rst $10 \ .db stdioId \ call printChar
+        stdio(printChar)
         inc hl
         djnz horizLoop
     ld a, '\n'
-    ;stdio(printChar)
-    rst $10 \ .db stdioId \ call printChar
+    stdio(printChar)
     pop bc
     djnz verticalLoop
     
-    ;stdio(enableUpdates)
-    rst $10 \ .db stdioId \ call enableUpdates
-    ret
+    ljp(stdioId, enableUpdates)

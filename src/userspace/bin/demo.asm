@@ -7,9 +7,8 @@
 ; Code
 .org 0
 start:
-    kld hl, message
-    ;stdio(printLine)
-    rst $10 \ .db stdioId \ call printLine
+    kld(hl, message)
+    stdio(printLine)
     ret
     
 message:

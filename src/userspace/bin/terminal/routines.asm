@@ -9,8 +9,7 @@ readString_cursorLoop:
         ; Update cursor
         ld a, cursorChar
         push de
-            ; libtext(drawCharXOR)
-            rst $10 \ .db libTextId \ call drawCharXOR
+            libtext(drawCharXOR)
         pop de
         kld hl, cursorState
         inc (hl)
@@ -24,8 +23,7 @@ readString_cursorLoop:
 readString_delay:
         call fastCopy
         push bc
-            ; applib(getCharacterInput)
-            rst $10 \ .db applibId \ call getCharacterInput
+            applib(getCharacterInput)
             ld c, a ; Some register juggling to preserve values
             ld a, b
             or a
@@ -51,11 +49,11 @@ readString_handleKey:
             pop hl
             jr z, handleKey_loopBack
             ; Perform the left scroll
-            kcall readString_doLeftScroll
+            kcall(readString_doLeftScroll)
             jr handleKey_loopBack
 _:      cp kRight
         jr nz, handleKey_loopBack
-            ; Handle right scroll
+        ; Handle right scroll
         
 handleKey_loopBack:
         pop bc
@@ -80,20 +78,19 @@ _:      inc sp \ inc sp
         pop hl
         jr z, readString_cursorLoop
         
-_:      kld a, (cursorState)
+_:      kld(a, (cursorState))
         bit 0, a
         jr z, _
         ; Get rid of cursor
         res 0, a
-        kld (cursorState), a
+        kld((cursorState), a)
         ld a, cursorChar
         push de
-            ; libtext(drawCharXOR)
-            rst $10 \ .db libTextId \ call drawCharXOR
+            libtext(drawCharXOR)
         pop de
         
 _:      ld a, c
-        kcall term_printChar
+        kcall(term_printChar)
         cp '\n'
         jr z, readString_done
         ld (ix), a
@@ -101,7 +98,7 @@ _:      ld a, c
         
         call flushKeys
         
-        kjp readString_cursorLoop
+        kjp(readString_cursorLoop)
         
 readString_handleBackspace:
     ; Don't allow it to grow past the start
@@ -110,23 +107,21 @@ readString_handleBackspace:
         push ix \ pop hl
         call cpHLBC
     pop hl
-    kjp z, readString_cursorLoop
+    kjp(z, readString_cursorLoop)
     
-    kld a, (cursorState)
+    kld(a, (cursorState))
     bit 0, a
     jr z, _
     ; Get rid of cursor
     res 0, a
-    kld (cursorState), a
+    kld((cursorState), a)
     ld a, cursorChar
     push de
-        ; libtext(drawCharXOR)
-        rst $10 \ .db libTextId \ call drawCharXOR
+        libtext(drawCharXOR)
     pop de
     
 _:  ld a, (IX + -1)
-    ;libtext(measureChar)
-    rst $10 \ .db libtextId \ call measureChar
+    libtext(measureChar)
     ; Back up cursor
     ld c, a
     ld a, d
@@ -150,32 +145,30 @@ _:  ld b, 5 ; Erase character
     xor a
     ld (ix), a
     call flushKeys
-    kjp readString_cursorLoop
+    kjp(readString_cursorLoop)
         
 readString_done:
         call flushKeys
         xor a
         ld (ix), a
-    pop IX
+    pop ix
     ret
     
 readString_doLeftScroll:
-    kld a, (cursorState)
+    kld(a, (cursorState))
     bit 0, a
     jr z, _
     ; Get rid of cursor
     res 0, a
-    kld (cursorState), a
+    kld((cursorState), a)
     ld a, cursorChar
     push de
-        ; libtext(drawCharXOR)
-        rst $10 \ .db libTextId \ call drawCharXOR
+        libtext(drawCharXOR)
     pop de
     
     ; Move display pointer back a character
-_:  ld a, (IX + -1)
-    ;libtext(measureChar)
-    rst $10 \ .db libtextId \ call measureChar
+_:  ld a, (ix + -1)
+    libtext(measureChar)
     ; Back up cursor
     ld c, a
     ld a, d
@@ -195,17 +188,16 @@ term_printChar:
     push de
         cp '\n'
         jr z, _
-        ; libtext(drawCharXOR)
-        rst $10 \ .db libTextId \ call drawCharXOR
+        libtext(drawCharXOR)
     pop de
-    kcall term_advanceCursor
+    kcall(term_advanceCursor)
     ret
 _:
     pop de
     push af
         ld d, 2
         ld a, e \ add a, 6 \ ld e, a
-        kcall term_checkScroll
+        kcall(term_checkScroll)
     pop af
     ret
 
@@ -215,15 +207,14 @@ term_advanceCursor:
     ret z
     ; Measure character
     push af
-        ; libtext(measureChar)
-        rst $10 \ .db libTextId \ call measureChar
+        libtext(measureChar)
         add a, d
         ld d, a
         cp 90
         jr c, _
         ld d, 2
         ld a, e \ add a, 6 \ ld e, a
-        kcall term_checkScroll
+        kcall(term_checkScroll)
 _:  pop af
     ret
     
@@ -260,7 +251,7 @@ term_printString:
 _:      ld a, (hl)
         or a
         jr z, _
-        kcall term_printChar
+        kcall(term_printChar)
         inc hl
         jr -_
 _:  pop hl
@@ -302,7 +293,7 @@ _:      call divHLbyC ; HL = HL / 10; A = HL % 10;
     pop de
         ; Print the string
         inc hl
-        kcall term_printString
+        kcall(term_printString)
     ; Reset the stack
     ld hl, 6
     add hl, sp
@@ -320,18 +311,18 @@ term_printHex:
         rrca
         kcall dispha
     pop af
-    kcall dispha
+    kcall(dispha)
     ret
 dispha:
     and 15
     cp 10
-    jr nc,dhlet
+    jr nc, dhlet
     add a, 48
     jr dispdh
 dhlet:
     add a,55
 dispdh:
-    kcall term_printChar
+    kcall(term_printChar)
     ret
     
 cursorState:

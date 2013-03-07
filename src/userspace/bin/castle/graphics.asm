@@ -6,7 +6,7 @@ drawChrome:
     xor a
     ld l, 2
     call setPixel
-    kld hl, castleTopSprite
+    kld(hl, castleTopSprite)
     ld b, 12
     ld de, $0100
 _:  ld a, 8
@@ -18,12 +18,12 @@ _:  ld a, 8
     ld d, a
     djnz -_
     
-    kld hl, hotkeyLeftSprite
+    kld(hl, hotkeyLeftSprite)
     ld b, 8
     ld de, $0038
     call putSpriteOR
     
-    kld hl, hotkeyRightSprite
+    kld(hl, hotkeyRightSprite)
     ld de, $5838
     call putSpriteOR
     
@@ -31,7 +31,7 @@ _:  ld a, 8
     ld de, $5F0A
     call drawLine
     
-    kld hl, batteryIndicatorSprite
+    kld(hl, batteryIndicatorSprite)
     ld b, 4
     ld de, $193B
     call putSpriteOR
@@ -49,57 +49,44 @@ _:  ld l, 60
     djnz -_
 _:    
     #ifdef CLOCK
-    .echo "test"
     ; Get time
     push ix
         call getTime
         ; TODO
-        kld hl, dummyTimeString
+        kld(hl, dummyTimeString)
         ld de, 69 << 8 | 4
-        ; libtext(DrawStr)
-        rst $10
-        .db libtextID
-        call drawStr
+        libtext(drawStr)
     pop ix
     #endif
 
     ret
     
 drawHome:
-    kld hl, hotkeyPlusSprite
+    kld(hl, hotkeyPlusSprite)
     ld b, 5
     ld de, $013A
     call putSpriteOR
     
-    kld hl, hotkeyArrowRightSprite
+    kld(hl, hotkeyArrowRightSprite)
     ld de, $593A
     call putSpriteOR
     
-    kld hl, menuArrowSprite
+    kld(hl, menuArrowSprite)
     ld b, 3
     ld de, $353B
     call putSpriteOR
     
     ld de, lang_more_position
-    kld hl, MoreString
-    ; libtext(DrawStr)
-    rst $10
-    .db libtextID
-    call drawStr
+    kld(hl, MoreString)
+    libtext(drawStr)
     
     ld de, lang_menu_position
-    kld hl, menuString
-    ; libtext(DrawStr)
-    rst $10
-    .db libtextID
-    call drawStr
+    kld(hl, menuString)
+    libtext(drawStr)
     
     ld de, lang_running_position
-    kld hl, runningString
-    ; libtext(DrawStr)
-    rst $10
-    .db libtextID
-    call drawStr
+    kld(hl, runningString)
+    libtext(drawStr)
     ret
     
 drawHomeIcons:
@@ -120,7 +107,7 @@ drawHomeIcons:
         pop af \ pop de \ ret
 _:
         ; Load config
-        kld de, configPath
+        kld(de, configPath)
         call openFileRead
         push de
             call getStreamInfo
@@ -136,14 +123,14 @@ _:
         ld bc, $0500
 _:      ; Check to see if this item is selected
         pop af \ push af
-        cp c \ kcall z, drawSelectionRectangle \ inc c
+        cp c \ kcall(z, drawSelectionRectangle) \ inc c
         
         ld l, (ix)
         ld h, (ix + 1)
         ld a, $FF
         push bc
             cp h \ jr nz, _ \ cp l \ jr nz, _
-            kld hl, emptySlotIcon
+            kld(hl, emptySlotIcon)
             inc ix \ inc ix
             jr ++_
             
@@ -165,14 +152,14 @@ _:
         ld bc, $0505
 _:      ; Check to see if this item is selected
         pop af \ push af
-        cp c \ kcall z, drawSelectionRectangle \ inc c
+        cp c \ kcall(z, drawSelectionRectangle) \ inc c
         
         ld l, (ix)
         ld h, (ix + 1)
         ld a, $FF
         push bc
             cp h \ jr nz, _ \ cp l \ jr nz, _
-            kld hl, emptySlotIcon
+            kld(hl, emptySlotIcon)
             inc ix \ inc ix
             jr ++_
             
@@ -206,9 +193,9 @@ drawSelectionRectangle:
         jr nz, _
         cp c
         jr nz, _
-        kcall drawEmptySlotName
+        kcall(drawEmptySlotName)
         jr ++_
-_:      kcall drawSelectedName
+_:      kcall(drawSelectedName)
 _:      ld a, e ; Get x
         sub 2
         ld l, a
@@ -233,21 +220,15 @@ drawSelectedName:
     ; Draw name string
     push de
         ld de, $0104
-        ; libtext(drawStr)
-        rst $10
-        .db libtextID
-        call drawStr
+        libtext(drawStr)
     pop de
     ret
     
 drawEmptySlotName:
     push de
-        kld hl, naString
+        kld(hl, naString)
         ld de, $0104
-        ; libtext(drawStr)
-        rst $10
-        .db libtextID
-        call drawStr
+        libtext(drawStr)
     pop de
     ret
     
@@ -275,38 +256,29 @@ drawPowerMenu:
     ld b, 1
     call rectXOR
 
-    kld hl, sleepString
+    kld(hl, sleepString)
     ld de, lang_sleep_position
-    ;libtext(DrawStr)
-    rst $10
-    .db libtextID
-    call drawStr
+    libtext(drawStr)
 
-    kld hl, shutdownString
+    kld(hl, shutdownString)
     ld de, lang_shutdown_position
-    ;libtext(DrawStr)
-    rst $10
-    .db libtextID
-    call drawStr
+    libtext(drawStr)
 
-    kld hl, restartString
+    kld(hl, restartString)
     ld de, lang_restart_position
-    ;libtext(RestartStr)
-    rst $10
-    .db libtextID
-    call drawStr
+    libtext(drawStr)
 
-    kld hl, menuArrowSprite
+    kld(hl, menuArrowSprite)
     ld de, $353B
     ld b, 3
     call putSpriteXOR
 
-    kld hl, menuArrowSpriteFlip
+    kld(hl, menuArrowSpriteFlip)
     ld de, $353B
     ld b, 3
     call putSpriteOR
 
-    kld hl, selectionIndicatorSprite
+    kld(hl, selectionIndicatorSprite)
     ld de, $1D26
     ld b, 5
     call putSpriteOR
@@ -325,52 +297,37 @@ drawConfirmationDialog:
     ld b, 48-16
     call rectXOR
     
-    kld hl, exclamationSprite1
+    kld(hl, exclamationSprite1)
     ld b, 8
     ld de, $1820
     call putSpriteOR
     
-    kld hl, exclamationSprite2
+    kld(hl, exclamationSprite2)
     ld b, 8
     ld de, $1828
     call putSpriteOR
     
-    kld hl, confirmString1
+    kld(hl, confirmString1)
     ld de, lang_areYouSure_position
-    ;libtext(DrawStr)
-    rst $10
-    .db libtextID
-    call drawStr
+    libtext(drawStr)
     
-    kld hl, confirmString2
+    kld(hl, confirmString2)
     ld de, lang_unsavedData_position
-    ;libtext(DrawStr)
-    rst $10
-    .db libtextID
-    call drawStr
+    libtext(drawStr)
     
-    kld hl, confirmString3
+    kld(hl, confirmString3)
     ld de, lang_mayBeLost_position
-    ;libtext(DrawStr)
-    rst $10
-    .db libtextID
-    call drawStr
+    libtext(drawStr)
     
-    kld hl, yesString
+    kld(hl, yesString)
     ld de, lang_yes_position
-    ;libtext(DrawStr)
-    rst $10
-    .db libtextID
-    call drawStr
+    libtext(drawStr)
     
-    kld hl, noString
+    kld(hl, noString)
     ld de, lang_no_position
-    ;libtext(DrawStr)
-    rst $10
-    .db libtextID
-    call drawStr
+    libtext(drawStr)
     
-    kld hl, selectionIndicatorSprite
+    kld(hl, selectionIndicatorSprite)
     ld de, $282B
     ld b, 5
     call putSpriteOR

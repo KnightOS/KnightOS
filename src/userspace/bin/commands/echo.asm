@@ -10,7 +10,5 @@
 .org 0
 
 start:
-    ;stdio(printLine)
-    rst $10 \ .db stdioId \ call printLine
-    ret
+    ljp(stdioId, printLine)
     

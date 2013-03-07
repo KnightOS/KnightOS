@@ -1,3 +1,10 @@
+.macro applib(addr)
+    lcall(applibId, addr)
+.endmacro
+.macro applib(cc, addr)
+    lcall(applibId, cc, addr)
+.endmacro
+
 applibId .equ $02
 
 appGetKey .equ 6

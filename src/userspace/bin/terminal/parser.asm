@@ -22,7 +22,7 @@ _:      xor a
         jr nz, parseInput_error
         pop bc \ push bc ; BC is X, Y
         ; File exists, execute it
-        kcall term_launchProgram
+        kcall(term_launchProgram)
         pop bc \ push de ; Update X, Y
         cp a
 parseInput_error:
@@ -35,8 +35,7 @@ term_launchProgram:
     di
     call launchProgram
     call setInitialHL
-    ;stdio(registerThread)
-    rst $10 \ .db stdioId \ call registerThread
+    stdio(registerThread)
     ld d, b \ ld e, c ; Terminal X, Y
     ei \ halt
 ioLoop:
@@ -44,8 +43,7 @@ ioLoop:
     push af
         ; We can be given focus again through the threadlist, so make sure everything
         ; still looks nice and we are responsive
-        ; applib(appGetKey)
-        rst $10 \ .db applibId \ call appGetKey
+        applib(appGetKey)
         ; Check if LCD updates are enabled
         push af
             kld a, (enableLcdUpdates)
@@ -54,10 +52,9 @@ ioLoop:
                 call fastCopy
 _:      pop af
         
-        ;stdio(readCommand)
-        rst $10 \ .db stdioId \ call readCommand
+        stdio(readCommand)
         or a
-        kcall nz, handleCommand
+        kcall(nz, handleCommand)
         call contextSwitch ; TODO: This is too slow, suspend the thread and make stdio wake it up
     ; Check if the thread is still alive
     pop af
@@ -65,13 +62,11 @@ _:      pop af
     jr z, ioLoop
     push af
         ; Final command check
-        ;stdio(readCommand)
-        rst $10 \ .db stdioId \ call readCommand
+        stdio(readCommand)
         or a
-        kcall nz, handleCommand
+        kcall(nz, handleCommand)
     pop af
-    ;stdio(releaseThread)
-    rst $10 \ .db stdioId \ call releaseThread
+    stdio(releaseThread)
     ; Reset state
     call getLcdLock
     call getKeypadLock
@@ -84,28 +79,28 @@ handleCommand:
         jr nz, _
         push af
             xor a
-            kld (enableLcdUpdates), a
+            kld((enableLcdUpdates), a)
         pop af
         
 _:      cp cmdEnableUpdates
         jr nz, _
         push af
             ld a, 1
-            kld (enableLcdUpdates), a
+            kld((enableLcdUpdates), a)
         pop af
         
 _:      cp cmdPrintHex
         jr nz, _
         push af
             ld a, h
-            kcall term_printHex
+            kcall(term_printHex)
         pop af
         
 _:      cp cmdReadLine
         jr nz, _
         push ix
             push hl \ pop ix
-            kcall term_readString
+            kcall(term_readString)
             push ix \ pop hl
         pop ix
         ld b, a
@@ -115,7 +110,7 @@ _:      cp cmdReadLine
         
 _:      cp cmdPrintDecimal
         jr nz, _
-        kcall term_printDecimal
+        kcall(term_printDecimal)
         
 _:      cp cmdClearTerminal
         jr nz, _
@@ -129,18 +124,18 @@ _:      cp cmdClearTerminal
 _:      cp cmdPrintChar
         jr nz, _
         ld c, a \ ld a, h
-        kcall term_printChar
+        kcall(term_printChar)
         ld a, c
         
 _:      cp cmdPrintString
         jr nz, _
-        kcall term_printString
+        kcall(term_printString)
         
 _:      cp cmdPrintLine
         jr nz, _
-        kcall term_printString
+        kcall(term_printString)
         ld a, '\n'
-        kcall term_printChar
+        kcall(term_printChar)
 _:  pop bc
     ret
     

@@ -20,18 +20,18 @@ start:
     jr z, launchCastle
     
     ; Set init memory to be permenant
-    kcall _
+    kcall(_)
 _:  pop ix
     call memSeekToStart
     dec ix \ dec ix \ dec ix
     ld (ix), $FE
     
     ; Load /lib/stdio so that it's always available
-    kld de, stdioPath
+    kld(de, stdioPath)
     call loadLibrary
     
     ; Update returnToCastle
-    kld de, castlePath
+    kld(de, castlePath)
     ld (ix + 6), e
     ld (ix + 7), d
     
@@ -40,15 +40,15 @@ _:  pop ix
     jr z, launchTerminal
 
 launchCastle:
-    kld de, castlePath
+    kld(de, castlePath)
     call launchProgram
     ret
     
 launchTerminal:
-    kld de, terminalPath
+    kld(de, terminalPath)
     di
     call launchProgram
-    kld hl, returnToCastle
+    kld(hl, returnToCastle)
     call setReturnPoint
     ei
     ret

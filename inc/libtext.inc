@@ -1,3 +1,10 @@
+.macro libtext(addr)
+    lcall(libtextId, addr)
+.endmacro
+.macro libtext(cc, addr)
+    lcall(libtextId, cc, addr)
+.endmacro
+
 libtextId .equ $01
 
 drawChar				.equ $0006

@@ -1,3 +1,10 @@
+.macro stdio(addr)
+    lcall(stdioId, addr)
+.endmacro
+.macro stdio(cc, addr)
+    lcall(stdioId, cc, addr)
+.endmacro
+
 stdioId .equ $03
 
 ; Commands

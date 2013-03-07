@@ -136,11 +136,11 @@ reboot:
     #ifdef USB
     ld a, $EF
     #else
-    #ifdef TI73
-    ld a, $FB
-    #else
-    ld a, $F4
-    #endif
+        #ifdef TI73
+            ld a, $FB
+        #else
+            ld a, $F4
+        #endif
     #endif
     ld (currentContrast), a
     call lcdDelay

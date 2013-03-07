@@ -1,30 +1,75 @@
-; Spasm macros don't work correctly, so instead, we use .addinstr
+rkcall .equ $08
+rlcall .equ $10
 
-.addinstr KCALL M,*     FCCF   4 NOP 1
-.addinstr KCALL NC,*    D4CF   4 NOP 1
-.addinstr KCALL NZ,*    C4CF   4 NOP 1
-.addinstr KCALL P,*     F4CF   4 NOP 1
-.addinstr KCALL PE,*    ECCF   4 NOP 1
-.addinstr KCALL PO,*    E4CF   4 NOP 1
-.addinstr KCALL Z,*     CCCF   4 NOP 1
-.addinstr KCALL *       CDCF   4 NOP 1
-.addinstr KLD   (*),A   32CF   4 NOP 1
-.addinstr KLD   (*),HL  22CF   4 NOP 1
-.addinstr KLD   (*),IX  22DDCF 5 NOP 1
-.addinstr KLD   (*),IY  22FDCF 5 NOP 1
-.addinstr KLD   A,(*)   3ACF   4 NOP 1
-.addinstr KLD   BC,*    01CF   4 NOP 1
-.addinstr KLD   DE,*    11CF   4 NOP 1
-.addinstr KLD   HL,*    21CF   4 NOP 1
-.addinstr KLD   IX,*    21DDCF 5 NOP 1
-.addinstr KLD   IY,*    21FDCF 5 NOP 1
-.addinstr KLD   SP,*    31CF   4 NOP 1
-.addinstr KJP   C,*     DACF   4 NOP 1
-.addinstr KJP   M,*     FACF   4 NOP 1
-.addinstr KJP   NC,*    D2CF   4 NOP 1
-.addinstr KJP   NZ,*    C2CF   4 NOP 1
-.addinstr KJP   P,*     F2CF   4 NOP 1
-.addinstr KJP   PE,*    EACF   4 NOP 1
-.addinstr KJP   PO,*    E2CF   4 NOP 1
-.addinstr KJP   Z,*     CACF   4 NOP 1
-.addinstr KJP   *       C3CF   4 NOP 1
+.macro kcall(addr)
+    rst rkcall
+    call addr
+.endmacro
+.macro kcall(cc, addr)
+    rst rkcall
+    call cc, addr
+.endmacro
+.macro kjp(addr)
+    rst rkcall
+    jp addr
+.endmacro
+.macro kjp(cc, addr)
+    rst rkcall
+    jp cc, addr
+.endmacro
+.macro kld(to, from)
+    rst rkcall
+    ld to, from
+.endmacro
+
+.macro lcall(id, addr)
+    rst rlcall
+    .db id
+    call addr
+.endmacro
+.macro lcall(id, cc, addr)
+    rst rlcall
+    .db id
+    call cc, addr
+.endmacro
+.macro ljp(id, addr)
+    rst rlcall
+    .db id
+    jp addr
+.endmacro
+.macro ljp(id, cc, addr)
+    rst rlcall
+    .db id
+    jp cc, addr
+.endmacro
+.macro lld(id, to, from)
+    rst rlcall
+    .db id
+    ld to, from
+.endmacro
+
+.macro icall(addr)
+    rst rlcall
+    .db libId
+    call addr
+.endmacro
+.macro icall(cc, addr)
+    rst rlcall
+    .db libId
+    call cc, addr
+.endmacro
+.macro ijp(addr)
+    rst rlcall
+    .db libId
+    jp addr
+.endmacro
+.macro ijp(cc, addr)
+    rst rlcall
+    .db libId
+    jp cc, addr
+.endmacro
+.macro ild(to, from)
+    rst rlcall
+    .db libId
+    ld to, from
+.endmacro

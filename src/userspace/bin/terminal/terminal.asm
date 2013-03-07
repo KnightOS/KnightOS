@@ -30,22 +30,20 @@ start:
     call allocScreenBuffer
     
     ; Load dependencies
-    kld de, libTextPath
+    kld(de, libTextPath)
     call loadLibrary
-    kld de, applibPath
+    kld(de, applibPath)
     call loadLibrary
-    kld de, stdioPath
+    kld(de, stdioPath)
     call loadLibrary
     
-    kld hl, windowTitle
+    kld(hl, windowTitle)
     xor a
-    ;applib(drawWindow)
-    rst $10 \ .db applibId \ call drawWindow
+    applib(drawWindow)
     
     ; Set default character set
     ld a, charSetLowercase
-    ;applib(setCharSet)
-    rst $10 \ .db applibId \ call setCharSet
+    applib(setCharSet)
     
     call flushKeys
     
@@ -58,7 +56,7 @@ idleLoop: ; Run when there is no attached program
     call memSeekToStart
     ; Draw out the command character
     ld a, commandChar
-    kcall term_printChar
+    kcall(term_printChar)
     
     ; Clear out old input
     xor a \ call memset
@@ -70,7 +68,7 @@ idleLoop: ; Run when there is no attached program
         push de \ pop ix
     pop de
     
-    kcall term_readString
+    kcall(term_readString)
     
     ; Handle empty string
     ld a, (ix)
@@ -79,18 +77,18 @@ idleLoop: ; Run when there is no attached program
     ; Special case for "exit" command
     push de
         push ix \ pop hl
-        kld de, exitStr
+        kld(de, exitStr)
         call compareStrings
     pop de
     ret z
     
     ; Interpret given string
-    kcall parseInput
+    kcall(parseInput)
     jr z, idleLoop
     
     ; Display error
-    kld hl, commandNotFoundStr
-    kcall term_printString
+    kld(hl, commandNotFoundStr)
+    kcall(term_printString)
     
     jr idleLoop
     

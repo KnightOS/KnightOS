@@ -25,40 +25,34 @@ start:
     call allocScreenBuffer
     
     ; Load dependencies
-    kld de, libTextPath
+    kld(de, libTextPath)
     call loadLibrary
-    kld de, applibPath
+    kld(de, applibPath)
     call loadLibrary
     
-    kld hl, windowTitle
+    kld(hl, windowTitle)
     xor a
-    ;applib(drawWindow)
-    rst $10 \ .db applibId
+    applib(drawWindow)
     call drawWindow
     
     ld b, 2
     ld de, $0208
-    kld hl, helloString
-    ;libtext(drawStr)
-    rst $10 \ .db libTextId
+    kld(hl, helloString)
+    libtext(drawStr)
     call drawStr
     
     ld de, $0219
-    kld hl, bootCodeString
-    ;libtext(drawStr)
-    rst $10 \ .db libTextId
+    kld(hl, bootCodeString)
+    libtext(drawStr)
     call drawStr
     
     call getBootCodeVersionString
-    ;libtext(drawStr)
-    rst $10 \ .db libTextId
-    call drawStr
+    libtext(drawStr)
     call free
     
 _:  call fastCopy
     call flushKeys
-    rst $10 \ .db applibId
-    call appWaitKey
+    applib(appWaitKey)
     cp kClear
     jr nz, -_
     ret

@@ -20,41 +20,35 @@
     .db lang_description, 0
 
 start:
-    kld hl, demoMessage
-    ;stdio(printLine)
-    rst $10 \ .db stdioId \ call printLine
-
+    kld(hl, demoMessage)
+    stdio(printLine)
+    
     call getLcdLock
     call getKeypadLock
 
     call allocScreenBuffer
     
     ; Load dependencies
-    kld de, libTextPath
+    kld(de, libTextPath)
     call loadLibrary
-    kld de, applibPath
+    kld(de, applibPath)
     call loadLibrary
     
-    kld hl, windowTitle
+    kld(hl, windowTitle)
     xor a
-    ;applib(drawWindow)
-    rst $10 \ .db applibId
-    call drawWindow
+    applib(drawWindow)
     
     ld b, 2
     ld de, $0208
-    kld hl, exitString
-    ;libtext(drawStr)
-    rst $10 \ .db libTextId
-    call drawStr
+    kld(hl, exitString)
+    libtext(drawStr)
     
-    kld hl, smileySprite
+    kld(hl, smileySprite)
     ld de, $0210
 _:  ld b, 5
     call putSpriteXor
     call fastCopy
-    rst $10 \ .db applibId
-    call appGetKey
+    applib(appGetKey)
     call putSpriteXor
     cp kClear
     jr z, exit
@@ -81,9 +75,8 @@ doRight:
     jr -_
     
 exit:
-    kld hl, goodbyeMessage
-    ;stdio(printLine)
-    rst $10 \ .db stdioId \ call printLine
+    kld(hl, goodbyeMessage)
+    stdio(printLine)
     ret
     
 threadListPath:

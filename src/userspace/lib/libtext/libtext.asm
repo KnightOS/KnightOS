@@ -52,10 +52,7 @@ _:      push de
             sub $20
             call DEMulA
             ex de, hl
-            ; ild(hl, Font)
-            rst $10
-            .db libID
-            ld hl, font
+            ild(hl, Font)
             add hl, de
             ld a, (hl)
             inc hl
@@ -88,10 +85,7 @@ _:      push de
             sub $20
             call DEMulA
             ex de, hl
-            ; ild(hl, Font)
-            rst $10
-            .db libID
-            ld hl, font
+            ild(hl, Font)
             add hl, de
             ld a, (hl)
             inc hl
@@ -124,10 +118,7 @@ _:        push de
             sub $20
             call DEMulA
             ex de, hl
-            ; ild(hl, Font)
-            rst $10
-            .db libID
-            ld hl, font
+            ild(hl, Font)
             add hl, de
             ld a, (hl)
             inc hl
@@ -152,10 +143,7 @@ drawStr:
 _:      ld a, (hl)
         or a
         jr z, _
-        ; icall(PutChar)
-        rst $10
-        .db libID
-        call drawChar
+        icall(drawChar)
         inc hl
         jr -_
 _:  pop af
@@ -168,10 +156,7 @@ drawStrAND:
 _:      ld a, (hl)
         or a
         jr z, _
-        ; icall(PutChar)
-        rst $10
-        .db libID
-        call drawCharAND
+        icall(drawCharAND)
         inc hl
         jr -_
 _:  pop af
@@ -184,7 +169,7 @@ drawStrXOR:
 _:      ld a, (hl)
         or a
         jr z, _
-        ; icall(PutChar)
+        ; icall(drawCharXOR)
         rst $10
         .db libID
         call drawCharXOR
@@ -203,7 +188,7 @@ _:      call streamReadByte
         jr nz, _
         or a
         jr z, _
-        ; icall(PutChar)
+        ; icall(drawChar)
         rst $10
         .db libID
         call drawChar
@@ -217,11 +202,9 @@ drawHexA:
    rrca
    rrca
    rrca
-   ; icall(dispha)
-   rst $10 \ .db libID \ call dispha
+   icall(dispha)
    pop af
-   ; icall(dispha)
-   rst $10 \ .db libID \ call dispha
+   icall(dispha)
    ret
 dispha:
    and 15
@@ -232,9 +215,7 @@ dispha:
 dhlet:
    add a,55
 dispdh:
-   ;icall(DrawCharOR)
-   rst $10 \ .db libId
-   call drawCharOR
+   ijp(drawCharOR)
    ret
    
 ; Inputs:    A: Character to measure
@@ -248,10 +229,7 @@ measureChar:
         sub $20
         call DEMulA
         ex de, hl
-        ;ild(hl, Font)
-        rst $10
-        .db libID
-        ld hl, font
+        ild(hl, font)
         add hl, de
         ld a, (hl)
     pop de
@@ -267,10 +245,7 @@ _:     push af
             ld a, (hl)
             or a
             jr z, _
-            ;icall(MeasureChar)
-            rst $10
-            .db libID
-            call measureChar
+            icall(measureChar)
         pop bc
         add a, b
         ld a, b
