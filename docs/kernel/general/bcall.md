@@ -30,7 +30,7 @@ Use of the system bcall hook is simple. Here's an example:
         inc sp \ inc sp
         ; Pop off the return address
         pop hl
-        ; Increment past the .dw (we don't actually handle bcalls here, so...
+        ; Increment past the .dw (we don't actually handle bcalls here)
         inc hl \ inc hl
         push hl
         
