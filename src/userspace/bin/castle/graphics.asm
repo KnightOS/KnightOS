@@ -54,7 +54,7 @@ _:
         call getTime
         ; TODO
         kld(hl, dummyTimeString)
-        ld de, 69 << 8 | 4
+        ld de, (69 << 8) | 4
         libtext(drawStr)
     pop ix
     #endif

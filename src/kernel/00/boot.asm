@@ -134,7 +134,7 @@ reboot:
     out (10h), a ; Op-amp control (OPA2) set to max
 
     #ifdef USB
-    ld a, $EF
+        ld a, $EF
     #else
         #ifdef TI73
             ld a, $FB
@@ -148,10 +148,10 @@ reboot:
     
     ; Configure filesystem memory
     ld hl, 0
-    ld (currentDirectoryID), hl
-    ld (endOfTableAddress), hl
-    ld (endOfDataPage), hl
-    ld (endOfDataAddress), hl
+    ;ld (currentDirectoryID), hl
+    ;ld (endOfTableAddress), hl
+    ;ld (endOfDataPage), hl
+    ;ld (endOfDataAddress), hl ; Not needed because memory has already been cleared
 
     ld a, allocTableStart
     out (6), a

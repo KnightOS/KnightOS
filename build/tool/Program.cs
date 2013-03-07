@@ -407,12 +407,6 @@ namespace build
         static void Assemble(string input, string output, string args, params string[] defines)
         {
             string defineString = string.Empty;
-            bool isBin = true;
-            if (!output.EndsWith(".bin"))
-            {
-                output = output + ".bin";
-                isBin = false;
-            }
             var listingFile = Path.Combine(Path.GetDirectoryName(output), Path.GetFileNameWithoutExtension(output) + ".lst");
             var symbolFile = Path.Combine(Path.GetDirectoryName(output), Path.GetFileNameWithoutExtension(output) + ".sym");
             Array.Resize(ref defines, defines.Length + 1);

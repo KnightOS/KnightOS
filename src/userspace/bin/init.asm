@@ -1,6 +1,8 @@
+.nolist
 #include "kernel.inc"
 #include "macros.inc"
 #include "keys.inc"
+.list
 ; Header
     .db 0
     .db 10 ; Stack size
@@ -16,7 +18,7 @@ returnToCastle:
     
 start:
     ; Boot status codes
-    cp 1 ; ON+MODE pressed
+    cp 1 ; ON+MODE pressed ; 0x820E
     jr z, launchCastle
     
     ; Set init memory to be permenant

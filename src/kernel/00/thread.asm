@@ -1,7 +1,7 @@
 getCurrentThreadID:
     push hl
         ld a, (currentThreadIndex)
-        cp $FF
+        cp nullThread
         jr z, +_
         cp $FE
         jr z, ++_
@@ -284,7 +284,7 @@ launchProgram:
             dec bc
             ld a, (currentThreadIndex)
             push af
-                ld a, $FF
+                ld a, nullThread
                 ld (currentThreadIndex), a ; The null thread will allocate memory to the next thread
                 call malloc
             pop af

@@ -213,8 +213,7 @@ streamReadToEnd_CopyLoop:
             in a, (6)
             inc a
             out (6), a
-_:
-        pop bc
+_:      pop bc
         ld a, $FF
         
         dec c
@@ -228,8 +227,7 @@ _:
         dec d
         cp d
         
-_:
-        xor a
+_:      xor a
         cp c
         jp nz, streamReadToEnd_CopyLoop
         cp b
@@ -262,7 +260,7 @@ _:
     pop af
     jp po, _
     ei
-_:    pop af
+_:  pop af
     ret
     
 streamReadToEnd_NoStream:
@@ -287,7 +285,7 @@ streamReadWord:
     ld a, i
     jp pe, _
     ld a, i
-_:    push af
+_:  push af
     push de
         di
         call getStreamInfo
@@ -335,7 +333,6 @@ _:
             ; The end of the stream has been reached, error out
             jr streamReadWord_EndOfStream        
 _:
-            
             ; Update stream size
             ld (hl), d
             dec hl
@@ -379,7 +376,6 @@ _:
             inc b
             ld de, $4000
 _:
-            
             ld (hl), d
             dec hl
             ld (hl), e
@@ -394,7 +390,7 @@ _:
     pop af
     jp po, _
     ei
-_:    pop bc
+_:  pop bc
     ret
     
 streamReadWord_EndOfStream:
@@ -424,7 +420,7 @@ streamReadByte:
     ld a, i
     jp pe, _
     ld a, i
-_:    push af
+_:  push af
     push hl
     push de
         di
@@ -461,8 +457,7 @@ _:    push af
             ; The end of the stream has been reached, error out
             jr streamReadByte_EndOfStream
             
-_:
-            ; Update stream size
+_:          ; Update stream size
             ld (hl), d
             dec hl
             ld (hl), b
@@ -502,7 +497,7 @@ _:
     pop af
     jp po, _
     ei
-_:    ld a, b
+_:  ld a, b
     pop bc
     ret
     
@@ -557,7 +552,7 @@ _:      call lookUpFile
         pop af
         jp po, _
         ei
-_:        ld a, errFileNotFound
+_:      ld a, errFileNotFound
         or a
         ret
         
@@ -680,7 +675,7 @@ closeStream:
         ld a, i
         jp pe, _
         ld a, i
-_:        push af
+_:      push af
             di
             call getStreamInfo
             push hl
@@ -722,7 +717,7 @@ getStreamInfo:
     push af
         ld hl, fileStreamTable
         
-_:        ld a, (hl)
+_:      ld a, (hl)
         cp d
         jr z, _
         ld bc, 8
@@ -924,7 +919,7 @@ lookUpFile:
     ld a, i
     jp pe, _
     ld a, i
-_:    push af
+_:  push af
         di
         
         ld a, (de)
