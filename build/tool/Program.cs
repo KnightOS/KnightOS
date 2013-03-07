@@ -415,7 +415,7 @@ namespace build
                 defineString += "," + define;
             defineString = defineString.Substring(1);
             string process = "sass.exe";
-            var info = new ProcessStartInfo(process, "--include \"" +
+            var info = new ProcessStartInfo(process, "--encoding \"Windows-1252\" --include \"" +
                 Path.Combine(Directory.GetCurrentDirectory(), "..", "inc") + ";" +
                 Path.Combine(Directory.GetCurrentDirectory(), "..", "lang", language) + "\""
                 + " --listing \"" + listingFile + "\" --symbols \"" + symbolFile + "\" --define \"" + defineString +

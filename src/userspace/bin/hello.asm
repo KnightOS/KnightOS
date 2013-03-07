@@ -33,18 +33,15 @@ start:
     kld(hl, windowTitle)
     xor a
     applib(drawWindow)
-    call drawWindow
     
     ld b, 2
     ld de, $0208
     kld(hl, helloString)
     libtext(drawStr)
-    call drawStr
     
     ld de, $0219
     kld(hl, bootCodeString)
     libtext(drawStr)
-    call drawStr
     
     call getBootCodeVersionString
     libtext(drawStr)
