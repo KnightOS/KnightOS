@@ -29,7 +29,7 @@ rlcall:
 .fill $28-$
 ; $0028
 ; RST $28
-    ret
+    jp bcall
 .fill $30-$    
 ; $0030
 ; RST $30

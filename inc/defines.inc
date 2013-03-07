@@ -79,6 +79,7 @@ endOfTableAddress .equ $80C2 ; 2 bytes
 endOfDataPage .equ $80C4
 endOfDataAddress .equ $80C5 ; 2 bytes
 currentContrast .equ $80C7
+bcallHook .equ  $80C8 ; 2 bytes
 
 ; Used for line drawing
 clip_mask .equ $80C8

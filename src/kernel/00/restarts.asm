@@ -58,7 +58,8 @@ _:
     pop de
     pop hl
     ret
-    
+
+; rst $10
 lcall:
     push hl
     inc sp \ inc sp
@@ -116,4 +117,24 @@ _:
     pop de
     pop hl
     ret
-    
+
+; rst $28
+bcall:
+    push hl
+    push af
+        ld hl, (bcallHook)
+        xor a
+        cp h
+        jr nz, _
+        cp l
+        ; KnightOS doesn't provide bcall support on its own. However, 3rd party programs
+        ; can hook into RST $28 and provide their own bcall mechanism. This is to make
+        ; compatibility layers possible with KnightOS. However, if no bcall hook is set,
+        ; we kill the originating thread. This is because use of a bcall implies that a
+        ; TIOS program is running, and without a compatibility layer (especially considering
+        ; that it's using bcalls), it's extremely likely to crash the system if allowed
+        ; to continue.
+        jp z, killCurrentThread
+_:  ; We have a hook, call it
+    pop af
+    jp (hl)
