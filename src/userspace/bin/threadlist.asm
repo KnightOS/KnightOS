@@ -309,7 +309,7 @@ drawOptions:
     
     kld(hl, selectionIndicatorSprite)
     ld b, 5
-    ld de, 57  - (61 - (lang_forceQuit_position >> 8)) * 256 + 50
+    ld de, ((57  - (61 - (lang_forceQuit_position >> 8))) << 8) + 50
     call putSpriteOR
     ret
     
