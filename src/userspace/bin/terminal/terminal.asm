@@ -62,7 +62,7 @@ idleLoop: ; Run when there is no attached program
     xor a \ call memset
     push de
         push ix \ pop de
-        kld hl, binPath
+        kld(hl, binPath)
         ld bc, 5
         ldir
         push de \ pop ix

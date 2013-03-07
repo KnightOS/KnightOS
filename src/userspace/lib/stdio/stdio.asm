@@ -4,6 +4,7 @@
 .nolist
 libId .equ $03
 #include "kernel.inc"
+#include "macros.inc"
 ; Commands
 cmdNone .equ 0
 cmdPrintChar .equ 1

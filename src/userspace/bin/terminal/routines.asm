@@ -11,7 +11,7 @@ readString_cursorLoop:
         push de
             libtext(drawCharXOR)
         pop de
-        kld hl, cursorState
+        kld(hl, cursorState)
         inc (hl)
         
         ; cursor delay/keyboard input loop
@@ -309,7 +309,7 @@ term_printHex:
         rrca
         rrca
         rrca
-        kcall dispha
+        kcall(dispha)
     pop af
     kcall(dispha)
     ret

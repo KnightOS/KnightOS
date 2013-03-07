@@ -185,7 +185,7 @@ _:  call flushKeys
 drawThreads:
     xor a
     kld((totalThreads), a)
-    ld de, 5 << 8 + 12
+    ld de, (5 << 8) + 12
     ld hl, threadTable
     ld a, (activeThreads) \ dec a \ ld b, a
 drawThreads_loop:
@@ -262,7 +262,7 @@ _:    ld a, 8
     ld de, lang_castle_position
     libtext(drawStr)
     
-    kld hl, optionsStr
+    kld(hl, optionsStr)
     ld de, lang_options_position
     libtext(drawStr)
         
@@ -286,13 +286,13 @@ drawOptions:
     
     ld e, 55 - (61 - (lang_forceQuit_position >> 8))
     ld l, 48
-    ld c, 96-54 + (61 - (lang_forceQuit_position >> 8))
-    ld b, 56-47
+    ld c, 96 - 54 + (61 - (lang_forceQuit_position >> 8))
+    ld b, 56 - 47
     call rectOR
     ld e, 56 - (61 - (lang_forceQuit_position >> 8))
     ld l, 49
-    ld c, 95-55 + (61 - (lang_forceQuit_position >> 8))
-    ld b, 55-48
+    ld c, 95 - 55 + (61 - (lang_forceQuit_position >> 8))
+    ld b, 55 - 48
     call rectXOR
     ld e, 87
     ld l, 56
@@ -367,15 +367,15 @@ selectionIndicatorSprite: ; 8x5
     .db %10000000
     
 backStr:
-    .db lang_castle, 0
+    .db lang_str_castle, 0
 optionsStr:
-    .db lang_options, 0
+    .db lang_str_options, 0
 runningProgramsStr:
-    .db lang_runningPrograms, 0
+    .db lang_str_runningPrograms, 0
 noProgramsStr:
-    .db lang_noPrograms, 0
+    .db lang_str_noPrograms, 0
 forceQuitStr:
-    .db lang_forceQuit, 0
+    .db lang_str_forceQuit, 0
     
 totalThreads:
     .db 0

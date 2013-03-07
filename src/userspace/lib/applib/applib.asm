@@ -6,6 +6,7 @@ libId .equ $02
 #include "kernel.inc"
 #include "libtext.inc" ; TODO: Support loading libraries from others
 #include "keys.inc"
+#include "macros.inc"
 .list
 
 .dw $0002
@@ -144,7 +145,7 @@ _:      pop af \ pop hl \ push hl \ push af
 ; Possible values include \n and backspace (0x08).
 ; Also watches for F1/F5 to launch castle/thread list
 getCharacterInput:
-    icall(drawCharacterSetIndicator)
+    icall(drawCharSetIndicator)
     
     ld b, 0
     icall(appGetKey)

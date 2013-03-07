@@ -5,6 +5,7 @@
 .nolist
 libID .equ $01
 #include "kernel.inc"
+#include "macros.inc"
 .list
 
 .dw $0001

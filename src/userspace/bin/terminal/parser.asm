@@ -46,7 +46,7 @@ ioLoop:
         applib(appGetKey)
         ; Check if LCD updates are enabled
         push af
-            kld a, (enableLcdUpdates)
+            kld(a, (enableLcdUpdates))
             or a
             jr z, _
                 call fastCopy

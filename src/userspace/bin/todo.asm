@@ -22,7 +22,7 @@ start:
     
     ld b, 0
     ld de, 0
-    kld hl, todoString
+    kld(hl, todoString)
     libtext(drawStr)
     call fastCopy
     

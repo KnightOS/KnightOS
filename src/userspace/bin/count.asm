@@ -37,7 +37,7 @@ _:  push bc
         
         ld b, 2
         ld de, $0208
-        kld hl, helloString
+        kld(hl, helloString)
         libtext(drawStr)
     pop bc
     
