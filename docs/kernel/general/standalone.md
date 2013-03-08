@@ -51,7 +51,7 @@ This build configuration expects it to be in `src/userspace/bin/init.asm`. Creat
     start:
         ; Boot status codes
         or a ; cp 0
-        ret z
+        ret nz
         
         ; Handle boot up
         
@@ -59,6 +59,7 @@ This build configuration expects it to be in `src/userspace/bin/init.asm`. Creat
         
         ; Temporary code so you know everything worked
         ; Replace this with proper initialization code
+        call getLcdLock
         call allocScreenBuffer
         kld(hl, sprite)
         ld de, 0
