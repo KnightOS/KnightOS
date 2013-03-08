@@ -84,7 +84,8 @@ being when ON+MODE is pressed. There may be other similar hooks added over time.
 status code, and is set to 0 when booting up normally. You should be able to just skip all of these unless you need them
 at some point.
 
-Once you've added your init program, you should be able to compile and boot up your OS.
+Once you've added your init program, you should be able to compile and boot up your OS. Run `build --verbose --all` from
+the `build/` directory to build, like you would with KnightOS.
 
 You may have interest in [KnightOS-deriv](https://github.com/SirCmpwn/KnightOS-Deriv), which is a simple example operating
 system based on the KnightOS kernel. It is likely to use an outdated kernel, however, so it is advised that you follow the
