@@ -1,7 +1,7 @@
 .nolist
 #include "stdio.inc"
 #include "macros.inc"
-.nolist
+.list
 ; Header
     .db 0, 20
 ; Code
