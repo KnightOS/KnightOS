@@ -404,18 +404,24 @@ namespace build
             Directory.CreateDirectory("../bin/" + configuration);
         }
 
-        static void Assemble(string input, string output, string args, params string[] defines)
-        {
-            string defineString = string.Empty;
-            var listingFile = Path.Combine(Path.GetDirectoryName(output), Path.GetFileNameWithoutExtension(output) + ".lst");
-            var symbolFile = Path.Combine(Path.GetDirectoryName(output), Path.GetFileNameWithoutExtension(output) + ".sym");
-            Array.Resize(ref defines, defines.Length + 1);
-            defines[defines.Length - 1] = "lang_" + language;
-            foreach (string define in defines)
-                defineString += "," + define;
-            defineString = defineString.Substring(1);
-            string process = "sass.exe";
-            var info = new ProcessStartInfo(process, "--encoding \"Windows-1252\" --include \"" +
+        static void Assemble (string input, string output, string args, params string[] defines)
+		{
+			string defineString = string.Empty;
+			var listingFile = Path.Combine (Path.GetDirectoryName (output), Path.GetFileNameWithoutExtension (output) + ".lst");
+			var symbolFile = Path.Combine (Path.GetDirectoryName (output), Path.GetFileNameWithoutExtension (output) + ".sym");
+			Array.Resize (ref defines, defines.Length + 1);
+			defines [defines.Length - 1] = "lang_" + language;
+			foreach (string define in defines)
+				defineString += "," + define;
+			defineString = defineString.Substring (1);
+			string process = "sass.exe";
+			string prefix = string.Empty;
+			if (RuntimeInfo.IsMono)
+			{
+				prefix = "\"" + Directory.GetCurrentDirectory() + "/sass.exe\" ";
+				process = "mono";
+			}
+            var info = new ProcessStartInfo(process, prefix + "--encoding \"Windows-1252\" --include \"" +
                 Path.Combine(Directory.GetCurrentDirectory(), "..", "inc") + ";" +
                 Path.Combine(Directory.GetCurrentDirectory(), "..", "lang", language) + "\""
                 + " --listing \"" + listingFile + "\" --symbols \"" + symbolFile + "\" --define \"" + defineString +
@@ -431,6 +437,7 @@ namespace build
             proc.WaitForExit();
             if (verbose)
                 Console.Write(procOutput);
+			Console.Write(procError);
         }
 
         static void OutputHelp()
