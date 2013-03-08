@@ -2,7 +2,7 @@
 
 The build tool is a .NET tool written in C# to assist in building KnightOS from source. It performs the following tasks:
 
-* Assemble files with [Spasm](http://wabbit.codeplex.com/)
+* Assemble files with [sass](http://github.com/SirCmpwn/sass/)
 * Handle various platform and locale retargeting
 * Create ROM and 8xu (or 73u) files, and sign the finished OS
 * Create the kernel jump table and include files
@@ -20,7 +20,7 @@ with no parameters, is to build the TI-84+ Silver Edition version in English. Yo
     --all: Build for all supported platforms in English.
     --configuration [target]: Change the target platform configuration.
     --language [language]: Changes the target locale of the build.
-    --verbose: Output all Spasm output to the console.
+    --verbose: Output all sass output to the console.
 
 ### Configurations
     
@@ -44,7 +44,7 @@ for each target platform.
 ### Languages
 
 The language selection is the name of a folder in [lang/](https://github.com/SirCmpwn/KnightOS/blob/master/lang/). This folder
-will be added to the include path for Spasm, and "lang_[language]" will be defined at assembly time. The default is en_us.
+will be added to the include path for sass, and "lang_[language]" will be defined at assembly time. The default is en_us.
 
 ## Build Files
 
@@ -86,7 +86,7 @@ from the kernel build configuration can be seen here:
 It is similar to scripting languages you've seen before, but less powerful and not suitable for use outside of the KnightOS build
 process. The following commands are available:
 
-* asm \[input] \[output]: Assembles the specified file with Spasm and outputs it to \[output].
+* asm \[input] \[output]: Assembles the specified file with sass and outputs it to \[output].
 * cp \[from] \[to]: Copies the \[from] file to \[to].
 * echo \[text]: Echos \[text] to the console during the build.
 * endif: Closes the corresponding if statement.
@@ -108,7 +108,7 @@ The build tool will first build [src/kernel/build.cfg](https://github.com/SirCmp
 
 ## Include Files
 
-Spasm will be instructed to add [inc/](https://github.com/SirCmpwn/KnightOS/blob/master/inc/) to the include path, as well as the
+sass will be instructed to add [inc/](https://github.com/SirCmpwn/KnightOS/blob/master/inc/) to the include path, as well as the
 selected language folder in [lang/](https://github.com/SirCmpwn/KnightOS/blob/master/lang/).
 
 ## Output
