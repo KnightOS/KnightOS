@@ -80,10 +80,9 @@ This simile init program will just put a smiley face on the screen so you know t
 You should replace this with proper initialization code. For inspiration, you might look to the KnightOS init program,
 whose source code is [here](https://github.com/SirCmpwn/KnightOS/blob/master/src/userspace/bin/init.asm).
 
-It's worth noting the ON+MODE handler. The kernel will run `/bin/init` at runtime under certain conditions, one of them
-being when ON+MODE is pressed. There may be other similar hooks added over time. The A register always contains the
-status code, and is set to 0 when booting up normally. You should be able to just skip all of these unless you need them
-at some point.
+The kernel will run `/bin/init` after boot under certain conditions, with a status code based on those conditions. The
+A register always contains the status code, and is set to 0 when booting up normally. You should be able to just skip
+all of these unless you need them at some point.
 
 Once you've added your init program, you should be able to compile and boot up your OS. Run `build --verbose --all` from
 the `build/` directory to build, like you would with KnightOS.
