@@ -4,6 +4,7 @@
 #include "libtext.inc"
 #include "keys.inc"
 #include "defines.inc"
+#include "config.inc"
 .list
 ; Header
     .db 0  ; TODO: Thread flags
@@ -204,13 +205,21 @@ powerMenuDown:
 powerMenuSelect:
     ld a, e
     pop de
+#ifdef config_confirm_shutdown
     cp 44
     jr z, confirmShutDown
     cp 50
     jr z, confirmRestart
+#else
+    cp 44
+    jp z, boot
+    cp 50
+    jp z, reboot
+#endif
     call suspendDevice
     kjp(redrawHome)
     
+#ifdef config_confirm_shutdown
 confirmShutDown:
     ld hl, boot
     jr confirmSelection
@@ -259,6 +268,7 @@ confirmSelectionLoop_Select:
     ld a, 2 \ out (10h), a
     ld b, 255 \ djnz $
     jp (hl)
+#endif
     
 libtext:
     .db "/lib/libtext", 0

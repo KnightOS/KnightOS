@@ -283,7 +283,8 @@ drawPowerMenu:
     ld b, 5
     call putSpriteOR
     ret
-    
+
+#ifdef config_confirm_shutdown
 drawConfirmationDialog:
     ld e, 18 ; e, l, c, b
     ld l, 16
@@ -332,6 +333,7 @@ drawConfirmationDialog:
     ld b, 5
     call putSpriteOR
     ret
+#endif
     
 castleTopSprite: ; 8x3
     .db %11110000
@@ -485,6 +487,7 @@ shutdownString:
     .db lang_shutDown, 0
 restartString:
     .db lang_restart, 0
+#ifdef config_confirm_shutdown
 confirmString1:
     .db lang_areYouSure, 0
 confirmString2:
@@ -495,6 +498,7 @@ yesString:
     .db lang_Yes, 0
 noString:
     .db lang_no, 0
+#endif
 noProgramsInstalledString:
     .db lang_noPrograms, 0
 configPath:

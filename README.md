@@ -1,75 +1,81 @@
 # KnightOS
 
-KnightOS is a 3rd party operating system for the following Texas Instruments calculators:
+KnightOS is a 3rd party Operating System for Texas Instruments z80 calculators. It offers
+many features over the stock OS, including multitasking, a tree-based filesystem, delivered
+in a Unix-like enviornment. KnightOS is written entirely in z80 assembly, with a purpose-
+built toolchain. Additionally, the KnightOS kernel is standalone, and you can use it as the
+basis for your own powerful operating systems.
 
-* TI-73
-* TI-73 Explorer\*
-* TI-83+
-* TI-83+ Silver Edition
-* TI-84+
-* TI-84+ Silver Edition
-* TI-84 Pocket.fr\*\*
-* TI-84 Plus Pocket SE\*\*\*
+## Building KnightOS
 
-It aims to provide a unix-like enviornment with multitasking and a tree-based filesystem,
-in addition to generally being a better experience than the official TIOS.
+Precomiled packages are not currently being distributed. However, you may build KnightOS from
+its source yourself. From a command line, navigate to the build directory. On Windows, run
+`build --all` to build KnightOS for all calculators. On Linux/Mac, install Mono. Then, run
+`mono build.exe --all`. You may want to change some details in `inc/config.asm` to customize
+some aspects of KnightOS.
 
-\* *For the TI-73 Explorer, use the standard TI-73 version of KnightOS.*
+Once the build completes, look in `bin/` for the completed OS upgrade files, which are signed
+and ready to send to a calculator. ROM files will also be generated for use in emulators.
 
-\*\* *For the TI-84 Pocket.fr, use the standard TI-84+ version of KnightOS.*
+For details on advanced usage of the build tool, see
+[its documentation](https://github.com/SirCmpwn/KnightOS/blob/master/docs/build/build-tool.md).
+This documentation includes details on building for specific platforms, and targetting
+languages other than English.
 
-\*\*\* *For the TI-84 Plus Pocket SE, use the standard TI-84+ Silver Edition version of KnightOS.*
+## Installation
+
+When you have produced a KnightOS 8xu (or 73u) upgrade file, you may send it to your calculator.
+**Installing KnightOS will clear all memory on your calculator, including the TIOS Archive.**
+First, install TI-Connect (Windows/Mac) or TILP (Windows/Linux/Mac) to facilitate the transfer.
+Remove one battery from your calculator for a moment, hold down the `DEL` key, and replace the
+battery. Plug your calculator into the computer.
+
+*TI-Connect*: Use "TI OS Downloader" to install KnightOS.
+
+*TILP*: Run `tilp path/to/KnightOS.8xu` as root to install KnightOS.
+
+You may repeat this procedure with the official OS upgrade file to install the stock OS again.
+
+## Supported Devices
+
+The following devices are supported:
+
+* TI-73 [TI73]
+* TI-73 Explorer [TI73]
+* TI-83+ [TI83p]
+* TI-83+ SE [TI83pSE]
+* TI-84+ [TI84pSE]
+* TI-84+ SE [TI84pSE]
+* TI-84 Pocket.fr [TI84p]
+* TI-84 Plus Pocket SE [TI84pSE]
+
+Indicated next to each device is the name used internally. The files for this device appear in
+`bin/<device>` when built with the instructions above. Use these files if you wish to install
+KnightOS on those devices.
 
 **NOTE**: Newer versions of the TI-84+, TI-84+ SE, and all TI-84 Pocket.fr and TI-84 Plus Pocket SE
-calculators are shipped with boot code 1.03. You must patch these calculators before you will be able
-to install KnightOS on them. Instructions for doing so may be found
-[here](https://github.com/SirCmpwn/KnightOS/tree/master/boot-patch).
+calculators are shipped with boot code 1.03, which prevents the installation of 3rd party operating
+systems. You must patch these calculators before you will be able to install KnightOS on them.
+Instructions for doing so may be found [here](https://github.com/SirCmpwn/KnightOS/tree/master/boot-patch).
 
-### Need help?
+## Help, Bugs, Feedback
 
-Make sure you drop by the official IRC channel if you have questions or need help: #knightos on irc.freenode.net.
+If you need help with KnightOS, want to keep up with progress, chat with developers, or learn
+ask any other questions about KnightOS, you can drop by the IRC channel: [#knightos on
+irc.freenode.net](http://webchat.freenode.net/?channels=knightos).
 
-## Building
-
-In build/, run "build.exe" from the command line. You can use "build.exe --help" for more
-information, or read the
-[documentation](https://github.com/SirCmpwn/KnightOS/blob/master/docs/build/build-tool.md).
-The default configuration is TI84pSE, or TI-84+ Silver Edition. If you have a different
-calculator, refer to --help for information on building for your model.
-
-*Note for Linux/Mac users*: Preface "build.exe" with "mono". Example:
-
-    mono build.exe --verbose --all
-
-Obviously, you will need to install Mono first.
-
-## Installing
-
-When you build from source, ROM files for emulation are output to `bin/<configuration>/KnightOS-<locale>.rom`.
-8xu files are output to `bin/<configuration>/KnightOS-<locale>.8xu`, signed and ready for transfer to actual
-hardware. The default locale is English (en_us). Basically, if you just want an installable version, do this
-from the command line:
-
-    $ cd build/
-    $ build --configuration <your calculator model>
-
-\<your calculator model> can be one of the following values:
-
-* TI73
-* TI83p
-* TI83pSE
-* TI84p
-* TI84pSE
-
-You install KnightOS at your own risk.
+To report bugs, please create [a GitHub issue](https://github.com/SirCmpwn/KnightOS/issues/new)
+or contact us on IRC.
 
 ## Contributing
 
-Feel free to make a fork and submit pull requests. This is assembly, so make sure they are very well
-commented - I won't accept anything I don't understand, and I'm not about to read some cryptic,
-uncommented assembly trying to learn what you've changed. However, if you have good comments, clean
-code, and adhere to the coding style, you should be fine. In general, follow these conventions:
+Feel free to make a fork and submit pull requests. KnightOS is written in assembly, and as such all
+code must be very well commented and easy to understand. Pull requests with cryptic assembly that we
+cannot understand will not be accepted. Please also include a detailed summary of your changes when
+making the pull request. Additionally, follow the code conventions already in place:
 
-* Use four spaces, not tabs. Indent where it makes sense, particularly with respect to the stack.
-* All instructions and registers in lowercase. Labels in camelCase. Use relative labels where you can.
-* For assembly-time math, add spaces between operators. "ld a, 5 * 10 + 7"
+* Use four spaces, not tabs. Indent instructions, but not labels. When you push things to the stack
+  to pop off later, make an indent to keep track of the stack pointer.
+* All instructions, registers, and directives should be in lowercase. Labels should use camelCase.
+  Where possible, use relative or local labels.
+* When doing math at assembly time, add spaces around operators (ex: `ld a, 5 * 10 + 7`).
