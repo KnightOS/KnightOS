@@ -87,6 +87,7 @@ _:  di
     ld a, (activeThreads)
     inc a \ ld (activeThreads), a
     ld a, (nextThreadId) \ inc a
+    ; Prevent 0xFE and 0xFF from being assigned as thread IDs
     cp $FE \ jr nz, $+3 \ inc a \ cp $FF \ jr nz, $+3 \ inc a
     ld (nextThreadId), a
     ld a, (hl)

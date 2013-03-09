@@ -49,19 +49,15 @@ errTooManySignals .equ 10
 
 kernelMem .equ $8000
 kernelGarbage .equ $8100
-#ifdef TI84pSE ; We need more space for garbage collection on TI-84+ SEs
-kernelGarbageSize .equ $200
-#else
 kernelGarbageSize .equ $100
-#endif
 userMemory .equ kernelGarbage + kernelGarbageSize
 
 threadTable .equ kernelMem
 libraryTable .equ $8050
 threadTableSize .equ libraryTable - threadTable ; TODO: More of these? Less?
 signalTable .equ $8078
-fileStreamTable .equ $808C
-fileStreamTableSize .equ $28
+fileHandleTable .equ $808C
+fileHandleTableSize .equ $28
 
 currentThreadIndex .equ $80B4
 activeThreads .equ $80B5

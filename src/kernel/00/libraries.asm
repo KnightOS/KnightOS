@@ -18,12 +18,12 @@ _:  push af
     push bc
         di
         push de
-            call lookUpFile
+            call fileExists
             jp nz, LoadLibrary_FileNotFound
             
             ld a, (loadedLibraries)
             inc a
-            cp MaxLibraries
+            cp maxLibraries
             jp z, LoadLibrary_TooManyLibraries
             
             dec bc \ dec bc ; Skip header
