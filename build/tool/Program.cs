@@ -16,6 +16,7 @@ namespace build
         private static Dictionary<string, long> labels;
         private static List<byte> pages;
         private static string language = "en_us";
+        private static Filesystem filesystem;
         
         static void Main(string[] args)
         {
@@ -61,6 +62,7 @@ namespace build
                 }
             }
             Console.WriteLine("Building configuration: " + configuration);
+            filesystem = new Filesystem();
             Console.WriteLine("Cleaning up previous build...");
             CleanUp();
             CreateOutput();
@@ -189,133 +191,11 @@ namespace build
             }
         }
 
-        private static byte allocationTableStart, dataStart = 1, swapSector;
-
-        private struct KDirectory
-        {
-            public ushort DirectoryId, ParentId;
-            public string Name;
-            public List<KFile> Files;
-        }
-
-        private struct KFile
-        {
-            public string Name;
-            public byte[] Contents;
-        }
-
-        private static List<KDirectory> filesystem;
-
         private static void CreateFilesystem(string path)
         {
             Console.WriteLine("Creating filesystem...");
-            string[] root = Directory.GetDirectories(path);
-            filesystem = new List<KDirectory>();
-            foreach (var directory in root)
-                filesystem.AddRange(CreateDirectory(directory + "/", 0));
-            // Generate filesystem
-            int dataIndex = dataStart * 0x4000;
-            int allocationIndex = allocationTableStart * 0x4000 + 0x4000;
-            byte[] entry;
-            // TODO: Dynamic pages
-            AddPage(dataStart);
-            AddPage(allocationTableStart);
-            foreach (var directory in filesystem)
-            {
-                // Create directory entry
-                string name = GetName(directory.DirectoryId);
-                Console.WriteLine("Creating entry for " + name);
-                entry = new byte[] { 0xBF, 0x00, 0x00 };
-                entry = entry.Concat(BitConverter.GetBytes(directory.ParentId))
-                    .Concat(BitConverter.GetBytes(directory.DirectoryId))
-                    .Concat(new byte[] { 0xFF }).Concat(Encoding.ASCII.GetBytes(directory.Name))
-                    .Concat(new byte[] { 0 }).ToArray();
-                entry[1] = BitConverter.GetBytes((ushort)entry.Length - 2)[0];
-                entry[2] = BitConverter.GetBytes((ushort)entry.Length - 2)[1];
-                Array.Reverse(entry);
-                allocationIndex -= entry.Length;
-                output.Seek(allocationIndex, SeekOrigin.Begin);
-                output.Write(entry, 0, entry.Length);
-                output.Flush();
-
-                foreach (var file in directory.Files)
-                {
-                    Console.WriteLine("Creating entry for " + name + file.Name);
-                    // Create file entry
-                    int fileSize = file.Contents.Length;
-                    byte[] size = BitConverter.GetBytes(fileSize);
-                    entry = new byte[] { 0x7F, 0x00, 0x00 }.Concat(BitConverter.GetBytes(directory.DirectoryId))
-                        .Concat(new byte[] { 0xFF }).Concat(size.Take(3))
-                        .Concat(new byte[] { (byte)(dataIndex / 0x4000) })
-                        .Concat(BitConverter.GetBytes((ushort)(dataIndex % 0x4000 + 0x4000)))
-                        .Concat(new byte[] { 0xFF, 0xFF, 0xFF })
-                        .Concat(Encoding.ASCII.GetBytes(file.Name)).Concat(new byte[] { 0x00 }).ToArray();
-                    entry[1] = BitConverter.GetBytes((ushort)entry.Length - 2)[0];
-                    entry[2] = BitConverter.GetBytes((ushort)entry.Length - 2)[1];
-                    Array.Reverse(entry);
-                    allocationIndex -= entry.Length;
-                    output.Seek(allocationIndex, SeekOrigin.Begin);
-                    output.Write(entry, 0, entry.Length);
-                    output.Flush();
-                    // Write data
-                    output.Seek(dataIndex, SeekOrigin.Begin);
-                    output.Write(file.Contents, 0, file.Contents.Length);
-                    output.Flush();
-                    dataIndex += file.Contents.Length;
-                }
-            }
-        }
-
-        private static string GetName(ushort directoryId)
-        {
-            string name = "";
-            foreach (var directory in filesystem)
-            {
-                if (directory.DirectoryId == directoryId)
-                {
-                    name = directory.Name;
-                    if (directory.ParentId != 0)
-                        name = GetName(directory.ParentId) + "/";
-                    else
-                        name = "/" + name;
-                }
-            }
-            return name + "/";
-        }
-
-        private static ushort nextDirectoryId = 1;
-
-        private static List<KDirectory> CreateDirectory(string path, ushort parent)
-        {
-            var directories = new List<KDirectory>();
-            var id = nextDirectoryId++;
-            var directory = new KDirectory
-                {
-                    DirectoryId = id,
-                    Name = GetDirectoryName(path),
-                    ParentId = parent
-                };
-            directory.Files = new List<KFile>();
-            foreach (var file in Directory.GetFiles(path))
-            {
-                directory.Files.Add(new KFile()
-                    {
-                        Contents = File.ReadAllBytes(file),
-                        Name = Path.GetFileName(file)
-                    });
-            }
-            directories.Add(directory);
-            var subs = Directory.GetDirectories(path);
-            foreach (var sub in subs)
-                directories.AddRange(CreateDirectory(sub, id));
-            return directories;
-        }
-
-        private static string GetDirectoryName(string path)
-        {
-            if (path.EndsWith("/"))
-                path = path.Remove(path.Length - 1);
-            return path.Substring(path.LastIndexOf('/') + 1);
+            filesystem.Load(path);
+            filesystem.WriteTo(output);
         }
 
         private static void LoadLabels(string file)
@@ -373,19 +253,19 @@ namespace build
             {
                 case "TI73":
                 case "TI83p":
-                    allocationTableStart = 0x17;
-                    swapSector = 0x18;
+                    filesystem.FATStart = 0x17;
+                    filesystem.SwapSector = 0x18;
                     flashPages = 32;
                     break;
                 case "TI84p":
-                    allocationTableStart = 0x37;
-                    swapSector = 0x38;
+                    filesystem.FATStart = 0x37;
+                    filesystem.SwapSector = 0x38;
                     flashPages = 64;
                     break;
                 case "TI83pSE":
                 case "TI84pSE":
-                    allocationTableStart = 0x77;
-                    swapSector = 0x78;
+                    filesystem.FATStart = 0x77;
+                    filesystem.SwapSector = 0x78;
                     flashPages = 128;
                     break;
                 default:

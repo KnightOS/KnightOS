@@ -50,6 +50,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Filesystem.cs" />
+    <Compile Include="FilesystemEntry.cs" />
+    <Compile Include="DirectoryEntry.cs" />
+    <Compile Include="FileEntry.cs" />
     <Compile Include="OSBuilder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
