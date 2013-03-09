@@ -1,3 +1,8 @@
+**NOTE: KnightOS is currently undergoing major refacotring with respect to the filesystem. Since
+basically everything depends on the filesystem, KnightOS is currently very broken. The latest
+changeset where everything still worked was 
+[d9bc259268](https://github.com/SirCmpwn/KnightOS/tree/d9bc2592682ce8a3795f363e1de793787e845009)**
+
 # KnightOS
 
 KnightOS is a 3rd party Operating System for Texas Instruments z80 calculators. It offers
