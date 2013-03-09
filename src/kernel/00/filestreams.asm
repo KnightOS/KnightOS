@@ -58,7 +58,7 @@ openFileRead:
 _:      ; A is block size
         ld (hl), a
         ; Get handle ID and return it, we're done here
-        ld bc, 7 \ or a \ sbc hl, bc
+        ld bc, 8 \ or a \ sbc hl, bc
         ld d, (hl)
     pop af
     jp po, _
