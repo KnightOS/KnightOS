@@ -58,7 +58,7 @@ Each entry's format is documented below.
 
 ### End of Table
 
-No further data. The length of this entry is always 0.
+No further data. This entry does not include the length field.
 
 ### File
 
