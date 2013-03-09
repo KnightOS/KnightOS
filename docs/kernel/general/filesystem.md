@@ -113,17 +113,18 @@ Deleted symbolic link entries use the same format as symbolic link entries, with
 
 ## Data Allocation Table
 
-KnightOS is a fragmented filesystem. The data allocation table is split into 512 byte sections, each of which
-may contain all or part of the contents of one file. Each flash page has 31 of these sections. At the beginning
+KnightOS is a fragmented filesystem. The data allocation table is split into 256 byte sections, each of which
+may contain all or part of the contents of one file. Each flash page has 63 of these sections. At the beginning
 of each Flash page is a simple table, which represents which section follows each from within the page.
 
-Starting at address 0, on each page, the header consists of 32 two-byte entries, each representing one section of
-the page's sections. There is one entry (the first entry) that is always 0xFFFF, and is not used. Each entry is
-set to 0xFFFF if that entry is not used, otherwise, it acts as a section identifier for the section that preceeds
-the represented section.
+Starting at address 0, on each page, the header consists of 64 four-byte entries, each representing one section of
+the page's sections. There is one entry (the first entry) that is always 0xFFFFFFFF, and is not used. Each entry is
+set to 0xFFFFFFFF if that entry is not used, otherwise, it is further split into two 16-bit numbers. The first is
+the preceeding section, or 0xFFFF if this is the first section of that file. The second is the next section, or
+0xFFFF if this is the last section of the file.
 
-For example, if you use section 2 as the first part of a file, and section 3 as the next, then the entry for
-section 2 on the table will point to section 3.
+For instance, say you have a file that starts on section 7, continues on 3, and ends on 12. The header for section
+7 would be 0xFFFF, 0x0003. The section 3 header is 0x0007, 0x000C. The section 12 header is 0x0003, 0xFFFF.
 
 The data allocation section may become severely fragmented over time. Defragmentation is not necessary.
 
@@ -159,8 +160,8 @@ To delete a directory, mark its entry as deleted and do the same for all childre
 
 ### Manipulating files
 
-When working with files, 512 bytes of memory should be allocated to manipulate the current section. When creating a file,
-locate the first free section and mark it as taken, but do not write to it. Allocate 512 bytes and set them to 0xFF. Streams
+When working with files, 256 bytes of memory should be allocated to manipulate the current section. When creating a file,
+locate the first free section and mark it as taken, but do not write to it. Allocate 256 bytes and set them to 0xFF. Streams
 will use this as working memory for modifying files. If the users writes or seeks past the end of that section, write the
 changes to Flash and continue from the new section. If the user seeks backwards *into* a section that has previously been
 written, copy that section to RAM and clear it before writing it again.
@@ -178,8 +179,8 @@ though it may not free up enough storage to continue with the pending operation.
    the screen after file operations, which may be interrupted for a garbage collection.
 2. With the screen safely saved (or maybe not), inform the user that a garbage collection is being performed.
 
-Once this is complete, you may begin consoldating the DAT, 4096 sections at a time. Clear kernel garbage (0x200 bytes long),
-and fill it with zeroes. Scan through the FAT and determine which sections are in use from the first 4096 sections. Indicate
+Once this is complete, you may begin consoldating the DAT, 2048 sections at a time. Clear kernel garbage (0x200 bytes long),
+and fill it with zeroes. Scan through the FAT and determine which sections are in use from the first 2048 sections. Indicate
 a section's usage in kernel garbage by setting the corresponding bit. After determining if all of these sections are in use,
 begin to clear unused sections. One sector at a time, copy each DAT sector to the swap sector. Inspect kernel garbage and
 only copy the spoken-for sections back to the disk.
@@ -187,6 +188,7 @@ only copy the spoken-for sections back to the disk.
 Once the DAT is cleaned up, cleaning up the FAT is simple. Copy each sector to the swap sector, and only copy back entries
 that have not expired (such as deleted files).
 
-**Note**: Kernel garbage can store usage information about *all* sectors on all calculators except for the CSE.
+**Note**: On the TI-83+ SE and TI-84+ SE, Flash is large enough to require two iterations of the DAT cleanup phase to complete.
+The TI-84+ CSE (not yet supported) will require four iterations.
 
 Garbage collection is to be done with interrupts disabled during the entire operation.
