@@ -150,7 +150,11 @@ reboot:
     
     ; Good place to test kernel routines
     
-    ; ...
+    ld de, testFile
+    call fileExists
+    jr $
+testFile:
+    .db "sub/foo.txt", 0
     
     ; /Good place to test kernel routines
     

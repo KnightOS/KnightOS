@@ -1,20 +1,20 @@
 #ifdef TI73
 privledgedPage .equ $1C
 swapSector .equ $18
-allocTableStart .equ $17
+fatStart .equ $17
 bootPage .equ $1F
 #endif
 #ifdef TI83p
 privledgedPage .equ $1C
 swapSector .equ $18
-allocTableStart .equ $17
+fatStart .equ $17
 bootPage .equ $1F
 #endif
 #ifdef TI83pSE
 #define CPU15
 privledgedPage .equ $7C
 swapSector .equ $78
-allocTableStart .equ $77
+fatStart .equ $77
 bootPage .equ $7F
 #endif
 #ifdef TI84p
@@ -23,7 +23,7 @@ bootPage .equ $7F
 #define CLOCK
 privledgedPage .equ $3C
 swapSector .equ $38
-allocTableStart .equ $37
+fatStart .equ $37
 bootPage .equ $3F
 #endif
 #ifdef TI84pSE
@@ -32,7 +32,7 @@ bootPage .equ $3F
 #define CLOCK
 privledgedPage .equ $7C
 swapSector .equ $78
-allocTableStart .equ $77
+fatStart .equ $77
 bootPage .equ $7F
 #endif
 nullThread .equ $FF
@@ -77,18 +77,13 @@ hwLockKeypad .equ $80BD
 hwLockUSB .equ $80BE
 
 ; Misc.
-currentDirectoryID .equ $80BF ; 2 bytes?
-endOfTablePage .equ $80C1
-endOfTableAddress .equ $80C2 ; 2 bytes
-endOfDataPage .equ $80C4
-endOfDataAddress .equ $80C5 ; 2 bytes
-currentContrast .equ $80C7
-bcallHook .equ  $80C8 ; 2 bytes
+currentContrast .equ $80BF
+bcallHook .equ  $80C0 ; 2 bytes
 
 ; Used for line drawing
-clip_mask .equ $80C8
+clip_mask .equ $80C2
 
-priorityHook .equ $80C9
+priorityHook .equ $80C3
 
 maxThreads .equ 10
 maxFileStreams .equ 5
@@ -100,9 +95,8 @@ fsEndOfTable .equ $FF
 fsFile .equ $7F
 fsDirectory .equ $BF
 fsSymLink .equ $DF
-fsEndOfPage .equ $EF
-fsModifiedFile .equ $07 ; Renamed files are marked like this
-fsRenamedDirectory .equ $03
-fsDeletedSymLink .equ $0F
-fsDeletedFile .equ $3F
-fsDeletedDirectory .equ $1F
+fsDeltedFile .equ $00
+fsModifiedFile .equ $01
+fsDeletedDirectory .equ $02
+fsModifiedDirectory .equ $04
+fsDeletedSymLink .equ $08

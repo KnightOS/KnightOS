@@ -22,30 +22,32 @@ namespace build
         public void Load(string model)
         {
             CurrentDirectoryId = 0;
-            AddDirectory(0, model);
+            AddDirectory(0, model.TrimEnd('\\', '/'));
         }
 
-        private void AddDirectory(ushort parentId, string model)
+        private void AddDirectory(ushort id, string model)
         {
-            var entry = new DirectoryEntry
-            {
-                ParentId = parentId,
-                DirectoryId = ++CurrentDirectoryId,
-                Name = Path.GetFileName(model.TrimEnd('\\', '/'))
-            };
-            Entries.Add(entry);
             foreach (var file in Directory.GetFiles(model))
             {
                 var fileEntry = new FileEntry
                 {
-                    ParentId = entry.DirectoryId,
+                    ParentId = id,
                     Name = Path.GetFileName(file),
                     Data = File.ReadAllBytes(file)
                 };
                 Entries.Add(fileEntry);
             }
             foreach (var directory in Directory.GetDirectories(model))
-                AddDirectory(entry.ParentId, directory);
+            {
+                var entry = new DirectoryEntry
+                {
+                    ParentId = id,
+                    DirectoryId = ++CurrentDirectoryId,
+                    Name = Path.GetFileName(directory)
+                };
+                Entries.Add(entry);
+                AddDirectory(entry.DirectoryId, directory);
+            }
         }
 
         public void WriteTo(Stream stream)
@@ -71,12 +73,14 @@ namespace build
                     stream.Seek(page * 0x4000 + (dataAddress * 4), SeekOrigin.Begin);
                     stream.Write(BitConverter.GetBytes(lastBlock), 0, sizeof(ushort));
                     stream.Write(BitConverter.GetBytes(block), 0, sizeof(ushort));
+                    stream.Flush();
                     // Write block
                     stream.Seek(page * 0x4000 + (dataAddress * BlockSize), SeekOrigin.Begin);
                     var length = BlockSize;
                     if (i + BlockSize > entry.Data.Length)
                         length = entry.Data.Length - i;
                     stream.Write(entry.Data, i, length);
+                    stream.Flush();
                     // Update state
                     lastBlock = block++;
                     if ((block & 0x1F) == 0) // Ensure that header blocks are never written to
@@ -87,7 +91,7 @@ namespace build
 
         private void WriteFAT(Stream stream)
         {
-            stream.Seek((FATStart + 1) * 0x4000, SeekOrigin.Begin);
+            var address = (FATStart + 1) * 0x4000;
             foreach (var entry in Entries)
             {
                 var data = entry.GetEntry();
@@ -96,8 +100,10 @@ namespace build
                 array[0] = entry.Identifier;
                 Array.Copy(BitConverter.GetBytes((ushort)data.Length), 0, array, 1, sizeof(ushort));
                 Array.Reverse(array);
-                stream.Seek(-array.Length, SeekOrigin.Current);
+                stream.Seek(address - array.Length, SeekOrigin.Begin);
                 stream.Write(array, 0, array.Length);
+                stream.Flush();
+                address -= array.Length;
             }
         }
 

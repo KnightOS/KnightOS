@@ -97,31 +97,26 @@ _:    in a,($10)
 
 ; 16-bit Compare routines
 cpHLDE:
+cpDEHL:
     push hl
     or a
     sbc hl,de
     pop hl
     ret
 cpHLBC:
+cpBCHL:
     push hl
     or a
     sbc hl,bc
     pop hl
     ret
 cpBCDE:
+cpDEBC:
     push hl
     ld h,b
     ld l,c 
     or a
     sbc hl,de
-    pop hl
-    ret
-cpDEBC:
-    push hl
-    ld h,d
-    ld l,e 
-    or a
-    sbc hl,bc
     pop hl
     ret
 
