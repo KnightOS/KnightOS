@@ -69,10 +69,13 @@ namespace build
                     // Write one block at a time
                     var page = block >> 5;
                     var dataAddress = block & 0x1F;
+                    var next = block + 1;
+                    if (i + BlockSize >= entry.Data.Length) // Last block
+                        next = 0xFFFF;
                     // Write header
                     stream.Seek(page * 0x4000 + (dataAddress * 4), SeekOrigin.Begin);
                     stream.Write(BitConverter.GetBytes(lastBlock), 0, sizeof(ushort));
-                    stream.Write(BitConverter.GetBytes(block), 0, sizeof(ushort));
+                    stream.Write(BitConverter.GetBytes(next), 0, sizeof(ushort));
                     stream.Flush();
                     // Write block
                     stream.Seek(page * 0x4000 + (dataAddress * BlockSize), SeekOrigin.Begin);
