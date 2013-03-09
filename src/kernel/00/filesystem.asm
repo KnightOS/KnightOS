@@ -9,6 +9,43 @@
 ; Inputs:
 ;   DE: File name
 ; Outputs:
+;   Z: File was deleted
+;   NZ: File did not exist
+deleteFile:
+    push hl
+    push af
+        call findFileEntry
+        jr nz, ++_
+        ; Delete file
+        push bc
+            ld b, a
+            ld a, i
+            push af
+                ld a, b
+                out (6), a
+                call unlockFlash
+                ld a, fsDeletedFile
+                call writeFlashByte
+                call lockFlash
+            pop af
+            jp po, _
+            ei
+_:      pop bc
+    pop af
+    pop hl
+    cp a
+    ret
+_:  ; File not found
+    ld h, a
+    pop af
+    or 1
+    ld a, h
+    pop hl
+    ret
+
+; Inputs:
+;   DE: File name
+; Outputs:
 ;   Z: File exists
 ;   NZ: File does not exist
 fileExists:

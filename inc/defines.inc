@@ -91,7 +91,7 @@ fsEndOfTable .equ $FF
 fsFile .equ $7F
 fsDirectory .equ $BF
 fsSymLink .equ $DF
-fsDeltedFile .equ $00
+fsDeletedFile .equ $00
 fsModifiedFile .equ $01
 fsDeletedDirectory .equ $02
 fsModifiedDirectory .equ $04
