@@ -11,6 +11,7 @@
 #include "memory.asm"
 #include "flash.asm"
 #include "filesystem.asm"
+#include "filestreams.asm"
 ;
 ;#include "thread.asm"
 ;#include "libraries.asm"

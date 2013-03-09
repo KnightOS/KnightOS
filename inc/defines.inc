@@ -96,3 +96,5 @@ fsModifiedFile .equ $01
 fsDeletedDirectory .equ $02
 fsModifiedDirectory .equ $04
 fsDeletedSymLink .equ $08
+s_readable .equ 1
+s_writable .equ 2

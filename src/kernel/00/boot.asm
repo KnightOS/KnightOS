@@ -151,10 +151,7 @@ reboot:
     ; Good place to test kernel routines
     
     ld de, testFile
-    jr $
-    call fileExists
-    call deleteFile
-    call fileExists
+    call openFileRead
     jr $
 testFile:
     .db "sub/foo.txt", 0

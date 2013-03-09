@@ -1,6 +1,6 @@
 ; TODO:
 ;   findDirectoryEntry
-;   openStreamRead
+;   openFileRead
 ;   streamReadByte
 ;   streamReadWord
 ;   streamReadBuffer
