@@ -20,6 +20,14 @@
     .db lang_description, 0
 
 start:
+    ; Load dependencies
+    kld(de, stdioPath)
+    call loadLibrary
+    kld(de, libTextPath)
+    call loadLibrary
+    kld(de, applibPath)
+    call loadLibrary
+
     kld(hl, demoMessage)
     stdio(printLine)
     
@@ -27,12 +35,6 @@ start:
     call getKeypadLock
 
     call allocScreenBuffer
-    
-    ; Load dependencies
-    kld(de, libTextPath)
-    call loadLibrary
-    kld(de, applibPath)
-    call loadLibrary
     
     kld(hl, windowTitle)
     xor a
@@ -90,6 +92,8 @@ libTextPath:
     .db "/lib/libtext", 0
 applibPath:
     .db "/lib/applib", 0
+stdioPath:
+    .db "/lib/stdio", 0
 smileySprite:
     .db %01010000
     .db %01010000
