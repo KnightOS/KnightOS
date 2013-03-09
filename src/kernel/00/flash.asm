@@ -1,4 +1,36 @@
 ; TODO: Add routines to erase certificate sectors (or add this to eraseFlashSector?)
+    jp 0 ; Safety, prevents runaway code from unlocking flash
+unlockFlash:
+    push af
+    push bc
+    in a, (6)
+    push af
+    ld a, privledgedPage
+    out (6), a
+    ld b, $01
+    ld c, $14
+    call $4001
+    pop af
+    out (6), a
+    pop bc
+    pop af
+    ret
+
+lockFlash:
+    push af
+    push bc
+    in a, (6)
+    push af
+    ld a, privledgedPage
+    out (6), a
+    ld b, $00
+    ld c, $14
+    call $4017
+    pop af
+    out (6), a
+    pop bc
+    pop af
+    ret
 
 ; Inputs:    A: Value to write
 ;            HL: Address to write to

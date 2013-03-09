@@ -19,39 +19,6 @@ suspendDevice:
     ei
     ret
     
-    jp 0 ; Safety
-unlockFlash:
-    push af
-    push bc
-    in a, (6)
-    push af
-    ld a, privledgedPage
-    out (6), a
-    ld b, $01
-    ld c, $14
-    call $4001
-    pop af
-    out (6), a
-    pop bc
-    pop af
-    ret
-
-lockFlash:
-    push af
-    push bc
-    in a, (6)
-    push af
-    ld a, privledgedPage
-    out (6), a
-    ld b, $00
-    ld c, $14
-    call $4017
-    pop af
-    out (6), a
-    pop bc
-    pop af
-    ret
-    
 ; Converts ASCII hex string at (hl) to HL
 ; TODO: This could use some improvement
 hexToHL:

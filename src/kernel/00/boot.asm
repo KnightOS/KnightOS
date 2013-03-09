@@ -29,7 +29,7 @@ _:  di
 
     ld sp, userMemory ; end of kernel garbage
 
-    call suspendDevice
+    ;call suspendDevice ; TODO: Uncomment me
 
 restart:
 reboot:
@@ -114,23 +114,23 @@ reboot:
         
     ; Initialize LCD
     ld a, 05h
-    call lcdDelay
+    ;call lcdDelay
     out (10h), a ; X-Increment Mode
 
     ld a, 01h
-    call lcdDelay
+    ;call lcdDelay
     out (10h), a ; 8-bit mode
 
     ld a, 3
-    call lcdDelay
+    ;call lcdDelay
     out (10h), a ; Enable screen
 
     ld a, $17 ; versus $13? TIOS uses $17, and that's the only value that works (the datasheet says go with $13)
-    call lcdDelay
+    ;call lcdDelay
     out (10h), a ; Op-amp control (OPA1) set to max (with DB1 set for some reason)
 
     ld a, $B ; B
-    call lcdDelay
+    ;call lcdDelay
     out (10h), a ; Op-amp control (OPA2) set to max
 
     #ifdef USB
@@ -143,124 +143,10 @@ reboot:
         #endif
     #endif
     ld (currentContrast), a
-    call lcdDelay
+    ;call lcdDelay
     out (10h), a ; Contrast
     
-    ; Configure filesystem memory
-    ld hl, 0
-    ;ld (currentDirectoryID), hl
-    ;ld (endOfTableAddress), hl
-    ;ld (endOfDataPage), hl
-    ;ld (endOfDataAddress), hl ; Not needed because memory has already been cleared
-
-    ld a, allocTableStart
-    out (6), a
-    ld hl, $7FFF
-boot_FileSystemConfigLoop:
-    ld a, (hl)
-    dec hl
-    ld c, (hl)
-    dec hl
-    ld b, (hl)
-    dec hl
-    cp FSDirectory
-    jr z, boot_FileSystemConfig_Dir
-    cp FSDeletedDirectory
-    jr z, boot_FileSystemConfig_Dir
-    cp FSFile
-    jr z, boot_FileSystemConfig_File
-    cp FSDeletedFile
-    jr z, boot_FileSystemConfig_File
-    cp FSModifiedFile
-    jr z, boot_FileSystemConfig_File
-    cp FSEndOfPage
-    jr z, boot_FileSystemConfig_EoP
-    cp FSEndOfTable
-    jr z, boot_FileSystemConfig_EoT
-
-    or a
-    sbc hl, bc
-    inc hl
-    jr boot_FilesystemConfigLoop
-
-boot_FileSystemConfig_Dir:
-    push hl
-    push bc
-    dec hl \ dec hl
-    ld c, (hl)
-    dec hl
-    ld b, (hl)
-
-    ld hl, (currentDirectoryID)
-    call cpHLBC
-    jr nc, _
-    push bc \ pop hl
-    ld (currentDirectoryID), hl ; Update the current directory ID if needed
-_:
-    pop bc
-    pop hl
-
-    or a
-    sbc hl, bc
-    inc hl
-    jr boot_FileSystemConfigLoop
-
-boot_FileSystemConfig_File:
-    push hl
-    push bc
-    dec hl \ dec hl
-    dec hl
-    ld c, (hl)
-    dec hl
-    ld b, (hl)
-    dec hl
-    ld d, (hl) ; TODO: Handle files larger than 0x4000 bytes
-    dec hl
-
-    push bc
-    ld a, (hl)
-    ld b, a
-    ld a, (endOfDataPage)
-    cp b
-    jr nc, _
-    ld a, b
-    ld (endOfDataPage), a
-_:
-    pop bc
-
-    dec hl
-    ld e, (hl)
-    dec hl
-    ld d, (hl)
-
-    ex de, hl
-    add hl, bc
-    ex de, hl
-
-    ld hl, (endOfDataAddress)
-    call cpHLDE
-    jr nc, _
-    push de \ pop hl
-    ld (endOfDataAddress), hl
-_:
-    pop bc
-    pop hl
-    or a
-    sbc hl, bc
-    inc hl
-    jp boot_FileSystemConfigLoop
-
-boot_FileSystemConfig_EoP:
-    in a, (6)
-    dec a
-    out (6), a
-    jp boot_FileSystemConfigLoop
-
-boot_FileSystemConfig_EoT:
-    inc hl \ inc hl \ inc hl
-    ld (endOfTableAddress), hl
-    in a, (6)
-    ld (endOfTablePage), a
+    ; TODO: Configure filesystem variables
     
     ; Good place to test kernel routines
     
@@ -268,19 +154,41 @@ boot_FileSystemConfig_EoT:
     
     ; /Good place to test kernel routines
     
-    xor a
-    ld (nextThreadId), a
-    ld (nextStreamId), a
-    
-    ld de, bootFile
-    call fileExists
-    ld a, %11001100
-    jp nz, kernelError
-    call launchProgram
-    ld h, 0
-    call setInitialA
-    
-    jp contextSwitch_search
+    ;xor a
+    ;ld (nextThreadId), a
+    ;ld (nextStreamId), a
+    ;
+    ;ld de, bootFile
+    ;call fileExists
+    ;ld a, %11001100
+    ;jp nz, kernelError
+    ;call launchProgram
+    ;ld h, 0
+    ;call setInitialA
+    ;
+    ;jp contextSwitch_search
     
 bootFile:
     .db "/bin/init", 0
+
+getCurrentThreadID:
+    push hl
+        ld a, (currentThreadIndex)
+        cp nullThread
+        jr z, +_
+        cp $FE
+        jr z, ++_
+        add a, a
+        add a, a
+        add a, a
+        ld h, $80
+        ld l, a
+        ld a, (hl)
+    pop hl
+    ret
+_:  pop hl
+    ld a, (nextThreadId)
+    ret
+_:  pop hl
+    ld a, $FE ; TODO: Dynamic library deallocation
+    ret
