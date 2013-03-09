@@ -151,7 +151,8 @@ launchThreadList:
 launch:
     di
     call launchProgram
-    ld hl, $8205
+    ; ENORMOUS HACK
+    ld hl, userMemory + 5
     call setReturnPoint
     ret
     

@@ -1,7 +1,7 @@
 formatMem:
     ld a, $FF
     ld (userMemory), a
-    ld hl, $8000 - (userMemory - $8000) - 5 ; Total RAM - Kernel RAM Size - Formatting Overhead + 1
+    ld hl, kernelMem - (userMemory - kernelMem) - 5 ; Total RAM - Kernel RAM Size - Formatting Overhead + 1
     ld (userMemory + 1), hl
     ld hl, userMemory
     ld ($FFFE), hl

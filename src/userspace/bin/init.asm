@@ -24,7 +24,8 @@
     jr start
     
 returnToCastle:
-    ; 0x8205
+    ; userMemory + 5
+    ; ENORMOUS HACK
     ld de, 0 ; Changed to castle path at runtime
     call launchProgram
     jp killCurrentThread
