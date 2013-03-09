@@ -184,6 +184,9 @@ a section's usage in kernel garbage by setting the corresponding bit. After dete
 begin to clear unused sections. One sector at a time, copy each DAT sector to the swap sector. Inspect kernel garbage and
 only copy the spoken-for sections back to the disk.
 
+Once the DAT is cleaned up, cleaning up the FAT is simple. Copy each sector to the swap sector, and only copy back entries
+that have not expired (such as deleted files).
+
 **Note**: Kernel garbage can store usage information about *all* sectors on all calculators except for the CSE.
 
 Garbage collection is to be done with interrupts disabled during the entire operation.
