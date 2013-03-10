@@ -65,21 +65,20 @@ loadedLibraries .equ $80B6
 activeSignals .equ $80B7
 activeFileStreams .equ $80B8
 nextThreadId .equ $80B9
-nextStreamId .equ $80BA
 
-hwLockIO .equ $80BB
-hwLockLCD .equ $80BC
-hwLockKeypad .equ $80BD
-hwLockUSB .equ $80BE
+hwLockIO .equ $80BA
+hwLockLCD .equ $80BB
+hwLockKeypad .equ $80BC
+hwLockUSB .equ $80BD
 
 ; Misc.
-currentContrast .equ $80BF
-bcallHook .equ  $80C0 ; 2 bytes
+currentContrast .equ $80BE
+bcallHook .equ  $80BF ; 2 bytes
 
 ; Used for line drawing
-clip_mask .equ $80C2
+clip_mask .equ $80C1
 
-priorityHook .equ $80C3
+priorityHook .equ $80C2
 
 maxThreads .equ 10
 maxFileStreams .equ 5

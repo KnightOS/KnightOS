@@ -23,45 +23,48 @@ openFileRead:
         ld a, (activeFileStreams)
         cp maxFileStreams
         jr nc, .tooManyStreams
-        inc a \ ld (activeFileStreams), a \ dec a
-        add a \ add a \ add a ; A *= 8
+        inc a \ ld (activeFileStreams), a
         ld hl, fileHandleTable
-        add l \ ld l, a \ jr nc, $+3 \ inc hl
-        ; HL points to next entry in table
-        ld a, (nextStreamId)
-        ld (hl), a \ inc a \ ld (nextStreamId), a
-        inc hl
-        call getCurrentThreadId
-        ld (hl), a ; Flags/owner (no need to set readable flag, it should be zero)
-        inc hl \ inc hl \ inc hl ; Skip buffer address
-        ex de, hl
-        ; Seek HL to file size in file entry
-        ld bc, 7
-        or a \ sbc hl, bc
-        ; Do some logic with the file size and save it for later
-        ld a, (hl) \ inc hl \ or a \ ld a, (hl)
-        push af
-            dec hl \ dec hl \ dec hl ; Seek HL to block address
-            ; Write block address to table
-            ld c, (hl) \ dec hl \ ld b, (hl)
-            ex de, hl
-            ld (hl), c \ inc hl \ ld (hl), b \ inc hl
-            ex de, hl
-            ; Find the flash address of that section
-            ld a, c \ and %11111 \ ld b, a \ ld c, 0
-            ld hl, 0x4000 \ add hl, bc
-            ; HL now points to flash address of that section
-            ex de, hl
-            ld (hl), e \ inc hl \ ld (hl), d \ inc hl
-        pop af
-        ; Get the size of this block in A
+        ; Search for open slot
+        ld b, 0
+_:      ld a, (hl)
+        cp 0xFF
         jr z, _
-        ld a, $FF
-_:      ; A is block size
-        ld (hl), a
-        ; Get handle ID and return it, we're done here
-        ld bc, 8 \ or a \ sbc hl, bc
-        ld d, (hl)
+        push bc
+            ld bc, 8
+            add hl, bc
+        pop bc
+        inc b
+        jr -_
+_:      push bc
+            ; HL points to next entry in table
+            call getCurrentThreadId
+            ld (hl), a ; Flags/owner (no need to set readable flag, it should be zero)
+            inc hl \ inc hl \ inc hl ; Skip buffer address
+            ex de, hl
+            ; Seek HL to file size in file entry
+            ld bc, 7
+            or a \ sbc hl, bc
+            ; Do some logic with the file size and save it for later
+            ld a, (hl) \ inc hl \ or a \ ld a, (hl)
+            push af
+                dec hl \ dec hl \ dec hl ; Seek HL to block address
+                ; Write block address to table
+                ld c, (hl) \ dec hl \ ld b, (hl)
+                ex de, hl
+                ld (hl), c \ inc hl \ ld (hl), b \ inc hl
+                ; Flash address always starts as zero
+                ld (hl), 0 \ inc hl
+            pop af
+            ; Write the size of the final block
+            inc hl \ ld (hl), a \ dec hl
+            ; Get the size of this block in A
+            jr z, _
+            ld a, $FF
+_:          ; A is block size
+            ld (hl), a
+        pop bc
+        ld d, b
     pop af
     jp po, _
     ei
@@ -106,26 +109,28 @@ getStreamEntry:
     push af
     push hl
     push bc
+        ld a, d
+        cp maxFileStreams
+        jr nc, .notFound
+        or a \ rla \ rla \ rla ; A *= 8
         ld hl, fileHandleTable
-        ld a, (activeFileStreams)
-        ld b, a
-_:      ld a, (hl)
-        cp d
-        jr z, .found
-        ld a, 8 \ add l \ ld l, a
-        djnz -_
-        ; Not found
+        add l \ ld l, a
+        ld a, (hl)
+        cp 0xFF
+        jr z, .notFound
+    pop bc
+    inc sp \ inc sp
+    pop af
+    cp a
+    ret
+.notFound:
     pop bc
     pop hl
     pop af
     or 1
     ld a, errStreamNotFound
     ret
-.found:
-    pop bc
-    inc sp \ inc sp
-    pop af
-    ret
+
 
 ; Inputs:
 ;   D: Stream ID
@@ -143,23 +148,11 @@ closeStream:
     ret
 .doClose:
         push af
-        push bc
-        push de
-            inc hl
             ld a, (hl)
             bit 7, a
             jr nz, .closeWritableStream
             ; Close readable stream (just remove the entry)
-            dec hl
-            ld d, h \ ld e, l
-            ld bc, 8
-            add hl, bc
-            ld bc, 8 * maxFileStreams
-            ldir
-            ld hl, activeFileStreams
-            dec (hl)
-        pop de
-        pop bc
+            ld (hl), 0xFF
         pop af
     pop hl
     cp a
@@ -188,22 +181,26 @@ streamReadByte:
         push de
         push bc
             di
-            inc hl
             ld a, (hl) \ inc hl
             bit 7, a
             jr nz, .readFromWritableStream
             ; Read from read-only stream
             inc hl \ inc hl
-            ld e, (hl) \ inc hl \ ld d, (hl) \ inc hl
-            ; We'll use DE to indicate the address being used
+            ld e, (hl) \ inc hl \ ld d, (hl)
+            ; If DE is 0xFFFF, we've reached the end of this file (and the "next" block is an empty one)
+            ld a, 0xFF
+            cp e \ jr nz, +_
+            cp d \ jr nz, +_
+            ; End of stream
+            jr .endOfStream_early
+_:          ; We'll use DE to indicate the address being used
             ; We need the flash page in A first, though.
-            ld a, e \ rra \ rra \ rra \ rra \ rra \ and 0b111
-            sla d \ sla d \ sla d
-            or d
+            ld a, e \ or a \ rra \ rra \ rra \ rra \ rra \ and 0b111
+            sla d \ sla d \ sla d \ or d
             out (6), a
             ; Now get the address of the entry on the page
             ld a, e \ and 0b11111 \ ld d, a
-            ld a, (hl) \ ld e, a
+            inc hl \ ld a, (hl) \ ld e, a
             push de
                 ld bc, 0x4000 \ ex de, hl \ add hl, bc
                 ; Read the byte into A
@@ -211,12 +208,45 @@ streamReadByte:
                 ex de, hl
             pop de
             push af
+                xor a
                 inc e
-                jr nc, _
+                cp e
+                jr nz, ++_
                 ; Handle block overflow
-                ; TODO
-_:              ld (hl), e
-                inc hl \ inc hl
+                dec hl \ dec hl \ ld a, (hl)
+                and %11111
+                rla \ rla ; A *= 4
+                ld d, 0x40 \ ld e, a
+                ; DE points to header entry, which tells us where the next block is
+                inc de \ inc de
+                ex de, hl
+                ld c, (hl) \ inc hl \ ld b, (hl)
+                ex de, hl
+                ; Determine if this is the final block
+                push bc
+                    ld a, c \ or a \ rra \ rra \ rra \ rra \ rra \ and 0b111
+                    sla b \ sla b \ sla b \ or b
+                    out (6), a
+                    ld a, c \ and %11111 \ rla \ rla \ ld d, 0x40 \ ld e, a
+                    ; DE points to header entry of next block
+                    inc de \ inc de
+                    ex de, hl
+                        ld a, 0xFF
+                        cp (hl) \ jr nz, _
+                        inc hl \ cp (hl) \ jr nz, _
+                        ; It is the final block, copy the block size from the final size
+                        ex de, hl
+                            inc hl \ inc hl \ inc hl \ inc hl \ ld a, (hl) \ dec hl \ ld (hl), a
+                            dec hl \ dec hl \ dec hl
+                        ex de, hl
+_:                  ex de, hl
+                pop bc
+                ; Update block address in stream entry
+                ld (hl), c \ inc hl \ ld (hl), b \ inc hl
+                ld e, 0
+_:              ; Update flash address
+                ld (hl), e
+                inc hl
                 ld a, (hl) ; Block size
                 cp e
                 jr c, .endOfStream
@@ -237,6 +267,7 @@ _:      pop af
 .endOfStream:
             dec hl \ dec hl \ dec (hl)
             pop af
+.endOfStream_early:
         pop bc
         pop de
         pop af

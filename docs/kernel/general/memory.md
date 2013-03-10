@@ -79,12 +79,12 @@ All active file handles are stored in this table. The buffer is only used for wr
 
 <table>
     <th>Offset</th><th>Length</th><th>Description</th>
-    <tr><td>0000</td><td>1</td><td>Stream ID</td></tr>
-    <tr><td>0001</td><td>1</td><td>Flags/Owner</td></tr>
-    <tr><td>0002</td><td>2</td><td>Buffer address</td></tr>
-    <tr><td>0004</td><td>2</td><td>Block address</td></tr>
-    <tr><td>0006</td><td>1</td><td>Flash address</td></tr>
-    <tr><td>0007</td><td>1</td><td>Block size</td></tr>
+    <tr><td>0000</td><td>1</td><td>Flags/Owner</td></tr>
+    <tr><td>0001</td><td>2</td><td>Buffer address</td></tr>
+    <tr><td>0003</td><td>2</td><td>Block address</td></tr>
+    <tr><td>0005</td><td>1</td><td>Flash address</td></tr>
+    <tr><td>0006</td><td>1</td><td>Block size</td></tr>
+    <tr><td>0007</td><td>1</td><td>Final block size</td></tr>
 </table>
 
 The buffer address refers to the in-memory buffer for writable streams. The block address is a "section identifier", as described in the

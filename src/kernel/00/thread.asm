@@ -87,8 +87,8 @@ _:  di
     ld a, (activeThreads)
     inc a \ ld (activeThreads), a
     ld a, (nextThreadId) \ inc a
-    ; Prevent >0x80 from being assigned as thread IDs
-    and 0b01111111
+    ; Prevent >0x3F from being assigned as thread IDs
+    and 0x3F
     ld (nextThreadId), a
     ld a, (hl)
     cp a

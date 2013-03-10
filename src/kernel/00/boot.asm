@@ -146,21 +146,30 @@ reboot:
     ;call lcdDelay
     out (10h), a ; Contrast
     
+    ; Set all file handles to unused
+    ld hl, fileHandleTable
+    ld (hl), 0xFF
+    ld de, fileHandleTable + 1
+    ld bc, 8 * maxFileStreams
+    ldir
+    
     xor a
     ld (nextThreadId), a
-    ld (nextStreamId), a
     
     ; Good place to test kernel routines
     
     ld de, testFile
     call openFileRead
+    ld b, 0
     jr $
-    call streamReadByte
-    call streamReadByte
-    call streamReadByte
-    call streamReadByte
+_:  call streamReadByte
+    jr nz, _
+    ld b, a
+    jr -_
+_:  jr $
+    .db '!'
 testFile:
-    .db "sub/foo.txt", 0
+    .db "large.txt", 0
     
     ; /Good place to test kernel routines
     
