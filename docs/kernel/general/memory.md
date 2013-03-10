@@ -80,7 +80,7 @@ All active file handles are stored in this table. The buffer is only used for wr
 <table>
     <th>Offset</th><th>Length</th><th>Description</th>
     <tr><td>0000</td><td>1</td><td>Stream ID</td></tr>
-    <tr><td>0001</td><td>1</td><td>Flags</td></tr>
+    <tr><td>0001</td><td>1</td><td>Flags/Owner</td></tr>
     <tr><td>0002</td><td>2</td><td>Buffer address</td></tr>
     <tr><td>0004</td><td>2</td><td>Block address</td></tr>
     <tr><td>0006</td><td>1</td><td>Flash address</td></tr>
@@ -92,10 +92,5 @@ filesystem specification, referring to the current block. The Flash address is t
 describe the stream's current position. The block size refers to the size of the block - 256 execpt for the last block. This allows us to
 avoid looking up the file entry every time we do a read. Instead, we just look up the entry when we seek out of the current block.
 
-Flags is a bitfield:
-
-<table>
-    <th>Bit</th><th>Description</th>
-    <tr><td>0</td><td>Readable</td></tr>
-    <tr><td>1</td><td>Writable</td></tr>
-</table>
+The most significant bit of `flags/owner` indicates if the stream is writable - 1 for writable, 0 for read-only. The remaining bits are the
+thread ID of the owner.

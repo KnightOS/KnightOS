@@ -146,22 +146,28 @@ reboot:
     ;call lcdDelay
     out (10h), a ; Contrast
     
-    ; TODO: Configure filesystem variables
+    xor a
+    ld (nextThreadId), a
+    ld (nextStreamId), a
     
     ; Good place to test kernel routines
     
     ld de, testFile
     call openFileRead
+    push de
+        ld de, testFile
+        call openFileRead
+        ld b, d
+    pop de
+    call closeStream
+    ld d, b
+    call closeStream
     jr $
 testFile:
     .db "sub/foo.txt", 0
     
     ; /Good place to test kernel routines
     
-    ;xor a
-    ;ld (nextThreadId), a
-    ;ld (nextStreamId), a
-    ;
     ;ld de, bootFile
     ;call fileExists
     ;ld a, %11001100

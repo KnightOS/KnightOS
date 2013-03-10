@@ -31,7 +31,8 @@ openFileRead:
         ld a, (nextStreamId)
         ld (hl), a \ inc a \ ld (nextStreamId), a
         inc hl
-        ld (hl), s_readable ; Flags
+        call getCurrentThreadId
+        ld (hl), a ; Flags/owner (no need to set readable flag, it should be zero)
         inc hl \ inc hl \ inc hl ; Skip buffer address
         ex de, hl
         ; Seek HL to file size in file entry
@@ -133,6 +134,35 @@ _:      ld a, (hl)
 ;   A: Error code
 ;   Z: Reset
 ; (Success)
-;   A: Read byte
 ;   Z: Set
 closeStream:
+    push hl
+        call getStreamEntry
+        jr z, .doClose
+    pop hl
+    ret
+.doClose:
+        push af
+        push bc
+        push de
+            inc hl
+            ld a, (hl)
+            bit 7, a
+            jr nz, .closeWritableStream
+            ; Close readable stream (just remove the entry)
+            dec hl
+            ld d, h \ ld e, l
+            ld bc, 8
+            add hl, bc
+            ld bc, 8 * maxFileStreams
+            ldir
+            ld hl, activeFileStreams
+            dec (hl)
+        pop de
+        pop bc
+        pop af
+    pop hl
+    cp a
+    ret
+.closeWritableStream:
+    ; TODO
