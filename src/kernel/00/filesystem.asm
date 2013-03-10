@@ -1,11 +1,3 @@
-; TODO:
-;   findDirectoryEntry
-;   openFileRead
-;   streamReadByte
-;   streamReadWord
-;   streamReadBuffer
-;   streamReadToEnd
-
 ; Inputs:
 ;   DE: File name
 ; Outputs:

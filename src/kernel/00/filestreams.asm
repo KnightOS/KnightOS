@@ -1,3 +1,8 @@
+; TODO:
+;   streamReadBuffer
+;   streamReadToEnd
+;   Writable streams
+
 ; Inputs:
 ;   DE: File name
 ; Outputs:
@@ -280,3 +285,27 @@ _:      pop af
     ret
 .readFromWritableStream:
     jr .success ; TODO
+
+; Inputs:
+;   D: Stream ID
+; Outputs:
+; (Failure)
+;   A: Error code
+;   Z: Reset
+; (Success)
+;   HL: Word read
+streamReadWord:
+; TODO: Perhaps optimize this into something like streamReadByte
+; The problem here is that reading two bytes requires you to do some
+; additional bounds checks that would make us basically put the same
+; code in twice (i.e. what happens when the word straddles a block
+; boundary?)
+    push af
+        call streamReadByte
+        ret nz
+        ld l, a
+        call streamReadByte
+        ret nz
+        ld h, a
+    pop af
+    ret
