@@ -92,5 +92,5 @@ filesystem specification, referring to the current block. The Flash address is t
 describe the stream's current position. The block size refers to the size of the block - 256 execpt for the last block. This allows us to
 avoid looking up the file entry every time we do a read. Instead, we just look up the entry when we seek out of the current block.
 
-The most significant bit of `flags/owner` indicates if the stream is writable - 1 for writable, 0 for read-only. The remaining bits are the
+The most significant bit of `Flags/Owner` indicates if the stream is writable: 1 for writable, 0 for read-only. The remaining bits are the
 thread ID of the owner.

@@ -166,3 +166,86 @@ closeStream:
     ret
 .closeWritableStream:
     ; TODO
+
+; Inputs:
+;   D: Stream ID
+; Outputs:
+; (Failure)
+;   A: Error code
+;   Z: Reset
+; (Success)
+;   A: Byte read
+streamReadByte:
+    push hl
+        call getStreamEntry
+        jr z, .doRead
+    pop hl
+    ret
+.doRead:
+        push af
+        ld a, i
+        push af
+        push de
+        push bc
+            di
+            inc hl
+            ld a, (hl) \ inc hl
+            bit 7, a
+            jr nz, .readFromWritableStream
+            ; Read from read-only stream
+            inc hl \ inc hl
+            ld e, (hl) \ inc hl \ ld d, (hl) \ inc hl
+            ; We'll use DE to indicate the address being used
+            ; We need the flash page in A first, though.
+            ld a, e \ rra \ rra \ rra \ rra \ rra \ and 0b111
+            sla d \ sla d \ sla d
+            or d
+            out (6), a
+            ; Now get the address of the entry on the page
+            ld a, e \ and 0b11111 \ ld d, a
+            ld a, (hl) \ ld e, a
+            push de
+                ld bc, 0x4000 \ ex de, hl \ add hl, bc
+                ; Read the byte into A
+                ld a, (hl)
+                ex de, hl
+            pop de
+            push af
+                inc e
+                jr nc, _
+                ; Handle block overflow
+                ; TODO
+_:              ld (hl), e
+                inc hl \ inc hl
+                ld a, (hl) ; Block size
+                cp e
+                jr c, .endOfStream
+            pop af
+            ; Return A
+.success:
+        ld h, a
+        pop bc
+        pop de
+        pop af
+        jp po, _
+        ei
+_:      pop af
+        ld a, h
+    pop hl
+    cp a
+    ret
+.endOfStream:
+            dec hl \ dec hl \ dec (hl)
+            pop af
+        pop bc
+        pop de
+        pop af
+        jp po, _
+        ei
+_:      pop af
+    pop hl
+    or 1
+    ld a, errEndOfStream
+    ret
+.readFromWritableStream:
+    jr .success ; TODO

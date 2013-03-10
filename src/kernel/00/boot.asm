@@ -154,15 +154,11 @@ reboot:
     
     ld de, testFile
     call openFileRead
-    push de
-        ld de, testFile
-        call openFileRead
-        ld b, d
-    pop de
-    call closeStream
-    ld d, b
-    call closeStream
     jr $
+    call streamReadByte
+    call streamReadByte
+    call streamReadByte
+    call streamReadByte
 testFile:
     .db "sub/foo.txt", 0
     
