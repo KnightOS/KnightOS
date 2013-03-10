@@ -23,9 +23,10 @@ openFileRead:
         ld a, (activeFileStreams)
         cp maxFileStreams
         jr nc, .tooManyStreams
+        inc a \ ld (activeFileStreams), a \ dec a
         add a \ add a \ add a ; A *= 8
         ld hl, fileHandleTable
-        add l \ jr nc, $+3 \ inc hl
+        add l \ ld l, a \ jr nc, $+3 \ inc hl
         ; HL points to next entry in table
         ld a, (nextStreamId)
         ld (hl), a \ inc a \ ld (nextStreamId), a
@@ -91,4 +92,47 @@ _:  pop af
     or 1
     ld a, errFileNotFound
     ret
-    
+
+; Inputs:
+;   D: Stream ID
+; Outputs:
+; (Failure)
+;   A: Error code
+;   Z: Reset
+; (Success)
+;   HL: Pointer to entry
+getStreamEntry:
+    push af
+    push hl
+    push bc
+        ld hl, fileHandleTable
+        ld a, (activeFileStreams)
+        ld b, a
+_:      ld a, (hl)
+        cp d
+        jr z, .found
+        ld a, 8 \ add l \ ld l, a
+        djnz -_
+        ; Not found
+    pop bc
+    pop hl
+    pop af
+    or 1
+    ld a, errStreamNotFound
+    ret
+.found:
+    pop bc
+    inc sp \ inc sp
+    pop af
+    ret
+
+; Inputs:
+;   D: Stream ID
+; Outputs:
+; (Failure)
+;   A: Error code
+;   Z: Reset
+; (Success)
+;   A: Read byte
+;   Z: Set
+closeStream:
