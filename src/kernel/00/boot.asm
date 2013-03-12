@@ -160,14 +160,16 @@ reboot:
     
     ld de, testFile
     call openFileRead
-    ld b, 0
+    ld b, 0xFF
     jr $
 _:  call streamReadByte
-    jr nz, _
-    ld b, a
-    jr -_
-_:  jr $
-    .db '!'
+    djnz -_
+    jr $
+    call streamReadByte
+    call streamReadByte
+    call streamReadByte
+    call streamReadByte
+    call streamReadByte
 testFile:
     .db "large.txt", 0
     

@@ -65,7 +65,7 @@ _:      push bc
             inc hl \ ld (hl), a \ dec hl
             ; Get the size of this block in A
             jr z, _
-            ld a, $FF
+            xor a
 _:          ; A is block size
             ld (hl), a
         pop bc
@@ -198,8 +198,7 @@ streamReadByte:
             cp d \ jr nz, +_
             ; End of stream
             jr .endOfStream_early
-_:          ; We'll use DE to indicate the address being used
-            ; We need the flash page in A first, though.
+_:          ; Set A to the flash page and DE to the address (relative to 0x4000)
             ld a, e \ or a \ rra \ rra \ rra \ rra \ rra \ and 0b111
             sla d \ sla d \ sla d \ or d
             out (6), a
@@ -253,9 +252,11 @@ _:              ; Update flash address
                 ld (hl), e
                 inc hl
                 ld a, (hl) ; Block size
+                cp a ; Handle 0x100 size
+                jr z, _
                 cp e
                 jr c, .endOfStream
-            pop af
+_:          pop af
             ; Return A
 .success:
         ld h, a
@@ -309,3 +310,178 @@ streamReadWord:
         ld h, a
     pop af
     ret
+
+; Inputs:
+;   D: Stream ID
+;   IX: Destination address
+;   BC: Length
+; Outputs:
+; (Failrue)
+;   A: Error code
+;   Z: Reset
+; (Success)
+;   File is read into (IX)
+;   Z: Set    
+streamReadBuffer:
+    push hl
+        call getStreamEntry
+        jr z, .doRead
+    pop hl
+    ret
+.doRead:
+        push af
+        ld a, i
+        push af
+        push de
+        push bc
+        push ix
+            di
+            ld a, (hl) \ inc hl
+            bit 7, a
+            jr nz, .readFromWritableStream
+            ; Read from read-only stream
+            inc hl \ inc hl
+            ld e, (hl) \ inc hl \ ld d, (hl)
+            ; If DE is 0xFFFF, we've reached the end of this file (and the "next" block is an empty one)
+            ld a, 0xFF
+            cp e \ jr nz, +_
+            cp d \ jr nz, +_
+            ; End of stream
+            jr .endOfStream
+_:          ; Set A to the flash page and DE to the address (relative to 0x4000)
+            ld a, e \ or a \ rra \ rra \ rra \ rra \ rra \ and 0b111
+            sla d \ sla d \ sla d \ or d
+            out (6), a
+            ; Now get the address of the entry on the page
+            ld a, e \ and 0b11111 \ ld d, a
+            inc hl \ ld a, (hl) \ ld e, a
+            push bc
+                ld bc, 0x4000
+                ex de, hl
+                add hl, bc
+                ld a, e
+                sub 5
+                ld e, a
+            pop bc
+            push de \ push ix \ pop de \ pop ix
+            ; HL refers to the block in Flash
+            ; IX refers to the file stream entry in RAM
+            ; DE refers to the destination address
+            ; BC is the amount to write
+.readLoop:
+            ; Calculate remaining space in the block
+            ld a, (ix + 6)
+            sub (ix + 5)
+            ; Compare with amount left to read
+            cp 0xFF
+            jr z, _
+            ; If we have less than a full block to read, confirm the file is large enough
+            ; to continue.
+            push af
+                xor a
+                cp b
+                jr nz, .endOfStream_pop
+            pop af
+            cp c
+            jr c, .endOfStream
+_:          ; We have enough file left to read
+            push af
+                xor a
+                cp b
+                jr z, _
+            pop af
+            ld a, 0xFF
+            jr ++_
+_:          pop af
+            cp c
+            jr c, _
+            ld a, c
+_:          ; A is length to read
+            push bc
+                ld c, a
+                ld b, 0
+                ldir
+            pop bc
+            ; BC -= A
+            push af
+                push bc
+                    ld b, a
+                    ld a, c
+                    sub b
+                pop bc
+                ld c, a
+                jr nc, _
+                dec b
+_:          pop af
+            cp 0xFF
+            jr nz, .iter
+            ; We need to use the next block
+            push bc
+                ; Grab the new one
+                ld a, (ix + 3) \ and 0b11111 \ rla \ rla \ ld l, a
+                ld h, 0x40
+                inc hl \ inc hl
+                ld c, (hl) \ inc hl \ ld b, (hl)
+                ld a, c \ rra \ rra \ rra \ rra \ rra \ and 0b111
+                sla b \ sla b \ or b
+                ld b, (hl)
+                ; Change flash page
+                out (6), a
+                ; Update entry
+                ld (ix + 3), c
+                ld (ix + 4), b
+                ; Update block size
+                ld a, c \ and 0b11111 \ rla \ rla \ ld l, a
+                inc hl \ inc hl
+                ld a, 0xFF
+                cp (hl)
+                jr nz, _
+                inc hl
+                cp (hl)
+                jr nz, _
+                ld a, (ix + 7) ; Final block
+                ld (ix + 6), a
+                jr _
+_:              ld (ix + 6), a ; Not final block
+_:              ; Update HL
+                ld hl, 0x4000
+                ld a, c \ and 0b11111 \ add h \ ld h, a
+            pop bc
+            xor a
+.iter:
+            add (ix + 5)
+            ld (ix + 5), a
+            ; BC is remaining length to read
+            ; Check to see if we're done
+            xor a
+            cp b
+            jp nz, .readLoop
+            cp c
+            jp nz, .readLoop
+        pop ix
+        pop bc
+        pop de
+        pop af
+        jp po, _
+        ei
+_:      pop af
+    pop hl
+    cp a
+    ret
+.endOfStream_pop:
+            pop af
+.endOfStream:
+        pop ix
+        pop bc
+        pop de
+        pop af
+        jp po, _
+        ei
+_:      pop af
+    pop hl
+    or 1
+    ld a, errEndOfStream
+    ret
+
+.readFromWritableStream:
+    ; TODO
