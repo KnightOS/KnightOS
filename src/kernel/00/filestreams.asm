@@ -303,12 +303,15 @@ streamReadWord:
 ; boundary?)
     push af
         call streamReadByte
-        ret nz
+        jr nz, .error
         ld l, a
         call streamReadByte
-        ret nz
+        jr nz, .error
         ld h, a
     pop af
+    ret
+.error:
+    inc sp \ inc sp
     ret
 
 ; Inputs:
