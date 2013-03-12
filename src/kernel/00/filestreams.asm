@@ -316,7 +316,7 @@ streamReadWord:
 ;   IX: Destination address
 ;   BC: Length
 ; Outputs:
-; (Failrue)
+; (Failure)
 ;   A: Error code
 ;   Z: Reset
 ; (Success)
