@@ -252,7 +252,7 @@ _:              ; Update flash address
                 ld (hl), e
                 inc hl
                 ld a, (hl) ; Block size
-                cp a ; Handle 0x100 size
+                or a ; Handle 0x100 size
                 jr z, _
                 cp e
                 jr c, .endOfStream
@@ -373,14 +373,14 @@ _:          ; Set A to the flash page and DE to the address (relative to 0x4000)
             ld a, (ix + 6)
             sub (ix + 5)
             ; Compare with amount left to read
-            cp 0xFF
+            or a
             jr z, _
             ; If we have less than a full block to read, confirm the file is large enough
             ; to continue.
             push af
                 xor a
                 cp b
-                jr nz, .endOfStream_pop
+                jp nz, .endOfStream_pop
             pop af
             cp c
             jr c, .endOfStream
@@ -390,21 +390,30 @@ _:          ; We have enough file left to read
                 cp b
                 jr z, _
             pop af
-            ld a, 0xFF
-            jr ++_
+            xor a
+            jr +++_
 _:          pop af
+            or a
+            jr z, _
             cp c
-            jr c, _
-            ld a, c
+            jr c, ++_
+_:          ld a, c
 _:          ; A is length to read
             push bc
-                ld c, a
                 ld b, 0
+                or a
+                jr nz, _
+                inc b
+_:              ld c, a
                 ldir
             pop bc
             ; BC -= A
             push af
-                push bc
+                or a
+                jr nz, _
+                dec b
+                jr ++_
+_:              push bc
                     ld b, a
                     ld a, c
                     sub b
@@ -413,7 +422,7 @@ _:          ; A is length to read
                 jr nc, _
                 dec b
 _:          pop af
-            cp 0xFF
+            or a
             jr nz, .iter
             ; We need to use the next block
             push bc
@@ -440,8 +449,6 @@ _:          pop af
                 cp (hl)
                 jr nz, _
                 ld a, (ix + 7) ; Final block
-                ld (ix + 6), a
-                jr _
 _:              ld (ix + 6), a ; Not final block
 _:              ; Update HL
                 ld hl, 0x4000

@@ -160,16 +160,11 @@ reboot:
     
     ld de, testFile
     call openFileRead
-    ld b, 0xFF
+    ld bc, 0x198
+    call malloc
     jr $
-_:  call streamReadByte
-    djnz -_
-    jr $
-    call streamReadByte
-    call streamReadByte
-    call streamReadByte
-    call streamReadByte
-    call streamReadByte
+    call streamReadBuffer
+    call streamReadBuffer
 testFile:
     .db "large.txt", 0
     
