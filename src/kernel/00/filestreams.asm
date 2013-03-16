@@ -526,7 +526,6 @@ _:              inc b
                 jr nz, _
                 inc d
 _:          ; Loop through remaining blocks
-            jr $
             ld a, (ix + 3) \ or a \ rra \ rra \ rra \ rra \ rra \ and 0b111
             ld h, (ix + 4) \ sla h \ sla h \ sla h \ or h
             out (6), a
