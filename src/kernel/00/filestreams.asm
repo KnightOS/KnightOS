@@ -512,6 +512,9 @@ getStreamInfo:
     pop hl
     ret
 _:	    push af
+        ld a, i
+        push af
+        di
         push ix
         push de
             push hl \ pop ix
@@ -545,6 +548,9 @@ _:          ; Loop through remaining blocks
             pop de
         inc sp \ inc sp
         pop ix
+        pop af
+        jp po, $+4
+        ei
         pop af
     pop hl
     cp a
@@ -581,6 +587,9 @@ _:          pop de
         inc sp \ inc sp
         pop ix
         pop af
+        jp po, $+4
+        ei
+        pop af
     pop hl
     cp a
     ret
@@ -596,3 +605,24 @@ _:              ; Navigate to new block and update working size
             pop de
             inc b
             jr .loop
+
+; Inputs:
+;   D: Stream ID
+; Outputs:
+; (Failure)
+;   A: Error
+;   Z: Reset
+; (Success)
+;   Z: Set
+streamReadToEnd:
+    push de
+    push bc
+        call getStreamInfo
+        jr z, _
+    pop bc
+    pop de
+    ret
+_:      call streamReadBuffer
+    pop bc
+    pop de
+    ret

@@ -29,7 +29,7 @@ _:  di
 
     ld sp, userMemory ; end of kernel garbage
 
-    ;call suspendDevice ; TODO: Uncomment me
+    call suspendDevice
 
 restart:
 reboot:
@@ -114,23 +114,23 @@ reboot:
         
     ; Initialize LCD
     ld a, 05h
-    ;call lcdDelay
+    call lcdDelay
     out (10h), a ; X-Increment Mode
 
     ld a, 01h
-    ;call lcdDelay
+    call lcdDelay
     out (10h), a ; 8-bit mode
 
     ld a, 3
-    ;call lcdDelay
+    call lcdDelay
     out (10h), a ; Enable screen
 
     ld a, $17 ; versus $13? TIOS uses $17, and that's the only value that works (the datasheet says go with $13)
-    ;call lcdDelay
+    call lcdDelay
     out (10h), a ; Op-amp control (OPA1) set to max (with DB1 set for some reason)
 
     ld a, $B ; B
-    ;call lcdDelay
+    call lcdDelay
     out (10h), a ; Op-amp control (OPA2) set to max
 
     #ifdef USB
@@ -143,7 +143,7 @@ reboot:
         #endif
     #endif
     ld (currentContrast), a
-    ;call lcdDelay
+    call lcdDelay
     out (10h), a ; Contrast
     
     ; Set all file handles to unused
@@ -158,46 +158,19 @@ reboot:
     
     ; Good place to test kernel routines
     
-    ld de, testFile
-    call openFileRead
-    call getStreamInfo
-    jr $
-testFile:
-    .db "large.txt", 0
+    ; ...
     
     ; /Good place to test kernel routines
     
-    ;ld de, bootFile
-    ;call fileExists
-    ;ld a, %11001100
-    ;jp nz, kernelError
-    ;call launchProgram
-    ;ld h, 0
-    ;call setInitialA
-    ;
-    ;jp contextSwitch_search
+    ld de, bootFile
+    call fileExists
+    ld a, %11001100
+    jp nz, kernelError
+    call launchProgram
+    ld h, 0
+    call setInitialA
+    
+    jp contextSwitch_search
     
 bootFile:
     .db "/bin/init", 0
-
-getCurrentThreadID:
-    push hl
-        ld a, (currentThreadIndex)
-        cp nullThread
-        jr z, +_
-        cp $FE
-        jr z, ++_
-        add a, a
-        add a, a
-        add a, a
-        ld h, $80
-        ld l, a
-        ld a, (hl)
-    pop hl
-    ret
-_:  pop hl
-    ld a, (nextThreadId)
-    ret
-_:  pop hl
-    ld a, $FE ; TODO: Dynamic library deallocation
-    ret
