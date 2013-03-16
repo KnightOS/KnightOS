@@ -5,7 +5,8 @@ libtext is a library for graphically drawing text on an LCD buffer. It is locate
 The source for libtext may be found in
 [src/userspace/lib/libtext/](https://github.com/SirCmpwn/KnightOS/tree/master/src/userspace/lib/libtext).
 
-libtext uses the ANSI character set.
+libtext uses the Windows-1252 character set, which was selected as the best 8-bit character set with international
+support.
 
 The following routines are available:
 
