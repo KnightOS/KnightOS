@@ -495,3 +495,105 @@ _:      pop af
 
 .readFromWritableStream:
     ; TODO
+	
+; Inputs:
+; 	D: Stream ID
+; Outputs:
+; (Failure)
+;	A: Error
+;	Z: Reset
+; (Success)
+;	Z: Set
+;	DBC: Remaining space in stream
+getStreamInfo:
+    push hl
+        call getStreamEntry
+        jr z, _
+    pop hl
+    ret
+_:	    push af
+        push ix
+        push de
+            push hl \ pop ix
+            ld bc, 0 \ ld d, 0
+            ld a, (ix + 6)
+            ; Update with remaining space in current block
+            or a \ jr nz, _
+            add c \ ld c, a
+            jr nc, _
+_:              inc b
+                ld a, b \ or a
+                jr nz, _
+                inc d
+_:          ; Loop through remaining blocks
+            jr $
+            ld a, (ix + 3) \ or a \ rra \ rra \ rra \ rra \ rra \ and 0b111
+            ld h, (ix + 4) \ sla h \ sla h \ sla h \ or h
+            out (6), a
+            ld a, (ix + 3) \ and 0b11111 \ rla \ rla \ ld l, a
+            ld h, 0x40
+            ; Check for early exit
+            push de
+                inc hl \ inc hl ; Skip "prior block" entry
+                ld e, (hl)
+                inc hl
+                ld d, (hl)
+                dec hl \ dec hl \ dec hl
+                ld a, 0xFF
+                cp e \ jr nz, _
+                cp d \ jr nz, _
+                ; Current block is last block, exit
+            pop de
+        inc sp \ inc sp
+        pop ix
+        pop af
+    pop hl
+    cp a
+    ret
+            ; Continue into mid-block loop
+_:          pop de
+            ; Loop conditions:
+            ; HL: Address of current block header
+            ; DBC: Working size
+            ; Memory bank 1: Flash page of current block
+.loop:      ; Locate next block
+            push de
+                inc hl \ inc hl
+                ld e, (hl)
+                inc hl
+                ld d, (hl)
+                ld a, 0xFF
+                cp e \ jr nz, ++_
+                cp d \ jr nz, ++_
+                ; Last block, update accordingly and return
+                dec b
+                ld a, (ix + 7)
+                add c \ ld c, a
+                jr nc, _
+                inc b
+                xor a
+                cp b
+                jr nz, _
+            pop de
+            inc d
+            jr $+3
+_:          pop de
+            ; DBC is now correct to return
+        inc sp \ inc sp
+        pop ix
+        pop af
+    pop hl
+    cp a
+    ret
+_:              ; Navigate to new block and update working size
+                push de
+                    ld a, e
+                    or a \ rra \ rra \ rra \ rra \ rra \ and 0b111
+                    sla d \ sla d \ sla d \ or d
+                pop de
+                out (6), a
+                ld a, e \ and 0b11111 \ rla \ rla \ ld l, a
+                ld h, 0x40
+            pop de
+            inc b
+            jr .loop

@@ -160,11 +160,8 @@ reboot:
     
     ld de, testFile
     call openFileRead
-    ld bc, 0x198
-    call malloc
+    call getStreamInfo
     jr $
-    call streamReadBuffer
-    call streamReadBuffer
 testFile:
     .db "large.txt", 0
     
