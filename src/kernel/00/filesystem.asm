@@ -72,7 +72,13 @@ findFileEntry:
     ld a, i
     push af ; Save interrupt state
     di
-        ld a, fatStart
+        ; Skip initial / if present
+        ; TODO: Allow for relative paths somehow
+        ld a, (de)
+        cp '/'
+        jr nz, _
+        inc de
+_:      ld a, fatStart
         out (6), a
         ld hl, 0
         ld (kernelGarbage), hl ; Used as temporary storage of parent directory ID

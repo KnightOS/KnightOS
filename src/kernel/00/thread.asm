@@ -293,6 +293,7 @@ launchProgram:
         pop de
         
         push ix
+            jr $
             call streamReadByte ; Thread flags
             push af
                 call streamReadByte ; Stack size

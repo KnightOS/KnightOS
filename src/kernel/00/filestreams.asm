@@ -256,7 +256,8 @@ _:              ; Update flash address
                 jr z, _
                 cp e
                 jr c, .endOfStream
-_:          pop af
+_:              dec (hl)
+            pop af
             ; Return A
 .success:
         ld h, a
@@ -521,9 +522,9 @@ _:	    push af
             ld bc, 0 \ ld d, 0
             ld a, (ix + 6)
             ; Update with remaining space in current block
-            or a \ jr nz, _
+            or a \ jr z, _
             add c \ ld c, a
-            jr nc, _
+            jr nc, ++_
 _:              inc b
                 ld a, b \ or a
                 jr nz, _

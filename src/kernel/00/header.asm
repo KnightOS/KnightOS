@@ -12,12 +12,12 @@
 ; RST $08
 .fill $08-$
 rkcall:
-    ;jp kcall
+    jp kcall
 .fill $10-$
 ; $0010
 ; RST $10
 rlcall:
-    ;jp lcall
+    jp lcall
 .fill $18-$
 ; $0018
 ; RST $18
@@ -29,7 +29,7 @@ rlcall:
 .fill $28-$
 ; $0028
 ; RST $28
-    ;jp bcall
+    jp bcall
 .fill $30-$    
 ; $0030
 ; RST $30
@@ -38,7 +38,7 @@ rlcall:
 ; $0038
 ; RST $38
 ; SYSTEM INTERRUPT
-    ;jp sysInterrupt
+    jp sysInterrupt
 ; $003B
 
 .fill $53-$
