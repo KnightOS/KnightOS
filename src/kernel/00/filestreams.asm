@@ -256,8 +256,7 @@ _:              ; Update flash address
                 jr z, _
                 cp e
                 jr c, .endOfStream
-_:              dec (hl)
-            pop af
+_:          pop af
             ; Return A
 .success:
         ld h, a
@@ -359,7 +358,7 @@ _:          ; Set A to the flash page and DE to the address (relative to 0x4000)
             ; Now get the address of the entry on the page
             ld a, e \ and 0b11111 \ ld d, a
             inc hl \ ld a, (hl) \ ld e, a
-            push bc
+            push bc ; TODO: Can be optimized
                 ld bc, 0x4000
                 ex de, hl
                 add hl, bc
@@ -387,7 +386,7 @@ _:          ; Set A to the flash page and DE to the address (relative to 0x4000)
                 jp nz, .endOfStream_pop
             pop af
             cp c
-            jr c, .endOfStream
+            jp c, .endOfStream
 _:          ; We have enough file left to read
             push af
                 xor a
@@ -521,6 +520,7 @@ _:	    push af
             push hl \ pop ix
             ld bc, 0 \ ld d, 0
             ld a, (ix + 6)
+            sub (ix + 5)
             ; Update with remaining space in current block
             or a \ jr z, _
             add c \ ld c, a
@@ -616,14 +616,15 @@ _:              ; Navigate to new block and update working size
 ; (Success)
 ;   Z: Set
 streamReadToEnd:
-    push de
     push bc
+    push de
         call getStreamInfo
         jr z, _
-    pop bc
     pop de
+    pop bc
     ret
-_:      call streamReadBuffer
+_:      pop de \ push de
+        call streamReadBuffer
     pop bc
     pop de
     ret
