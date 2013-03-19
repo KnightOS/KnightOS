@@ -53,7 +53,6 @@ _:  pop ix
 
 launchCastle:
     kld(de, castlePath)
-    jr $
     call launchProgram
     ret
     

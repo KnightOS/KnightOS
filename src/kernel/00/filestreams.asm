@@ -380,13 +380,13 @@ _:          ; Set A to the flash page and DE to the address (relative to 0x4000)
             jr z, _
             ; If we have less than a full block to read, confirm the file is large enough
             ; to continue.
+            cp c
+            jr nc, _
             push af
                 xor a
                 cp b
-                jp nz, .endOfStream_pop
+                jp z, .endOfStream_pop
             pop af
-            cp c
-            jp c, .endOfStream
 _:          ; We have enough file left to read
             push af
                 xor a

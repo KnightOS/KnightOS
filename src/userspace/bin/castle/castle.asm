@@ -12,7 +12,6 @@
 ; Program
 .org 0
 start:
-    jr $
     call getLcdLock
     call getKeypadLock
 
