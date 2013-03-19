@@ -304,7 +304,6 @@ launchProgram:
                 ld b, c
             pop af
         pop hl
-        
         call startThread
     ld b, a
     pop ix

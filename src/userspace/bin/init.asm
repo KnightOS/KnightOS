@@ -18,7 +18,7 @@
 .list
 ; Header
     .db 0
-    .db 10 ; Stack size
+    .db 20 ; Stack size
 ; Program
 .org 0
     jr start
@@ -53,6 +53,7 @@ _:  pop ix
 
 launchCastle:
     kld(de, castlePath)
+    jr $
     call launchProgram
     ret
     

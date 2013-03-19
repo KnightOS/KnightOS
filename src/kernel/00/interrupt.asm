@@ -77,7 +77,7 @@ doContextSwitch:
     inc hl
     ld (hl), d
   
-contextSwitch_search:  
+contextSwitch_search:
     ld a, (currentThreadIndex)
     inc a \ ld (currentThreadIndex), a
     ld b, a
