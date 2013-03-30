@@ -49,7 +49,7 @@ The following devices are supported:
 * TI-73 Explorer [TI73]
 * TI-83+ [TI83p]
 * TI-83+ SE [TI83pSE]
-* TI-84+ [TI84pSE]
+* TI-84+ [TI84p]
 * TI-84+ SE [TI84pSE]
 * TI-84 Pocket.fr [TI84p]
 * TI-84 Plus Pocket SE [TI84pSE]
