@@ -32,6 +32,7 @@ returnToCastle:
     
 start:
     ; Boot status codes
+    jr $
     cp 1 ; ON+MODE pressed ; 0x820E
     jr z, launchCastle
     
@@ -39,13 +40,12 @@ start:
     kcall(_)
 _:  pop ix
     call memSeekToStart
-    dec ix \ dec ix \ dec ix
-    ld (ix), $FE
+    ld (ix + -3), $FE
     
     ; Update returnToCastle
     kld(de, castlePath)
-    ld (ix + 6), e
-    ld (ix + 7), d
+    ld (ix + 3), e
+    ld (ix + 4), d
     
     call getKey
     cp kT
