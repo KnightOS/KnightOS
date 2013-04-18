@@ -131,7 +131,7 @@ The data allocation section may become severely fragmented over time. Defragment
 ### Section Identifiers
 
 A section identifier is a two-byte identifer that refers to a location within the DAT. The upper 11 bits refer to
-the Flash page the section resides on, and the remaining five bits refer to its address (divided by 512). Though
+the Flash page the section resides on, and the remaining five bits refer to its address (divided by 256). Though
 Flash pages may usually be represented in 8 bits, 11 bits are used for future-proofing. The TI-84+ CSE demands 9
 bits to refer to a Flash page, and future calculators may add even more.
 

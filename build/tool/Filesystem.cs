@@ -70,6 +70,7 @@ namespace build
                     var page = block >> 5;
                     var dataAddress = block & 0x1F;
                     var next = block + 1;
+                    if ((next & 0x1F) == 0) next++;
                     if (i + BlockSize >= entry.Data.Length) // Last block
                         next = 0xFFFF;
                     // Write header

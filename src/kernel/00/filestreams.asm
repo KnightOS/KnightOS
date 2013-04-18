@@ -597,6 +597,7 @@ _:              ; Navigate to new block and update working size
 
 ; Inputs:
 ;   D: Stream ID
+;   IX: Destination to read into
 ; Outputs:
 ; (Failure)
 ;   A: Error

@@ -70,10 +70,8 @@ _:              pop af
         pop af
         ld (loadedLibraries), a
         
-        push ix
-            call streamReadToEnd
-            call closeStream
-        pop ix
+        call streamReadToEnd
+        call closeStream
         ; DE is library ID, IX is location
         
         ld hl, libraryTable

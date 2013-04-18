@@ -103,9 +103,6 @@ drawHomeIcons:
         ld de, $5F21
         call drawLine
         
-        jr _
-        pop af \ pop de \ ret
-_:
         ; Load config
         kld(de, configPath)
         call openFileRead
@@ -113,14 +110,12 @@ _:
             call getStreamInfo
         pop de
         call malloc
-        push ix
-            call streamReadToEnd
-            call closeStream
-        pop ix
+        call streamReadBuffer
+        call closeStream
         
         ; First row
-        ld de, $020E
-        ld bc, $0500
+        ld de, 0x020E
+        ld bc, 0x0500
 _:      ; Check to see if this item is selected
         pop af \ push af
         cp c \ kcall(z, drawSelectionRectangle) \ inc c
@@ -148,8 +143,8 @@ _:
         djnz ---_
     
         ; Second row
-        ld de, $0225
-        ld bc, $0505
+        ld de, 0x0225
+        ld bc, 0x0505
 _:      ; Check to see if this item is selected
         pop af \ push af
         cp c \ kcall(z, drawSelectionRectangle) \ inc c
