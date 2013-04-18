@@ -16,7 +16,6 @@ start:
     call getKeypadLock
 
     call allocScreenBuffer
-    jr $
     kld(de, libtext)
     call loadLibrary
 resetToHome:

@@ -613,6 +613,6 @@ streamReadToEnd:
     ret
 _:      pop de \ push de
         call streamReadBuffer
-    pop bc
     pop de
+    pop bc
     ret

@@ -25,10 +25,8 @@ _:  push af
             inc a
             cp maxLibraries
             jp z, LoadLibrary_TooManyLibraries
-            
-            dec bc \ dec bc ; Skip header
         pop de
-            push af
+        push af
             push hl
             push bc
                 call openFileRead
@@ -52,11 +50,12 @@ _:                      ld a, (hl)
                         dec b
                         jr nz, -_
                     pop bc
-_:          pop af
+_:              pop af
             pop bc
             pop hl
-            
+            ld d, a
             push af
+                call getStreamInfo
                 ld a, (currentThreadIndex)
                 push af
                     ld a, $FE
