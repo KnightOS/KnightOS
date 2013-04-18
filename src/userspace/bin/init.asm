@@ -32,7 +32,6 @@ returnToCastle:
     
 start:
     ; Boot status codes
-    jr $
     cp 1 ; ON+MODE pressed ; 0x820E
     jr z, launchCastle
     

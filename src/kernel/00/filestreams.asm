@@ -370,39 +370,26 @@ _:          ; Set A to the flash page and DE to the address (relative to 0x4000)
             ; HL refers to the block in Flash
             ; IX refers to the file stream entry in RAM
             ; DE refers to the destination address
-            ; BC is the amount to write
+            ; BC is the amount to read
 .readLoop:
             ; Calculate remaining space in the block
             ld a, (ix + 6)
             sub (ix + 5)
-            ; Compare with amount left to read
-            or a
-            jr z, _
-            ; If we have less than a full block to read, confirm the file is large enough
-            ; to continue.
+            ; A is remaining space in block
+            ; if (bc > A) BC = A
+            push af
+                xor a
+                cp b
+                jr nz, _
+            pop af
             cp c
-            jr nc, _
-            push af
-                xor a
-                cp b
-                jp z, .endOfStream_pop
-            pop af
-_:          ; We have enough file left to read
-            push af
-                xor a
-                cp b
-                jr z, _
-            pop af
-            xor a
-            jr +++_
+            jr nc, ++_
+            ld a, c
+            jr ++_
+            
 _:          pop af
-            or a
-            jr z, _
-            cp c
-            jr c, ++_
-_:          ld a, c
-_:          ; A is length to read
-            push bc
+            ; A is length to read
+_:          push bc
                 ld b, 0
                 or a
                 jr nz, _
@@ -425,6 +412,7 @@ _:              push bc
                 jr nc, _
                 dec b
 _:          pop af
+            add (ix + 5)
             or a
             jr nz, .iter
             ; We need to use the next block
@@ -452,14 +440,14 @@ _:          pop af
                 cp (hl)
                 jr nz, _
                 ld a, (ix + 7) ; Final block
-_:              ld (ix + 6), a ; Not final block
+_:              xor a
+                ld (ix + 6), a ; Not final block
 _:              ; Update HL
                 ld hl, 0x4000
                 ld a, c \ and 0b11111 \ add h \ ld h, a
             pop bc
             xor a
 .iter:
-            add (ix + 5)
             ld (ix + 5), a
             ; BC is remaining length to read
             ; Check to see if we're done
