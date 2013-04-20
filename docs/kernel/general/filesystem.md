@@ -1,8 +1,5 @@
 # KnightOS Filesystem Format
 
-**Note**: This is a revised format, and is not yet implemented. KnightOS currently uses an older filesystem,
-which is soon being phased out. Most of the system API will remain the same.
-
 **Note**: All details may change before the initial release.
 
 Multi-byte numbers are stored in little endian.
