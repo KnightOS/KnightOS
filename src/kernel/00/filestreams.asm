@@ -158,6 +158,8 @@ closeStream:
             jr nz, .closeWritableStream
             ; Close readable stream (just remove the entry)
             ld (hl), 0xFF
+            ld hl, activeFileStreams
+            dec (hl)
         pop af
     pop hl
     cp a

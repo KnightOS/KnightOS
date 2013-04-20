@@ -74,6 +74,15 @@ namespace build
             Console.WriteLine("Creating 8xu...");
             var osBuilder = new OSBuilder(configuration == "TI73");
             var pageData = new Dictionary<byte, byte[]>();
+            // Not the best way to do this
+            var newPages = new List<byte>();
+            foreach (var page in pages)
+            {
+                byte sector = (byte)(page & ~3);
+                if (!pages.Contains(sector) && !newPages.Contains(sector))
+                    newPages.Add(sector);
+            }
+            pages.AddRange(newPages.ToArray());
             pages.Sort();
             foreach (var page in pages)
             {
@@ -196,6 +205,9 @@ namespace build
             Console.WriteLine("Creating filesystem...");
             filesystem.Load(path);
             filesystem.WriteTo(output);
+            foreach (var page in filesystem.Pages)
+                if (!pages.Contains(page))
+                    pages.Add(page);
         }
 
         private static void LoadLabels(string file)

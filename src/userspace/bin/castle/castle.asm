@@ -88,10 +88,8 @@ homeSelect:
             call getStreamInfo
         pop de
         call malloc
-        push ix
-            call streamReadToEnd
-            call closeStream
-        pop ix
+        call streamReadToEnd
+        call closeStream
     
         ; IX is the config file
         ld bc, $0AFF
@@ -103,7 +101,7 @@ _:      inc c
         cp h \ jr nz, _ \ cp l \ jr nz, _
         ; Empty slot
         djnz -_
-_:      pop af \ push af
+_:  pop af \ push af
         cp c
         jr nz, _
         ; This is the correct slot
@@ -112,8 +110,8 @@ _:      pop af \ push af
         call memSeekToStart
         push ix \ pop hl
         add hl, de \ ex de, hl
-        pop af
-        kjp(launch)
+    pop af
+    kjp(launch)
 _:      push bc
             ld bc, 34
             add ix, bc

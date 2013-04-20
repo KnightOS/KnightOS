@@ -13,10 +13,12 @@ namespace build
 
         public byte FATStart { get; set; }
         public byte SwapSector { get; set; }
+        public List<byte> Pages { get; set; }
 
         public Filesystem()
         {
             Entries = new List<FilesystemEntry>();
+            Pages = new List<byte>();
         }
 
         public void Load(string model)
@@ -80,6 +82,8 @@ namespace build
                     stream.Flush();
                     // Write block
                     stream.Seek(page * 0x4000 + (dataAddress * BlockSize), SeekOrigin.Begin);
+                    if (!Pages.Contains((byte)page))
+                        Pages.Add((byte)page);
                     var length = BlockSize;
                     if (i + BlockSize > entry.Data.Length)
                         length = entry.Data.Length - i;
@@ -105,6 +109,8 @@ namespace build
                 Array.Copy(BitConverter.GetBytes((ushort)data.Length), 0, array, 1, sizeof(ushort));
                 Array.Reverse(array);
                 stream.Seek(address - array.Length, SeekOrigin.Begin);
+                if (!Pages.Contains((byte)(address / 0x4000)))
+                    Pages.Add((byte)(address / 0x4000));
                 stream.Write(array, 0, array.Length);
                 stream.Flush();
                 address -= array.Length;
