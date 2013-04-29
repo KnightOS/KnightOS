@@ -228,7 +228,7 @@ Gets the current battery level.
 
 *Outputs*
 
-* **B**: Value from 0-4, where 0 is critical
+* **B**: Value from 0-4, where 0 is critical and 4 is fully charged.
 
 *Notes*
 
@@ -246,16 +246,16 @@ Gets the boot code version string and loads it into memory.
 
 *Outputs*
 
-* **HL**: Pointer to version string
+* **HL**: Pointer to newly allocated version string
 
 *Notes*
 
 You should call
-[freeMem](https://github.com/KnightSoft/KnightOS/blob/master/docs/kernel/routines/memory.md#freemem)
+[free](https://github.com/KnightSoft/KnightOS/blob/master/docs/kernel/routines/memory.md#free)
 when you are done with the string to free memory.
 
-This assumes that the string is at 0xF of the boot page, which is true for all
-official TI boot codes.
+This routine assumes that the string is at 0xF of the boot page, which is true
+for all official TI boot codes.
 
 ## getTime
 
