@@ -8,16 +8,18 @@ It is laid out as follows:
     <th>Address</th><th>Length</th><th>Description</th>
     <tr><td>0x0000</td><td>0x4000</td><td>Kernel</td></tr>
     <tr><td>0x4000</td><td>0x4000</td><td>Flash paging</td></tr>
-    <tr><td>0x8000</td><td>0x50</td><td>Thread table</td></tr>
-    <tr><td>0x8050</td><td>0x28</td><td>Library table</td></tr>
-    <tr><td>0x8078</td><td>0x14</td><td>Signal table</td></tr>
-    <tr><td>0x808C</td><td>0x28</td><td>File handle table</td></tr>
+    <tr><td>0x8000</td><td>0x50</td><td>Thread table**</td></tr>
+    <tr><td>0x8050</td><td>0x28</td><td>Library table**</td></tr>
+    <tr><td>0x8078</td><td>0x14</td><td>Signal table**</td></tr>
+    <tr><td>0x808C</td><td>0x28</td><td>File stream table**</td></tr>
     <tr><td>...</td><td>...</td><td>Various kernel variables*</td></tr>
     <tr><td>0x8100</td><td>0x100</td><td>Kernel garbage</td></tr>
     <tr><td>0x8200</td><td>0x7E00</td><td>Userspace memory</td></tr>
 </table>
 
 <em>* See <a href="https://github.com/KnightSoft/KnightOS/blob/master/inc/defines.inc#L66">defines.inc</a> for details</em>
+
+<em>** The size of this section could change if the maximum value is changed in <a href="https://github.com/SirCmpwn/KnightOS/blob/master/inc/defines.inc#L66">defines.inc</a></em>
 
 Kernel garbage is throwaway memory that the kernel uses for specific purposes for short periods of time. For example, it is used
 for garbage collection, and for writing to Flash, and as temporary storage during file lookups.
@@ -73,9 +75,9 @@ All pending signals are stored in the signal table. Each entry is 4 bytes long.
     <tr><td>0002</td><td>2</td><td>Payload</td></tr>
 </table>
 
-### File Handle Table
+### File Stream Table
 
-All active file handles are stored in this table. The buffer is only used for writable streams, and is garbage for read-only streams.
+All active file streams are stored in this table. The buffer is only used for writable streams, and is garbage for read-only streams.
 
 <table>
     <th>Offset</th><th>Length</th><th>Description</th>
