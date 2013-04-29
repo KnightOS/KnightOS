@@ -8,7 +8,7 @@ The build tool is a .NET tool written in C# to assist in building KnightOS from 
 * Create the kernel jump table and include files
 * Create the base filesystem and import the userspace files
 
-The source code for the build tool may be found in [build/tool/](https://github.com/SirCmpwn/KnightOS/tree/master/build/tool/).
+The source code for the build tool may be found in [build/tool/](https://github.com/KnightSoft/KnightOS/tree/master/build/tool/).
 
 ## Usage
 
@@ -23,7 +23,7 @@ with no parameters, is to build the TI-84+ Silver Edition version in English. Yo
     --verbose: Output all sass output to the console.
 
 ### Configurations
-    
+
 The possible configuration values are the following:
 
 * TI73
@@ -35,7 +35,7 @@ The possible configuration values are the following:
 *Note*: Providing --all will build all of these configurations, in this order.
 
 The tool will use the appropriate signing key based on this selection, as well as defining the configuration value at assembly
-time. [inc/defines.inc](https://github.com/SirCmpwn/KnightOS/blob/master/inc/defines.inc) will add additional defined values
+time. [inc/defines.inc](https://github.com/KnightSoft/KnightOS/blob/master/inc/defines.inc) will add additional defined values
 at assembly time based on the configuration value. The default value is TI84pSE.
 
 KnightOS does not use the same binary to target all platforms. For the sake of optimization, a different binary is distributed
@@ -43,7 +43,7 @@ for each target platform.
 
 ### Languages
 
-The language selection is the name of a folder in [lang/](https://github.com/SirCmpwn/KnightOS/blob/master/lang/). This folder
+The language selection is the name of a folder in [lang/](https://github.com/KnightSoft/KnightOS/blob/master/lang/). This folder
 will be added to the include path for sass, and "lang_[language]" will be defined at assembly time. The default is en_us.
 
 ## Build Files
@@ -103,17 +103,17 @@ process. The following commands are available:
 * pages \[hex...]: Adds the specified pages, in hex, to the final 8xu or 73u files.
 * rm \[targets...]: Deletes \[targets...], either files or directories.
 
-The build tool will first build [src/kernel/build.cfg](https://github.com/SirCmpwn/KnightOS/blob/master/src/kernel/build.cfg), then
-[src/userspace/build.cfg](https://github.com/SirCmpwn/KnightOS/blob/master/src/userspace/build.cfg).
+The build tool will first build [src/kernel/build.cfg](https://github.com/KnightSoft/KnightOS/blob/master/src/kernel/build.cfg), then
+[src/userspace/build.cfg](https://github.com/KnightSoft/KnightOS/blob/master/src/userspace/build.cfg).
 
 ## Include Files
 
-sass will be instructed to add [inc/](https://github.com/SirCmpwn/KnightOS/blob/master/inc/) to the include path, as well as the
-selected language folder in [lang/](https://github.com/SirCmpwn/KnightOS/blob/master/lang/).
+sass will be instructed to add [inc/](https://github.com/KnightSoft/KnightOS/blob/master/inc/) to the include path, as well as the
+selected language folder in [lang/](https://github.com/KnightSoft/KnightOS/blob/master/lang/).
 
 ## Output
 
 The build tool outputs the final files to `bin/<configuration>/KnightOS-<locale>.[rom|8xu|73u]`.
 
-8xu and 73u files are signed with one of the keys in [build/](https://github.com/SirCmpwn/KnightOS/blob/master/build/), based on
+8xu and 73u files are signed with one of the keys in [build/](https://github.com/KnightSoft/KnightOS/blob/master/build/), based on
 the configuration value.

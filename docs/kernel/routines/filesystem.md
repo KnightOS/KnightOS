@@ -27,7 +27,7 @@ garbage collection is complete.
 * [streamSeekToStart](#streamSeekToStart)
 
 The source for these routines may be found in
-[src/kernel/00/knighfs.asm](https://github.com/SirCmpwn/KnightOS/blob/master/src/kernel/00/knightfs.asm).
+[src/kernel/00/knighfs.asm](https://github.com/KnightSoft/KnightOS/blob/master/src/kernel/00/knightfs.asm).
 
 ## closeStream
 

@@ -23,16 +23,16 @@ First, copy this file to `src/userspace/build.cfg` for a basic build configurati
     # Clean up previous build, set up for this one
     rm out/
     mkdir out/bin/
-    
+
     # /bin/
     asm bin/init.asm out/bin/init
-    
+
     # Clean up
     rm out/bin/init.sym out/bin/init.lst
-    
+
     fscreate out/
 
-You should read the [build tool docs](https://github.com/SirCmpwn/KnightOS/tree/master/docs/build). This configuraiton
+You should read the [build tool docs](https://github.com/KnightSoft/KnightOS/tree/master/docs/build). This configuraiton
 will set up your userspace in a similar way to KnightOS - it will create the root of the on-calc filesystem in
 `src/userspace/out/` and create a filesystem based on it with `fscreate out/`. You then need to create the init program.
 This build configuration expects it to be in `src/userspace/bin/init.asm`. Create this file, and populate it with this:
@@ -47,16 +47,16 @@ This build configuration expects it to be in `src/userspace/bin/init.asm`. Creat
     ; Program
     .org 0
         jr start
-        
+
     start:
         ; Boot status codes
         or a ; cp 0
         ret nz
-        
+
         ; Handle boot up
-        
+
         ; ...
-        
+
         ; Temporary code so you know everything worked
         ; Replace this with proper initialization code
         call getLcdLock
@@ -66,9 +66,9 @@ This build configuration expects it to be in `src/userspace/bin/init.asm`. Creat
         ld b, 5
         call putSpriteOR
         call fastCopy
-        
+
         jr $
-        
+
     sprite:
         .db %01010000
         .db %01010000
@@ -78,7 +78,7 @@ This build configuration expects it to be in `src/userspace/bin/init.asm`. Creat
 
 This simile init program will just put a smiley face on the screen so you know that you've set everything up properly.
 You should replace this with proper initialization code. For inspiration, you might look to the KnightOS init program,
-whose source code is [here](https://github.com/SirCmpwn/KnightOS/blob/master/src/userspace/bin/init.asm).
+whose source code is [here](https://github.com/KnightSoft/KnightOS/blob/master/src/userspace/bin/init.asm).
 
 The kernel will run `/bin/init` after boot under certain conditions, with a status code based on those conditions. The
 A register always contains the status code, and is set to 0 when booting up normally. You should be able to just skip
@@ -87,7 +87,7 @@ all of these unless you need them at some point.
 Once you've added your init program, you should be able to compile and boot up your OS. Run `build --verbose --all` from
 the `build/` directory to build, like you would with KnightOS.
 
-You may have interest in [KnightOS-deriv](https://github.com/SirCmpwn/KnightOS-Deriv), which is a simple example operating
+You may have interest in [KnightOS-deriv](https://github.com/KnightSoft/KnightOS-Deriv), which is a simple example operating
 system based on the KnightOS kernel. It is likely to use an outdated kernel, however, so it is advised that you follow the
 above steps manually and simply use -deriv as a reference.
 

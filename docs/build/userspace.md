@@ -5,9 +5,9 @@ page 0, and is perpetually swapped in to bank 0. The filesystem is the remainder
 pages of the filesystem are swapped into bank 1 to facilitate reading and writing with it.
 
 To build userspace, the build tool reads the
-[userspace configuration](https://github.com/SirCmpwn/KnightOS/blob/master/src/userspace/build.cfg).
+[userspace configuration](https://github.com/KnightSoft/KnightOS/blob/master/src/userspace/build.cfg).
 This file instructs it to build several files in
-[src/userspace/](https://github.com/SirCmpwn/KnightOS/blob/master/docs/build/build-tool.md) and copy
+[src/userspace/](https://github.com/KnightSoft/KnightOS/blob/master/docs/build/build-tool.md) and copy
 them to src/out/. src/userspace/ is organized in a similar manner to how it appears in the final
 filesystem. Once all files are assembled and copied, src/userspace/out/ becomes the root folder of
 the filesystem installed on the final binaries.
@@ -34,4 +34,4 @@ Ensure that you remove extraneous files, such as .lab and .lst files.
 ## Adding to the Castle
 
 If you want your program to appear in the castle, you need to update
-[src/userspace/etc/castle.config](https://github.com/SirCmpwn/KnightOS/blob/master/src/userspace/etc/castle.config.asm).
+[src/userspace/etc/castle.config](https://github.com/KnightSoft/KnightOS/blob/master/src/userspace/etc/castle.config.asm).
