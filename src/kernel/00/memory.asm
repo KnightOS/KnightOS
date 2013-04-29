@@ -79,12 +79,14 @@ memSeekToEnd:
     pop hl
     ret
 
-; Inputs:    BC is amount to allocate
-;            (CurrentThreadID) owns the new memory (set automatically)
-; Outputs:    On success, IX is pointer to allocated memory
-;            On success, Z is set
-;            On failure, A is error code
-;            On failure, Z is reset
+;; malloc [System]
+;;  Allocates the specified amount of memory.
+;; Inputs:
+;;  BC: Length of requested section, in bytes
+;; Outputs:
+;;  Z: Set on success, reset on failure
+;;  A: Error code (on failure)
+;;  IX: First byte of allocated memory (on success)
 malloc:
     push af
     ld a, i
