@@ -1,5 +1,5 @@
-rkcall .equ $08
-rlcall .equ $10
+rkcall .equ 0x08
+rlcall .equ 0x10
 
 .macro kcall(addr)
     rst rkcall

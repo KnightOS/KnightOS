@@ -5,7 +5,7 @@
     lcall(stdioId, cc, addr)
 .endmacro
 
-stdioId .equ $03
+stdioId .equ 0x03
 
 ; Commands
 cmdNone .equ 0

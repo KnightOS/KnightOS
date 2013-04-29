@@ -5,7 +5,7 @@
     lcall(applibId, cc, addr)
 .endmacro
 
-applibId .equ $02
+applibId .equ 0x02
 
 appGetKey .equ 6
 appWaitKey .equ 9
