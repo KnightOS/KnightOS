@@ -17,9 +17,9 @@ It is laid out as follows:
     <tr><td>0x8200</td><td>0x7E00</td><td>Userspace memory</td></tr>
 </table>
 
-<em>* See [defines.inc](https://github.com/KnightSoft/KnightOS/blob/master/inc/defines.inc#L66) for details</em>
+_\* See [defines.inc](https://github.com/KnightSoft/KnightOS/blob/master/inc/defines.inc#L66) for details_
 
-<em>** The size of this section could change if the maximum value is changed in [defines.inc](https://github.com/KnightSoft/KnightOS/blob/master/inc/defines.inc#L66")</em>
+_\*\* The size of this section could change if the maximum value is changed in [defines.inc](https://github.com/KnightSoft/KnightOS/blob/master/inc/defines.inc#L66")_
 
 Kernel garbage is throwaway memory that the kernel uses for specific purposes for short periods of time. For example, it is used
 for garbage collection, and for writing to Flash, and as temporary storage during file lookups.
