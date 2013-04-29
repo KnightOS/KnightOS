@@ -95,3 +95,4 @@
 .equ streamReadBuffer 0x3EE6
 .equ streamReadToEnd 0x3EE3
 .equ getStreamInfo 0x3EE0
+.equ radixSort 0x3EDD

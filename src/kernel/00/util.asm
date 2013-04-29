@@ -213,7 +213,61 @@ _:  ld a, (de)
 _:  pop de
     pop hl
     ret
-    
+
+;; radixSort [Utils]
+;;  Sorts a specified array of numbers.
+;; Inputs:
+;;  B: Bitmask; you must set it to 0b10000000
+;;  HL: first element in array
+;;  DE: Last element in array
+;; Outputs:
+;;  (Array is sorted)
+;;  HL, DE, and BC preserved
+;; Notes:
+;;  This routine is an in-place version of a radix sort, which has an O(k*n)
+;;  runtime for k-bit numbers.  It also requires a smaller, fixed amount of
+;;  stack space.
+radixSort:
+    push bc
+        push de
+            push hl
+                or a                    ; We must initially clear CA bit, later it's never modified.
+.nextbyte:
+                sbc hl,de \ add hl,de   ; Check if our bins have met up
+                jr c, _
+                jr nz, .nextbit         ; If they have, restart with next bit
+
+_:              ld a, (hl)              ; Perform our bit test
+                and b
+                jr nz, _
+                inc hl                  ; It's already in the 0s bin.  0s bin gets larger.
+                jr .nextbyte
+_:              ld a, (hl)              ; Switch number at top of 1s bin with this one
+                ex de, hl
+                ld c, (hl)
+                ld (hl), a
+                ex de, hl
+                ld (hl), c
+                dec de                  ; 1s bin gets larger.
+                jr .nextbyte
+
+.nextbit:
+                srl b                   ; Next bit please
+                jr c, .done             ; If our carry is 1, we've been through all 8 bits (base case).
+            pop hl
+            call radixSort              ; Sort the 0s bin
+            push de \ pop hl
+            inc hl
+        pop de
+        call radixSort                  ; Sort the 1s bin
+    pop bc
+    ret
+.done:
+            pop hl
+        pop de
+    pop bc
+    ret
+
 ; >>> Quicksort routine v1.1 <<<
 ; by Frank Yaul 7/14/04
 ; Usage: bc->first, de->last,
