@@ -499,5 +499,7 @@ configPath:
     .db "/etc/castle.config", 0
 naString:
     .db lang_nonApp, 0
+#ifdef CLOCK
 dummyTimeString:
     .db "12:00 AM", 0
+#endif
