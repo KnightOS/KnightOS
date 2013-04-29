@@ -4,9 +4,9 @@ If you wish to contribute, please create a fork and submit pull requests. If you
 frequent and high-quality and you wish to have a deeper role in the project, you should get in touch
 and you may be granted access to the repository and assigned tasks.
 
-It's also worth noting that small changes are better than broad ones. The diff of all pull requests
-are inspected before merging them, and huge diffs are a pain to inspect and will be rejected. Your
-code should also be tidy and understandable - this is assembly, after all.
+It's also worth noting that small changes are better than broad ones. The all pull requests are
+inspected before merging them, and huge diffs are a pain to inspect and will be rejected. Your code
+should also be tidy and understandable - this is assembly, after all.
 
 ## Code Style
 
