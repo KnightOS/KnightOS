@@ -2,8 +2,8 @@
 
 The kernel provides several routines for interfacing with the keyboard.
 
-*Note*: An include file is provided in 
-[inc/keys.inc](https://github.com/SirCmpwn/KnightOS/blob/master/inc/keys.inc) that
+*Note*: An include file is provided in
+[inc/keys.inc](https://github.com/KnightSoft/KnightOS/blob/master/inc/keys.inc) that
 includes all key codes used by the kernel.
 
 * [flushKeys](#flushkeys)
@@ -11,7 +11,7 @@ includes all key codes used by the kernel.
 * [waitKey](#waitkey)
 
 The code for these routines may be found in
-[src/kernel/00/keyboard.asm](https://github.com/SirCmpwn/KnightOS/blob/master/src/kernel/00/keyboard.asm).
+[src/kernel/00/keyboard.asm](https://github.com/KnightSoft/KnightOS/blob/master/src/kernel/00/keyboard.asm).
 
 # flushKeys
 

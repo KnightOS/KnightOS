@@ -9,8 +9,8 @@ Several routines are also provided for manipulating pre-allocated memory.
 * [free](#free)
 * [memSeekToStart](#memseektostart)
 
-The code for these routines may be found in 
-[src/kernel/00/memory.asm](https://github.com/SirCmpwn/KnightOS/blob/master/src/kernel/00/memory.asm).
+The code for these routines may be found in
+[src/kernel/00/memory.asm](https://github.com/KnightSoft/KnightOS/blob/master/src/kernel/00/memory.asm).
 
 ## malloc
 
