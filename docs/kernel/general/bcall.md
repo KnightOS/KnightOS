@@ -7,7 +7,7 @@ you try to execute a TIOS program). However, you can override this behavior as a
 If you wish to provide a compatibility layer of some sort, you can handle bcalls yourself.
 
 The code for the system handler is in
-[src/kernel/00/restarts.asm](https://github.com/SirCmpwn/KnightOS/blob/master/src/kernel/00/restarts.asm).
+[src/kernel/00/restarts.asm](https://github.com/KnightSoft/KnightOS/blob/master/src/kernel/00/restarts.asm).
 
 Use of the system bcall hook is simple. Here's an example:
 
@@ -15,15 +15,15 @@ Use of the system bcall hook is simple. Here's an example:
         #include "defines.inc"
         #include "kernel.inc"
         #include "stdio.inc"
-        
+
         kld(hl, hook)
         ld (bcallHook), hl
-        
+
         ; Do a bcall
         rst $28
         .dw $1234
         ret
-        
+
     hook:
         kld(hl, text)
         stdio(printline)
@@ -34,11 +34,11 @@ Use of the system bcall hook is simple. Here's an example:
         ; Increment past the .dw (we don't actually handle bcalls here)
         inc hl \ inc hl
         push hl
-        
+
         dec sp \ dec sp
         pop hl ; Restore HL
         ret
-    
+
     text:
         .asciiz "bcall executed!"
 

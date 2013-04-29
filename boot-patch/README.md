@@ -19,7 +19,7 @@ That being said, such a scenario is extremely unlikely, but proceed at your own 
 
 ## Instructions
 
-Please download [patch.8xp](https://github.com/SirCmpwn/KnightOS/tree/master/boot-patch/patch.8xp)
+Please download [patch.8xp](https://github.com/KnightSoft/KnightOS/tree/master/boot-patch/patch.8xp)
 and transfer it to your calcultor with TI-Connect, TILP, or a similar program. When the transfer
 completes, do the following from the home screen:
 

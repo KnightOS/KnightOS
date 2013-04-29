@@ -4,7 +4,7 @@ applib provides several features specific to KnightOS, including access to the C
 well as routines for providing UIs based on the standard KnightOS UI.
 
 The source for applib may be found in
-[src/userspace/lib/applib/](https://github.com/SirCmpwn/KnightOS/tree/master/src/userspace/lib/applib).
+[src/userspace/lib/applib/](https://github.com/KnightSoft/KnightOS/tree/master/src/userspace/lib/applib).
 
 If you are interested in writing applications that use the UI framework, you should consider reading the UI
 application tutorial. (TODO)

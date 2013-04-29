@@ -3,7 +3,7 @@
 libtext is a library for graphically drawing text on an LCD buffer. It is located at `/lib/libtext` on a normal KnightOS installation.
 
 The source for libtext may be found in
-[src/userspace/lib/libtext/](https://github.com/SirCmpwn/KnightOS/tree/master/src/userspace/lib/libtext).
+[src/userspace/lib/libtext/](https://github.com/KnightSoft/KnightOS/tree/master/src/userspace/lib/libtext).
 
 libtext uses the Windows-1252 character set, which was selected as the best 8-bit character set with international
 support.

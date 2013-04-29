@@ -8,7 +8,7 @@ basis for your own powerful operating systems.
 
 ## Building KnightOS
 
-Precomiled packages are not currently being distributed. However, you may build KnightOS from
+Precompiled packages are not currently being distributed. However, you may build KnightOS from
 its source yourself. From a command line, navigate to the build directory. On Windows, run
 `build --all` to build KnightOS for all calculators. On Linux/Mac, install Mono. Then, run
 `mono build.exe --all`. You may want to change some details in `inc/config.asm` to customize
@@ -18,7 +18,7 @@ Once the build completes, look in `bin/` for the completed OS upgrade files, whi
 and ready to send to a calculator. ROM files will also be generated for use in emulators.
 
 For details on advanced usage of the build tool, see
-[its documentation](https://github.com/SirCmpwn/KnightOS/blob/master/docs/build/build-tool.md).
+[its documentation](https://github.com/KnightSoft/KnightOS/blob/master/docs/build/build-tool.md).
 This documentation includes details on building for specific platforms, and targetting
 languages other than English.
 
@@ -56,7 +56,7 @@ KnightOS on those devices.
 **NOTE**: Newer versions of the TI-84+, TI-84+ SE, and all TI-84 Pocket.fr and TI-84 Plus Pocket SE
 calculators are shipped with boot code 1.03, which prevents the installation of 3rd party operating
 systems. You must patch these calculators before you will be able to install KnightOS on them.
-Instructions for doing so may be found [here](https://github.com/SirCmpwn/KnightOS/tree/master/boot-patch).
+Instructions for doing so may be found [here](https://github.com/KnightSoft/KnightOS/tree/master/boot-patch).
 
 ## Help, Bugs, Feedback
 
@@ -64,5 +64,5 @@ If you need help with KnightOS, want to keep up with progress, chat with develop
 ask any other questions about KnightOS, you can drop by the IRC channel: [#knightos on
 irc.freenode.net](http://webchat.freenode.net/?channels=knightos).
 
-To report bugs, please create [a GitHub issue](https://github.com/SirCmpwn/KnightOS/issues/new)
+To report bugs, please create [a GitHub issue](https://github.com/KnightOS/KnightOS/issues/new)
 or contact us on IRC.

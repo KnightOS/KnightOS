@@ -20,10 +20,10 @@ routines will work properly with flash locked.
 * [writeFlashByte](#writeflashbyte)
 
 The source for these routines may be found in
-[src/kernel/00/flash.asm](https://github.com/SirCmpwn/KnightOS/blob/master/src/kernel/00/flash.asm).
+[src/kernel/00/flash.asm](https://github.com/KnightSoft/KnightOS/blob/master/src/kernel/00/flash.asm).
 
 The exception is unlockFlash and lockFlash, which may be found in
-[src/kernel/00/util.asm](https://github.com/SirCmpwn/KnightOS/blob/master/src/kernel/00/util.asm).
+[src/kernel/00/util.asm](https://github.com/KnightSoft/KnightOS/blob/master/src/kernel/00/util.asm).
 
 ## copyFlashPage
 

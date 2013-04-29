@@ -15,7 +15,7 @@ The kernel provides a number of routines for creating, manipulating, and killing
 * [suspendCurrentThread](#suspendcurrentthread)
 
 The code for these routines may be found in
-[src/kernel/00/thread.asm](https://github.com/SirCmpwn/KnightOS/blob/master/src/kernel/00/thread.asm).
+[src/kernel/00/thread.asm](https://github.com/KnightSoft/KnightOS/blob/master/src/kernel/00/thread.asm).
 
 ## getCurrentThreadId
 

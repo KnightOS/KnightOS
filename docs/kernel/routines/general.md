@@ -24,12 +24,12 @@ tasks.
 * [sub16from32](#sub16from32)
 * [setClock](#setclock)
 
-The code for these routines may be found in 
-[src/kernel/00/util.asm](https://github.com/SirCmpwn/KnightOS/blob/master/src/kernel/00/util.asm),
+The code for these routines may be found in
+[src/kernel/00/util.asm](https://github.com/KnightSoft/KnightOS/blob/master/src/kernel/00/util.asm),
 and in
-[src/kernel/00/time.asm](https://github.com/SirCmpwn/KnightOS/blob/master/src/kernel/00/time.asm),
+[src/kernel/00/time.asm](https://github.com/KnightSoft/KnightOS/blob/master/src/kernel/00/time.asm),
 and in
-[src/kernel/00/boot.asm](https://github.com/SirCmpwn/KnightOS/blob/master/src/kernel/00/boot.asm).
+[src/kernel/00/boot.asm](https://github.com/KnightSoft/KnightOS/blob/master/src/kernel/00/boot.asm).
 
 ## boot
 
@@ -251,7 +251,7 @@ Gets the boot code version string and loads it into memory.
 *Notes*
 
 You should call
-[freeMem](https://github.com/SirCmpwn/KnightOS/blob/master/docs/kernel/routines/memory.md#freemem)
+[freeMem](https://github.com/KnightSoft/KnightOS/blob/master/docs/kernel/routines/memory.md#freemem)
 when you are done with the string to free memory.
 
 This assumes that the string is at 0xF of the boot page, which is true for all
