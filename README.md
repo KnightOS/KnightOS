@@ -66,16 +66,3 @@ irc.freenode.net](http://webchat.freenode.net/?channels=knightos).
 
 To report bugs, please create [a GitHub issue](https://github.com/SirCmpwn/KnightOS/issues/new)
 or contact us on IRC.
-
-## Contributing
-
-Feel free to make a fork and submit pull requests. KnightOS is written in assembly, and as such all
-code must be very well commented and easy to understand. Pull requests with cryptic assembly that we
-cannot understand will not be accepted. Please also include a detailed summary of your changes when
-making the pull request. Additionally, follow the code conventions already in place:
-
-* Use four spaces, not tabs. Indent instructions, but not labels. When you push things to the stack
-  to pop off later, make an indent to keep track of the stack pointer.
-* All instructions, registers, and directives should be in lowercase. Labels should use camelCase.
-  Where possible, use relative or local labels.
-* When doing math at assembly time, add spaces around operators (ex: `ld a, 5 * 10 + 7`).
