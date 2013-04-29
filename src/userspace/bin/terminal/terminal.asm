@@ -12,17 +12,12 @@ leftMargin .equ 2
 commandChar .equ '$'
 cursorChar .equ '_'
 .list
-; Header
-    .db %00000010
-    .db 50 ; Stack size
-; Program
+    .db 0b00000010, 50
 .org 0
-; KnightOS Header
     jr start
     .db 'K'
-    .db %00000010
+    .db 0b00000010
     .db lang_description, 0
-    
 start:
     call getLcdLock
     call getKeypadLock

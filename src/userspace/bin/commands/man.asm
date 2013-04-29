@@ -5,12 +5,8 @@
 #include "libtext.inc"
 maxPages .equ 16
 .list
-; Header
-    .db 0
-    .db 10 ; Stack size
-; Program
+    .db 0, 10
 .org 0
-
 start:
     push hl
         kld(hl, manDirectory)
@@ -67,8 +63,7 @@ formatLoop:
         cp '\n'
         jr z, format_handleNewline
         ; Handle other characters with libtext
-        ;libtext(measureChar)
-        rst $10 \ .db libTextId \ call measureChar
+        libtext(measureChar)
         add a, d \ ld d, a
         cp 90
          ; We let the \n handler deal with advancing past the edge of the screen

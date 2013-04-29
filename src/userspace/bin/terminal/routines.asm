@@ -2,7 +2,7 @@
 
 ; Reads a string into (IX)
 term_readString:
-    push IX
+    push ix
 readString_cursorLoop:
         ; TODO: Try to refactor cursor drawing to use the column
         ; on the right properly
@@ -16,9 +16,9 @@ readString_cursorLoop:
         
         ; cursor delay/keyboard input loop
 #ifdef CPU15
-        ld b, $80
+        ld b, 0x80
 #else
-        ld b, $20
+        ld b, 0x20
 #endif
 readString_delay:
         call fastCopy
@@ -60,7 +60,7 @@ handleKey_loopBack:
         jr readString_delay
         
 _:      inc sp \ inc sp
-        cp $08 ; Backspace
+        cp 0x08 ; Backspace
         jr z, readString_handleBackspace
         
         cp '\n'
@@ -320,7 +320,7 @@ dispha:
     add a, 48
     jr dispdh
 dhlet:
-    add a,55
+    add a, 55
 dispdh:
     kcall(term_printChar)
     ret

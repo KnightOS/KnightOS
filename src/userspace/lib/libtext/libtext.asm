@@ -3,12 +3,12 @@
 ; Facilitates drawing of text onto buffers
 
 .nolist
-libID .equ $01
+libID .equ 0x01
 #include "kernel.inc"
 #include "macros.inc"
 .list
 
-.dw $0001
+.dw 0x0001
 
 .org 0
 
@@ -27,7 +27,7 @@ jumpTable:
     jp drawHexA
     jp measureChar
     jp measureStr
-    .db $FF
+    .db 0xFF
 
 ; Inputs:    A: Character to print
 ;            D,E: X,Y
@@ -50,7 +50,7 @@ drawCharOR:
     
 _:      push de
             ld de, 6
-            sub $20
+            sub 0x20
             call DEMulA
             ex de, hl
             ild(hl, Font)
@@ -83,7 +83,7 @@ drawCharAND:
     
 _:      push de
             ld de, 6
-            sub $20
+            sub 0x20
             call DEMulA
             ex de, hl
             ild(hl, Font)
@@ -116,7 +116,7 @@ drawCharXOR:
     
 _:        push de
             ld de, 6
-            sub $20
+            sub 0x20
             call DEMulA
             ex de, hl
             ild(hl, Font)
@@ -170,10 +170,7 @@ drawStrXOR:
 _:      ld a, (hl)
         or a
         jr z, _
-        ; icall(drawCharXOR)
-        rst $10
-        .db libID
-        call drawCharXOR
+        icall(drawCharXOR)
         inc hl
         jr -_
 _:  pop af
@@ -189,10 +186,7 @@ _:      call streamReadByte
         jr nz, _
         or a
         jr z, _
-        ; icall(drawChar)
-        rst $10
-        .db libID
-        call drawChar
+        icall(drawChar)
         jr -_
 _:  pop af
     ret
@@ -214,7 +208,7 @@ dispha:
    add a, 48
    jr dispdh
 dhlet:
-   add a,55
+   add a, 55
 dispdh:
    ijp(drawCharOR)
    ret
@@ -227,7 +221,7 @@ measureChar:
     push hl
     push de
         ld de, 6
-        sub $20
+        sub 0x20
         call DEMulA
         ex de, hl
         ild(hl, font)

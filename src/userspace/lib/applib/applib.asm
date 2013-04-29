@@ -2,14 +2,14 @@
 ; General purpose application library
 
 .nolist
-libId .equ $02
+libId .equ 0x02
 #include "kernel.inc"
 #include "libtext.inc" ; TODO: Support loading libraries from others
 #include "keys.inc"
 #include "macros.inc"
 .list
 
-.dw $0002
+.dw 0x0002
 
 .org 0
 
@@ -27,7 +27,7 @@ jumpTable:
     jp getCharSet
     jp launchCastle
     jp launchThreadList
-    .db $FF
+    .db 0xFF
     
 ; Same as kernel getKey, but listens for
 ; F1 and F5 and acts accordingly
@@ -228,7 +228,7 @@ drawCharSetIndicator:
     push af
         ; Clear old sprite, if present
         ild(hl, clearCharSetSprite)
-        ld de, $5C02
+        ld de, 0x5C02
         ld b, 4
         call putSpriteOR
     
@@ -270,62 +270,62 @@ threadlistPath:
     .db "/bin/threadlist", 0
     
 castleSprite1: ; 16x4
-    .db %10100110, %01101101
-    .db %11101000, %10101001
-    .db %10101000, %10100101
-    .db %11100110, %01101100
+    .db 0b10100110, 0b01101101
+    .db 0b11101000, 0b10101001
+    .db 0b10101000, 0b10100101
+    .db 0b11100110, 0b01101100
     
 castleSprite2: ; 8x4
-    .db %00110010
-    .db %10010101
-    .db %00010110
-    .db %10010011
+    .db 0b00110010
+    .db 0b10010101
+    .db 0b00010110
+    .db 0b10010011
     
 threadListSprite: ; 8x5
-    .db %00000000
-    .db %00011100
-    .db %00001100
-    .db %00010100
-    .db %00100000
+    .db 0b00000000
+    .db 0b00011100
+    .db 0b00001100
+    .db 0b00010100
+    .db 0b00100000
     
 menuSprite1: ; 16x4
-    .db %10100100, %11001010
-    .db %11101010, %10101010
-    .db %11101100, %10101010
-    .db %10100110, %10101110
+    .db 0b10100100, 0b11001010
+    .db 0b11101010, 0b10101010
+    .db 0b11101100, 0b10101010
+    .db 0b10100110, 0b10101110
     
 menuSprite2: ; 8x3
-    .db %00100000
-    .db %01110000
-    .db %11111000
+    .db 0b00100000
+    .db 0b01110000
+    .db 0b11111000
     
 clearCharSetSprite:
-    .db %11100000
-    .db %11100000
-    .db %11100000
-    .db %11100000
+    .db 0b11100000
+    .db 0b11100000
+    .db 0b11100000
+    .db 0b11100000
 charSetSprites:
 
 uppercaseASprite:
-    .db %01000000
-    .db %10100000
-    .db %11100000
-    .db %10100000
+    .db 0b01000000
+    .db 0b10100000
+    .db 0b11100000
+    .db 0b10100000
     
 lowercaseASprite:
-    .db %00000000
-    .db %01100000
-    .db %10100000
-    .db %01100000
+    .db 0b00000000
+    .db 0b01100000
+    .db 0b10100000
+    .db 0b01100000
     
 symbolSprite:
-    .db %01000000
-    .db %11000000
-    .db %01000000
-    .db %11100000
+    .db 0b01000000
+    .db 0b11000000
+    .db 0b01000000
+    .db 0b11100000
     
 extendedSprite:
-    .db %01000000
-    .db %01000000
-    .db %00000000
-    .db %01000000
+    .db 0b01000000
+    .db 0b01000000
+    .db 0b00000000
+    .db 0b01000000

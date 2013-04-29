@@ -2,9 +2,7 @@
 #include "stdio.inc"
 #include "macros.inc"
 .list
-; Header
     .db 0, 20
-; Code
 .org 0
 start:
     kld(hl, message)

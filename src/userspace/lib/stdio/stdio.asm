@@ -2,7 +2,7 @@
 ; Handles complex communication between threads via signals
 
 .nolist
-libId .equ $03
+libId .equ 0x03
 #include "kernel.inc"
 #include "macros.inc"
 ; Commands
@@ -18,7 +18,7 @@ cmdEnableUpdates .equ 8
 cmdDisableUpdates .equ 9
 .list
 
-.dw $0003
+.dw 0x0003
 
 .org 0
 
@@ -41,12 +41,12 @@ jumpTable:
     
 threadRegistration:
     ; Supervisor, Child
-    .db $FF, $FF
-    .db $FF, $FF
-    .db $FF, $FF
-    .db $FF, $FF
-    .db $FF, $FF
-    .db $FF, $FF
+    .db 0xFF, 0xFF
+    .db 0xFF, 0xFF
+    .db 0xFF, 0xFF
+    .db 0xFF, 0xFF
+    .db 0xFF, 0xFF
+    .db 0xFF, 0xFF
 
 ; TODO: Thread registration might not even really be needed
     
@@ -60,7 +60,7 @@ registerThread:
     ld b, 6
     ild(hl, threadRegistration)
 _:  ld a, (hl)
-    cp $FF
+    cp 0xFF
     jr z, _
     inc hl \ inc hl
     djnz -_
@@ -97,7 +97,7 @@ _:  ld a, (hl)
     pop bc
     ret
 _:  ; Use (hl)
-    ld a, $FF
+    ld a, 0xFF
     ld (hl), a \ dec hl \ ld (hl), a
     pop af
     pop hl

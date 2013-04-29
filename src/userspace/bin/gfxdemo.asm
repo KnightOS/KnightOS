@@ -8,17 +8,12 @@
 #include "stdio.inc"
 #include "gfxdemo.lang"
 .list
-; Header
-    .db 0
-    .db 50 ; Stack size
-; Program
+    .db 0, 50 ; Stack size
 .org 0
-; KnightOS Header
     jr start
     .db 'K'
-    .db %00000010
+    .db 0b00000010
     .db lang_description, 0
-
 start:
     ; Load dependencies
     kld(de, stdioPath)
@@ -41,12 +36,12 @@ start:
     applib(drawWindow)
     
     ld b, 2
-    ld de, $0208
+    ld de, 0x0208
     kld(hl, exitString)
     libtext(drawStr)
     
     kld(hl, smileySprite)
-    ld de, $0210
+    ld de, 0x0210
 _:  ld b, 5
     call putSpriteXor
     call fastCopy
@@ -95,11 +90,11 @@ applibPath:
 stdioPath:
     .db "/lib/stdio", 0
 smileySprite:
-    .db %01010000
-    .db %01010000
-    .db %00000000
-    .db %10001000
-    .db %01110000
+    .db 0b01010000
+    .db 0b01010000
+    .db 0b00000000
+    .db 0b10001000
+    .db 0b01110000
 goodbyeMessage:
     .db "Goodbye!", 0
 demoMessage:

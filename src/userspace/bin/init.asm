@@ -16,13 +16,9 @@
 #include "macros.inc"
 #include "keys.inc"
 .list
-; Header
-    .db 0
-    .db 20 ; Stack size
-; Program
+    .db 0, 20
 .org 0
     jr start
-    
 returnToCastle:
     ; userMemory + 5
     ; ENORMOUS HACK

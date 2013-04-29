@@ -6,10 +6,7 @@
 #include "defines.inc"
 #include "config.inc"
 .list
-; Header
-    .db 0  ; TODO: Thread flags
-    .db 50 ; Stack size
-; Program
+    .db 0, 50
 .org 0
 start:
     call getLcdLock
@@ -92,12 +89,12 @@ homeSelect:
         call closeStream
     
         ; IX is the config file
-        ld bc, $0AFF
+        ld bc, 0x0AFF
 _:      inc c
         ld l, (ix)
         ld h, (ix + 1)
         inc ix \ inc ix
-        ld a, $FF
+        ld a, 0xFF
         cp h \ jr nz, _ \ cp l \ jr nz, _
         ; Empty slot
         djnz -_
@@ -130,7 +127,7 @@ incrementContrast:
     jr nz, _
     dec (hl)
     dec a
-_:  out ($10), a
+_:  out (0x10), a
     kjp(homeLoop)
     
 decrementContrast:
@@ -141,7 +138,7 @@ decrementContrast:
     jr nz, _
     inc (hl)
     inc a
-_:  out ($10), a
+_:  out (0x10), a
     kjp(homeLoop)
     
 launchThreadList:
@@ -246,19 +243,19 @@ confirmSelectionLoop:
         
 confirmSelectionLoop_Up:
     call putSpriteXOR
-    ld de, $2825
+    ld de, 0x2825
     call putSpriteOR
     jr confirmSelectionLoop
         
 confirmSelectionLoop_Down:
     call putSpriteXOR
-    ld de, $282B
+    ld de, 0x282B
     call putSpriteOR
     jr confirmSelectionLoop
 
 confirmSelectionLoop_Select:
     pop hl
-    ld a, $2B
+    ld a, 0x2B
     cp e
     kjp(z, resetToHome)
     ; Before restarting, shut off the screen for a moment

@@ -8,7 +8,7 @@ drawChrome:
     call setPixel
     kld(hl, castleTopSprite)
     ld b, 12
-    ld de, $0100
+    ld de, 0x0100
 _:  ld a, 8
     push bc
         ld b, 3
@@ -20,20 +20,20 @@ _:  ld a, 8
     
     kld(hl, hotkeyLeftSprite)
     ld b, 8
-    ld de, $0038
+    ld de, 0x0038
     call putSpriteOR
     
     kld(hl, hotkeyRightSprite)
-    ld de, $5838
+    ld de, 0x5838
     call putSpriteOR
     
-    ld hl, $000A
-    ld de, $5F0A
+    ld hl, 0x000A
+    ld de, 0x5F0A
     call drawLine
     
     kld(hl, batteryIndicatorSprite)
     ld b, 4
-    ld de, $193B
+    ld de, 0x193B
     call putSpriteOR
     
     call getBatteryLevel
@@ -48,7 +48,7 @@ _:  ld l, 60
     inc a
     djnz -_
 _:    
-    #ifdef CLOCK
+#ifdef CLOCK
     ; Get time
     push ix
         call getTime
@@ -57,27 +57,26 @@ _:
         ld de, (69 << 8) | 4
         libtext(drawStr)
     pop ix
-    #endif
-
+#endif
     ret
     
 drawHome:
     kld(hl, hotkeyPlusSprite)
     ld b, 5
-    ld de, $013A
+    ld de, 0x013A
     call putSpriteOR
     
     kld(hl, hotkeyArrowRightSprite)
-    ld de, $593A
+    ld de, 0x593A
     call putSpriteOR
     
     kld(hl, menuArrowSprite)
     ld b, 3
-    ld de, $353B
+    ld de, 0x353B
     call putSpriteOR
     
     ld de, lang_more_position
-    kld(hl, MoreString)
+    kld(hl, moreString)
     libtext(drawStr)
     
     ld de, lang_menu_position
@@ -99,8 +98,8 @@ drawHomeIcons:
         ld e, 0 \ ld l, 3 \ ld c, 69 \ ld b, 7
         call rectAND
         
-        ld hl, $0021
-        ld de, $5F21
+        ld hl, 0x0021
+        ld de, 0x5F21
         call drawLine
         
         ; Load config
@@ -122,7 +121,7 @@ _:      ; Check to see if this item is selected
         
         ld l, (ix)
         ld h, (ix + 1)
-        ld a, $FF
+        ld a, 0xFF
         push bc
             cp h \ jr nz, _ \ cp l \ jr nz, _
             kld(hl, emptySlotIcon)
@@ -151,7 +150,7 @@ _:      ; Check to see if this item is selected
         
         ld l, (ix)
         ld h, (ix + 1)
-        ld a, $FF
+        ld a, 0xFF
         push bc
             cp h \ jr nz, _ \ cp l \ jr nz, _
             kld(hl, emptySlotIcon)
@@ -183,7 +182,7 @@ drawSelectionRectangle:
         ; Find name string
         ld c, (ix)
         ld b, (ix + 1)
-        ld a, $FF
+        ld a, 0xFF
         cp b
         jr nz, _
         cp c
@@ -197,7 +196,7 @@ _:      ld a, e ; Get x
         ld a, d ; Get y
         sub 2
         ld e, a
-        ld bc, $1414
+        ld bc, 0x1414
         push de \ push hl \ push bc
             call rectOR
         pop bc \ pop hl \ pop de
@@ -214,7 +213,7 @@ drawSelectedName:
     pop ix
     ; Draw name string
     push de
-        ld de, $0104
+        ld de, 0x0104
         libtext(drawStr)
     pop de
     ret
@@ -222,7 +221,7 @@ drawSelectedName:
 drawEmptySlotName:
     push de
         kld(hl, naString)
-        ld de, $0104
+        ld de, 0x0104
         libtext(drawStr)
     pop de
     ret
@@ -238,11 +237,11 @@ drawPowerMenu:
     ld c, 66-27
     ld b, 55-36
     call rectXOR
-    ld de, $2339
-    ld hl, $233F
+    ld de, 0x2339
+    ld hl, 0x233F
     call drawLine
-    ld de, $3B39
-    ld hl, $3B3F
+    ld de, 0x3B39
+    ld hl, 0x3B3F
     call drawLine
 
     ld e, 36
@@ -264,17 +263,17 @@ drawPowerMenu:
     libtext(drawStr)
 
     kld(hl, menuArrowSprite)
-    ld de, $353B
+    ld de, 0x353B
     ld b, 3
     call putSpriteXOR
 
     kld(hl, menuArrowSpriteFlip)
-    ld de, $353B
+    ld de, 0x353B
     ld b, 3
     call putSpriteOR
 
     kld(hl, selectionIndicatorSprite)
-    ld de, $1D26
+    ld de, 0x1D26
     ld b, 5
     call putSpriteOR
     ret
@@ -295,12 +294,12 @@ drawConfirmationDialog:
     
     kld(hl, exclamationSprite1)
     ld b, 8
-    ld de, $1820
+    ld de, 0x1820
     call putSpriteOR
     
     kld(hl, exclamationSprite2)
     ld b, 8
-    ld de, $1828
+    ld de, 0x1828
     call putSpriteOR
     
     kld(hl, confirmString1)
@@ -324,143 +323,143 @@ drawConfirmationDialog:
     libtext(drawStr)
     
     kld(hl, selectionIndicatorSprite)
-    ld de, $282B
+    ld de, 0x282B
     ld b, 5
     call putSpriteOR
     ret
 #endif
     
 castleTopSprite: ; 8x3
-    .db %11110000
-    .db %10010000
-    .db %10011111
+    .db 0b11110000
+    .db 0b10010000
+    .db 0b10011111
     
 hotkeyLeftSprite: ; 8x8
-    .db %01111100
-    .db %10000010
-    .db %00000001
-    .db %00000001
-    .db %00000001
-    .db %00000001
-    .db %00000001
-    .db %10000010
+    .db 0b01111100
+    .db 0b10000010
+    .db 0b00000001
+    .db 0b00000001
+    .db 0b00000001
+    .db 0b00000001
+    .db 0b00000001
+    .db 0b10000010
     
 hotkeyRightSprite: ; 8x8
-    .db %00111110
-    .db %01000001
-    .db %10000000
-    .db %10000000
-    .db %10000000
-    .db %10000000
-    .db %10000000
-    .db %01000001
+    .db 0b00111110
+    .db 0b01000001
+    .db 0b10000000
+    .db 0b10000000
+    .db 0b10000000
+    .db 0b10000000
+    .db 0b10000000
+    .db 0b01000001
     
 hotkeyPlusSprite: ; 8x5
-    .db %00100000
-    .db %00100000
-    .db %11111000
-    .db %00100000
-    .db %00100000
+    .db 0b00100000
+    .db 0b00100000
+    .db 0b11111000
+    .db 0b00100000
+    .db 0b00100000
     
 hotkeyArrowLeftSprite: ; 8x5
-    .db %0010000
-    .db %0100000
-    .db %1111100
-    .db %0100000
-    .db %0010000
+    .db 0b0010000
+    .db 0b0100000
+    .db 0b1111100
+    .db 0b0100000
+    .db 0b0010000
     
 hotkeyArrowRightSprite: ; 8x5
-    .db %0010000
-    .db %0001000
-    .db %1111100
-    .db %0001000
-    .db %0010000
+    .db 0b0010000
+    .db 0b0001000
+    .db 0b1111100
+    .db 0b0001000
+    .db 0b0010000
     
 hotkeyArrowUpSprite: ; 8x5
-    .db %0010000
-    .db %0111000
-    .db %1010100
-    .db %0010000
-    .db %0010000
+    .db 0b0010000
+    .db 0b0111000
+    .db 0b1010100
+    .db 0b0010000
+    .db 0b0010000
     
 menuArrowSprite: ; 8x3
-    .db %00100000
-    .db %01110000
-    .db %11111000
+    .db 0b00100000
+    .db 0b01110000
+    .db 0b11111000
     
 menuArrowSpriteFlip: ; 8x3
-    .db %11111000
-    .db %01110000
-    .db %00100000
+    .db 0b11111000
+    .db 0b01110000
+    .db 0b00100000
     
 batteryIndicatorSprite: ; 8x4
-    .db %11111100
-    .db %10000110
-    .db %10000110
-    .db %11111100
+    .db 0b11111100
+    .db 0b10000110
+    .db 0b10000110
+    .db 0b11111100
 
 selectionIndicatorSprite: ; 8x5
-    .db %10000000
-    .db %11000000
-    .db %11100000
-    .db %11000000
-    .db %10000000
+    .db 0b10000000
+    .db 0b11000000
+    .db 0b11100000
+    .db 0b11000000
+    .db 0b10000000
     
 exclamationSprite1: ; 8x8
-    .db %01110000
-    .db %10001000
-    .db %10001000
-    .db %10001000
-    .db %10001000
-    .db %10001000
-    .db %10001000
-    .db %10001000
+    .db 0b01110000
+    .db 0b10001000
+    .db 0b10001000
+    .db 0b10001000
+    .db 0b10001000
+    .db 0b10001000
+    .db 0b10001000
+    .db 0b10001000
 
 exclamationSprite2: ; 8x8
-    .db %10001000
-    .db %01110000
-    .db %00000000
-    .db %01110000
-    .db %10001000
-    .db %10001000
-    .db %10001000
-    .db %01110000
+    .db 0b10001000
+    .db 0b01110000
+    .db 0b00000000
+    .db 0b01110000
+    .db 0b10001000
+    .db 0b10001000
+    .db 0b10001000
+    .db 0b01110000
     
 defaultIconSprite: ; 16x16
-    .db %01111111, %11111110
-    .db %11111111, %11111111
-    .db %11111111, %11111111
-    .db %10000000, %00000001
-    .db %10111111, %10111101
-    .db %10100000, %10111101
-    .db %10100000, %10111101
-    .db %10111111, %10111101
-    .db %10000000, %00111101
-    .db %10111100, %00111101
-    .db %10000000, %00111101
-    .db %10111111, %00111101
-    .db %10000000, %00111101
-    .db %10111110, %00111101
-    .db %10000000, %00000001
-    .db %11111111, %11111111
+    .db 0b01111111, 0b11111110
+    .db 0b11111111, 0b11111111
+    .db 0b11111111, 0b11111111
+    .db 0b10000000, 0b00000001
+    .db 0b10111111, 0b10111101
+    .db 0b10100000, 0b10111101
+    .db 0b10100000, 0b10111101
+    .db 0b10111111, 0b10111101
+    .db 0b10000000, 0b00111101
+    .db 0b10111100, 0b00111101
+    .db 0b10000000, 0b00111101
+    .db 0b10111111, 0b00111101
+    .db 0b10000000, 0b00111101
+    .db 0b10111110, 0b00111101
+    .db 0b10000000, 0b00000001
+    .db 0b11111111, 0b11111111
 
 emptySlotIcon: ; 16x16
-    .db %10101010, %10101011
-    .db %00000000, %00000001
-    .db %10101000, %00000000
-    .db %00010000, %00000001
-    .db %10101000, %00000000
-    .db %00000000, %00000001
-    .db %10000000, %00000000
-    .db %00000000, %00000001
-    .db %10000000, %00000000
-    .db %00000000, %00000001
-    .db %10000000, %00000000
-    .db %00000000, %00000001
-    .db %10000000, %00000000
-    .db %00000000, %00000001
-    .db %10000000, %00000000
-    .db %11010101, %01010101
+    .db 0b10101010, 0b10101011
+    .db 0b00000000, 0b00000001
+    .db 0b10101000, 0b00000000
+    .db 0b00010000, 0b00000001
+    .db 0b10101000, 0b00000000
+    .db 0b00000000, 0b00000001
+    .db 0b10000000, 0b00000000
+    .db 0b00000000, 0b00000001
+    .db 0b10000000, 0b00000000
+    .db 0b00000000, 0b00000001
+    .db 0b10000000, 0b00000000
+    .db 0b00000000, 0b00000001
+    .db 0b10000000, 0b00000000
+    .db 0b00000000, 0b00000001
+    .db 0b10000000, 0b00000000
+    .db 0b11010101, 0b01010101
 
 moreString:
     .db lang_more, 0

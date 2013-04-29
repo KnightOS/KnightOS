@@ -6,12 +6,8 @@
 #include "keys.inc"
 #include "threadlist.lang"
 .list
-
-; Header
-.db 0
-.db 20
+    .db 0, 20
 .org 0
-
 start:
     call getLcdLock
     call getKeypadLock
@@ -229,7 +225,7 @@ drawInterface:
     call setPixel
     kld(hl, castleTopSprite)
     ld b, 12
-    ld de, $0100
+    ld de, 0x0100
 _:    ld a, 8
     push bc
         ld b, 3
@@ -241,21 +237,21 @@ _:    ld a, 8
     
     kld(hl, hotkeyLeftSprite)
     ld b, 8
-    ld de, $0038
+    ld de, 0x0038
     call putSpriteOR
     
     kld(hl, hotkeyRightSprite)
-    ld de, $5838
+    ld de, 0x5838
     call putSpriteOR
     
     kld(hl, hotkeyArrowLeftSprite)
     ld b, 5
-    ld de, $003A
+    ld de, 0x003A
     call putSpriteOR
     
     kld(hl, hotkeyPlusSprite)
     ld b, 5
-    ld de, $5A3A
+    ld de, 0x5A3A
     call putSpriteOR
     
     kld(hl, backStr)
@@ -270,18 +266,18 @@ _:    ld a, 8
     ld de, lang_runningPrograms_position
     libtext(drawStr)
     
-    ld hl, $000A
-    ld de, $5F0A
+    ld hl, 0x000A
+    ld de, 0x5F0A
     call drawLine
     ret
     
 drawOptions:
     kld(hl, hotkeyPlusSprite)
-    ld de, $5A3A
+    ld de, 0x5A3A
     call putSpriteXOR
     
     kld(hl, hotkeyArrowUpSprite)
-    ld de, $593A
+    ld de, 0x593A
     call putSpriteOR
     
     ld e, 55 - (61 - (lang_forceQuit_position >> 8))
@@ -314,57 +310,57 @@ drawOptions:
     ret
     
 castleTopSprite: ; 8x3
-    .db %11110000
-    .db %10010000
-    .db %10011111
+    .db 0b11110000
+    .db 0b10010000
+    .db 0b10011111
     
 hotkeyLeftSprite: ; 8x8
-    .db %01111100
-    .db %10000010
-    .db %00000001
-    .db %00000001
-    .db %00000001
-    .db %00000001
-    .db %00000001
-    .db %10000010
+    .db 0b01111100
+    .db 0b10000010
+    .db 0b00000001
+    .db 0b00000001
+    .db 0b00000001
+    .db 0b00000001
+    .db 0b00000001
+    .db 0b10000010
     
 hotkeyRightSprite: ; 8x8
-    .db %00111110
-    .db %01000001
-    .db %10000000
-    .db %10000000
-    .db %10000000
-    .db %10000000
-    .db %10000000
-    .db %01000001
+    .db 0b00111110
+    .db 0b01000001
+    .db 0b10000000
+    .db 0b10000000
+    .db 0b10000000
+    .db 0b10000000
+    .db 0b10000000
+    .db 0b01000001
     
 hotkeyPlusSprite: ; 8x5
-    .db %00100000
-    .db %00100000
-    .db %11111000
-    .db %00100000
-    .db %00100000
+    .db 0b00100000
+    .db 0b00100000
+    .db 0b11111000
+    .db 0b00100000
+    .db 0b00100000
     
 hotkeyArrowLeftSprite: ; 8x5
-    .db %0010000
-    .db %0100000
-    .db %1111100
-    .db %0100000
-    .db %0010000
+    .db 0b0010000
+    .db 0b0100000
+    .db 0b1111100
+    .db 0b0100000
+    .db 0b0010000
     
 hotkeyArrowUpSprite: ; 8x5
-    .db %0010000
-    .db %0111000
-    .db %1010100
-    .db %0010000
-    .db %0010000
+    .db 0b0010000
+    .db 0b0111000
+    .db 0b1010100
+    .db 0b0010000
+    .db 0b0010000
     
 selectionIndicatorSprite: ; 8x5
-    .db %10000000
-    .db %11000000
-    .db %11100000
-    .db %11000000
-    .db %10000000
+    .db 0b10000000
+    .db 0b11000000
+    .db 0b11100000
+    .db 0b11000000
+    .db 0b10000000
     
 backStr:
     .db lang_str_castle, 0

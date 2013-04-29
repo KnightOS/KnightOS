@@ -3,9 +3,8 @@
 #include "macros.inc"
 #include "stdio.inc"
 .nolist
-; Header
     .db 0, 20
-    .org 0
-; Code
+.org 0
 start:
-    ljp(stdioId, clearTerminal)
+    stdio(clearTerminal)
+    ret

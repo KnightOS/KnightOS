@@ -545,7 +545,7 @@ horizClipDone:
 
     ld d, 0                 ; Correct graph buffer address
     ld e, c                 ; if clipping the left side
-    sbc, de
+    sbc hl, de
 
     and 7
     jr z, _aligned

@@ -7,17 +7,12 @@
 #include "defines.inc"
 #include "hello.lang"
 .list
-; Header
-    .db 0
-    .db 50 ; Stack size
-; Program
+    .db 0, 50
 .org 0
-; KnightOS Header
     jr start
     .db 'K'
-    .db %00000010
+    .db 0b00000010
     .db lang_description, 0
-
 start:
     call getLcdLock
     call getKeypadLock
@@ -35,11 +30,11 @@ start:
     applib(drawWindow)
     
     ld b, 2
-    ld de, $0208
+    ld de, 0x0208
     kld(hl, helloString)
     libtext(drawStr)
     
-    ld de, $0219
+    ld de, 0x0219
     kld(hl, bootCodeString)
     libtext(drawStr)
     

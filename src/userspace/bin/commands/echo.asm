@@ -4,11 +4,8 @@
 #include "stdio.inc"
 .list
 ; Header
-    .db 0
-    .db 10 ; Stack size
-; Program
+    .db 0, 10
 .org 0
-
 start:
-    ljp(stdioId, printLine)
-    
+    stdio(printLine)
+    ret

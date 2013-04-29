@@ -4,10 +4,8 @@
 #include "macros.inc"
 #include "stdio.inc"
 .nolist
-; Header
     .db 0, 20
-    .org 0
-; Code
+.org 0
 start:
     call hexToHL
     stdio(disableUpdates)
@@ -30,4 +28,5 @@ horizLoop:
     pop bc
     djnz verticalLoop
     
-    ljp(stdioId, enableUpdates)
+    stdio(enableUpdates)
+    ret

@@ -4,16 +4,14 @@
 #include "macros.inc"
 #include "stdio.inc"
 .nolist
-; Header
     .db 0, 20
-    .org 0
-; Code
+.org 0
 start:
     kld(hl, versionString)
     stdio(printLine)
     
     kld(hl, kernelVersion)
-    stdio(printChar)
+    stdio(printString)
     
     ; Print version number
     ld h, 0

@@ -7,17 +7,12 @@
 #include "defines.inc"
 #include "count.lang"
 .list
-; Header
-    .db %00000010
-    .db 50 ; Stack size
-; Program
+    .db 0, 50
 .org 0
-; KnightOS Header
     jr start
     .db 'K'
-    .db %00000010
+    .db 0b00000010
     .db lang_description, 0
-
 start:
     call getLcdLock
     call getKeypadLock
@@ -36,13 +31,13 @@ _:  push bc
         applib(drawWindow)
         
         ld b, 2
-        ld de, $0208
+        ld de, 0x0208
         kld(hl, helloString)
         libtext(drawStr)
     pop bc
     
     ld a, b \ inc b
-    ld de, $0210
+    ld de, 0x0210
     libtext(drawHexA)
     
     call fastCopy

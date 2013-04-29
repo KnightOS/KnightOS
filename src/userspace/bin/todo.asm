@@ -5,10 +5,7 @@
 #include "defines.inc"
 #include "todo.lang"
 .list
-; Header
-    .db 0
-    .db 50 ; Stack size
-; Program
+    .db 0, 50
 .org 0
 start:
     call getLcdLock

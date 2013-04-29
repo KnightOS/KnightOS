@@ -4,9 +4,7 @@
 #include "keys.inc"
 #include "kernel.inc"
 .nolist
-; Header
     .db 0, 20
-; Code
 .org 0
 start:
     call getKeypadLock
@@ -14,9 +12,9 @@ start:
     kcall(hook)
     kld(hl, hook)
     ld (priorityHook), hl
-_:  ld a, $FF
+_:  ld a, 0xFF
     out (1), a
-    ld a, $FD
+    ld a, 0xFD
     out (1), a
     nop \ nop
     in a, (1)
@@ -30,7 +28,7 @@ _:  ld a, $FF
 hook:
     kld(a, (state))
     out (0), a
-    xor %11
+    xor 0b11
     kld((state), a)
     ret
     

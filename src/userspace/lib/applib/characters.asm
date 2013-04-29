@@ -1,6 +1,6 @@
 characterMapUppercase:
     ; $9 = Enter
-    .db '\n', '"', 'W', 'R', 'M', 'H', $08, 0 ; $08 is Backspace, which is mapped to CLEAR
+    .db '\n', '"', 'W', 'R', 'M', 'H', 0x08, 0 ; 0x08 is Backspace, which is mapped to CLEAR
     ; Theta
     .db '?', 0, 'V', 'Q', 'L', 'G', 0, 0
     .db ':', 'Z', 'U', 'P', 'K', 'F', 'C', 0
@@ -10,7 +10,7 @@ characterMapUppercase:
 
 characterMapLowercase:
     ; $9 = Enter
-    .db '\n', '"', 'w', 'r', 'm', 'h', $08, 0
+    .db '\n', '"', 'w', 'r', 'm', 'h', 0x08, 0
     ; Theta
     .db '?', 0, 'v', 'q', 'l', 'g', 0, 0
     .db ':', 'z', 'u', 'p', 'k', 'f', 'c', 0
@@ -20,7 +20,7 @@ characterMapLowercase:
 
 characterMapSymbol:
     ; $9 = Enter
-    .db '\n', '+', '-', '*', '/', '^', $08, 0
+    .db '\n', '+', '-', '*', '/', '^', 0x08, 0
     .db '-', '3', '6', '9', ')', 0, 0, 0
     .db 'i', '2', '5', '8', '(', 0, 0, 0
     .db '0', '1', '4', '7', ',', 0, 0, 0
@@ -28,7 +28,7 @@ characterMapSymbol:
 
 characterMapExtended:
     ; $9 = Enter
-    .db '\n', '\'', ']', '[', '\\', '_', $08, 0
+    .db '\n', '\'', ']', '[', '\\', '_', 0x08, 0
     .db '-', '3', '6', '9', '}', '>', '`', 0
     .db 'i', '2', '5', '8', '{', '<', '|', 0
     .db '0', '1', '4', '7', ',', 0, 0, 0
