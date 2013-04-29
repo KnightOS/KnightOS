@@ -15,9 +15,9 @@ kcall:
     inc hl
 
     ld a, (hl)
-    cp $DD
+    cp 0xDD
     jr z, _
-    cp $FD
+    cp 0xFD
     jr nz, ++_
 _:
     inc hl ; Handle IX/IY prefix
@@ -93,10 +93,10 @@ _:      inc hl
         
         ex de, hl
 
-        ld a, $DD ; Handle IX/IY cases
+        ld a, 0xDD ; Handle IX/IY cases
         cp (hl)
         jr z, _
-        ld a, $FD
+        ld a, 0xFD
         jr nz, ++_
 _:
         inc hl

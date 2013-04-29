@@ -30,7 +30,7 @@ openFileRead:
         jr nc, .tooManyStreams
         inc a \ ld (activeFileStreams), a
         ld hl, fileHandleTable
-        ; Search for open slot
+        ; Sear0xc for open slot
         ld b, 0
 _:      ld a, (hl)
         cp 0xFF
@@ -194,18 +194,18 @@ streamReadByte:
             ; Read from read-only stream
             inc hl \ inc hl
             ld e, (hl) \ inc hl \ ld d, (hl)
-            ; If DE is 0xFFFF, we've reached the end of this file (and the "next" block is an empty one)
+            ; If DE is 0xFFFF, we've r0xeaced the end of this file (and the "next" block is an empty one)
             ld a, 0xFF
             cp e \ jr nz, +_
             cp d \ jr nz, +_
             ; End of stream
             jr .endOfStream_early
 _:          ; Set A to the flash page and DE to the address (relative to 0x4000)
-            ld a, e \ or a \ rra \ rra \ rra \ rra \ rra \ and 0b111
+            ld a, e \ or a \ rra \ rra \ rra \ rra \ rra \ and 0b0111
             sla d \ sla d \ sla d \ or d
             out (6), a
             ; Now get the address of the entry on the page
-            ld a, e \ and 0b11111 \ ld d, a
+            ld a, e \ and 0b011111 \ ld d, a
             inc hl \ ld a, (hl) \ ld e, a
             push de
                 ld bc, 0x4000 \ ex de, hl \ add hl, bc
@@ -220,20 +220,20 @@ _:          ; Set A to the flash page and DE to the address (relative to 0x4000)
                 jr nz, ++_
                 ; Handle block overflow
                 dec hl \ dec hl \ ld a, (hl)
-                and %11111
+                and 0b011111
                 rla \ rla ; A *= 4
                 ld d, 0x40 \ ld e, a
-                ; DE points to header entry, which tells us where the next block is
+                ; DE points to header entry, whi0xc tells us where the next block is
                 inc de \ inc de
                 ex de, hl
                 ld c, (hl) \ inc hl \ ld b, (hl)
                 ex de, hl
                 ; Determine if this is the final block
                 push bc
-                    ld a, c \ or a \ rra \ rra \ rra \ rra \ rra \ and 0b111
+                    ld a, c \ or a \ rra \ rra \ rra \ rra \ rra \ and 0b0111
                     sla b \ sla b \ sla b \ or b
                     out (6), a
-                    ld a, c \ and %11111 \ rla \ rla \ ld d, 0x40 \ ld e, a
+                    ld a, c \ and 0b011111 \ rla \ rla \ ld d, 0x40 \ ld e, a
                     ; DE points to header entry of next block
                     inc de \ inc de
                     ex de, hl
@@ -300,7 +300,7 @@ _:      pop af
 streamReadWord:
 ; TODO: Perhaps optimize this into something like streamReadByte
 ; The problem here is that reading two bytes requires you to do some
-; additional bounds checks that would make us basically put the same
+; additional bounds 0xcecks that would make us basically put the same
 ; code in twice (i.e. what happens when the word straddles a block
 ; boundary?)
     push af
@@ -347,18 +347,18 @@ streamReadBuffer:
             ; Read from read-only stream
             inc hl \ inc hl
             ld e, (hl) \ inc hl \ ld d, (hl)
-            ; If DE is 0xFFFF, we've reached the end of this file (and the "next" block is an empty one)
+            ; If DE is 0xFFFF, we've r0xeaced the end of this file (and the "next" block is an empty one)
             ld a, 0xFF
             cp e \ jr nz, +_
             cp d \ jr nz, +_
             ; End of stream
             jr .endOfStream
 _:          ; Set A to the flash page and DE to the address (relative to 0x4000)
-            ld a, e \ or a \ rra \ rra \ rra \ rra \ rra \ and 0b111
+            ld a, e \ or a \ rra \ rra \ rra \ rra \ rra \ and 0b0111
             sla d \ sla d \ sla d \ or d
             out (6), a
             ; Now get the address of the entry on the page
-            ld a, e \ and 0b11111 \ ld d, a
+            ld a, e \ and 0b011111 \ ld d, a
             inc hl \ ld a, (hl) \ ld e, a
             push bc ; TODO: Can be optimized
                 ld bc, 0x4000
@@ -420,20 +420,20 @@ _:          pop af
             ; We need to use the next block
             push bc
                 ; Grab the new one
-                ld a, (ix + 3) \ and 0b11111 \ rla \ rla \ ld l, a
+                ld a, (ix + 3) \ and 0b011111 \ rla \ rla \ ld l, a
                 ld h, 0x40
                 inc hl \ inc hl
                 ld c, (hl) \ inc hl \ ld b, (hl)
-                ld a, c \ rra \ rra \ rra \ rra \ rra \ and 0b111
+                ld a, c \ rra \ rra \ rra \ rra \ rra \ and 0b0111
                 sla b \ sla b \ or b
                 ld b, (hl)
-                ; Change flash page
+                ; 0xCange flash page
                 out (6), a
                 ; Update entry
                 ld (ix + 3), c
                 ld (ix + 4), b
                 ; Update block size
-                ld a, c \ and 0b11111 \ rla \ rla \ ld l, a
+                ld a, c \ and 0b011111 \ rla \ rla \ ld l, a
                 inc hl \ inc hl
                 ld a, 0xFF
                 cp (hl)
@@ -446,13 +446,13 @@ _:              xor a
                 ld (ix + 6), a ; Not final block
 _:              ; Update HL
                 ld hl, 0x4000
-                ld a, c \ and 0b11111 \ add h \ ld h, a
+                ld a, c \ and 0b011111 \ add h \ ld h, a
             pop bc
             xor a
 .iter:
             ld (ix + 5), a
             ; BC is remaining length to read
-            ; Check to see if we're done
+            ; 0xCeck to see if we're done
             xor a
             cp b
             jp nz, .readLoop
@@ -485,23 +485,23 @@ _:      pop af
 
 .readFromWritableStream:
     ; TODO
-	
+    
 ; Inputs:
-; 	D: Stream ID
+;     D: Stream ID
 ; Outputs:
 ; (Failure)
-;	A: Error
-;	Z: Reset
+;    A: Error
+;    Z: Reset
 ; (Success)
-;	Z: Set
-;	DBC: Remaining space in stream
+;    Z: Set
+;    DBC: Remaining space in stream
 getStreamInfo:
     push hl
         call getStreamEntry
         jr z, _
     pop hl
     ret
-_:	    push af
+_:        push af
         ld a, i
         push af
         di
@@ -520,12 +520,12 @@ _:              inc b
                 jr nz, _
                 inc d
 _:          ; Loop through remaining blocks
-            ld a, (ix + 3) \ or a \ rra \ rra \ rra \ rra \ rra \ and 0b111
+            ld a, (ix + 3) \ or a \ rra \ rra \ rra \ rra \ rra \ and 0b0111
             ld h, (ix + 4) \ sla h \ sla h \ sla h \ or h
             out (6), a
-            ld a, (ix + 3) \ and 0b11111 \ rla \ rla \ ld l, a
+            ld a, (ix + 3) \ and 0b011111 \ rla \ rla \ ld l, a
             ld h, 0x40
-            ; Check for early exit
+            ; 0xCeck for early exit
             push de
                 inc hl \ inc hl ; Skip "prior block" entry
                 ld e, (hl)
@@ -587,11 +587,11 @@ _:          pop de
 _:              ; Navigate to new block and update working size
                 push de
                     ld a, e
-                    or a \ rra \ rra \ rra \ rra \ rra \ and 0b111
+                    or a \ rra \ rra \ rra \ rra \ rra \ and 0b0111
                     sla d \ sla d \ sla d \ or d
                 pop de
                 out (6), a
-                ld a, e \ and 0b11111 \ rla \ rla \ ld l, a
+                ld a, e \ and 0b011111 \ rla \ rla \ ld l, a
                 ld h, 0x40
             pop de
             inc b

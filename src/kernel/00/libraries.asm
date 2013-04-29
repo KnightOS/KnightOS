@@ -19,12 +19,12 @@ _:  push af
         di
         push de
             call fileExists
-            jp nz, LoadLibrary_FileNotFound
+            jp nz, .fileNotFound
             
             ld a, (loadedLibraries)
             inc a
             cp maxLibraries
-            jp z, LoadLibrary_TooManyLibraries
+            jp z, .tooManyLibraries
         pop de
         push af
             push hl
@@ -45,7 +45,7 @@ _:  push af
                         ld hl, libraryTable
 _:                      ld a, (hl)
                         cp e
-                        jr z, loadLibrary_AlreadyLoaded
+                        jr z, .alreadyLoaded
                         inc hl \ inc hl \ inc hl \ inc hl
                         dec b
                         jr nz, -_
@@ -61,7 +61,7 @@ _:              pop af
                     ld a, $FE
                     ld (currentThreadIndex), a
                     call malloc
-                    jp nz, loadLibrary_OutOfMem
+                    jp nz, .outOfMem
                 pop af
                 ld (currentThreadIndex), a
             pop af
@@ -94,15 +94,15 @@ _:              pop af
         
         push ix \ pop hl
         push ix \ pop bc
-loadLibrary_JumpTableLoop:
+.jumpTableLoop:
         ld a, (hl)
         inc hl
         cp $FF
-        jr z, loadLibrary_JumpTableDone
+        jr z, .jumpTableDone
         cp $C9
         jr nz, _
         inc hl \ inc hl
-        jr LoadLibrary_JumpTableLoop
+        jr .jumpTableLoop
 _:      ld e, (hl)
         inc hl
         ld d, (hl)
@@ -115,9 +115,9 @@ _:      ld e, (hl)
         dec hl
         ld (hl), e
         inc hl \ inc hl
-        jr loadLibrary_JumpTableLoop
+        jr .jumpTableLoop
         
-loadLibrary_JumpTableDone:
+.jumpTableDone:
         ld hl, _
         push hl
         jp (ix) ; Run the initialization routine
@@ -132,7 +132,7 @@ _:  pop af
     cp a
     ret
     
-loadLibrary_AlreadyLoaded:
+.alreadyLoaded:
     pop bc
     pop af
     ld d, a
@@ -152,7 +152,7 @@ _:  pop af
     cp a
     ret
     
-loadLibrary_FileNotFound:
+.fileNotFound:
     pop de
     pop ix
     pop bc
@@ -165,7 +165,7 @@ _:  pop af
     or a
     ret
     
-loadLibrary_TooManyLibraries:
+.tooManyLibraries:
     pop de
     pop ix
     pop bc
@@ -178,7 +178,7 @@ _:  pop af
     or a
     ret
     
-loadLibrary_OutOfMem:
+.outOfMem:
     pop af
     ld (currentThreadIndex), a
     pop ix

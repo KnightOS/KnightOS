@@ -1,10 +1,10 @@
 formatMem:
-    ld a, $FF
+    ld a, 0xFF
     ld (userMemory), a
     ld hl, kernelMem - (userMemory - kernelMem) - 5 ; Total RAM - Kernel RAM Size - Formatting Overhead + 1
     ld (userMemory + 1), hl
     ld hl, userMemory
-    ld ($FFFE), hl
+    ld (0xFFFE), hl
     ret
     
 allocScreenBuffer:
@@ -43,7 +43,7 @@ memSeekToStart:
     push de
         push ix \ pop de
         ld hl, userMemory
-MemorySeekToStart_Loop:
+.loop:
         inc hl
         ld c, (hl)
         inc hl
@@ -54,7 +54,7 @@ MemorySeekToStart_Loop:
         call cpHLDE
         jr nc, ++_
         inc hl \ inc hl
-        jr memorySeekToStart_Loop
+        jr .loop
 _:      ld ix, 0 ; Error
         jr ++_
 _:      sbc hl, bc
@@ -94,7 +94,7 @@ malloc:
     push de
     push bc
         ld hl, userMemory
-allocMem_SearchLoop:
+.searchLoop:
         ld a, (hl)
         inc hl
         ld e, (hl)
@@ -103,16 +103,16 @@ allocMem_SearchLoop:
         inc hl ; Load owner thread into A, size into DE, HL points to first byte of allocated section
         
         cp nullThread ; Free memory is owned by the null thread ($FF)
-        jr z, allocMem_HandleFree
+        jr z, .handleFree
         inc de
         inc de
-allocMem_InsufficientFree:
+.insufficientFree:
         add hl, de ; Skip non-free section
-        jp c, allocMem_OutOfMem ; If overflow
+        jp c, .outOfMem ; If overflow
         
-        jr allocMem_SearchLoop
+        jr .searchLoop
         
-allocMem_HandleFree:
+.handleFree:
         ; BC = amount to allocate
         ; DE = size of current section
         ; HL = pointer to section start
@@ -130,7 +130,7 @@ allocMem_HandleFree:
         ; Return to loop
         add hl, de
         inc hl \ inc hl
-        jr allocMem_SearchLoop
+        jr .searchLoop
         
 _:      ; Check for dead pockets
         push de
@@ -151,9 +151,9 @@ _:          ex de, hl
         pop de
         
         call cpDEBC
-        jr z, allocMem_SkipNewMeta
+        jr z, .skipNewMeta
         
-allocMem_DoAllocNormal: ; Not accounting for dead pockets
+.doAllocNormal: ; Not accounting for dead pockets
     ; Update existing metadata (allocated header)
     push de
         push hl
@@ -208,7 +208,7 @@ _:  pop af
     cp a
     ret
         
-allocMem_SkipNewMeta:
+.skipNewMeta:
     ; Update existing metadata (allocated header)
     push hl \ pop ix ; Set IX for the return value
     dec hl \ dec hl \ dec hl
@@ -226,7 +226,7 @@ _:  pop af
     cp a
     ret
         
-allocMem_OutOfMem:
+.outOfMem:
     pop bc
     pop de
     pop hl
@@ -270,7 +270,7 @@ free:
         
         ld a, (hl)
         cp nullThread
-        jr nz, freeMem_TryMergeForward
+        jr nz, .tryMergeForward
         
         ; Possible to merge backward
         inc bc \ inc bc \ inc bc \ inc bc \ inc bc ; BC += 5
@@ -302,7 +302,7 @@ free:
         push hl
         pop ix
         jr _ ; Skip part of the forward merge code
-freeMem_TryMergeForward:
+.tryMergeForward:
         push ix \ pop hl
 _:
         ; HL is the first byte of this block, BC is the size
@@ -314,7 +314,7 @@ _:
         ld e, (hl)
         inc hl
         ld d, (hl) ; DE == size of leading block
-        jr nz, freeMem_Done
+        jr nz, .done
         
         ; Merge forward
         ;inc hl?
@@ -338,7 +338,7 @@ _:
         dec hl
         ld (hl), e ; Update header
         
-freeMem_Done:
+.done:
     pop ix
     pop de
     pop hl

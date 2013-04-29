@@ -1,52 +1,52 @@
-; $0000
-; RST $00
+; 0x0000
+; RST 0x00
     jp boot
 ; Magic Number
-; $0003
+; 0x0003
 .db "KK"
-; $0005
+; 0x0005
 .db 0 ; Major version
 .db 1 ; Minor version
 
-; $0008
-; RST $08
-.fill $08-$
+; 0x0008
+; RST 0x08
+.fill 0x08-$
 rkcall:
     jp kcall
-.fill $10-$
-; $0010
-; RST $10
+.fill 0x10-$
+; 0x0010
+; RST 0x10
 rlcall:
     jp lcall
-.fill $18-$
-; $0018
-; RST $18
+.fill 0x18-$
+; 0x0018
+; RST 0x18
     ret
-.fill $20-$
-; $0020
-; RST $20
+.fill 0x20-$
+; 0x0020
+; RST 0x20
     ret
-.fill $28-$
-; $0028
-; RST $28
+.fill 0x28-$
+; 0x0028
+; RST 0x28
     jp bcall
-.fill $30-$    
-; $0030
-; RST $30
+.fill 0x30-$    
+; 0x0030
+; RST 0x30
     ret
-.fill $38-$
-; $0038
-; RST $38
+.fill 0x38-$
+; 0x0038
+; RST 0x38
 ; SYSTEM INTERRUPT
     jp sysInterrupt
-; $003B
+; 0x003B
 
-.fill $53-$
-; $0053
+.fill 0x53-$
+; 0x0053
     jp boot
-; $0056
-.db $FF, $A5, $FF
+; 0x0056
+.db 0xFF, 0xA5, 0xFF
 #ifdef TI84pSE
-.fill $64-$
+.fill 0x64-$
     .db '2' ; For the sake of WabbitEmu
 #endif

@@ -3,12 +3,12 @@ getCurrentThreadID:
         ld a, (currentThreadIndex)
         cp nullThread
         jr z, +_
-        cp $FE
+        cp 0xFE
         jr z, ++_
         add a, a
         add a, a
         add a, a
-        ld h, $80
+        ld h, 0x80
         ld l, a
         ld a, (hl)
     pop hl
@@ -17,7 +17,7 @@ _:  pop hl
     ld a, (nextThreadId)
     ret
 _:  pop hl
-    ld a, $FE ; TODO: Dynamic library deallocation
+    ld a, 0xFE ; TODO: Dynamic library deallocation
     ret
     
 ; Inputs:

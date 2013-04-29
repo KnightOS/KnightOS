@@ -296,7 +296,7 @@ namespace build
             Directory.CreateDirectory("../bin/" + configuration);
         }
 
-        static void Assemble (string input, string output, string args, params string[] defines)
+        static void Assemble(string input, string output, string args, params string[] defines)
 		{
 			string defineString = string.Empty;
 			var listingFile = Path.Combine (Path.GetDirectoryName (output), Path.GetFileNameWithoutExtension (output) + ".lst");

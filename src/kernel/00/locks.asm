@@ -60,7 +60,7 @@ hasKeypadLock:
     ret
     
 hasUSBLock:
-    #ifdef USB
+#ifdef USB
     push hl
     push af
         call getCurrentThreadId
@@ -70,12 +70,12 @@ hasUSBLock:
     ld a, h
     pop hl
     ret
-    #else
+#else
     push bc
         ld b, a
         or a
         ld a, b
     pop bc
-    #endif
+#endif
     ret
     

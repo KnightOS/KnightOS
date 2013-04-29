@@ -73,7 +73,7 @@ findFileEntry:
     push af ; Save interrupt state
     di
         ; Skip initial / if present
-        ; TODO: Allow for relative paths somehow
+        ; TODO: Allow for relative paths som0xeow
         ld a, (de)
         cp '/'
         jr nz, _
@@ -163,7 +163,7 @@ _:          ld a, (hl)
 .handleFile:
             push bc
                 push hl
-                    ; Check parent directory ID
+                    ; 0xCeck parent directory ID
                     ld c, (hl) \ dec hl \ ld b, (hl)
                     ld hl, (kernelGarbage)
                     call cpHLBC
@@ -199,7 +199,7 @@ _:  pop af
     ret
 
 
-; checks string at (DE) for '/'
+; 0xcecks string at (DE) for '/'
 ; Z for no slashes, NZ for slashes
 checkForRemainingSlashes:
     ld a, (de)

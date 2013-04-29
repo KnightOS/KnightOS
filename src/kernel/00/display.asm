@@ -19,11 +19,8 @@ clearBuffer:
 ;Input: IY: Buffer
 ;-----> Copy the gbuf to the screen, guaranteed 
 ;Input: nothing
-;Output:graph buffer is copied to the screen, no matter the speed settings
-bufferToLCD:
-bufCopy:
+;Output: graph buffer is copied to the screen, no matter the speed settings
 fastCopy:
-safeCopy:
     call hasLCDLock
     ret nz
 fastCopy_skipCheck:
@@ -36,41 +33,40 @@ fastCopy_skipCheck:
     di                 ;DI is only required if an interrupt will alter the lcd.
     push iy \ pop hl
     
-    ld c, $10
-    ld a, $80
-setrow:
+    ld c, 0x10
+    ld a, 0x80
+.setRow:
     in f, (c)
-    jp m, setrow
-    out ($10), a
+    jp m, .setRow
+    out (0x10), a
     ld de, 12
-    ld a, $20
-col:
+    ld a, 0x20
+.col:
     in f, (c)
-    jp m, col
-    out ($10),a
+    jp m, .col
+    out (0x10),a
     push af
     ld b,64
-row:
+.row:
     ld a, (hl)
-rowwait:
+.rowWait:
     in f, (c)
-    jp m, rowwait
-    out ($11), a
+    jp m, .rowWait
+    out (0x11), a
     add hl, de
-    djnz row
+    djnz .row
     pop af
     dec h
     dec h
     dec h
     inc hl
     inc a
-    cp $2c
-    jp nz, col
+    cp 0x2C
+    jp nz, .col
     pop af
     jp po, _
     ei
-_:    
-    pop de
+_:  pop de
     pop af
     pop bc
     pop hl
@@ -81,32 +77,30 @@ _:
 ; output : hl -> address in graph buffer, a -> pixel mask
 ; destroys : b, de
 getPixel:
-    ld    h, 0
-    ld    d, h
-    ld    e, l
+    ld h, 0
+    ld d, h
+    ld e, l
     
-    add    hl, hl
-    add    hl, de
-    add    hl, hl
-    add    hl, hl
+    add hl, hl
+    add hl, de
+    add hl, hl
+    add hl, hl
     
-    ld    e, a
-    srl    e
-    srl    e
-    srl    e
-    add    hl, de
-    
+    ld e, a
+    srl e
+    srl e
+    srl e
+    add hl, de
+
     push iy \ pop de
-    add    hl, de
-    
-    and    7
-    ld    b, a
-    ld    a, $80
-    ret    z
+    add hl, de
+    and 7
+    ld b, a
+    ld a, 0x80
+    ret z
     
     rrca
-    djnz    $-1
-    
+    djnz $-1
     ret
     
 ; brief : set (darkens) a pixel in the graph buffer
@@ -193,36 +187,36 @@ drawLine:
 _drawLine:
     ld a, h
     cp d
-    jp nc, noswapx
+    jp nc, .noswapx
     ex de, hl
-noswapx:
+.noswapx:
 
     ld a, h
     sub d
-    jp nc, posx
+    jp nc, .posx
     neg
-posx:
+.posx:
     ld b, a
     ld a, l
     sub e
-    jp nc, posy
+    jp nc, .posy
     neg
-posY:
+.posY:
     ld c, a
     ld a, l
     ld hl, -12
     cp e
-    jp c, lineup
+    jp c, .lineup
     ld hl, 12
-lineup:
-    ld ix, xbit
+.lineup:
+    ld ix, .xbit
     ld a, b
     cp c
-    jp nc, xline
+    jp nc, .xline
     ld b, c
     ld c, a
-    ld ix, ybit
-xline:
+    ld ix, .ybit
+.xline:
     push hl
     ld a, d
     ld d, 0
@@ -233,20 +227,20 @@ xline:
     add hl, de
     add hl, de
     ld e, a
-    and %00000111
+    and 0b000000111
     srl e
     srl e
     srl e
     add hl, de
     push iy \ pop de
-    ;ld de,gbuf
+    ;ld de, gbuf
     add hl, de
     add a, a
     ld e, a
     ld d, 0
     add ix, de
     ld e, (ix)
-    ld d, (ix+1)
+    ld d, (ix + 1)
     push hl
     pop ix
     ex de, hl
@@ -259,77 +253,77 @@ xline:
     inc b
     ret
 
-Xbit:
- .dw drawX0, drawX1, drawX2, drawX3
- .dw drawX4, drawX5, drawX6, drawX7
-Ybit:
- .dw drawY0, drawY1, drawY2, drawY3
- .dw drawY4, drawY5, drawY6, drawY7
+.xbit:
+ .dw .drawX0, .drawX1, .drawX2, .drawX3
+ .dw .drawX4, .drawX5, .drawX6, .drawX7
+.ybit:
+ .dw .drawY0, .drawY1, .drawY2, .drawY3
+ .dw .drawY4, .drawY5, .drawY6, .drawY7
     
-drawX0:
+.drawX0:
     set 7, (ix)
     add a, c
     cp h
-    jp c, $+3+2+1
+    jp c, $ + 3 + 2 + 1
     add ix, de
     sub h
-    djnz drawX1
+    djnz .drawX1
     ret
-drawX1:
+.drawX1:
     set 6, (ix)
     add a, c
     cp h
-    jp c, $+3+2+1
+    jp c, $ + 3 + 2 + 1
     add ix, de
     sub h
-    djnz drawX2
+    djnz .drawX2
     ret
-drawX2:
+.drawX2:
     set 5, (ix)
     add a, c
     cp h
     jp c, $+3+2+1
     add ix, de
     sub h
-    djnz drawX3
+    djnz .drawX3
     ret
-drawX3:
+.drawX3:
     set 4, (ix)
     add a, c
     cp h
     jp c, $+3+2+1
     add ix, de
     sub h
-    djnz drawX4
+    djnz .drawX4
     ret
-drawX4:
+.drawX4:
     set 3, (ix)
     add a, c
     cp h
     jp c, $+3+2+1
     add ix, de
     sub h
-    djnz drawX5
+    djnz .drawX5
     ret
-drawX5:
+.drawX5:
     set 2, (ix)
     add a, c
     cp h
     jp c, $+3+2+1
     add ix, de
     sub h
-    djnz drawX6
+    djnz .drawX6
     ret
-drawX6:
+.drawX6:
     set 1, (ix)
     add a, c
     cp h
     jp c, $+3+2+1
     add ix, de
     sub h
-    djnz drawX7
+    djnz .drawX7
     ret
-drawX7:
+.drawX7:
     set 0, (ix)
     inc ix
     add a, c
@@ -337,108 +331,106 @@ drawX7:
     jp c, $+3+2+1
     add ix, de
     sub h
-    djnz drawX0
+    djnz .drawX0
     ret
 
-drawY0_:
+.drawY0_:
     inc ix
     sub h
     dec b
     ret z
-drawY0:
+.drawY0:
     set 7, (ix)
     add ix, de
     add a, l
     cp h
-    jp nc, drawY1_
-    djnz drawY0
+    jp nc, .drawY1_
+    djnz .drawY0
     ret
-drawY1_:
+.drawY1_:
     sub h
     dec b
     ret z
-drawY1:
+.drawY1:
     set 6, (ix)
     add ix, de
     add a, l
     cp h
-    jp nc, drawY2_
-    djnz drawY1
+    jp nc, .drawY2_
+    djnz .drawY1
     ret
-drawY2_:
+.drawY2_:
     sub h
     dec b
     ret z
-DrawY2:
+.drawY2:
     set 5, (ix)
     add ix, de
     add a, l
     cp h
-    jp nc, drawY3_
-    djnz drawY2
+    jp nc, .drawY3_
+    djnz .drawY2
     ret
-drawY3_:
+.drawY3_:
     sub h
     dec b
     ret z
-drawY3:
+.drawY3:
     set 4, (ix)
     add ix, de
     add a, l
     cp h
-    jp nc, drawY4_
-    djnz drawY3
+    jp nc, .drawY4_
+    djnz .drawY3
     ret
-drawY4_:
+.drawY4_:
     sub h
     dec b
     ret z
-drawY4:
+.drawY4:
     set 3, (ix)
     add ix, de
     add a, l
     cp h
-    jp nc, drawY5_
-    djnz drawY4
+    jp nc, .drawY5_
+    djnz .drawY4
     ret
-drawY5_:
+.drawY5_:
     sub h
     dec b
     ret z
-drawY5:
+.drawY5:
     set 2, (ix)
     add ix, de
     add a, l
     cp h
-    jp nc, drawY6_
-    djnz drawY5
+    jp nc, .drawY6_
+    djnz .drawY5
     ret
-drawY6_:
+.drawY6_:
     sub h
     dec b
     ret z
-drawY6:
+.drawY6:
     set 1, (ix)
     add ix, de
     add a, l
     cp h
-    jp nc, drawY7_
-    djnz drawY6
+    jp nc, .drawY7_
+    djnz .drawY6
     ret
-drawY7_:
+.drawY7_:
     sub h
     dec b
     ret z
-drawY7:
+.drawY7:
     set 0, (ix)
     add ix, de
     add a, l
     cp h
-    jp nc, drawY0_
-    djnz drawY7
+    jp nc, .drawY0_
+    djnz .drawY7
     ret
-
-; ====SPRITE ROUTINES====
 
 ; D = xpos
 ; E = ypos
@@ -462,7 +454,7 @@ putSpriteXOR:
     
 _clipSprXOR:
 ; Start by doing vertical clipping
-    ld a, %11111111         ; Reset clipping mask
+    ld a, 0b011111111         ; Reset clipping mask
     ld (clip_mask), a
     ld a, e                 ; If ypos is negative
     or a                    ; try clipping the top
@@ -504,28 +496,28 @@ vertClipDone:
 clipRight:
     and 7                   ; Determine the clipping mask
     LD C, A
-    LD A, %11111111
+    LD A, 0b011111111
 findRightMask:
     add a, a
     dec c
-    jr NZ, findRightMask
+    jr nz, findRightMask
     ld (clip_mask), a
     ld a, d
     jr horizClipDone
     
 clipLeft:
-    AND    7                    ; Determine the clipping mask
-    LD     C, A
-    LD     A, %11111111
+    and 7                    ; Determine the clipping mask
+    ld c, a
+    ld a, 0b011111111
 findLeftMask:
-    ADD    A, A
-    DEC    C
-    JR     NZ, findLeftMask
-    CPL
-    LD     (clip_mask), A
-    LD     A, D
-    ADD    A, 96                ; Set xpos so sprite will "spill over"
-    LD     C, 12                ; Set correction
+    add a, a
+    dec c
+    jr nz, findLeftMask
+    cpl
+    ld (clip_mask), A
+    ld a, d
+    add a, 96                ; Set xpos so sprite will "spill over"
+    ld c, 12                ; Set correction
 
 horizClipDone:
 ; A = xpos
@@ -534,52 +526,52 @@ horizClipDone:
 ; IX = image address
 
 ; Now we can finally display the sprite.
-    LD     H, 0
-    LD     D, H
-    LD     L, E
-    ADD    HL, HL
-    ADD    HL, DE
-    ADD    HL, HL
-    ADD    HL, HL
+    ld h, 0
+    ld d, h
+    ld l, e
+    add hl, hl
+    add hl, de
+    add hl, hl
+    add hl, hl
 
-    LD     E, A
-    SRL    E
-    SRL    E
-    SRL    E
-    ADD    HL, DE
+    ld e, a
+    srl e
+    srl e
+    srl e
+    add hl, de
 
     push iy \ pop de ; LD     DE, PlotSScreen
-    ADD    HL, DE
+    add hl, de
 
-    LD     D, 0                 ; Correct graph buffer address
-    LD     E, C                 ; if clipping the left side
-    SBC    HL, DE               ;
+    ld d, 0                 ; Correct graph buffer address
+    ld e, c                 ; if clipping the left side
+    sbc, de
 
-    AND    7
-    JR     Z, _aligned
+    and 7
+    jr z, _aligned
 
-    LD     C, A
-    LD     DE, 11
+    ld c, a
+    ld de, 11
 
 _rowLoop:
-    PUSH   BC
-    LD     B, C
-    LD     A, (clip_mask)       ; Mask out the part of the sprite
-    AND    (IX)                 ; to be horizontally clipped
-    LD     C, 0
+    push bc
+    ld b, c
+    ld a, (clip_mask)       ; Mask out the part of the sprite
+    and (ix)                 ; to be horizontally clipped
+    ld c, 0
 
 _shiftLoop:
-    SRL    A
-    RR     C
-    DJNZ   _shiftLoop
+    srl a
+    rr c
+    djnz _shiftLoop
 
-    XOR    (HL)
-    LD     (HL), A
+    xor (hl)
+    ld (hl), a
 
-    INC    HL
-    LD     A, C
-    XOR    (HL)
-    LD     (HL), A
+    inc hl
+    ld a, c
+    xor (hl)
+    ld (hl), a
 
     ADD    HL, DE
     INC    IX
@@ -621,7 +613,7 @@ PutSpriteAND:
     
 _ClipSprAND:
 ; Start by doing vertical clipping
-    LD     A, %11111111         ; Reset clipping mask
+    LD     A, 0b011111111         ; Reset clipping mask
     LD     (clip_mask), A
     LD     A, E                 ; If ypos is negative
     OR     A                    ; try clipping the top
@@ -670,7 +662,7 @@ VertClipDone2:
 ClipRight2:
     AND    7                    ; Determine the clipping mask
     LD     C, A
-    LD     A, %11111111
+    LD     A, 0b011111111
 FindRightMask2:
     ADD    A, A
     DEC    C
@@ -682,7 +674,7 @@ FindRightMask2:
 ClipLeft2:
     AND    7                    ; Determine the clipping mask
     LD     C, A
-    LD     A, %11111111
+    LD     A, 0b011111111
 FindLeftMask2:
     ADD    A, A
     DEC    C
@@ -790,7 +782,7 @@ PutSpriteOR:
     
 _ClipSprOR:
 ; Start by doing vertical clipping
-    LD     A, %11111111         ; Reset clipping mask
+    LD     A, 0b011111111         ; Reset clipping mask
     LD     (clip_mask), A
     LD     A, E                 ; If ypos is negative
     OR     A                    ; try clipping the top
@@ -839,7 +831,7 @@ VertClipDone3:
 ClipRight3:
     AND    7                    ; Determine the clipping mask
     LD     C, A
-    LD     A, %11111111
+    LD     A, 0b011111111
 FindRightMask3:
     ADD    A, A
     DEC    C
@@ -851,7 +843,7 @@ FindRightMask3:
 ClipLeft3:
     AND    7                    ; Determine the clipping mask
     LD     C, A
-    LD     A, %11111111
+    LD     A, 0b011111111
 FindLeftMask3:
     ADD    A, A
     DEC    C
@@ -977,7 +969,7 @@ RectXOR:
     srl    e
     srl    e
     add    hl,de
-    and    %00000111    ;(a,_) = (X^8,Y)
+    and    0b000000111    ;(a,_) = (X^8,Y)
     pop    de        ;(e,d) = (width,height)
 
     ld    b,a
@@ -1027,7 +1019,7 @@ __BoxInvLoop2:
     ld    e,b
     jr    c,__BoxInvShift
     ld    e,a
-    ld    a,%11111111
+    ld    a,0b011111111
     jr    __BoxInvLoop1
 __BoxInvEnd:
 
@@ -1074,7 +1066,7 @@ RectOR:
     srl    e
     srl    e
     add    hl,de
-    and    %00000111    ;(a,_) = (X^8,Y)
+    and    0b000000111    ;(a,_) = (X^8,Y)
     pop    de        ;(e,d) = (width,height)
 
     ld    b,a
@@ -1124,7 +1116,7 @@ __BoxORLoop2:
     ld    e,b
     jr    c,__BoxORShift
     ld    e,a
-    ld    a,%11111111
+    ld    a,0b011111111
     jr    __BoxORLoop1
 __BoxOREnd:
 
@@ -1171,7 +1163,7 @@ RectAND:
     srl    e
     srl    e
     add    hl,de
-    and    %00000111    ;(a,_) = (X^8,Y)
+    and    0b000000111    ;(a,_) = (X^8,Y)
     pop    de        ;(e,d) = (width,height)
 
     ld    b,a
@@ -1222,7 +1214,7 @@ __BoxANDLoop2:
     ld    e,b
     jr    c,__BoxANDShift
     ld    e,a
-    ld    a,%11111111
+    ld    a,0b011111111
     jr    __BoxANDLoop1
 __BoxANDEnd:
 

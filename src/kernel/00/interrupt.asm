@@ -30,11 +30,11 @@ sysInterrupt:
     push hl
     
 #ifdef USB
-    jp USBInterrupt
-InterruptResume:
+    jp usbInterrupt
+interruptResume:
 #endif
     
-    in a, (04h)
+    in a, (0x04)
     bit 0, a
     jr nz, intHandleON
     bit 1, a
@@ -43,22 +43,22 @@ InterruptResume:
     jr nz, intHandleTimer2
     bit 4, a
     jr nz, intHandleLink
-    jr doContextSwitch
+    jr contextSwitch
 intHandleON:
-    in a, (03h)
+    in a, (0x03)
     res 0, a
-    out (03h), a
+    out (0x03), a
     set 0, a
-    out (03h), a
+    out (0x03), a
     
-    ; Check for special keycodes
+    ; 0xCeck for special keycodes
     jp handleKeyboard
 intHandleTimer1:
-    in a, (03h)
+    in a, (0x03)
     res 1, a
-    out (03h), a
+    out (0x03), a
     set 1, a
-    out (03h), a
+    out (0x03), a
     ; Timer 1 interrupt
 doContextSwitch:
     ld a, (currentThreadIndex)
@@ -111,11 +111,11 @@ _:  dec hl
     
     jr sysInterruptDone
 intHandleTimer2:
-    in a, (03h)
+    in a, (0x03)
     res 2, a
-    out (03h), a
+    out (0x03), a
     set 2, a
-    out (03h), a
+    out (0x03), a
     ; Timer 2 interrupt
     
     ; Run priority hook
@@ -130,11 +130,11 @@ intHandleTimer2:
     jp (hl)    
     
 intHandleLink:
-    in a, (03h)
+    in a, (0x03)
     res 4, a
-    out (03h), a
+    out (0x03), a
     set 4, a
-    out (03h), a
+    out (0x03), a
     ; Link interrupt
 sysInterruptDone:
     pop hl
@@ -153,10 +153,10 @@ sysInterruptDone:
     ret
     
 handleKeyboard:
-    ld a, $FF
+    ld a, 0xFF
     out (1), a
     ; Try ON+MODE
-    ld a, $BF
+    ld a, 0xBF
     out (1), a
     in a, (1)
     bit 6, a
@@ -171,30 +171,30 @@ handleOnMODE:
     jr sysInterruptDone
     
 #ifdef USB
-USBInterrupt:
-    in a, ($55) ; USB Interrupt status
+usbInterrupt:
+    in a, (0x55) ; USB Interrupt status
     bit 0, a
-    jr z, USBUnknownEvent
+    jr z, usbUnknownEvent
     bit 2, a
-    jr z, USBLineEvent
+    jr z, usbLineEvent
     bit 4, a
-    jr z, USBProtocolEvent
-    jp InterruptResume
+    jr z, usbProtocolEvent
+    jp interruptResume
     
-USBUnknownEvent:
-    jp InterruptResume
+usbUnknownEvent:
+    jp interruptResume
     
-USBLineEvent:
-    in a, ($56) ; USB Line Events
-    xor $FF
-    out ($57), a ; Acknowledge interrupt and disable further interrupts
-    jp InterruptResume
+usbLineEvent:
+    in a, (0x56) ; USB Line Events
+    xor 0xFF
+    out (0x57), a ; Acknowledge interrupt and disable further interrupts
+    jp interruptResume
     
-USBProtocolEvent:
-    in a, ($82)
-    in a, ($83)
-    in a, ($84)
-    in a, ($85)
-    in a, ($86) ; Merely reading from these will acknowledge the interrupt
-    jp InterruptResume
+usbProtocolEvent:
+    in a, (0x82)
+    in a, (0x83)
+    in a, (0x84)
+    in a, (0x85)
+    in a, (0x86) ; Merely reading from these will acknowledge the interrupt
+    jp interruptResume
 #endif

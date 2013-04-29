@@ -1,51 +1,48 @@
-#define secsPerHour 60 * 60
-#define secsPerDay secsPerHour * 24
-
 ; Sets the clock to HLDE, in ticks
 setClock:
-    #IFDEF CLOCK
-    push af
-        ld a, h
-        out ($41), a
-        ld a, l
-        out ($42), a
-        ld a, d
-        out ($43), a
-        ld a, e
-        out ($44), a
-        ld a, 1
-        out ($40), a
-        ld a, 3
-        out ($40), a
-    pop af
-    cp a
-    ret
-    #ELSE
+#ifndef CLOCK
     ld a, errUnsupported
     or a
     ret
-    #ENDIF
+#else
+    push af
+        ld a, h
+        out (0x41), a
+        ld a, l
+        out (0x42), a
+        ld a, d
+        out (0x43), a
+        ld a, e
+        out (0x44), a
+        ld a, 1
+        out (0x40), a
+        ld a, 3
+        out (0x40), a
+    pop af
+    cp a
+    ret
+#endif
     
 ; Time in HLDE
 getTimeInTicks:
-    #IFDEF CLOCK
+#ifndef CLOCK
+    ld a, errUnsupported
+    or a
+    ret
+#else
     push af
-        in a, ($45)
+        in a, (0x45)
         ld h, a
-        in a, ($46)
+        in a, (0x46)
         ld l, a
-        in a, ($47)
+        in a, (0x47)
         ld d, a
-        in a, ($48)
+        in a, (0x48)
         ld e, a
     pop af
     cp a
     ret
-    #ELSE
-    ld a, errUnsupported
-    or a
-    ret
-    #ENDIF
+#endif
     
 ; Converts HLDE (ticks) to:
 ; H: Day
@@ -82,15 +79,13 @@ convertTimeToTicks:
 ; E: Seconds
 ; A: Day of Week
 getTime:
-    #IFDEF CLOCK
+#ifndef CLOCK
+    ld a, errUnsupported
+    or a
+    ret
+#else
     call getTimeInTicks
     call convertTimeFromTicks
-    #ENDIF
+    cp a
     ret
-
-#undefine ticks
-#undefine days
-#undefine hour
-#undefine minute
-#undefine second
-#undefine dayOfWeek
+#endif
