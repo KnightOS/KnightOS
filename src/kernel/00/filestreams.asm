@@ -11,7 +11,8 @@
 ;   Z: Reset
 ; (Success)
 ;   D: File stream ID
-;   E: Garbage    
+;   E: Garbage
+;   Z: Set
 openFileRead:
     push hl
     push de
@@ -175,6 +176,7 @@ closeStream:
 ;   Z: Reset
 ; (Success)
 ;   A: Byte read
+;   Z: Set
 streamReadByte:
     push hl
         call getStreamEntry
@@ -297,12 +299,14 @@ _:      pop af
 ;   Z: Reset
 ; (Success)
 ;   HL: Word read
+;   Z: Set
 streamReadWord:
 ; TODO: Perhaps optimize this into something like streamReadByte
 ; The problem here is that reading two bytes requires you to do some
-; additional bounds 0xcecks that would make us basically put the same
+; additional bounds checks that would make us basically put the same
 ; code in twice (i.e. what happens when the word straddles a block
-; boundary?)
+; boundary?  Although the only time this would happen is when the pointer
+; is on the last byte of the block.)
     push af
         call streamReadByte
         jr nz, .error
@@ -326,7 +330,7 @@ streamReadWord:
 ;   Z: Reset
 ; (Success)
 ;   File is read into (IX)
-;   Z: Set    
+;   Z: Set
 streamReadBuffer:
     push hl
         call getStreamEntry
@@ -388,7 +392,7 @@ _:          ; Set A to the flash page and DE to the address (relative to 0x4000)
             jr nc, ++_
             ld a, c
             jr ++_
-            
+
 _:          pop af
             ; A is length to read
 _:          push bc
@@ -485,7 +489,7 @@ _:      pop af
 
 .readFromWritableStream:
     ; TODO
-    
+
 ; Inputs:
 ;     D: Stream ID
 ; Outputs:
@@ -606,6 +610,7 @@ _:              ; Navigate to new block and update working size
 ;   Z: Reset
 ; (Success)
 ;   Z: Set
+;   File is read into (IX)
 streamReadToEnd:
     push bc
     push de

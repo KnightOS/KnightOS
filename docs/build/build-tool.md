@@ -17,10 +17,10 @@ The source code for the build tool may be found in [build/tool/](https://github.
 Include "mono" if you use it on Linux or Mac. You must first install Mono if you are on these platforms. The default usage,
 with no parameters, is to build the TI-84+ Silver Edition version in English. You may supply the following parameters:
 
-    --all: Build for all supported platforms in English.
-    --configuration [target]: Change the target platform configuration.
-    --language [language]: Changes the target locale of the build.
-    --verbose: Output all sass output to the console.
+    `--all`: Build for all supported platforms in English.
+    `--configuration [target]`: Change the target platform configuration.
+    `--language [language]`: Changes the target locale of the build.
+    `--verbose`: Output all sass output to the console.
 
 ### Configurations
 
@@ -32,7 +32,7 @@ The possible configuration values are the following:
 * TI84p
 * TI84pSE
 
-*Note*: Providing --all will build all of these configurations, in this order.
+*Note*: Providing `--all` will build all of these configurations, in this order.
 
 The tool will use the appropriate signing key based on this selection, as well as defining the configuration value at assembly
 time. [inc/defines.inc](https://github.com/KnightSoft/KnightOS/blob/master/inc/defines.inc) will add additional defined values
@@ -86,22 +86,22 @@ from the kernel build configuration can be seen here:
 It is similar to scripting languages you've seen before, but less powerful and not suitable for use outside of the KnightOS build
 process. The following commands are available:
 
-* asm \[input] \[output]: Assembles the specified file with sass and outputs it to \[output].
-* cp \[from] \[to]: Copies the \[from] file to \[to].
-* echo \[text]: Echos \[text] to the console during the build.
-* endif: Closes the corresponding if statement.
-* fscreate \[path]: \[path] must be a directory. This directory will be copied into the final output and formatted as a KFS disk.
-* if \[configuration]: If the specified \[configuration] is not the target, the script will be ignored until endif. This may not be
+* `asm \[input] \[output]`: Assembles the specified file with sass and outputs it to \[output].
+* `cp \[from] \[to]`: Copies the \[from] file to \[to].
+* `echo \[text]`: Echos \[text] to the console during the build.
+* `endif`: Closes the corresponding if statement.
+* `fscreate \[path]`: `\[path]` must be a directory. This directory will be copied into the final output and formatted as a KFS disk.
+* `if \[configuration]`: If the specified \[configuration] is not the target, the script will be ignored until endif. This may not be
   nested.
-* jump include \[label]: Adds the label specified to the jump table. This label must be loaded via the load command.
-* jump finish \[address] \[include file]: Creates the jump table, starting at \[address] and working backwards. Also outputs an
-  include file to \[include file] with equates for each label that point to locations in the jump table.
-* link \[file] \[target] \[length]: Copies the first \[length] bytes from \[file] to the final ROM at \[target].
-* load \[file]: Loads the labels in the specified file into the build tool's memory for use when creating jump tables and include
+* `jump include \[label]`: Adds the `label` specified to the jump table. This label must be loaded via the load command.
+* `jump finish \[address] \[include file]`: Creates the jump table, starting at `\[address]` and working backwards. Also outputs an
+  include file to `\[include file]` with equates for each label that point to locations in the jump table.
+* `link \[file] \[target] \[length]`: Copies the first \[length] bytes from \[file] to the final ROM at \[target].
+* `load \[file]`: Loads the labels in the specified file into the build tool's memory for use when creating jump tables and include
   files.
-* mkdir \[name]: Creates the directory specified.
-* pages \[hex...]: Adds the specified pages, in hex, to the final 8xu or 73u files.
-* rm \[targets...]: Deletes \[targets...], either files or directories.
+* `mkdir \[name]`: Creates the directory specified.
+* `pages \[hex...]`: Adds the specified pages, in hex, to the final 8xu or 73u files.
+* `rm \[targets...]`: Deletes `\[targets...]`, either files or directories.
 
 The build tool will first build [src/kernel/build.cfg](https://github.com/KnightSoft/KnightOS/blob/master/src/kernel/build.cfg), then
 [src/userspace/build.cfg](https://github.com/KnightSoft/KnightOS/blob/master/src/userspace/build.cfg).

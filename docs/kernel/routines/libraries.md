@@ -24,14 +24,15 @@ Loads the specified library.
 *Notes*
 
 If the library is already in use, this routine instead notes that this thread
-depends on the library.
+depends on the library; it does not load another copy of the library.
 
-Once loaded, you will be able to perform LCALLs that use this library.
+Once you have used this routine to load the library, you will be able to perform
+LCALLs that use this library.
 
 Libraries are automatically unloaded with the last program that depends on it
 exits.
 
-Note: The library mechanism is incomplete. All loaded libraries will persist
-in memory until the device reboots. This behavior will change before the release
-of KnightOS. However, all other functions of library support are in working
-order.
+Note: The library mechanism is incomplete.  Currently, all loaded libraries will
+persist in memory until a reboot.  Library unloading will be implemented before
+the release of KnightOS. However, all other functions of library support are in
+working order.

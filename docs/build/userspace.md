@@ -29,9 +29,9 @@ entries:
     asm bin/castle/castle.asm out/bin/castle
     rm out/bin/castle.lab out/bin/castle.lst
 
-Ensure that you remove extraneous files, such as .lab and .lst files.
+Ensure that you remove extraneous files, such as `.sym` and `.lst` files.
 
 ## Adding to the Castle
 
-If you want your program to appear in the castle, you need to update
+If you want your program to appear in the Castle, you need to update
 [src/userspace/etc/castle.config](https://github.com/KnightSoft/KnightOS/blob/master/src/userspace/etc/castle.config.asm).
