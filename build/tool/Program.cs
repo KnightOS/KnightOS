@@ -152,7 +152,7 @@ namespace build
                     foreach (var jumpValue in jumpTable.Reverse())
                     {
                         byte[] value = BitConverter.GetBytes(jumpValue.Value);
-                        include = jumpValue.Key + " .equ $" + ((ushort)output.Position).ToString("X4") + Environment.NewLine + include;
+                        include = ".equ " + jumpValue.Key + " 0x" + ((ushort)output.Position).ToString("X4") + Environment.NewLine + include;
                         output.Write(new byte[]
                             {
                                 0xC3, // jp
