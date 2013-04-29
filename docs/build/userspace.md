@@ -29,7 +29,7 @@ entries:
     asm bin/castle/castle.asm out/bin/castle
     rm out/bin/castle.lab out/bin/castle.lst
 
-Ensure that you remove extraneous files, such as `.lab` and `.lst` files.
+Ensure that you remove extraneous files, such as `.sym` and `.lst` files.
 
 ## Adding to the Castle
 
