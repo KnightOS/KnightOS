@@ -1,2 +1,0 @@
-In this folder, build.cfg is set up to output all files to out/, which is placed directly into the
-resulting binary's file system as /.
