@@ -1,4 +1,4 @@
-;; openFileRead [File Streams]
+;; openFileRead [File Stream]
 ;;  Opens a file stream in read-only mode.
 ;; Inputs:
 ;;  DE: Path to file (string pointer)
@@ -97,7 +97,7 @@ _:  pop af
     ld a, errFileNotFound
     ret
 
-;; getStreamEntry [File Streams]
+;; getStreamEntry [File Stream]
 ;;  Gets the address of a stream entry in the kernel file stream table.
 ;; Inputs:
 ;;  D: Stream ID
@@ -131,7 +131,7 @@ getStreamEntry:
     ld a, errStreamNotFound
     ret
 
-;; closeStream [File Streams]
+;; closeStream [File Stream]
 ;;  Closes an open stream.
 ;; Inputs:
 ;;  D: Stream ID
@@ -160,7 +160,7 @@ closeStream:
 .closeWritableStream:
     ; TODO
 
-;; streamReadByte [File Streams]
+;; streamReadByte [File Stream]
 ;;  Reads a single byte from a file stream and advances the stream.
 ;; Inputs:
 ;;  D: Stream ID
@@ -281,7 +281,7 @@ _:      pop af
 .readFromWritableStream:
     jr .success ; TODO
 
-;; streamReadWord [File Streams]
+;; streamReadWord [File Stream]
 ;;  Reads a 16-bit word from a file stream and advances the stream.
 ;; Inputs:
 ;;  D: Stream ID
@@ -309,7 +309,7 @@ streamReadWord:
     inc sp \ inc sp
     ret
 
-;; streamReadBuffer [File Streams]
+;; streamReadBuffer [File Stream]
 ;;  Reads a number of bytes from a file stream and advances the stream.
 ;; Inputs:
 ;;  D: Stream ID
@@ -480,7 +480,7 @@ _:      pop af
 .readFromWritableStream:
     ; TODO
 
-;; getStreamInfo [File Streams]
+;; getStreamInfo [File Stream]
 ;;  Gets the amount of space remaining in a file stream.
 ;; Inputs:
 ;;  D: Stream ID
@@ -590,7 +590,7 @@ _:              ; Navigate to new block and update working size
             inc b
             jr .loop
 
-;; streamReadToEnd [File Streams]
+;; streamReadToEnd [File Stream]
 ;;  Reads the remainder of a file stream into memory.
 ;; Inputs:
 ;;  D: Stream ID
