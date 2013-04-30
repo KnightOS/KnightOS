@@ -590,7 +590,7 @@ _:              ; Navigate to new block and update working size
             inc b
             jr .loop
 
-;; streamReadToEnd
+;; streamReadToEnd [File Streams]
 ;;  Reads the remainder of a file stream into memory.
 ;; Inputs:
 ;;  D: Stream ID
