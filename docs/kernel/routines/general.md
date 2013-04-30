@@ -312,7 +312,6 @@ Sorts a list of bytes in ascending order.
 
 *Inputs*
 
-* **B**: Bitmask; you must set this to 0b10000000
 * **HL**: First element in array
 * **DE**: Last element in array
 

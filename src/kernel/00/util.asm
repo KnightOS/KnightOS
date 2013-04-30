@@ -217,7 +217,6 @@ _:  pop de
 ;; radixSort [Utils]
 ;;  Sorts a specified array of numbers.
 ;; Inputs:
-;;  B: Bitmask; you must set it to 0b10000000
 ;;  HL: first element in array
 ;;  DE: Last element in array
 ;; Outputs:
@@ -228,6 +227,8 @@ _:  pop de
 ;;  runtime for k-bit numbers.  It also requires a smaller, fixed amount of
 ;;  stack space.
 radixSort:
+    ld b, 0b10000000
+radixSortRecurse:
     push bc
         push de
             push hl
@@ -255,11 +256,11 @@ _:              ld a, (hl)              ; Switch number at top of 1s bin with th
                 srl b                   ; Next bit please
                 jr c, .done             ; If our carry is 1, we've been through all 8 bits (base case).
             pop hl
-            call radixSort              ; Sort the 0s bin
+            call radixSortRecurse       ; Sort the 0s bin
             push de \ pop hl
             inc hl
         pop de
-        call radixSort                  ; Sort the 1s bin
+        call radixSortRecurse           ; Sort the 1s bin
     pop bc
     ret
 .done:
