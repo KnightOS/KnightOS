@@ -19,6 +19,7 @@ tasks.
 * [getTime](#gettime)
 * [getTimeInTicks](#gettimeinticks)
 * [quicksort](#quicksort)
+* [radixSort](#radixsort)
 * [reboot](#reboot)
 * [stringLength](#stringlength)
 * [sub16from32](#sub16from32)
@@ -302,6 +303,24 @@ Sorts a list of bytes in ascending order.
 
 This is a stack-based routine, and sorting high volumes of data may result in a
 stack overflow.
+
+## radixSort
+
+**Address**: 0x3EDD
+
+Sorts a list of bytes in ascending order.
+
+*Inputs*
+
+* **B**: Bitmask; you must set this to 0b10000000
+* **HL**: First element in array
+* **DE**: Last element in array
+
+*Notes*
+
+This routine is an in-place version of a radix sort, which has an O(k*n)
+runtime for k-bit numbers.  It also requires a smaller, fixed amount of
+stack space.
 
 ## reboot
 
