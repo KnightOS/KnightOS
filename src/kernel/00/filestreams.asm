@@ -1,18 +1,12 @@
-; TODO:
-;   streamReadBuffer
-;   streamReadToEnd
-;   Writable streams
-
-; Inputs:
-;   DE: File name
-; Outputs:
-; (Failure)
-;   A: Error code
-;   Z: Reset
-; (Success)
-;   D: File stream ID
-;   E: Garbage
-;   Z: Set
+;; openFileRead [File Streams]
+;;  Opens a file stream in read-only mode.
+;; Inputs:
+;;  DE: Path to file (string pointer)
+;; Outputs:
+;;  Z: Set on success, reset on failure
+;;  A: Error code (on failure)
+;;  D: File stream ID (on success)
+;;  E: Garbage (on success)
 openFileRead:
     push hl
     push de
@@ -103,14 +97,14 @@ _:  pop af
     ld a, errFileNotFound
     ret
 
-; Inputs:
-;   D: Stream ID
-; Outputs:
-; (Failure)
-;   A: Error code
-;   Z: Reset
-; (Success)
-;   HL: Pointer to entry
+;; getStreamEntry [File Streams]
+;;  Gets the address of a stream entry in the kernel file stream table.
+;; Inputs:
+;;  D: Stream ID
+;; Outputs:
+;;  Z: Set on success, reset on failure
+;;  A: Error code (on failure)
+;;  HL: File stream entry poitner (on success)
 getStreamEntry:
     push af
     push hl
@@ -137,15 +131,13 @@ getStreamEntry:
     ld a, errStreamNotFound
     ret
 
-
-; Inputs:
-;   D: Stream ID
-; Outputs:
-; (Failure)
-;   A: Error code
-;   Z: Reset
-; (Success)
-;   Z: Set
+;; closeStream [File Streams]
+;;  Closes an open stream.
+;; Inputs:
+;;  D: Stream ID
+;; Outputs:
+;;  Z: Set on success, reset on failure
+;;  A: Error code (on failure)
 closeStream:
     push hl
         call getStreamEntry
@@ -168,15 +160,13 @@ closeStream:
 .closeWritableStream:
     ; TODO
 
-; Inputs:
-;   D: Stream ID
-; Outputs:
-; (Failure)
-;   A: Error code
-;   Z: Reset
-; (Success)
-;   A: Byte read
-;   Z: Set
+;; streamReadByte [File Streams]
+;;  Reads a single byte from a file stream and advances the stream.
+;; Inputs:
+;;  D: Stream ID
+;; Outputs:
+;;  Z: Set on success, reset on failure
+;;  A: Data read (on success); Error code (on failure)
 streamReadByte:
     push hl
         call getStreamEntry
@@ -291,15 +281,14 @@ _:      pop af
 .readFromWritableStream:
     jr .success ; TODO
 
-; Inputs:
-;   D: Stream ID
-; Outputs:
-; (Failure)
-;   A: Error code
-;   Z: Reset
-; (Success)
-;   HL: Word read
-;   Z: Set
+;; streamReadWord [File Streams]
+;;  Reads a 16-bit word from a file stream and advances the stream.
+;; Inputs:
+;;  D: Stream ID
+;; Outputs:
+;;  Z: Set on success, reset on failure
+;;  A: Error code (on failure)
+;;  HL: Data read (on success)
 streamReadWord:
 ; TODO: Perhaps optimize this into something like streamReadByte
 ; The problem here is that reading two bytes requires you to do some
@@ -320,17 +309,18 @@ streamReadWord:
     inc sp \ inc sp
     ret
 
-; Inputs:
-;   D: Stream ID
-;   IX: Destination address
-;   BC: Length
-; Outputs:
-; (Failure)
-;   A: Error code
-;   Z: Reset
-; (Success)
-;   File is read into (IX)
-;   Z: Set
+;; streamReadBuffer [File Streams]
+;;  Reads a number of bytes from a file stream and advances the stream.
+;; Inputs:
+;;  D: Stream ID
+;;  IX: Destination address
+;;  BC: Length
+;; Outputs:
+;;  Z: Set on success, reset on failure
+;;  A: Error code (on failure)
+;; Notes:
+;;  If BC is greater than the remaining space in the stream, the stream will be advanced to the end
+;;  before returning an error.
 streamReadBuffer:
     push hl
         call getStreamEntry
@@ -490,15 +480,14 @@ _:      pop af
 .readFromWritableStream:
     ; TODO
 
-; Inputs:
-;     D: Stream ID
-; Outputs:
-; (Failure)
-;    A: Error
-;    Z: Reset
-; (Success)
-;    Z: Set
-;    DBC: Remaining space in stream
+;; getStreamInfo [File Streams]
+;;  Gets the amount of space remaining in a file stream.
+;; Inputs:
+;;  D: Stream ID
+;; Ouptuts:
+;;  Z: Set on success, reset on failure
+;;  A: Error code (on failure)
+;;  DBC: Remaining space in stream (on success)
 getStreamInfo:
     push hl
         call getStreamEntry
@@ -601,16 +590,14 @@ _:              ; Navigate to new block and update working size
             inc b
             jr .loop
 
-; Inputs:
-;   D: Stream ID
-;   IX: Destination to read into
-; Outputs:
-; (Failure)
-;   A: Error
-;   Z: Reset
-; (Success)
-;   Z: Set
-;   File is read into (IX)
+;; streamReadToEnd
+;;  Reads the remainder of a file stream into memory.
+;; Inputs:
+;;  D: Stream ID
+;;  IX: Destination address
+;; Outputs:
+;;  Z: Set on success, reset on failure
+;;  A: Error code (on failure)
 streamReadToEnd:
     push bc
     push de
