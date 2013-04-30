@@ -214,14 +214,11 @@ _:  pop de
     pop hl
     ret
 
-;; radixSort [Utils]
+;; radixSort [Miscellaneous]
 ;;  Sorts a specified array of numbers.
 ;; Inputs:
 ;;  HL: first element in array
 ;;  DE: Last element in array
-;; Outputs:
-;;  (Array is sorted)
-;;  HL, DE, and BC preserved
 ;; Notes:
 ;;  This routine is an in-place version of a radix sort, which has an O(k*n)
 ;;  runtime for k-bit numbers.  It also requires a smaller, fixed amount of
@@ -234,7 +231,7 @@ radixSortRecurse:
             push hl
                 or a                    ; We must initially clear CA bit, later it's never modified.
 .nextbyte:
-                sbc hl,de \ add hl,de   ; Check if our bins have met up
+                sbc hl, de \ add hl, de ; Check if our bins have met up
                 jr c, _
                 jr nz, .nextbit         ; If they have, restart with next bit
 
