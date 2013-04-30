@@ -1,5 +1,5 @@
 ;; clearBuffer [Display]
-;;  Sets all of a screen buffer to zero.
+;;  Turns off all pixels on a screen buffer.
 ;; Inputs:
 ;;  IY: Screen buffer
 clearBuffer:
@@ -19,7 +19,7 @@ clearBuffer:
     ret
 
 ;; fastCopy [Display]
-;;  Copies the specified screen buffer to the LCD.
+;;  Copies the screen buffer to the LCD.
 ;; Inputs:
 ;;  IY: Screen buffer
 ;; Notes:
@@ -78,7 +78,7 @@ _:  pop de
     ret
     
 ;; getPixel [Display]
-;;  Finds the address of and mask for a pixel in the specified screen buffer.
+;;  Finds the address of and mask for a pixel on the screen buffer.
 ;; Inputs:
 ;;  IY: Screen buffer
 ;;  A,L: X, Y
@@ -119,7 +119,7 @@ _:  pop bc
     ret
     
 ;; setPixel [Display]
-;;  Sets (turns on) a pixel in the specified screen buffer.
+;;  Sets (turns on) a pixel on the screen buffer.
 ;; Inputs:
 ;;  IY: Screen buffer
 ;;  A,L: X, Y
@@ -134,7 +134,7 @@ setPixel:
     ret
 
 ;; resetPixel [Display]
-;;  Sets (turns on) a pixel in the specified screen buffer.
+;;  Sets (turns on) a pixel on the screen buffer.
 ;; Inputs:
 ;;  IY: Screen buffer
 ;;  A,L: X, Y
@@ -150,7 +150,7 @@ resetPixel:
     ret
 
 ;; invertPixel [Display]
-;;  Inverts a pixel in the specified screen buffer.
+;;  Inverts a pixel on the screen buffer.
 ;; Inputs:
 ;;  IY: Screen buffer
 ;;  A,L: X, Y
@@ -164,13 +164,15 @@ invertPixel:
     pop hl
     ret
     
-;Fast line routine, only sets pixels
-;(d,e),(h,l) = (x1,y1),(x2,y2)
-;IY = buffer
-;NO clipping
-;James Montelongo
-drawLineOR:
-drawLine:
+;; drawLine [Display]
+;;  Draws a line on the screen buffer using OR (turns pixels ON) logic.
+;; Inputs:
+;;  IY: Screen buffer
+;;  D, E: X1, Y1
+;;  H, L: X2, Y2
+;; Notes:
+;;  This function does not clip lines to the screen boundaries.
+drawLine: ; By James Montelongo
     push hl
     push de
     push bc
@@ -434,11 +436,13 @@ _drawLine:
     djnz .drawY7
     ret
 
-; D = xpos
-; E = ypos
-; B = height
-; HL = image address
-; IY = buffer address
+;; putSpriteXOR [Display]
+;;  Draws an 8xB sprite on the screen buffer using XOR (invert) logic.
+;; Inputs:
+;;  IY: Screen buffer
+;;  HL: Sprite pointer
+;;  D, E: X, Y
+;;  B: Height
 putSpriteXOR:
     push af
     push bc
@@ -593,11 +597,13 @@ _putLoop:
     DJNZ   _putLoop
     RET
     
-; D = xpos
-; E = ypos
-; B = height
-; HL = image address
-; IY = buffer address
+;; putSpriteAND [Display]
+;;  Draws an 8xB sprite on the screen buffer using AND (turns pixels OFF) logic.
+;; Inputs:
+;;  IY: Screen buffer
+;;  HL: Sprite pointer
+;;  D, E: X, Y
+;;  B: Height
 PutSpriteAND:
     push af
     push bc
@@ -762,11 +768,13 @@ _PutLoop2:
     DJNZ   _PutLoop2
     RET
     
-; D = xpos
-; E = ypos
-; B = height
-; IX = image address
-; IY = buffer address
+;; putSpriteOR [Display]
+;;  Draws an 8xB sprite on the screen buffer using OR (turns pixels ON) logic.
+;; Inputs:
+;;  IY: Screen buffer
+;;  HL: Sprite pointer
+;;  D, E: X, Y
+;;  B: Height
 PutSpriteOR:
     push af
     push bc
@@ -928,10 +936,13 @@ _PutLoop3:
     DJNZ   _PutLoop3
     RET
     
-; From Axe's Commands.inc by Quigibo
-; Inputs:    (e, l): X, Y
-;        (c, b): width, height
-RectXOR:
+;; rectXOR [Display]
+;;  Draws a filled rectangle on the screen buffer using XOR (invert) logic.
+;; Inputs:
+;;  IY: Screen buffer
+;;  E, L: X, Y
+;;  C, B: Width, height
+RectXOR: ; by Quigibo
     ld    a,96        ;Clip Top
     sub    e
     ret    c
@@ -1025,9 +1036,12 @@ __BoxInvLoop2:
     jr    __BoxInvLoop1
 __BoxInvEnd:
 
-; From Axe's Commands.inc by Quigibo
-; Inputs:    (e, l): X, Y
-;        (c, b): width, height
+;; rectOR [Display]
+;;  Draws a filled rectangle on the screen buffer using OR (turns pixels ON) logic.
+;; Inputs:
+;;  IY: Screen buffer
+;;  E, L: X, Y
+;;  C, B: Width, height
 RectOR:
     ld    a,96        ;Clip Top
     sub    e
@@ -1122,9 +1136,12 @@ __BoxORLoop2:
     jr    __BoxORLoop1
 __BoxOREnd:
 
-; From Axe's Commands.inc by Quigibo
-; Inputs:    (e, l): X, Y
-;        (c, b): width, height
+;; rectAND [Display]
+;;  Draws a filled rectangle on the screen buffer using AND (turns pixels OFF) logic.
+;; Inputs:
+;;  IY: Screen buffer
+;;  E, L: X, Y
+;;  C, B: Width, height
 RectAND:
     ld    a,96        ;Clip Top
     sub    e
@@ -1220,16 +1237,16 @@ __BoxANDLoop2:
     jr    __BoxANDLoop1
 __BoxANDEnd:
 
-;2-byte (across) sprite xor routine by Jon Martin
-;optimized to be faster than Joe Wingbermeuhle's largesprite routine
-;based on the 1-byte xor routine from "learn ti 83+ asm in 28 days"
-;inputs:
-;d=xc
-;e=yc
-;b=height
-;hl=sprite pointer
-;destroys all except shadow registers
-PutSprite16XOR:
+;; putSprite16XOR:
+;;  Draws a 16xB sprite on the screen buffer using XOR (invert) logic.
+;; Inputs:
+;;  IY: Screen buffer
+;;  HL: Sprite pointer
+;;  D, E: X, Y
+;;  B: Height
+;; Notes:
+;;  Each 16-wide group of pixels is represented by two adjacent octets.
+PutSprite16XOR: ; By Jon Martin
     push af
     push hl
     push bc
@@ -1312,7 +1329,16 @@ alignedloop:
     inc ix
     djnz alignedloop
     ret
- 
+
+;; putSprite16OR:
+;;  Draws a 16xB sprite on the screen buffer using OR (turns pixels ON) logic.
+;; Inputs:
+;;  IY: Screen buffer
+;;  HL: Sprite pointer
+;;  D, E: X, Y
+;;  B: Height
+;; Notes:
+;;  Each 16-wide group of pixels is represented by two adjacent octets.
 PutSprite16OR:
     push af
     push hl
@@ -1396,7 +1422,16 @@ alignedloopOR:
     inc ix
     djnz alignedloopOR
     ret
- 
+
+;; putSprite16AND:
+;;  Draws a 16xB sprite on the screen buffer using AND (turns pixels OFF) logic.
+;; Inputs:
+;;  IY: Screen buffer
+;;  HL: Sprite pointer
+;;  D, E: X, Y
+;;  B: Height
+;; Notes:
+;;  Each 16-wide group of pixels is represented by two adjacent octets.
 PutSprite16AND:
     push af
     push hl

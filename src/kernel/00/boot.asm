@@ -37,7 +37,7 @@ _:  di
 ;; reboot [System]
 ;;  Restarts the device.
 ;; Notes:
-;;  This will never return. Call it with `jp shutdown`
+;;  This will never return. Call it with `jp reboot`
 reboot:
     di
 

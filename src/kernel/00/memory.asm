@@ -1,3 +1,7 @@
+;; formatMem [System]
+;;  Formats memory in preparation for memory allocation.
+;; Notes:
+;;  This function will deallocate **all allocated memory**.
 formatMem:
     ld a, 0xFF
     ld (userMemory), a
@@ -6,7 +10,11 @@ formatMem:
     ld hl, userMemory
     ld (0xFFFE), hl
     ret
-    
+
+;; allocScreenBuffer [Display]
+;;  Allocates a 768-byte screen buffer.
+;; Outputs:
+;;  IY: Screen buffer
 allocScreenBuffer:
     push bc
     push ix
