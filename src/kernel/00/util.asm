@@ -21,8 +21,13 @@ suspendDevice:
     ei
     ret
     
-; Converts ASCII hex string at (hl) to HL
 ; TODO: This could use some improvement
+;; hexToHL [Miscellaneous]
+;;  Converts a hexadecimal string to a number.
+;; Inputs:
+;;  HL: String pointer
+;; Outputs:
+;;  HL: Value
 hexToHL:
     push de
     push af
@@ -57,7 +62,12 @@ hexToHL:
     pop de
     ret
     
-; Converts ASCII hex string at (hl) to A
+;; hexToA [Miscellaneous]
+;;  Converts a hexadecimal string to a number.
+;; Inputs:
+;;  HL: String pointer
+;; Outputs:
+;;  A: Value
 hexToA:
     push bc
     push hl
@@ -97,7 +107,10 @@ _:    in a,(0x10)
     pop af
     ret
 
-; 16-bit Compare routines
+;; cpHLDE [Miscellaneous]
+;;  Compares HL to DE.
+;; Output:
+;;  Same as z80 CP instruction.
 cpHLDE:
 cpDEHL:
     push hl
@@ -105,6 +118,10 @@ cpDEHL:
     sbc hl,de
     pop hl
     ret
+;; cpHLBC [Miscellaneous]
+;;  Compares HL to BC.
+;; Output:
+;;  Same as z80 CP instruction.
 cpHLBC:
 cpBCHL:
     push hl
@@ -112,6 +129,10 @@ cpBCHL:
     sbc hl,bc
     pop hl
     ret
+;; cpDEBC [Miscellaneous]
+;;  Compares DE to BC.
+;; Output:
+;;  Same as z80 CP instruction.
 cpBCDE:
 cpDEBC:
     push hl
@@ -122,8 +143,12 @@ cpDEBC:
     pop hl
     ret
 
-; Inputs:    HL: String
-; Outputs:    BC: String length
+;; stringLength [Miscellaneous]
+;;  Determines the length of a zero delimited string.
+;; Inputs:
+;;  HL: String pointer
+;; Outputs:
+;;  BC: String length
 stringLength:
     push af
     push hl
@@ -136,7 +161,12 @@ stringLength:
     pop af
     ret
     
-; Outputs:    B: Value from 0-4 indicating battery level (0 is critical)
+;; getBatteryLevel [Miscellaneous]
+;;  Determines the approximate battery level.
+;; Outputs:
+;;  B: Battery level
+;; Notes:
+;;  B is a value from 0 to 4, where 0 is critical and 4 is full.
 getBatteryLevel:
 #ifdef CPU15
     push af
@@ -167,8 +197,10 @@ _:  pop af
     pop af
     ret
 #endif
-    
-DEMulA: ; HL = DE � A
+
+;; DEMulA [Miscellaneous]
+;;  Performs `HL = DE * A"
+DEMulA:
     push bc
     ld hl, 0 ; Use HL to store the product
     ld b, 8 ; Eight bits to check
@@ -183,9 +215,13 @@ DEMulA: ; HL = DE � A
     pop bc
     ret
 
-; Compare Strings
-; Z for equal, NZ for not equal
-; Inputs: HL and DE are strings to compare
+;; compareStrings [Miscellaneous]
+;;  Determines if two strings are equal.
+;; Inputs:
+;;  HL: String pointer
+;;  DE: String pointer
+;; Outputs:
+;;  Z: Set if equal, reset if not equal
 compareStrings:
     ld a, (de)
     or a
@@ -200,8 +236,11 @@ compareStrings:
     or a
     ret
 
-; String copy
-; Copies string at (hl) to (de)
+;; stringCopy [Miscellaneous]
+;;  Copies a string.
+;; Inputs:
+;;  HL: String pointer
+;;  DE: Destination
 stringCopy:
     push de
     push hl
@@ -285,10 +324,14 @@ endqsort:
     pop de
     pop hl
     ret
-        
+
+;; div32By16 [Miscellaneous]
+;;  Performs `ACIX = ACIX / DE`
+;; Outputs:
+;;  As described above, and:
+;;  HL: Remainder
+;;  B: 0
 div32By16:
-; IN:    ACIX=dividend, DE=divisor
-; OUT:    ACIX=quotient, DE=divisor, HL=remainder, B=0
     ld hl, 0
     ld b, 32
 .loop:
@@ -310,7 +353,8 @@ div32By16:
     djnz .loop
     ret
     
-; Subtracts DE from ACIX
+;; sub16From32 [Miscellaneous]
+;;  Performs `ACIX = ACIX - DE`
 sub16from32:
     push hl
     push de
@@ -332,7 +376,8 @@ _:  push hl \ pop ix
     pop hl
     ret
     
-; Adds DE to ACIX
+;; add16To32 [Miscellaneous]
+;;  Performs `ACIX = ACIX + DE`
 add16to32:
     push hl
     push de
@@ -352,7 +397,11 @@ _:  push hl \ pop ix
     pop bc
     ret
     
-; remainder in a
+;; divHLByC [Miscellaneous]
+;;  Performs `HL = HL / C`
+;; Outputs:
+;;  As described above, and:
+;;  A: Remainder
 divHLbyC:
    xor a
    ld b, 16
@@ -365,7 +414,11 @@ _: add hl, hl
    djnz -_
    ret
  
-; remainder in HL
+;; divACByDE [Miscellaneous]
+;;  Performs `AC = AC / DE`
+;; Outputs:
+;;  As described above, and:
+;;  HL: Remainder
 divACbyDE:
    ld hl, 0
    ld b, 16
@@ -379,8 +432,12 @@ _: srl c
    djnz -_
    ret
    
-; Returns HL as pointer to allocated memory containing version
-; string. Free this memory when you're done with it.
+;; getBootCodeVersionString [Miscellaneous]
+;;  Gets the version string from the device's boot code.
+;; Outputs:
+;;  HL: String pointer
+;; Notes:
+;;  This allocates memory to hold the string. Deallocate it with [[free]] when you no longer need it.
 getBootCodeVersionString:
     ld a, i
     push af

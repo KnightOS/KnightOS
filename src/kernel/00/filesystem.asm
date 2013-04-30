@@ -1,8 +1,10 @@
-; Inputs:
-;   DE: File name
-; Outputs:
-;   Z: File was deleted
-;   NZ: File did not exist
+;; deleteFile [Filesystem]
+;;  Deletes a file.
+;; Inputs:
+;;  DE: Path to file (string pointer)
+;; Outputs:
+;;  Z: Set if file was deleted, reset if file did not exist
+; TODO: Use a proper error code
 deleteFile:
     push hl
     push af
@@ -35,11 +37,12 @@ _:  ; File not found
     pop hl
     ret
 
-; Inputs:
-;   DE: File name
-; Outputs:
-;   Z: File exists
-;   NZ: File does not exist
+;; fileExists [Filesystem]
+;;  Determines if a file exists.
+;; Inputs:
+;;  DE: Path to file (string pointer)
+;; Outputs:
+;;  Z: Set if file exists, reset if not
 fileExists:
     push hl
     push af
@@ -56,15 +59,14 @@ _:  ld h, a
     pop hl
     ret
 
-; Inputs:
-;   DE: File name
-; Outputs:
-; (Failure)
-;   A: Error code
-;   Z flag reset
-; (Success)
-;   A: Flash page
-;   HL: Address (relative from 0x4000)
+;; findFileEntry [Filesystem]
+;;  Finds a file entry in the FAT.
+;; Inputs:
+;;  DE: Path to file (string pointer)
+;; Outputs:
+;;  Z: Set on success, reset on failure
+;;  A: Flash page (on success); Error code (on failure)
+;;  HL: Address relative to 0x4000 (on success)
 findFileEntry:
     push de
     push bc
