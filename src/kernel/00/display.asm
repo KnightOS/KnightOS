@@ -1237,7 +1237,7 @@ __BoxANDLoop2:
     jr    __BoxANDLoop1
 __BoxANDEnd:
 
-;; putSprite16XOR:
+;; putSprite16XOR [Display]
 ;;  Draws a 16xB sprite on the screen buffer using XOR (invert) logic.
 ;; Inputs:
 ;;  IY: Screen buffer
@@ -1330,7 +1330,7 @@ alignedloop:
     djnz alignedloop
     ret
 
-;; putSprite16OR:
+;; putSprite16OR [Display]
 ;;  Draws a 16xB sprite on the screen buffer using OR (turns pixels ON) logic.
 ;; Inputs:
 ;;  IY: Screen buffer
@@ -1423,7 +1423,7 @@ alignedloopOR:
     djnz alignedloopOR
     ret
 
-;; putSprite16AND:
+;; putSprite16AND [Display]
 ;;  Draws a 16xB sprite on the screen buffer using AND (turns pixels OFF) logic.
 ;; Inputs:
 ;;  IY: Screen buffer
