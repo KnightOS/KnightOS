@@ -1,5 +1,7 @@
-; Clears an LCD buffer
-; Input: IY: Buffer
+;; clearBuffer [Display]
+;;  Sets all of a screen buffer to zero.
+;; Inputs:
+;;  IY: Screen buffer
 clearBuffer:
     push hl
     push de
@@ -16,10 +18,13 @@ clearBuffer:
     pop hl
     ret
 
-;Input: IY: Buffer
-;-----> Copy the gbuf to the screen, guaranteed 
-;Input: nothing
-;Output: graph buffer is copied to the screen, no matter the speed settings
+;; fastCopy [Display]
+;;  Copies the specified screen buffer to the LCD.
+;; Inputs:
+;;  IY: Screen buffer
+;; Notes:
+;;  This routine will return immediately without drawing to the LCD if the calling thead does not have an
+;;  LCD lock. Acquire one with [[getLcdLock]].
 fastCopy:
     call hasLCDLock
     ret nz
@@ -72,11 +77,19 @@ _:  pop de
     pop hl
     ret
     
-; brief : utility for pixel manipulation
-; input : a -> x coord, l -> y coord, IY -> graph buffer
-; output : hl -> address in graph buffer, a -> pixel mask
-; destroys : b, de
+;; getPixel [Display]
+;;  Finds the address of and mask for a pixel in the specified screen buffer.
+;; Inputs:
+;;  IY: Screen buffer
+;;  A,L: X, Y
+;; Outputs:
+;;  HL: Address of pixel
+;;  A: Mask
+;; Notes:
+;;  If the pixel is on, HL & A is nonzero.
 getPixel:
+    push de
+    push bc
     ld h, 0
     ld d, h
     ld e, l
@@ -97,68 +110,57 @@ getPixel:
     and 7
     ld b, a
     ld a, 0x80
-    ret z
+    jr z, _
     
     rrca
     djnz $-1
+_:  pop bc
+    pop de
     ret
     
-; brief : set (darkens) a pixel in the graph buffer
-; input : a -> x coord, l -> y coord
-; output : none
-pixelOn:
+;; setPixel [Display]
+;;  Sets (turns on) a pixel in the specified screen buffer.
+;; Inputs:
+;;  IY: Screen buffer
+;;  A,L: X, Y
 setPixel:
     push hl
-    push de
     push af
-    push bc
         call getPixel
         or (hl)
         ld (hl), a
-    pop bc
     pop af
-    pop de
     pop hl
     ret
 
-; brief : reset (lighten) a pixel in the graph buffer
-; input : a -> x coord, l -> y coord
-; output : none
-; destroys : a, b, de, hl
-pixelOff:
+;; resetPixel [Display]
+;;  Sets (turns on) a pixel in the specified screen buffer.
+;; Inputs:
+;;  IY: Screen buffer
+;;  A,L: X, Y
 resetPixel:
     push hl
-    push de
     push af
-    push bc
         call getPixel
         cpl
         and (hl)
         ld (hl), a
-    pop bc
     pop af
-    pop de
     pop hl
     ret
 
-; brief : flip (invert) a pixel in the graph buffer
-; input : a -> x coord, l -> y coord
-; output : none
-; destroys : a, b, de, hl
+;; invertPixel [Display]
+;;  Inverts a pixel in the specified screen buffer.
+;; Inputs:
+;;  IY: Screen buffer
+;;  A,L: X, Y
 invertPixel:
-pixelFlip:
-pixelInvert:
-flipPixel:
     push hl
-    push de
     push af
-    push bc
         call getPixel
         xor (hl)
         ld (hl), a
-    pop bc
     pop af
-    pop de
     pop hl
     ret
     

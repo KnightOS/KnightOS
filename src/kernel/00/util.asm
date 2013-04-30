@@ -1,3 +1,5 @@
+;; suspendDevice [System]
+;;  Turns off the screen, enters low power mode, and halts system operation until the ON key is pressed.
 suspendDevice:
     ld a, i
     push af

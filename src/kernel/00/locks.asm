@@ -1,3 +1,5 @@
+;; getLcdLock [Hardware]
+;;  Locks the LCD to the current thread.
 getLCDLock:
     push af
         call getCurrentThreadId

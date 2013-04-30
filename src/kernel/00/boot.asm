@@ -2,6 +2,10 @@
 boot:
     di
     jr _
+;; shutdown [System]
+;;  Shuts off the device.
+;; Notes:
+;;  This will never return. Call it with `jp shutdown`
 shutdown:
     ; TODO: Crash detection
 _:  di
@@ -30,8 +34,10 @@ _:  di
     ld sp, userMemory ; end of kernel garbage
 
     call suspendDevice
-
-restart:
+;; reboot [System]
+;;  Restarts the device.
+;; Notes:
+;;  This will never return. Call it with `jp shutdown`
 reboot:
     di
 
