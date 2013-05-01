@@ -1,0 +1,6 @@
+NAME
+ echo - display a line of textSYNOPSIS
+ echo [text]
+DESCRIPTION
+ Echos [text] to the
+ attached terminal.
