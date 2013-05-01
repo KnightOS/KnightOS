@@ -8,19 +8,17 @@ basis for your own powerful operating systems.
 
 ## Building KnightOS
 
-Precompiled packages are not currently being distributed. However, you may build KnightOS from
-its source yourself. From a command line, navigate to the build directory. On Windows, run
-`build --all` to build KnightOS for all calculators. On Linux/Mac, install Mono. Then, run
-`mono build.exe --all`. You may want to change some details in `inc/config.asm` to customize
-some aspects of KnightOS.
+To build KnightOS from source, make sure you have all git submodules first. If you haven't
+cloned the repository yet, use `git clone --recursive git://github.com/KnightSoft/KnightOS.git`
+to clone recursively. Otherwise, use `git submodule update --init` to clone submodules for
+an existing repository.
 
-Once the build completes, look in `bin/` for the completed OS upgrade files, which are signed
-and ready to send to a calculator. ROM files will also be generated for use in emulators.
+Once you have the source and submodules, run `make` from the root of the repository to build
+KnightOS for the TI-84+ SE. You may specify a target (i.e. `make TI83p`) to build for another
+calculator model. You may additionally specify a language (i.e. `make LANG=de`) to use a
+language other than English. Your binaries will appear in the bin folder.
 
-For details on advanced usage of the build tool, see
-[its documentation](https://github.com/KnightSoft/KnightOS/blob/master/docs/build/build-tool.md).
-This documentation includes details on building for specific platforms, and targetting
-languages other than English.
+On Windows, run make from Cygwin.
 
 ## Installation
 
@@ -49,14 +47,8 @@ The following devices are supported:
 * TI-84 Pocket.fr [TI84p]
 * TI-84 Plus Pocket SE [TI84pSE]
 
-Indicated next to each device is the name used internally. The files for this device appear in
-`bin/<device>` when built with the instructions above. Use these files if you wish to install
-KnightOS on those devices.
-
-**NOTE**: Newer versions of the TI-84+, TI-84+ SE, and all TI-84 Pocket.fr and TI-84 Plus Pocket SE
-calculators are shipped with boot code 1.03, which prevents the installation of 3rd party operating
-systems. You must patch these calculators before you will be able to install KnightOS on them.
-Instructions for doing so may be found [here](https://github.com/KnightSoft/KnightOS/tree/master/boot-patch).
+The make target is listed next to each supported device. To build KnightOS for that device, use
+`make [target]`.
 
 ## Help, Bugs, Feedback
 
