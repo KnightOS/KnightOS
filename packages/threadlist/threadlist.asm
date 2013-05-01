@@ -1,6 +1,5 @@
 .nolist
 #include "kernel.inc"
-#include "libtext.inc"
 #include "threadlist.lang"
 .list
     .db 0, 20
@@ -8,9 +7,6 @@
 start:
     call getLcdLock
     call getKeypadLock
-    
-    kld(de, libTextPath)
-    call loadLibrary
     
     call allocScreenBuffer
 redraw:
@@ -160,7 +156,7 @@ noThreads:
     kcall(drawInterface)
     ld de, lang_noPrograms_position
     kld(hl, noProgramsStr)
-    libtext(drawStr)
+    call drawStr
     
     call fastCopy
     
@@ -199,7 +195,7 @@ _:          inc hl
                 pop de \ jr skipThread
 _:      inc hl
         pop de
-        libtext(drawStr)
+        call drawStr
         kld(hl, totalThreads)
         inc (hl)
 skipThread:
@@ -253,15 +249,15 @@ _:    ld a, 8
     
     kld(hl, backStr)
     ld de, lang_castle_position
-    libtext(drawStr)
+    call drawStr
     
     kld(hl, optionsStr)
     ld de, lang_options_position
-    libtext(drawStr)
+    call drawStr
         
     kld(hl, runningProgramsStr)
     ld de, lang_runningPrograms_position
-    libtext(drawStr)
+    call drawStr
     
     ld hl, 0x000A
     ld de, 0x5F0A
@@ -298,7 +294,7 @@ drawOptions:
     
     kld(hl, forceQuitStr)
     ld de, lang_forceQuit_position
-    libtext(drawStr)
+    call drawStr
     
     kld(hl, selectionIndicatorSprite)
     ld b, 5
@@ -373,7 +369,5 @@ forceQuitStr:
 totalThreads:
     .db 0
     
-libTextPath:
-    .db "/lib/libtext", 0
 castlePath:
     .db "/bin/castle", 0

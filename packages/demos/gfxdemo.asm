@@ -1,6 +1,5 @@
 .nolist
 #include "kernel.inc"
-#include "libtext.inc"
 #include "applib.inc"
 #include "stdio.inc"
 #include "gfxdemo.lang"
@@ -14,8 +13,6 @@
 start:
     ; Load dependencies
     kld(de, stdioPath)
-    call loadLibrary
-    kld(de, libTextPath)
     call loadLibrary
     kld(de, applibPath)
     call loadLibrary
@@ -35,7 +32,7 @@ start:
     ld b, 2
     ld de, 0x0208
     kld(hl, exitString)
-    libtext(drawStr)
+    call drawStr
     
     kld(hl, smileySprite)
     ld de, 0x0210
@@ -80,8 +77,6 @@ exitString:
     .db lang_exitString, 0
 windowTitle:
     .db lang_windowTitle, 0
-libTextPath:
-    .db "/lib/libtext", 0
 applibPath:
     .db "/lib/applib", 0
 stdioPath:

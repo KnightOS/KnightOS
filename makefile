@@ -82,20 +82,17 @@ userland: kernel $(PACKAGES)
 base:
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/base/" $(PACKAGEPATH)/base/init.asm temp/bin/init
 
-libtext:
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/libtext/" $(PACKAGEPATH)/libtext/libtext.asm temp/lib/libtext
-
 stdio:
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/stdio/" $(PACKAGEPATH)/stdio/stdio.asm temp/lib/stdio
 
-applib: libtext
+applib:
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/applib/" $(PACKAGEPATH)/applib/applib.asm temp/lib/applib
 
-castle: libtext
+castle:
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/castle/" $(PACKAGEPATH)/castle/castle.asm temp/bin/castle
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/castle/" $(PACKAGEPATH)/castle/castle.config.asm temp/etc/castle.config
 
-threadlist: libtext
+threadlist:
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/threadlist/" $(PACKAGEPATH)/threadlist/threadlist.asm temp/bin/threadlist
 
 unixcommon: stdio

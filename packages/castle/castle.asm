@@ -1,6 +1,5 @@
 .nolist
 #include "kernel.inc"
-#include "libtext.inc"
 .list
     .db 0, 50
 .org 0
@@ -9,8 +8,6 @@ start:
     call getKeypadLock
 
     call allocScreenBuffer
-    kld(de, libtext)
-    call loadLibrary
 resetToHome:
     ld d, 0
 redrawHome:
@@ -253,8 +250,6 @@ confirmSelectionLoop_Select:
     ld b, 255 \ djnz $
     jp (hl)
     
-libtext:
-    .db "/lib/libtext", 0
 threadlist:
     .db "/bin/threadlist", 0
     

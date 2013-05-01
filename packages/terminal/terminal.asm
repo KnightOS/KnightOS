@@ -1,6 +1,5 @@
 .nolist
 #include "kernel.inc"
-#include "libtext.inc"
 #include "applib.inc"
 #include "stdio.inc"
 #include "terminal.lang"
@@ -22,8 +21,6 @@ start:
     call allocScreenBuffer
     
     ; Load dependencies
-    kld(de, libTextPath)
-    call loadLibrary
     kld(de, applibPath)
     call loadLibrary
     kld(de, stdioPath)
@@ -89,8 +86,6 @@ idleLoop: ; Run when there is no attached program
    
 windowTitle:
     .db lang_windowTitle, 0
-libTextPath:
-    .db "/lib/libtext", 0
 applibPath:
     .db "/lib/applib", 0
 stdioPath:

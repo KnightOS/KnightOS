@@ -1,6 +1,5 @@
 .nolist
 #include "kernel.inc"
-#include "libtext.inc"
 #include "applib.inc"
 #include "hello.lang"
 .list
@@ -17,8 +16,6 @@ start:
     call allocScreenBuffer
     
     ; Load dependencies
-    kld(de, libTextPath)
-    call loadLibrary
     kld(de, applibPath)
     call loadLibrary
     
@@ -29,14 +26,14 @@ start:
     ld b, 2
     ld de, 0x0208
     kld(hl, helloString)
-    libtext(drawStr)
+    call drawStr
     
     ld de, 0x0219
     kld(hl, bootCodeString)
-    libtext(drawStr)
+    call drawStr
     
     call getBootCodeVersionString
-    libtext(drawStr)
+    call drawStr
     call free
     
 _:  call fastCopy
@@ -52,7 +49,5 @@ windowTitle:
     .db lang_windowTitle, 0
 bootCodeString:
     .db "Boot Code Version: \n", 0
-libTextPath:
-    .db "/lib/libtext", 0
 applibPath:
     .db "/lib/applib", 0

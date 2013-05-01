@@ -4,7 +4,6 @@
 .nolist
 libId .equ 0x02
 #include "kernel.inc"
-#include "libtext.inc" ; TODO: Support loading libraries from others
 .list
 
 .dw 0x0002
@@ -129,7 +128,7 @@ _:      pop af \ push af
             call PutSpriteOR
 _:      pop af \ pop hl \ push hl \ push af
         ld de, $0201
-        libtext(DrawStrXOR)
+        call DrawStrXOR
     pop af
     pop hl
     pop bc

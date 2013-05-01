@@ -55,7 +55,7 @@ _:
         ; TODO
         kld(hl, dummyTimeString)
         ld de, (69 << 8) | 4
-        libtext(drawStr)
+        call drawStr
     pop ix
 #endif
     ret
@@ -77,15 +77,15 @@ drawHome:
     
     ld de, lang_more_position
     kld(hl, moreString)
-    libtext(drawStr)
+    call drawStr
     
     ld de, lang_menu_position
     kld(hl, menuString)
-    libtext(drawStr)
+    call drawStr
     
     ld de, lang_running_position
     kld(hl, runningString)
-    libtext(drawStr)
+    call drawStr
     ret
     
 drawHomeIcons:
@@ -214,7 +214,7 @@ drawSelectedName:
     ; Draw name string
     push de
         ld de, 0x0104
-        libtext(drawStr)
+        call drawStr
     pop de
     ret
     
@@ -222,7 +222,7 @@ drawEmptySlotName:
     push de
         kld(hl, naString)
         ld de, 0x0104
-        libtext(drawStr)
+        call drawStr
     pop de
     ret
     
@@ -252,15 +252,15 @@ drawPowerMenu:
 
     kld(hl, sleepString)
     ld de, lang_sleep_position
-    libtext(drawStr)
+    call drawStr
 
     kld(hl, shutdownString)
     ld de, lang_shutdown_position
-    libtext(drawStr)
+    call drawStr
 
     kld(hl, restartString)
     ld de, lang_restart_position
-    libtext(drawStr)
+    call drawStr
 
     kld(hl, menuArrowSprite)
     ld de, 0x353B
@@ -303,23 +303,23 @@ drawConfirmationDialog:
     
     kld(hl, confirmString1)
     ld de, lang_areYouSure_position
-    libtext(drawStr)
+    call drawStr
     
     kld(hl, confirmString2)
     ld de, lang_unsavedData_position
-    libtext(drawStr)
+    call drawStr
     
     kld(hl, confirmString3)
     ld de, lang_mayBeLost_position
-    libtext(drawStr)
+    call drawStr
     
     kld(hl, yesString)
     ld de, lang_yes_position
-    libtext(drawStr)
+    call drawStr
     
     kld(hl, noString)
     ld de, lang_no_position
-    libtext(drawStr)
+    call drawStr
     
     kld(hl, selectionIndicatorSprite)
     ld de, 0x282B

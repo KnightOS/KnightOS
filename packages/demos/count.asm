@@ -1,6 +1,5 @@
 .nolist
 #include "kernel.inc"
-#include "libtext.inc"
 #include "applib.inc"
 #include "count.lang"
 .list
@@ -17,8 +16,6 @@ start:
     call allocScreenBuffer
     
     ; Load dependencies
-    kld(de, libTextPath)
-    call loadLibrary
     kld(de, applibPath)
     call loadLibrary
     ld b, 0
@@ -30,12 +27,12 @@ _:  push bc
         ld b, 2
         ld de, 0x0208
         kld(hl, helloString)
-        libtext(drawStr)
+        call drawStr
     pop bc
     
     ld a, b \ inc b
     ld de, 0x0210
-    libtext(drawHexA)
+    call drawHexA
     
     call fastCopy
     applib(appGetKey)

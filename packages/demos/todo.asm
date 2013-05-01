@@ -1,6 +1,5 @@
 .nolist
 #include "kernel.inc"
-#include "libtext.inc"
 #include "todo.lang"
 .list
     .db 0, 50
@@ -12,13 +11,10 @@ start:
     call allocScreenBuffer
     call clearBuffer
     
-    kld(de, libTextPath)
-    call loadLibrary
-    
     ld b, 0
     ld de, 0
     kld(hl, todoString)
-    libtext(drawStr)
+    call drawStr
     call fastCopy
     
     call flushKeys
@@ -26,5 +22,3 @@ start:
     ret
 todoString:
     .db lang_todo, 0
-libTextPath:
-    .db "/lib/libtext", 0

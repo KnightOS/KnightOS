@@ -1,7 +1,6 @@
 .nolist
 #include "kernel.inc"
 #include "stdio.inc"
-#include "libtext.inc"
 maxPages .equ 16
 .list
     .db 0, 10
@@ -51,9 +50,6 @@ _:      call malloc
     pop hl
     ld b, l \ ld c, h ; Load the file size in CB
     call memSeekToStart
-    ; We need libtext to do some calculations for displaying text in the terminal
-    kld(de, libTextPath)
-    call loadLibrary
     ; We calculate the space required on the terminal and insert zeroes for pagination.
     ; D, E is X, Y for the cursor location (starts at 2, 8)
     ld de, 2 << 8 | 8
@@ -62,7 +58,7 @@ formatLoop:
         cp '\n'
         jr z, format_handleNewline
         ; Handle other characters with libtext
-        libtext(measureChar)
+        call measureChar
         add a, d \ ld d, a
         cp 90
          ; We let the \n handler deal with advancing past the edge of the screen
@@ -98,5 +94,3 @@ manDirectory: ; TODO: Try loading these from config files
     .db "/etc/man/", 0
 commandNotFoundText:
     .db "No manual entry for ", 0
-libTextPath:
-    .db "/lib/libtext", 0

@@ -9,7 +9,7 @@ readString_cursorLoop:
         ; Update cursor
         ld a, cursorChar
         push de
-            libtext(drawCharXOR)
+            call drawCharXOR
         pop de
         kld(hl, cursorState)
         inc (hl)
@@ -86,7 +86,7 @@ _:      kld(a, (cursorState))
         kld((cursorState), a)
         ld a, cursorChar
         push de
-            libtext(drawCharXOR)
+            call drawCharXOR
         pop de
         
 _:      ld a, c
@@ -117,11 +117,11 @@ readString_handleBackspace:
     kld((cursorState), a)
     ld a, cursorChar
     push de
-        libtext(drawCharXOR)
+        call drawCharXOR
     pop de
     
 _:  ld a, (IX + -1)
-    libtext(measureChar)
+    call measureChar
     ; Back up cursor
     ld c, a
     ld a, d
@@ -163,12 +163,12 @@ readString_doLeftScroll:
     kld((cursorState), a)
     ld a, cursorChar
     push de
-        libtext(drawCharXOR)
+        call drawCharXOR
     pop de
     
     ; Move display pointer back a character
 _:  ld a, (ix + -1)
-    libtext(measureChar)
+    call measureChar
     ; Back up cursor
     ld c, a
     ld a, d
@@ -188,7 +188,7 @@ term_printChar:
     push de
         cp '\n'
         jr z, _
-        libtext(drawCharXOR)
+        call drawCharXOR
     pop de
     kcall(term_advanceCursor)
     ret
@@ -207,7 +207,7 @@ term_advanceCursor:
     ret z
     ; Measure character
     push af
-        libtext(measureChar)
+        call measureChar
         add a, d
         ld d, a
         cp 90
