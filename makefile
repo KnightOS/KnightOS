@@ -4,8 +4,8 @@
 
 # Set lang with `make [platform] LANG=[langauge]`
 LANG=en_us
-# Default packages: base castle threadlist unixcommon terminal demos manfiles
-PACKAGES=base castle threadlist unixcommon terminal demos manfiles
+# Default packages: base castle threadlist unixcommon terminal demos
+PACKAGES=base castle threadlist unixcommon terminal demos
 
 # Paths
 SOURCEPATH=src
@@ -31,31 +31,43 @@ all:
 	make TI84p
 	make TI84pSE
 
-run: TI84pSE
-	$(EMU) bin/$(PLATFORM)/KnightOS_$(LANG).rom
-
 TI73: PLATFORM := TI73
+TI73: FAT := 17
+TI73: KEY := 02
 TI73: directories userland
 
 TI83p: PLATFORM := TI83p
+TI83p: FAT := 17
+TI83p: KEY := 04
 TI83p: directories userland
 
 TI83pSE: PLATFORM := TI83pSE
+TI83pSE: FAT := 77
+TI83pSE: KEY := 04
 TI83pSE: directories userland
 
 TI84p: PLATFORM := TI84p
+TI84p: FAT := 37
+TI84p: KEY := 0A
 TI84p: directories userland
 
 TI84pSE: PLATFORM := TI84pSE
+TI84pSE: FAT := 77
+TI84pSE: KEY := 0A
 TI84pSE: directories userland
 
 .PHONY: kernel
+
+run: TI84pSE
+	$(EMU) bin/TI84pSE/KnightOS-$(LANG).rom
 
 kernel:
 	cd kernel && make $(PLATFORM)
 
 userland: kernel $(PACKAGES)
 	cp kernel/bin/kernel-$(PLATFORM).rom bin/$(PLATFORM)/KnightOS-$(LANG).rom
+	$(PREFIX)build/BuildFS.exe $(FAT) bin/$(PLATFORM)/KnightOS-$(LANG).rom temp
+	rm -rf temp
 
 base:
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/base/" $(PACKAGEPATH)/base/init.asm temp/bin/init
@@ -79,6 +91,7 @@ threadlist: libtext
 unixcommon: stdio
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/unixcommon/" $(PACKAGEPATH)/unixcommon/clear.asm temp/bin/clear
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/unixcommon/" $(PACKAGEPATH)/unixcommon/echo.asm temp/bin/echo
+	cp $(PACKAGEPATH)/unixcommon/echo.man temp/etc/man/echo
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/unixcommon/" $(PACKAGEPATH)/unixcommon/man.asm temp/bin/man
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/unixcommon/" $(PACKAGEPATH)/unixcommon/reboot.asm temp/bin/reboot
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/unixcommon/" $(PACKAGEPATH)/unixcommon/shutdown.asm temp/bin/shutdown
@@ -94,9 +107,6 @@ demos: applib stdio
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/" $(PACKAGEPATH)/demos/hello.asm temp/bin/hello
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/" $(PACKAGEPATH)/demos/todo.asm temp/bin/todo
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/" $(PACKAGEPATH)/demos/userhello.asm temp/bin/userhello
-
-manfiles:
-	cp $(PACKAGEPATH)/manfiles/* temp/etc/man
 
 directories:
 	mkdir -p bin/$(PLATFORM)
