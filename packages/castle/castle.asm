@@ -141,6 +141,7 @@ _:  out (0x10), a
     
 openThreadList:
     kld(de, threadlist)
+    jr _
 launch:
     ld a, (activeThreads)
     cp maxThreads - 1
