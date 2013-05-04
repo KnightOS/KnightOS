@@ -261,6 +261,7 @@ _:                      call flushKeys
 .answerloop_Cancel:
                     ld a, 0xFF
 .answerloop_Select:
+                    pop de
                 pop de
             pop bc
         pop hl
