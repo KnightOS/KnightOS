@@ -24,6 +24,7 @@ jumpTable:
     jp getCharSet
     jp launchCastle
     jp launchThreadList
+    jp showMessage
     .db 0xFF
     
 ; Same as kernel getKey, but listens for
@@ -134,7 +135,138 @@ _:      pop af \ pop hl \ push hl \ push af
     pop bc
     pop de
     ret
-    
+
+;; showMessage [applib]
+;;  Displays a message box on the screen buffer.
+;; Inputs:
+;;  HL: Message text
+;;  DE: Option list
+;;  B: Icon index (0: Exclamation mark)
+;;  IY: Screen buffer
+;; Outputs:
+;;  A: Selected option index, or 0xFF if nothing was selected
+;; Notes:
+;;  Option list may be up to two different options, with an 0xFF at the end. Example:
+;;      .db "Yes", 0, "No", 0, 0xFF
+;;  Or:
+;;      .db "Dismiss", 0, 0xFF
+showMessage:
+    push af
+        push de
+            push hl
+                push bc
+                    ld e, 18
+                    ld l, 16
+                    ld bc, 0x343D ; b = 49-15, c = 78-17
+                    ld b, 49-15
+                    ld c, 78-17
+                    call rectOR
+
+                    ld e, 19
+                    ld l, 17
+                    ld bc, 0x103B; b = 48-16, c = 77-18
+                    ld b, 48-16
+                    ld c, 77-18
+                    call rectXOR
+
+                    ; Draw our nice icon. Note, in the future it might be nice to have a table of
+                    ; different icons and then do something like
+                    ; ld hl, iconTable \ ld e, b \ ld d, 0 \ add hl, de
+                    ; to get a pointer to the table (with a check to ensure the icon index is valid.)
+                pop bc \ push bc
+                    ld a, b
+                    or a ; cp 0
+                    jr nz, .skipIcon
+
+                    ld b, 8
+                    ld de, 0x1412 ; d = 20, e = 18
+                    ild(hl, exclamationSprite1)
+                    call putSpriteOR
+                    ld e, 26
+                    ild(hl, exclamationSprite2)
+                    call putSpriteOR
+
+.skipIcon:
+        pop bc \ pop hl \ pop de \ push hl \ push bc \ push de
+                    ; For now we'll hardcode the location of the text, but if wider icons get
+                    ; implemented the text's X coordinate needs to be calculated (or pre-stored).
+                    ld de, 0x1A12 ; d = 26, e = 18
+                    ld b, d ; margin
+                    call drawStr
+
+                    ; Draw all the options
+                    ld c, 0 ; maximum reply index incremented every time we find an answer
+_:                  ld de, -7
+                    ld a, c
+                    call DEMulA
+                    ld de, 0x182B
+                    add hl, de
+                    ex de, hl ; no margin here!
+                pop hl ; originally de
+                call drawStr
+_:              inc hl
+                xor a
+                cp (hl)
+                jr nz, -_
+                inc hl
+                push hl ; location of next string!
+                    inc c
+                    ld a, (hl)
+                    inc a
+                    jr nz, --_
+
+                    ld a, 0 ; current reply index starts at the default
+                    ld b, 5 ; height of sprite
+.answerloop:
+                    ; Now draw the arrow. Calculate position based on index. Second entry is
+                    ; higher than first.
+                    ld de, -7
+                    call DEMulA
+                    ld de, 0x142B
+                    add hl, de
+                    ex de, hl
+                    ; Draw!
+                    ild(hl, selectionIndicatorSprite)
+                    call putSpriteOR
+
+                    call fastCopy
+                    push af
+_:                      call flushKeys
+                        call waitKey
+                        cp kUp
+                        jr z, .answerloop_Up
+                        cp kDown
+                        jr z, .answerloop_Down
+                        cp kEnter
+                        jr z, .answerloop_Select
+                        cp k2nd
+                        jr z, .answerloop_Select
+                        cp kClear
+                        jr z, .answerloop_Cancel
+                        jr -_
+.answerloop_Up:
+                    pop af
+                    call putSpriteXOR
+                    or a
+                    jr nz, .answerloop
+                    inc a
+                    jr .answerloop
+.answerloop_Down:
+                    pop af
+                    call putSpriteXOR
+                    or a
+                    jr z, .answerloop
+                    dec a
+                    jr .answerloop
+.answerloop_Cancel:
+                    ld a, 0xFF
+.answerloop_Select:
+                pop de
+            pop bc
+        pop hl
+    inc sp \ inc sp
+    ret
+
 ; Returns a character (ANSI) in A based on the pressed key.
 ; Returns actual raw keypress in B.
 ; Uses the upper-right hand corner of the screen to display
@@ -326,3 +458,30 @@ extendedSprite:
     .db 0b01000000
     .db 0b00000000
     .db 0b01000000
+
+exclamationSprite1:
+    .db 0b01110000
+    .db 0b10001000
+    .db 0b10001000
+    .db 0b10001000
+    .db 0b10001000
+    .db 0b10001000
+    .db 0b10001000
+    .db 0b10001000
+
+exclamationSprite2:
+    .db 0b10001000
+    .db 0b01110000
+    .db 0b00000000
+    .db 0b01110000
+    .db 0b10001000
+    .db 0b10001000
+    .db 0b10001000
+    .db 0b01110000
+
+selectionIndicatorSprite:
+    .db 0b10000000
+    .db 0b11000000
+    .db 0b11100000
+    .db 0b11000000
+    .db 0b10000000
