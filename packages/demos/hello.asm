@@ -19,6 +19,7 @@ start:
     kld(de, applibPath)
     call loadLibrary
     
+redraw:
     kld(hl, windowTitle)
     xor a
     applib(drawWindow)
@@ -39,9 +40,24 @@ start:
 _:  call fastCopy
     call flushKeys
     applib(appWaitKey)
+    cp kMode
+    jr z, testMessage
     cp kClear
-    jr nz, -_
-    ret
+    ret z
+    jr -_
+
+testMessage:
+    kld(hl, messageText)
+    kld(de, options)
+    ld b, 0
+    applib(showMessage)
+    kld(hl, options)
+    ld c, a
+    add a \ add a \ add a \ add c
+    add l \ ld l, a \ jr nc, $+3 \ inc h
+    kld(de, dismiss)
+    applib(showMessage)
+    jr redraw
     
 helloString:
     .db lang_helloString, 0
@@ -51,3 +67,11 @@ bootCodeString:
     .db "Boot Code Version: \n", 0
 applibPath:
     .db "/lib/applib", 0
+messageText:
+    .db "Hello, world!\nThis is a test", 0
+options:
+    .db "Option 1", 0
+    .db "Option 2", 0
+    .db 0xFF
+dismiss:
+    .db "Dismiss", 0, 0xFF

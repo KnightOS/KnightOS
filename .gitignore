@@ -9,8 +9,6 @@
 *.vshost.exe
 *.pdb
 *.mdb
-build/tool/_ReSharper.build/
-build/tool/bin/
-build/tool/obj/
 /bin/
-out/
+temp/
+*.swp

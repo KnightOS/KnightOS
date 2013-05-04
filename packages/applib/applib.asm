@@ -157,16 +157,12 @@ showMessage:
                 push bc
                     ld e, 18
                     ld l, 16
-                    ld bc, 0x343D ; b = 49-15, c = 78-17
-                    ld b, 49-15
-                    ld c, 78-17
+                    ld bc, (49 - 15) * 256 + (78 - 17)
                     call rectOR
 
                     ld e, 19
                     ld l, 17
-                    ld bc, 0x103B; b = 48-16, c = 77-18
-                    ld b, 48-16
-                    ld c, 77-18
+                    ld bc, (48 - 16) * 256 + (77 - 18)
                     call rectXOR
 
                     ; Draw our nice icon. Note, in the future it might be nice to have a table of
@@ -179,52 +175,42 @@ showMessage:
                     jr nz, .skipIcon
 
                     ld b, 8
-                    ld de, 0x1412 ; d = 20, e = 18
+                    ld de, 20 * 256 + 18
                     ild(hl, exclamationSprite1)
                     call putSpriteOR
                     ld e, 26
                     ild(hl, exclamationSprite2)
                     call putSpriteOR
-
 .skipIcon:
         pop bc \ pop hl \ pop de \ push hl \ push bc \ push de
                     ; For now we'll hardcode the location of the text, but if wider icons get
                     ; implemented the text's X coordinate needs to be calculated (or pre-stored).
-                    ld de, 0x1A12 ; d = 26, e = 18
+                    ld de, 26 * 256 + 18 ; d = 26, e = 18
                     ld b, d ; margin
                     call drawStr
 
                     ; Draw all the options
-                    ld c, 0 ; maximum reply index incremented every time we find an answer
-_:                  ld de, -7
-                    ld a, c
-                    call DEMulA
-                    ld de, 0x182B
-                    add hl, de
-                    ex de, hl ; no margin here!
+                    ld de, 24 * 256 + 37
+                    ld bc, 24 * 256 + 0xFF ; B is left margin, C is the option count (-1 for zero indexing)
                 pop hl ; originally de
-                call drawStr
-_:              inc hl
+_:              call drawStr
                 xor a
-                cp (hl)
+                push bc \ ld bc, -1 \ cpir \ pop bc ; Seek to end of string
+                ld a, '\n' \ call drawChar
+                inc c
+                ld a, (hl)
+                inc a
                 jr nz, -_
-                inc hl
-                push hl ; location of next string!
-                    inc c
-                    ld a, (hl)
-                    inc a
-                    jr nz, --_
 
-                    ld a, 0 ; current reply index starts at the default
-                    ld b, 5 ; height of sprite
+                ld a, 0 ; current reply index starts at the default
+                ld b, 5 ; height of sprite
+                push hl
 .answerloop:
-                    ; Now draw the arrow. Calculate position based on index. Second entry is
-                    ; higher than first.
-                    ld de, -7
-                    call DEMulA
-                    ld de, 0x142B
-                    add hl, de
-                    ex de, hl
+                    push af
+                        or a \ rlca \ ld d, a \ rlca \ add d ; A *= 6
+                        ld d, 0x14
+                        add a, 37 \ ld e, a
+                    pop af
                     ; Draw!
                     ild(hl, selectionIndicatorSprite)
                     call putSpriteOR
@@ -241,27 +227,23 @@ _:                      call flushKeys
                         jr z, .answerloop_Select
                         cp k2nd
                         jr z, .answerloop_Select
-                        cp kClear
-                        jr z, .answerloop_Cancel
                         jr -_
 .answerloop_Up:
-                    pop af
-                    call putSpriteXOR
-                    or a
-                    jr nz, .answerloop
-                    inc a
-                    jr .answerloop
-.answerloop_Down:
                     pop af
                     call putSpriteXOR
                     or a
                     jr z, .answerloop
                     dec a
                     jr .answerloop
-.answerloop_Cancel:
-                    ld a, 0xFF
+.answerloop_Down:
+                    pop af
+                    call putSpriteXOR
+                    cp c
+                    jr z, .answerloop
+                    inc a
+                    jr .answerloop
 .answerloop_Select:
-                    pop de
+                    pop af
                 pop de
             pop bc
         pop hl
