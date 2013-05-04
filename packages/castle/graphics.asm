@@ -1,5 +1,3 @@
-#include "castle.lang"
-
 drawChrome:
     call clearBuffer
     ; Castle top
@@ -277,55 +275,6 @@ drawPowerMenu:
     ld b, 5
     call putSpriteOR
     ret
-
-drawConfirmationDialog:
-    ld e, 18 ; e, l, c, b
-    ld l, 16
-    ld c, 78-17
-    ld b, 49-15
-    call rectOR
-    
-    ld e, 19
-    ld l, 17
-    ld c, 77-18
-    ld b, 48-16
-    call rectXOR
-    
-    kld(hl, exclamationSprite1)
-    ld b, 8
-    ld de, 0x1820
-    call putSpriteOR
-    
-    kld(hl, exclamationSprite2)
-    ld b, 8
-    ld de, 0x1828
-    call putSpriteOR
-    
-    kld(hl, confirmString1)
-    ld de, lang_areYouSure_position
-    call drawStr
-    
-    kld(hl, confirmString2)
-    ld de, lang_unsavedData_position
-    call drawStr
-    
-    kld(hl, confirmString3)
-    ld de, lang_mayBeLost_position
-    call drawStr
-    
-    kld(hl, yesString)
-    ld de, lang_yes_position
-    call drawStr
-    
-    kld(hl, noString)
-    ld de, lang_no_position
-    call drawStr
-    
-    kld(hl, selectionIndicatorSprite)
-    ld de, 0x282B
-    ld b, 5
-    call putSpriteOR
-    ret
     
 castleTopSprite: ; 8x3
     .db 0b11110000
@@ -402,27 +351,7 @@ selectionIndicatorSprite: ; 8x5
     .db 0b11100000
     .db 0b11000000
     .db 0b10000000
-    
-exclamationSprite1: ; 8x8
-    .db 0b01110000
-    .db 0b10001000
-    .db 0b10001000
-    .db 0b10001000
-    .db 0b10001000
-    .db 0b10001000
-    .db 0b10001000
-    .db 0b10001000
-
-exclamationSprite2: ; 8x8
-    .db 0b10001000
-    .db 0b01110000
-    .db 0b00000000
-    .db 0b01110000
-    .db 0b10001000
-    .db 0b10001000
-    .db 0b10001000
-    .db 0b01110000
-    
+   
 defaultIconSprite: ; 16x16
     .db 0b01111111, 0b11111110
     .db 0b11111111, 0b11111111
@@ -479,16 +408,6 @@ shutdownString:
     .db lang_shutDown, 0
 restartString:
     .db lang_restart, 0
-confirmString1:
-    .db lang_areYouSure, 0
-confirmString2:
-    .db lang_unsavedData, 0
-confirmString3:
-    .db lang_beLost, 0
-yesString:
-    .db lang_Yes, 0
-noString:
-    .db lang_no, 0
 noProgramsInstalledString:
     .db lang_noPrograms, 0
 configPath:

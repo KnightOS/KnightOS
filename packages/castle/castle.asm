@@ -1,5 +1,7 @@
 .nolist
 #include "kernel.inc"
+#include "applib.inc"
+#include "castle.lang"
 .list
     .db 0, 50
 .org 0
@@ -8,6 +10,8 @@ start:
     call getKeypadLock
 
     call allocScreenBuffer
+    kld(de, applibPath)
+    call loadLibrary
 resetToHome:
     ld d, 0
 redrawHome:
@@ -37,7 +41,7 @@ _:  call flushKeys
     cp k2nd
     jr z, homeSelect
     cp kGraph
-    kjp(z, launchThreadList)
+    kjp(z, openThreadList)
     cp kPlus
     kjp(z, incrementContrast)
     cp kMinus
@@ -134,7 +138,7 @@ decrementContrast:
 _:  out (0x10), a
     kjp(homeLoop)
     
-launchThreadList:
+openThreadList:
     kld(de, threadlist)
 launch:
     di
@@ -208,49 +212,27 @@ confirmRestart:
     ld hl, reboot
 confirmSelection:
     push hl
-    kcall(drawConfirmationDialog)
-        
-confirmSelectionLoop:
-    call fastCopy
-    call flushKeys
-    call waitKey
-
-    cp kUp
-    jr z, confirmSelectionLoop_Up
-    cp kDown
-    jr z, confirmSelectionLoop_Down
-    cp kEnter
-    jr z, confirmSelectionLoop_Select
-    cp k2nd
-    jr z, confirmSelectionLoop_Select
-    cp kClear
-    kjp(z, resetToHome)
-        
-confirmSelectionLoop_Up:
-    call putSpriteXOR
-    ld de, 0x2825
-    call putSpriteOR
-    jr confirmSelectionLoop
-        
-confirmSelectionLoop_Down:
-    call putSpriteXOR
-    ld de, 0x282B
-    call putSpriteOR
-    jr confirmSelectionLoop
-
-confirmSelectionLoop_Select:
+        kld(hl, confirmMessage)
+        kld(de, shutdownOptions)
+        ld b, 0
+        applib(showMessage)
     pop hl
-    ld a, 0x2B
-    cp e
-    kjp(z, resetToHome)
-    ; Before restarting, shut off the screen for a moment
-    ; This was added because some people had the impression
-    ; that restarting the calculator didn't do anything
-    ld a, 2 \ out (10h), a
+    or a
+    jr nz, _
+    kjp(resetToHome)
+_:  ld a, 2 \ out (0x10), a
     ld b, 255 \ djnz $
     jp (hl)
-    
+
+#include "graphics.asm"
+
 threadlist:
     .db "/bin/threadlist", 0
-    
-#include "graphics.asm"
+applibPath:
+    .db "/lib/applib", 0
+confirmMessage:
+    .db lang_confirmShutdown, 0
+shutdownOptions:
+    .db lang_no, 0
+    .db lang_yes, 0
+    .db 0xFF
