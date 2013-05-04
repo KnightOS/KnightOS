@@ -13,6 +13,7 @@ start:
     kld(de, applibPath)
     call loadLibrary
 resetToHome:
+    ei
     ld d, 0
 redrawHome:
     push de
@@ -141,8 +142,17 @@ _:  out (0x10), a
 openThreadList:
     kld(de, threadlist)
 launch:
-    di
+    ld a, (activeThreads)
+    cp maxThreads - 1
+    jr nz, _
+    or 1
+    ld a, errTooManyThreads
+    applib(showError)
+    kjp(resetToHome)
+_:  di
     call launchProgram
+    applib(nz, showError)
+    kjp(nz, resetToHome)
     ; ENORMOUS HACK
     ld hl, userMemory + 5
     call setReturnPoint

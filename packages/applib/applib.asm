@@ -25,6 +25,7 @@ jumpTable:
     jp launchCastle
     jp launchThreadList
     jp showMessage
+    jp showError
     .db 0xFF
     
 ; Same as kernel getKey, but listens for
@@ -374,6 +375,43 @@ getCharSet:
     ild(a, (charSet))
     ret
     
+;; showError [applib]
+;;  Displays a user-friendly error message if appliciable.
+;; Inputs:
+;;  A: Error code
+showError:
+    ret z
+    push af
+        or a
+        jr z, .exitEarly
+        ; Show error
+        push de
+        push bc
+        push hl
+            dec a
+            ild(hl, errorMessages)
+            add a \ add l \ ld l, a \ jr nc, $+3 \ inc h
+            ld e, (hl) \ inc hl \ ld d, (hl)
+            push de
+            push ix
+                push hl \ pop ix
+                call memSeekToStart
+                push ix \ pop bc
+            pop ix
+            pop hl
+            add hl, bc
+
+            ild(de, dismissOption)
+            ld b, 0
+            icall(showMessage)
+        pop hl
+        pop bc
+        pop de
+.exitEarly:
+    pop af
+    ret
+ 
+#include "errors.asm"
 #include "characters.asm"
 
 castlePath:
