@@ -226,6 +226,7 @@ confirmSelection:
         kld(hl, confirmMessage)
         kld(de, shutdownOptions)
         ld b, 0
+        xor a
         applib(showMessage)
     pop hl
     or a
@@ -244,6 +245,6 @@ applibPath:
 confirmMessage:
     .db lang_confirmShutdown, 0
 shutdownOptions:
+    .db 2
     .db lang_no, 0
     .db lang_yes, 0
-    .db 0xFF

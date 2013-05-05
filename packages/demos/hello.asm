@@ -50,12 +50,14 @@ testMessage:
     kld(hl, messageText)
     kld(de, options)
     ld b, 0
+    xor a
     applib(showMessage)
     kld(hl, options)
     ld c, a
     add a \ add a \ add a \ add c
     add l \ ld l, a \ jr nc, $+3 \ inc h
     kld(de, dismiss)
+    xor a
     applib(showMessage)
     jr redraw
     
@@ -70,8 +72,9 @@ applibPath:
 messageText:
     .db "Hello, world!\nThis is a test", 0
 options:
+    .db 2
     .db "Option 1", 0
     .db "Option 2", 0
-    .db 0xFF
 dismiss:
-    .db "Dismiss", 0, 0xFF
+    .db 1
+    .db "Dismiss", 0

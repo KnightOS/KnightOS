@@ -33,4 +33,5 @@ msg_tooManySignals:
     .db "Error:\nToo many\nsignals", 0
 
 dismissOption:
-    .db "Dismiss", 0, 0xFF
+    .db 1
+    .db "Dismiss", 0
