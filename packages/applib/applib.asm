@@ -145,7 +145,7 @@ _:      pop af \ pop hl \ push hl \ push af
 ;;  B: Icon index (0: Exclamation mark)
 ;;  IY: Screen buffer
 ;; Outputs:
-;;  A: Selected option index, or 0xFF if nothing was selected
+;;  A: Selected option index
 ;; Notes:
 ;;  Option list may be up to two different options, with an 0xFF at the end. Example:
 ;;      .db "Yes", 0, "No", 0, 0xFF
@@ -203,7 +203,7 @@ _:              call drawStr
                 inc a
                 jr nz, -_
 
-                ld a, 0 ; current reply index starts at the default
+                xor a ; current reply index starts at the default
                 ld b, 5 ; height of sprite
                 push hl
 .answerloop:
@@ -220,15 +220,14 @@ _:              call drawStr
                     push af
 _:                      call flushKeys
                         call waitKey
-                        cp kUp
-                        jr z, .answerloop_Up
-                        cp kDown
-                        jr z, .answerloop_Down
                         cp kEnter
                         jr z, .answerloop_Select
                         cp k2nd
                         jr z, .answerloop_Select
-                        jr -_
+                        cp kDown
+                        jr z, .answerloop_Down
+                        cp kUp
+                        jr nz, -_ ; fall thru to .answerloop_Up
 .answerloop_Up:
                     pop af
                     call putSpriteXOR
