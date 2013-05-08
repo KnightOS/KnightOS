@@ -34,11 +34,12 @@ parseInput_error:
 term_launchProgram:
     di
     call launchProgram
+    push bc \ pop de ; Terminal X, Y
+    jr nz, .error ; Handle error by just telling the user which error it is
     call setInitialHL
     stdio(registerThread)
-    ld d, b \ ld e, c ; Terminal X, Y
     ei \ halt
-ioLoop:
+.ioLoop:
     di
     push af
         ; We can be given focus again through the threadlist, so make sure everything
@@ -59,7 +60,7 @@ _:      pop af
     ; Check if the thread is still alive
     pop af
     call getThreadEntry
-    jr z, ioLoop
+    jr z, .ioLoop
     push af
         ; Final command check
         stdio(readCommand)
@@ -67,12 +68,23 @@ _:      pop af
         kcall(nz, handleCommand)
     pop af
     stdio(releaseThread)
+.cleanup:
     ; Reset state
     call getLcdLock
     call getKeypadLock
     call flushKeys
     ret
-    
+.error:
+    push af
+        kld(hl, launchErrorStr)
+        kcall(term_printString)
+    pop af
+    kcall(term_printHex)
+    ld a, '\n'
+    kcall(term_printChar)
+    ei
+    jr .cleanup
+
 handleCommand:
     push bc
         cp cmdDisableUpdates
@@ -139,5 +151,9 @@ _:      cp cmdPrintLine
 _:  pop bc
     ret
     
+
+launchErrorStr:
+    .db lang_launchError
+    .db " ", 0
 enableLcdUpdates:
     .db 1

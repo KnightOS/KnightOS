@@ -4,3 +4,4 @@
 #define lang_description "Terminal"
 #define lang_windowTitle "Terminal"
 #define lang_commandNotFound "Commando n'est pas trouve"
+#define lang_launchError "Erreur"
