@@ -1,6 +1,6 @@
-; English language file for /bin/terminal
+; Dutch language file for /bin/terminal
 
 ; Text
 #define lang_description "Terminal"
 #define lang_windowTitle "Terminal"
-#define lang_commandNotFound ":Command not found"
+#define lang_commandNotFound "Opdracht niet gevonden"
