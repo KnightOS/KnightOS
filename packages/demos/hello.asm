@@ -49,8 +49,8 @@ _:  call fastCopy
 testMessage:
     kld(hl, messageText)
     kld(de, options)
-    ld b, 0
     xor a
+    ld b, a
     applib(showMessage)
     kld(hl, options)
     ld c, a

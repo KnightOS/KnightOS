@@ -225,8 +225,8 @@ confirmSelection:
     push hl
         kld(hl, confirmMessage)
         kld(de, shutdownOptions)
-        ld b, 0
         xor a
+        ld b, a
         applib(showMessage)
     pop hl
     or a
