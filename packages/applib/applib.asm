@@ -208,7 +208,11 @@ showMessage:
                 call drawStr
 
 _:          pop af \ push af ; default option
-                ld b, 5 ; height of sprite
+                cp c
+                jr c, _
+                jr z, _
+                xor a ; default option is too large
+_:              ld b, 5 ; height of sprite
 .answerloop:
                     push af
                         or a \ rlca \ ld d, a \ rlca \ add d ; A *= 6
