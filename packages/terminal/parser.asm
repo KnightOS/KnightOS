@@ -78,8 +78,27 @@ _:      pop af
     push af
         kld(hl, launchErrorStr)
         kcall(term_printString)
+    pop af \ push af
+        kcall(term_printHex)
+        kld(hl, colonStr)
+        kcall(term_printString)
     pop af
-    kcall(term_printHex)
+    ; This next bit stolen from applib
+    dec a
+    push de
+        kld(hl, errorMessages)
+        add a \ add l \ ld l, a \ jr nc, $+3 \ inc h
+        ld e, (hl) \ inc hl \ ld d, (hl)
+        push de
+        push ix
+            push hl \ pop ix
+            call memSeekToStart
+            push ix \ pop bc
+        pop ix
+        pop hl
+        add hl, bc
+    pop de
+    kcall(term_printString)
     ld a, '\n'
     kcall(term_printChar)
     ei
@@ -150,10 +169,8 @@ _:      cp cmdPrintLine
         kcall(term_printChar)
 _:  pop bc
     ret
-    
 
-launchErrorStr:
-    .db lang_launchError
-    .db " ", 0
+#include "errors.asm"
+
 enableLcdUpdates:
     .db 1
