@@ -80,8 +80,10 @@ _:      pop af
         kcall(term_printString)
     pop af \ push af
         kcall(term_printHex)
-        kld(hl, colonStr)
-        kcall(term_printString)
+        ld a, ':'
+        kcall(term_printChar)
+        ld a, ' '
+        kcall(term_printChar)
     pop af
     ; This next bit stolen from applib
     dec a

@@ -1,8 +1,6 @@
 launchErrorStr:
     .db lang_launchError
     .db " ", 0
-colonStr:
-    .db ": ", 0
 
 errorMessages:
     .dw msg_outOfMem
