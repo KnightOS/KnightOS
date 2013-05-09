@@ -34,11 +34,12 @@ parseInput_error:
 term_launchProgram:
     di
     call launchProgram
+    push bc \ pop de ; Terminal X, Y
+    jr nz, .error ; Handle error by just telling the user which error it is
     call setInitialHL
     stdio(registerThread)
-    ld d, b \ ld e, c ; Terminal X, Y
     ei \ halt
-ioLoop:
+.ioLoop:
     di
     push af
         ; We can be given focus again through the threadlist, so make sure everything
@@ -59,7 +60,7 @@ _:      pop af
     ; Check if the thread is still alive
     pop af
     call getThreadEntry
-    jr z, ioLoop
+    jr z, .ioLoop
     push af
         ; Final command check
         stdio(readCommand)
@@ -67,12 +68,42 @@ _:      pop af
         kcall(nz, handleCommand)
     pop af
     stdio(releaseThread)
+.cleanup:
     ; Reset state
     call getLcdLock
     call getKeypadLock
     call flushKeys
     ret
-    
+.error:
+    push af
+        kld(hl, launchErrorStr)
+        kcall(term_printString)
+    pop af \ push af
+        kcall(term_printHex)
+        kld(hl, colonStr)
+        kcall(term_printString)
+    pop af
+    ; This next bit stolen from applib
+    dec a
+    push de
+        kld(hl, errorMessages)
+        add a \ add l \ ld l, a \ jr nc, $+3 \ inc h
+        ld e, (hl) \ inc hl \ ld d, (hl)
+        push de
+        push ix
+            push hl \ pop ix
+            call memSeekToStart
+            push ix \ pop bc
+        pop ix
+        pop hl
+        add hl, bc
+    pop de
+    kcall(term_printString)
+    ld a, '\n'
+    kcall(term_printChar)
+    ei
+    jr .cleanup
+
 handleCommand:
     push bc
         cp cmdDisableUpdates
@@ -138,6 +169,8 @@ _:      cp cmdPrintLine
         kcall(term_printChar)
 _:  pop bc
     ret
-    
+
+#include "errors.asm"
+
 enableLcdUpdates:
     .db 1
