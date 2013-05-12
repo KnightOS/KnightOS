@@ -2,6 +2,7 @@
 #include "kernel.inc"
 #include "applib.inc"
 #include "castle.lang"
+#include "platforms.inc"
 .list
     .db 0, 50
 .org 0

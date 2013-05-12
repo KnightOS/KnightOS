@@ -19,7 +19,7 @@ EMUPREFIX=wine
 endif
 AS=$(ASPREFIX)build/sass.exe
 EMU=$(EMUPREFIX)build/Wabbitemu.exe
-INCLUDE=inc/;kernel/bin/;lang/$(LANG)/
+INCLUDE=inc/;kernel/bin/;lang/$(LANG)/;kernel/inc/
 ASFLAGS=--encoding "Windows-1252"
 .DEFAULT_GOAL=TI84pSE
 
