@@ -408,8 +408,8 @@ showError:
             add hl, bc
 
             ild(de, dismissOption)
-            ld b, 0
             xor a
+            ld b, a
             icall(showMessage)
         pop hl
         pop bc
