@@ -142,15 +142,16 @@ _:      pop af \ pop hl \ push hl \ push af
 ;; Inputs:
 ;;  HL: Message text
 ;;  DE: Option list
+;;  A: Default option, zero based
 ;;  B: Icon index (0: Exclamation mark)
 ;;  IY: Screen buffer
 ;; Outputs:
-;;  A: Selected option index, or 0xFF if nothing was selected
+;;  A: Selected option index
 ;; Notes:
-;;  Option list may be up to two different options, with an 0xFF at the end. Example:
-;;      .db "Yes", 0, "No", 0, 0xFF
+;;  Option list may be up to two different options, preceded by the number of options. Example:
+;;      .db 2, "Yes", 0, "No", 0
 ;;  Or:
-;;      .db "Dismiss", 0, 0xFF
+;;      .db 1, "Dismiss", 0
 showMessage:
     push af
         push de
@@ -183,7 +184,7 @@ showMessage:
                     ild(hl, exclamationSprite2)
                     call putSpriteOR
 .skipIcon:
-        pop bc \ pop hl \ pop de \ push hl \ push bc \ push de
+        pop bc \ pop hl \ pop de \ pop af \ push hl \ push bc \ push af \ push de
                     ; For now we'll hardcode the location of the text, but if wider icons get
                     ; implemented the text's X coordinate needs to be calculated (or pre-stored).
                     ld de, 26 * 256 + 18 ; d = 26, e = 18
@@ -192,20 +193,26 @@ showMessage:
 
                     ; Draw all the options
                     ld de, 24 * 256 + 37
-                    ld bc, 24 * 256 + 0xFF ; B is left margin, C is the option count (-1 for zero indexing)
-                pop hl ; originally de
-_:              call drawStr
+                    ld b, d ; left margin
+                pop hl \ pop af \ push hl \ push af ; need the address of options, originally in de
+                ld c, (hl)
+                dec c ; We need our number of options to be zero-based
+                inc hl ; Go to start of first string
+                call drawStr
+                ld a, c
+                or a
+                jr z, _ ; Skip drawing second option if there isn't one
                 xor a
                 push bc \ ld bc, -1 \ cpir \ pop bc ; Seek to end of string
                 ld a, '\n' \ call drawChar
-                inc c
-                ld a, (hl)
-                inc a
-                jr nz, -_
+                call drawStr
 
-                ld a, 0 ; current reply index starts at the default
-                ld b, 5 ; height of sprite
-                push hl
+_:          pop af \ push af ; default option
+                cp c
+                jr c, _
+                jr z, _
+                xor a ; default option is too large
+_:              ld b, 5 ; height of sprite
 .answerloop:
                     push af
                         or a \ rlca \ ld d, a \ rlca \ add d ; A *= 6
@@ -220,15 +227,14 @@ _:              call drawStr
                     push af
 _:                      call flushKeys
                         call waitKey
-                        cp kUp
-                        jr z, .answerloop_Up
-                        cp kDown
-                        jr z, .answerloop_Down
                         cp kEnter
                         jr z, .answerloop_Select
                         cp k2nd
                         jr z, .answerloop_Select
-                        jr -_
+                        cp kDown
+                        jr z, .answerloop_Down
+                        cp kUp
+                        jr nz, -_ ; fall thru to .answerloop_Up
 .answerloop_Up:
                     pop af
                     call putSpriteXOR
@@ -245,10 +251,10 @@ _:                      call flushKeys
                     jr .answerloop
 .answerloop_Select:
                     pop af
-                pop de
-            pop bc
-        pop hl
-    inc sp \ inc sp
+                inc sp \ inc sp
+            pop de
+        pop bc
+    pop hl
     ret
 
 ; Returns a character (ANSI) in A based on the pressed key.
@@ -402,7 +408,8 @@ showError:
             add hl, bc
 
             ild(de, dismissOption)
-            ld b, 0
+            xor a
+            ld b, a
             icall(showMessage)
         pop hl
         pop bc
