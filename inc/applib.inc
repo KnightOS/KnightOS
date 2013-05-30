@@ -18,6 +18,7 @@ launchCastle .equ 27
 launchThreadList .equ 30
 showMessage .equ 33
 showError .equ 36
+showErrorAndQuit .equ 39
 
 ; Character sets
 charSetUppercase .equ 0

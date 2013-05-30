@@ -26,6 +26,7 @@ jumpTable:
     jp launchThreadList
     jp showMessage
     jp showError
+    jp showErrorAndQuit
     .db 0xFF
     
 ; Same as kernel getKey, but listens for
@@ -389,7 +390,7 @@ showError:
     ret z
     push af
         or a
-        jr z, .exitEarly
+        jr z, showError_exitEarly
         ; Show error
         push de
         push bc
@@ -414,9 +415,24 @@ showError:
         pop hl
         pop bc
         pop de
-.exitEarly:
+showError_exitEarly:
     pop af
     ret
+
+;; showErrorAndQuit [applib]
+;;  Displays a user-friendly error message, if applicable,
+;;  then quits the current thread.  This function does not
+;;  return if NZ or if A != 0.
+;; Inputs:
+;;  A: Error code
+showErrorAndQuit:
+    ret z
+    push af
+        or a
+        jr z, showError_exitEarly
+        icall(showError)
+        ; ENORMOUS HACK
+        jp userMemory + 5
  
 #include "errors.asm"
 #include "characters.asm"
