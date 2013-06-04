@@ -430,20 +430,8 @@ showErrorAndQuit:
     push af
         or a
         jr z, showError_exitEarly
-        ; Not returning; we can clobber registers at will!
         icall(showError)
-        call getCurrentThreadID
-        call getThreadEntry
-        inc hl \ inc hl \ inc hl
-        ld c, (hl) \ inc hl \ ld b, (hl)
-        push bc \ pop ix
-        call memSeekToStart
-        dec ix \ dec ix
-        ld c, (ix) \ ld b, (ix + 1)
-        add ix, bc
-        ld l, (ix)
-        ld h, (ix + 1)
-        jp (hl)
+        jp exitThread
  
 #include "errors.asm"
 #include "characters.asm"
