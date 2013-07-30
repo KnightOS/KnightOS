@@ -422,7 +422,7 @@ showError_exitEarly:
 ;; showErrorAndQuit [applib]
 ;;  Displays a user-friendly error message, if applicable,
 ;;  then quits the current thread.  This function does not
-;;  return if NZ or if A != 0.
+;;  return if NZ and if A != 0.
 ;; Inputs:
 ;;  A: Error code
 showErrorAndQuit:
