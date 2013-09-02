@@ -81,6 +81,7 @@ userland: kernel $(PACKAGES)
 
 base:
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/base/" $(PACKAGEPATH)/base/init.asm temp/bin/init
+	cp $(PACKAGEPATH)/base/inittab temp/etc/inittab
 
 stdio:
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/stdio/" $(PACKAGEPATH)/stdio/stdio.asm temp/lib/stdio
