@@ -5,7 +5,7 @@
 # Set lang with `make [platform] LANG=[langauge]`
 LANG=en_us
 # Default packages: base castle threadlist unixcommon terminal demos
-PACKAGES=base castle threadlist unixcommon terminal demos
+PACKAGES=base castle threadlist unixcommon terminal demos osrecv
 
 # Paths
 PACKAGEPATH=packages
@@ -115,6 +115,9 @@ demos: applib stdio
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/" $(PACKAGEPATH)/demos/hello.asm temp/bin/hello
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/" $(PACKAGEPATH)/demos/todo.asm temp/bin/todo
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/" $(PACKAGEPATH)/demos/userhello.asm temp/bin/userhello
+
+osrecv:
+	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/osrecv/" $(PACKAGEPATH)/osrecv/osrecv.asm temp/bin/osrecv
 
 directories:
 	mkdir -p bin/$(PLATFORM)
