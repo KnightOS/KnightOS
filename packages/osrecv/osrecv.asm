@@ -21,7 +21,7 @@
 #define JUMP1_END   0x412B
 
 #include <kernel.inc>
-.db 20, 0
+.db 0, 20
 .org 0
 start:
     ;Try finding the jump point -- if we can't, bail out now
@@ -53,7 +53,6 @@ stillGood:
     jp 0x9D95 + tiosStart
 tiosStart:
     .org 0x9D95
-    jr $
     ld hl, (kernelGarbage)
     ld (kernelGarbage + 1), hl
 
