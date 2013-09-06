@@ -52,7 +52,7 @@ stillGood:
     ldir
     jp 0x9D95 + tiosStart
 tiosStart:
-    .org 0x9D95
+    .org 0x9D95 + tiosStart
     ld hl, (kernelGarbage)
     ld (kernelGarbage + 1), hl
 
