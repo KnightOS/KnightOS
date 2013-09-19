@@ -1,0 +1,6 @@
+; Portuguese language file for /bin/hello
+
+; Text
+#define lang_description "Hello world"
+#define lang_helloString "Hello, world!\nPrima [Clear] para sair."
+#define lang_windowTitle "Hello world"
