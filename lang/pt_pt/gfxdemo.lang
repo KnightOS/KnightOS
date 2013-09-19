@@ -1,0 +1,6 @@
+; Portuguese language file for /bin/demo
+
+; Text
+#define lang_description "Demo"
+#define lang_exitString "Prima [Clear] para sair."
+#define lang_windowTitle "Demo"
