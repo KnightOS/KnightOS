@@ -1,0 +1,6 @@
+; Portuguese language file for /etc/castle.config
+
+; Text
+#define lang_description "Demo de Contagem"
+#define lang_hello "Prima [Clear] para sair."
+#define lang_windowTitle "Demo de Contagem"

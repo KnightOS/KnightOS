@@ -7,20 +7,20 @@
 start:
     call getLcdLock
     call getKeypadLock
-    
+
     call allocScreenBuffer
 redraw:
     kcall(drawInterface)
     kcall(drawThreads)
     ld a, (totalThreads)
     kjp(z, noThreads)
-    
+
     ld ix, threadTable
 mainLoop:
     call fastCopy
     call flushKeys
     call waitKey
-    
+
     cp kClear
     kjp(z, launchCastle)
     cp kYEqu
@@ -37,9 +37,9 @@ mainLoop:
     kjp(z, doKill)
     cp kGraph
     kjp(z, doOptions)
-    
+
     jr mainLoop
-    
+
 doUp:
     ld a, e
     cp 12
@@ -72,7 +72,7 @@ _:      pop ix
     pop de
     pop hl
     jr mainLoop
-    
+
 doDown:
     kld(a, (totalThreads))
     dec a
@@ -113,7 +113,7 @@ _:      pop ix
     pop de
     pop hl
     kjp(mainLoop)
-    
+
 doSelect:
     call flushKeys
     di
@@ -122,14 +122,14 @@ doSelect:
     ld (hwLockKeypad), a
     call resumeThread
     jp killCurrentThread
-    
+
 doKill:
     di
     ld a, (ix)
     call killThread
     ei
     kjp(redraw)
-    
+
 doOptions:
     kcall(drawOptions)
     call fastCopy
@@ -151,26 +151,27 @@ launchCastle:
     di
     call launchProgram
     jp killCurrentThread
-    
+
 noThreads:
     kcall(drawInterface)
+    ld b, 0
     ld de, lang_noPrograms_position
     kld(hl, noProgramsStr)
     call drawStr
-    
+
     call fastCopy
-    
+
 _:  call flushKeys
     call waitKey
-    
+
     cp kClear
     jr z, _
     cp kYEqu
     jr nz, -_
-    
+
 _:  call flushKeys
     jr launchCastle
-    
+
 drawThreads:
     xor a
     kld((totalThreads), a)
@@ -203,13 +204,13 @@ skipThread:
     ld a, 6 \ add a, e \ ld e, a
     ld a, 8 \ add a, l \ ld l, a
     djnz drawThreads_loop
-    
+
     kld(hl, selectionIndicatorSprite)
     ld b, 5
     ld de, 1 * 256 + 12
     call PutSpriteOR
     ret
-    
+
 drawInterface:
     call clearBuffer
     ; Castle top
@@ -227,52 +228,52 @@ _:    ld a, 8
     add a, d
     ld d, a
     djnz -_
-    
+
     kld(hl, hotkeyLeftSprite)
     ld b, 8
     ld de, 0x0038
     call putSpriteOR
-    
+
     kld(hl, hotkeyRightSprite)
     ld de, 0x5838
     call putSpriteOR
-    
+
     kld(hl, hotkeyArrowLeftSprite)
     ld b, 5
     ld de, 0x003A
     call putSpriteOR
-    
+
     kld(hl, hotkeyPlusSprite)
     ld b, 5
     ld de, 0x5A3A
     call putSpriteOR
-    
+
     kld(hl, backStr)
     ld de, lang_castle_position
     call drawStr
-    
+
     kld(hl, optionsStr)
     ld de, lang_options_position
     call drawStr
-        
+
     kld(hl, runningProgramsStr)
     ld de, lang_runningPrograms_position
     call drawStr
-    
+
     ld hl, 0x000A
     ld de, 0x5F0A
     call drawLine
     ret
-    
+
 drawOptions:
     kld(hl, hotkeyPlusSprite)
     ld de, 0x5A3A
     call putSpriteXOR
-    
+
     kld(hl, hotkeyArrowUpSprite)
     ld de, 0x593A
     call putSpriteOR
-    
+
     ld e, 55 - (61 - (lang_forceQuit_position >> 8))
     ld l, 48
     ld c, 96 - 54 + (61 - (lang_forceQuit_position >> 8))
@@ -291,22 +292,22 @@ drawOptions:
     ld a, 87
     ld l, 57
     call setPixel
-    
+
     kld(hl, forceQuitStr)
     ld de, lang_forceQuit_position
     call drawStr
-    
+
     kld(hl, selectionIndicatorSprite)
     ld b, 5
     ld de, ((57  - (61 - (lang_forceQuit_position >> 8))) << 8) + 50
     call putSpriteOR
     ret
-    
+
 castleTopSprite: ; 8x3
     .db 0b11110000
     .db 0b10010000
     .db 0b10011111
-    
+
 hotkeyLeftSprite: ; 8x8
     .db 0b01111100
     .db 0b10000010
@@ -316,7 +317,7 @@ hotkeyLeftSprite: ; 8x8
     .db 0b00000001
     .db 0b00000001
     .db 0b10000010
-    
+
 hotkeyRightSprite: ; 8x8
     .db 0b00111110
     .db 0b01000001
@@ -326,35 +327,35 @@ hotkeyRightSprite: ; 8x8
     .db 0b10000000
     .db 0b10000000
     .db 0b01000001
-    
+
 hotkeyPlusSprite: ; 8x5
     .db 0b00100000
     .db 0b00100000
     .db 0b11111000
     .db 0b00100000
     .db 0b00100000
-    
+
 hotkeyArrowLeftSprite: ; 8x5
     .db 0b0010000
     .db 0b0100000
     .db 0b1111100
     .db 0b0100000
     .db 0b0010000
-    
+
 hotkeyArrowUpSprite: ; 8x5
     .db 0b0010000
     .db 0b0111000
     .db 0b1010100
     .db 0b0010000
     .db 0b0010000
-    
+
 selectionIndicatorSprite: ; 8x5
     .db 0b10000000
     .db 0b11000000
     .db 0b11100000
     .db 0b11000000
     .db 0b10000000
-    
+
 backStr:
     .db lang_str_castle, 0
 optionsStr:
@@ -365,9 +366,9 @@ noProgramsStr:
     .db lang_str_noPrograms, 0
 forceQuitStr:
     .db lang_str_forceQuit, 0
-    
+
 totalThreads:
     .db 0
-    
+
 castlePath:
     .db "/bin/castle", 0
