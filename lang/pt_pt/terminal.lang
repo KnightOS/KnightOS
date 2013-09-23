@@ -1,0 +1,7 @@
+; Portuguese language file for /bin/terminal
+
+; Text
+#define lang_description "Terminal"
+#define lang_windowTitle "Terminal"
+#define lang_commandNotFound "Comando não encontrado\n"
+#define lang_launchError "Erro"

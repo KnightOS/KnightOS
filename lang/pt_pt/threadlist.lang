@@ -1,0 +1,15 @@
+; Portuguese language file for /bin/threadlist
+
+; Text
+#define lang_str_castle "Castelo"
+#define lang_str_options "Opções"
+#define lang_str_runningPrograms "Programas em Execução"
+#define lang_str_noPrograms "Não existem programas em\nexecução!"
+#define lang_str_forceQuit "Terminar"
+
+; Positions
+.equ lang_forceQuit_position 61 * 256 + 50
+.equ lang_runningPrograms_position 1 * 256 + 4
+.equ lang_options_position 64 * 256 + 58
+.equ lang_castle_position 9 * 256 + 58
+.equ lang_noPrograms_position (1 << 8) + 12

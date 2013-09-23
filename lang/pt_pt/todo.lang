@@ -1,0 +1,4 @@
+; Portuguese language file for /bin/todo
+
+; Text
+#define lang_todo "Esta característica ainda\nnão foi implementada.\nPrima uma tecla para sair."
