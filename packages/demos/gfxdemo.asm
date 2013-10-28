@@ -1,7 +1,6 @@
 .nolist
 #include "kernel.inc"
 #include "applib.inc"
-#include "stdio.inc"
 #include "gfxdemo.lang"
 .list
     .db 0, 50 ; Stack size
@@ -12,13 +11,8 @@
     .db lang_description, 0
 start:
     ; Load dependencies
-    kld(de, stdioPath)
-    call loadLibrary
     kld(de, applibPath)
     call loadLibrary
-
-    kld(hl, demoMessage)
-    stdio(printLine)
     
     call getLcdLock
     call getKeypadLock
@@ -42,7 +36,7 @@ _:  ld b, 5
     applib(appGetKey)
     call putSpriteXor
     cp kClear
-    jr z, exit
+    ret z
     cp kUp
     jr z, doUp
     cp kDown
@@ -65,11 +59,6 @@ doRight:
     inc d
     jr -_
     
-exit:
-    kld(hl, goodbyeMessage)
-    stdio(printLine)
-    ret
-    
 threadListPath:
     .db "/bin/threadlist", 0
     
@@ -87,7 +76,3 @@ smileySprite:
     .db 0b00000000
     .db 0b10001000
     .db 0b01110000
-goodbyeMessage:
-    .db "Goodbye!", 0
-demoMessage:
-    .db "KnightOS Graphical Demo", 0

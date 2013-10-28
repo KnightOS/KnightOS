@@ -28,7 +28,7 @@ jumpTable:
     jp showError
     jp showErrorAndQuit
     .db 0xFF
-    
+
 ; Same as kernel getKey, but listens for
 ; F1 and F5 and acts accordingly
 appGetKey:
@@ -38,14 +38,14 @@ appGetKey:
 appWaitKey:
     call waitKey
     jr checkKey
-    
+
 checkKey:
     cp kYEqu
     ijp(z, launchCastle)
     cp kGraph
     ijp(z, launchThreadList)
     ret
-    
+
 launchCastle:
     push de
         ild(de, castlePath)
@@ -56,7 +56,7 @@ launchCastle:
     call flushKeys
     xor a
     ret
-    
+
 launchThreadList:
     push de
         ild(de, threadListPath)
@@ -66,7 +66,7 @@ launchThreadList:
     call suspendCurrentThread
     xor a
     ret
-    
+
 ; Inputs:   IY: Screen buffer
 ;           HL: Window title text
 ;           A: Flags:
@@ -90,23 +90,23 @@ drawWindow:
         ld c, 94
         ld b, 51
         call rectXOR
-        
+
         push af
             xor a
             ld l, 0
             call resetPixel
-            
+
             ld a, 95
             call resetPixel
         pop af
-        
+
         bit 0, a
-        jr nz, _        
+        jr nz, _
             ild(hl, castleSprite1)
             ld b, 4
             ld de, $003C
             call putSprite16OR
-            
+
             ild(hl, castleSprite2)
             ld d, 16
             call putSpriteOR
@@ -124,7 +124,7 @@ _:      pop af \ push af
             ld b, 4
             ld de, 40 * 256 + 60
             call putSprite16OR
-            
+
             ild(hl, menuSprite2)
             ld d, 56
             dec b
@@ -266,28 +266,28 @@ _:                      call flushKeys
 ; Also watches for F1/F5 to launch castle/thread list
 getCharacterInput:
     icall(drawCharSetIndicator)
-    
+
     ld b, 0
     icall(appGetKey)
     or a
     ret z ; Return if zero
-    
+
     ld b, a
-    
+
     ; Check for special keys
     cp kAlpha
     jr z, setCharSetFromKey
     cp k2nd
     jr z, setCharSetFromKey
-    
+
     push bc
-    
+
     ; Get key value
     sub 9
     jr c, _
     cp 41
     jr nc, _
-    
+
     push hl
         push af
             ild(a, (charSet))
@@ -297,7 +297,7 @@ getCharacterInput:
             ld l, a
             jr nc, $+3 \ inc h
         pop af
-        
+
         add a, l
         ld l, a
         jr nc, $+3 \ inc h
@@ -305,11 +305,11 @@ getCharacterInput:
     pop hl
     pop bc
     ret
-    
+
 _:  xor a
     pop bc
     ret
-    
+
 setCharSetFromKey:
     cp kAlpha
     icall(z, setAlphaKey)
@@ -318,7 +318,7 @@ setCharSetFromKey:
     call flushKeys
     xor a
     ret
-    
+
 setAlphaKey: ; Switch between alpha charsets
     ild(a, (charSet))
     inc a
@@ -327,7 +327,7 @@ setAlphaKey: ; Switch between alpha charsets
         xor a
 _:  ild((charSet), a)
     ret
-    
+
 set2ndKey: ; Switch between symbol charsets
     ild(a, (charSet))
     inc a
@@ -339,7 +339,7 @@ _:  cp 2
         ld a, 2
 _:  ild((charSet), a)
     ret
-    
+
 ; Draws the current character set indicator on a window
 drawCharSetIndicator:
     push hl
@@ -351,7 +351,7 @@ drawCharSetIndicator:
         ld de, 0x5C02
         ld b, 4
         call putSpriteOR
-    
+
         ild(a, (charSet))
         ; Get sprite in HL
         add a, a \ add a, a ; A * 4
@@ -366,10 +366,10 @@ drawCharSetIndicator:
     pop de
     pop hl
     ret
-    
+
 charSet:
     .db 0
-    
+
 ; Sets the character mapping to A.
 ; 0: uppercase \ 1: lowercase \ 2: symbols \ 3: extended
 setCharSet:
@@ -377,11 +377,11 @@ setCharSet:
     ret nc ; Only allow 0-3
     ild((charSet), a)
     ret
-    
+
 getCharSet:
     ild(a, (charSet))
     ret
-    
+
 ;; showError [applib]
 ;;  Displays a user-friendly error message if appliciable.
 ;; Inputs:
@@ -432,7 +432,7 @@ showErrorAndQuit:
         jr z, showError_exitEarly
         icall(showError)
         jp exitThread
- 
+
 #include "errors.asm"
 #include "characters.asm"
 
@@ -440,37 +440,37 @@ castlePath:
     .db "/bin/castle", 0
 threadlistPath:
     .db "/bin/threadlist", 0
-    
+
 castleSprite1: ; 16x4
     .db 0b10100110, 0b01101101
     .db 0b11101000, 0b10101001
     .db 0b10101000, 0b10100101
     .db 0b11100110, 0b01101100
-    
+
 castleSprite2: ; 8x4
     .db 0b00110010
     .db 0b10010101
     .db 0b00010110
     .db 0b10010011
-    
+
 threadListSprite: ; 8x5
     .db 0b00000000
     .db 0b00011100
     .db 0b00001100
     .db 0b00010100
     .db 0b00100000
-    
+
 menuSprite1: ; 16x4
     .db 0b10100100, 0b11001010
     .db 0b11101010, 0b10101010
     .db 0b11101100, 0b10101010
     .db 0b10100110, 0b10101110
-    
+
 menuSprite2: ; 8x3
     .db 0b00100000
     .db 0b01110000
     .db 0b11111000
-    
+
 clearCharSetSprite:
     .db 0b11100000
     .db 0b11100000
@@ -483,19 +483,19 @@ uppercaseASprite:
     .db 0b10100000
     .db 0b11100000
     .db 0b10100000
-    
+
 lowercaseASprite:
     .db 0b00000000
     .db 0b01100000
     .db 0b10100000
     .db 0b01100000
-    
+
 symbolSprite:
     .db 0b01000000
     .db 0b11000000
     .db 0b01000000
     .db 0b11100000
-    
+
 extendedSprite:
     .db 0b01000000
     .db 0b01000000

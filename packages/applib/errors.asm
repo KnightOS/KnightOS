@@ -20,7 +20,7 @@ msg_streamNotFound:
 msg_endOfStream:
     .db "Error:\nEnd of stream", 0
 msg_fileNotFound:
-    .db "Error:\nFile not\nfound.", 0
+    .db "Error:\nFile not found.", 0
 msg_tooManyStreams:
     .db "Too many\nfiles are\nopen.", 0
 msg_noSuchThread:

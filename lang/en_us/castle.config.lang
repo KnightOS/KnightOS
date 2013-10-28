@@ -10,7 +10,6 @@
 #define lang_matrixEditor "Matrix Editor"
 #define lang_connectToPC "Connect to PC"
 #define lang_settings "Settings"
-#define lang_terminal "Terminal"
 
 ; Testing
 #define lang_hello "Hello, world!"

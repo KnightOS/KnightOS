@@ -5,7 +5,7 @@
 # Set lang with `make [platform] LANG=[langauge]`
 LANG=en_us
 # Default packages: base castle threadlist unixcommon terminal demos
-PACKAGES=base castle threadlist unixcommon terminal demos osrecv
+PACKAGES=base castle threadlist demos osrecv
 
 # Paths
 PACKAGEPATH=packages
@@ -83,9 +83,6 @@ base:
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/base/" $(PACKAGEPATH)/base/init.asm temp/bin/init
 	cp $(PACKAGEPATH)/base/inittab temp/etc/inittab
 
-stdio:
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/stdio/" $(PACKAGEPATH)/stdio/stdio.asm temp/lib/stdio
-
 applib:
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/applib/" $(PACKAGEPATH)/applib/applib.asm temp/lib/applib
 
@@ -96,25 +93,11 @@ castle:
 threadlist:
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/threadlist/" $(PACKAGEPATH)/threadlist/threadlist.asm temp/bin/threadlist
 
-unixcommon: stdio
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/unixcommon/" $(PACKAGEPATH)/unixcommon/clear.asm temp/bin/clear
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/unixcommon/" $(PACKAGEPATH)/unixcommon/echo.asm temp/bin/echo
-	cp $(PACKAGEPATH)/unixcommon/echo.man temp/etc/man/echo
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/unixcommon/" $(PACKAGEPATH)/unixcommon/man.asm temp/bin/man
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/unixcommon/" $(PACKAGEPATH)/unixcommon/reboot.asm temp/bin/reboot
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/unixcommon/" $(PACKAGEPATH)/unixcommon/shutdown.asm temp/bin/shutdown
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/unixcommon/" $(PACKAGEPATH)/unixcommon/version.asm temp/bin/version
-
-terminal: stdio applib
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/terminal/" $(PACKAGEPATH)/terminal/terminal.asm temp/bin/terminal
-
-demos: applib stdio
+demos: applib
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/" $(PACKAGEPATH)/demos/count.asm temp/bin/count
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/" $(PACKAGEPATH)/demos/demo.asm temp/bin/demo
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/" $(PACKAGEPATH)/demos/gfxdemo.asm temp/bin/gfxdemo
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/" $(PACKAGEPATH)/demos/hello.asm temp/bin/hello
+	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/" $(PACKAGEPATH)/demos/gfxdemo.asm temp/bin/gfxdemo
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/" $(PACKAGEPATH)/demos/todo.asm temp/bin/todo
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/" $(PACKAGEPATH)/demos/userhello.asm temp/bin/userhello
 
 osrecv:
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/osrecv/" $(PACKAGEPATH)/osrecv/osrecv.asm temp/bin/osrecv
