@@ -3,8 +3,8 @@
 KnightOS is a 3rd party Operating System for Texas Instruments z80 calculators. It offers
 many features over the stock OS, including multitasking, a tree-based filesystem, delivered
 in a Unix-like enviornment. KnightOS is written entirely in z80 assembly, with a purpose-
-built toolchain. Additionally, the KnightOS kernel is standalone, and you can use it as the
-basis for your own powerful operating systems.
+built toolchain. Additionally, the [KnightOS kernel](https://github.com/KnightSoft/kernel)
+is standalone, and you can use it as the basis for your own powerful operating systems.
 
 ## Building KnightOS
 
@@ -58,5 +58,5 @@ If you need help with KnightOS, want to keep up with progress, chat with develop
 ask any other questions about KnightOS, you can drop by the IRC channel: [#knightos on
 irc.freenode.net](http://webchat.freenode.net/?channels=knightos).
 
-To report bugs, please create [a GitHub issue](https://github.com/KnightOS/KnightOS/issues/new)
+To report bugs, please create [a GitHub issue](https://github.com/KnightSoft/KnightOS/issues/new)
 or contact us on IRC.
