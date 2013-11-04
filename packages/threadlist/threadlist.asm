@@ -9,13 +9,18 @@ start:
     call getKeypadLock
 
     call allocScreenBuffer
+    xor a
+    kld((topThread), a)
+    kld((cursorWasAtBottom), a)
+    ld ix, threadTable
 redraw:
     kcall(drawInterface)
     kcall(drawThreads)
-    ld a, (totalThreads)
+    kld(a, (totalThreads))
+    or a
     kjp(z, noThreads)
-
-    ld ix, threadTable
+    xor a
+    kld((hasToRedraw), a)
 mainLoop:
     call fastCopy
     call flushKeys
@@ -43,7 +48,20 @@ mainLoop:
 doUp:
     ld a, e
     cp 12
+    jr nz, doUp_noScroll
+    
+    kld(a, (topThread))
+    or a
     jr z, mainLoop
+    dec a
+    kld((topThread), a)
+    xor a
+    kld((cursorWasAtBottom), a)
+    inc a
+    kld((hasToRedraw), a)
+    ld a, e
+    add a, 6
+doUp_noScroll:
     call putSpriteXOR
     sub 6
     ld e, a
@@ -51,7 +69,7 @@ doUp:
     push hl
     push de
         push ix \ pop hl
-        ; Loop to the next available thread
+        ; Loop to the previous available thread
 doUp_loop:
         ld a, l
         sub 8
@@ -71,11 +89,17 @@ _:          inc hl
 _:      pop ix
     pop de
     pop hl
-    jr mainLoop
+    kld(a, (hasToRedraw))
+    or a
+    kjp(nz, redraw)
+    kjp(mainLoop)
 
 doDown:
+    kld(a, (topThread))
+    ld c, a
     kld(a, (totalThreads))
     dec a
+    sub c
     add a, a
     ld c, a
     add a, a
@@ -84,13 +108,22 @@ doDown:
     ld c, a
     ld a, e
     cp c
-    jr z, mainLoop
+    kjp(z, mainLoop)
+    cp 6 * 6 + 12
+    jr nz, doDown_noScroll
+    kld(hl, topThread)
+    inc (hl)
+    ld a, 1
+    kld((cursorWasAtBottom), a)
+    kld((hasToRedraw), a)
+    ld a, e
+    sub 6
+doDown_noScroll:
     call putSpriteXOR
     add a, 6
     ld e, a
     call putSpriteOR
-    push hl
-    push de
+    push hl \ push de
         push ix \ pop hl
         ; Loop to the next available thread
 doDown_loop:
@@ -112,6 +145,9 @@ _:          inc hl
 _:      pop ix
     pop de
     pop hl
+    kld(a, (hasToRedraw))
+    or a
+    kjp(nz, redraw)
     kjp(mainLoop)
 
 doSelect:
@@ -124,22 +160,28 @@ doSelect:
     jp killCurrentThread
 
 doKill:
+    xor a
+    kld((cursorWasAtBottom), a)
+    kld((topThread), a)
     di
     ld a, (ix)
     call killThread
     ei
-    kjp(redraw)
+    kjp(redraw - 3)
 
 doOptions:
+    xor a
+    kld((cursorWasAtBottom), a)
+    kld((topThread), a)
     kcall(drawOptions)
     call fastCopy
 
 _:  call flushKeys
     call waitKey
     cp kClear
-    kjp(z, redraw)
+    kjp(z, redraw - 3)
     cp kGraph
-    kjp(z, redraw)
+    kjp(z, redraw - 3)
     cp k2nd
     jr z, doKill
     cp kEnter
@@ -175,7 +217,8 @@ _:  call flushKeys
 drawThreads:
     xor a
     kld((totalThreads), a)
-    ld de, (5 << 8) + 12
+    kld((displayedThreads), a)
+    ld de, (5 * 256) + 12
     ld hl, threadTable
     ld a, (activeThreads) \ dec a \ ld b, a
 drawThreads_loop:
@@ -194,20 +237,64 @@ _:          inc hl
             bit 1, a ; Check thread visibility
             jr nz, _
                 pop de \ jr skipThread
-_:      inc hl
-        pop de
+_:          inc hl
+        pop de                                          ; please pleaaaaase optimize from here
+        push hl
+            kld(a, (totalThreads))
+            kld(hl, topThread)
+            cp (hl)
+        pop hl
+        jr nc, dispThread
+    pop de
+    ld a, -6
+    add a, e
+    ld e, a
+    push de
+        kld(a, (totalThreads))
+        jr noDispThread
+dispThread:
+        ld c, a
+        ld a, 6 * 6 + 12
+        cp e
+        ld a, c
+        jr c, noDispThread
         call drawStr
-        kld(hl, totalThreads)
-        inc (hl)
-skipThread:
+noDispThread:
+        inc a
+        kld((totalThreads), a)
+skipThread:                                             ; to here or everyone's gonna throw up
     pop de \ pop hl
     ld a, 6 \ add a, e \ ld e, a
     ld a, 8 \ add a, l \ ld l, a
     djnz drawThreads_loop
 
-    kld(hl, selectionIndicatorSprite)
+    kld(a, (topThread))
+    or a
+    jr z, noTopSprite
+    kld(hl, moreThreadsUpSprite)
+    ld b, 3
+    ld de, 90 * 256 + 12
+    call PutSpriteOR
+noTopSprite:
+    kld(a, (totalThreads))
+    kld(hl, topThread)
+    sub (hl)
+    cp 8
+    jr c, noBottomSprite
+    kld(hl, moreThreadsDownSprite)
+    ld b, 3
+    ld de, 90 * 256 + 49
+    call PutSpriteOR
+noBottomSprite:
+    kld(a, (cursorWasAtBottom))
+    ld hl, 1 * 256 + 12
+    or a
+    jr z, $ + 6
+        ld de, 6 * 6
+        add hl, de
+    ex de, hl
     ld b, 5
-    ld de, 1 * 256 + 12
+    kld(hl, selectionIndicatorSprite)
     call PutSpriteOR
     ret
 
@@ -299,7 +386,7 @@ drawOptions:
 
     kld(hl, selectionIndicatorSprite)
     ld b, 5
-    ld de, ((57  - (61 - (lang_forceQuit_position >> 8))) << 8) + 50
+    ld de, ((57  - (61 - (lang_forceQuit_position >> 8))) * 256) + 50
     call putSpriteOR
     ret
 
@@ -356,6 +443,16 @@ selectionIndicatorSprite: ; 8x5
     .db 0b11000000
     .db 0b10000000
 
+moreThreadsUpSprite: ; 8x3
+    .db 0b00100000
+    .db 0b01110000
+    .db 0b11111000
+    
+moreThreadsDownSprite: ; 8x3
+    .db 0b11111000
+    .db 0b01110000
+    .db 0b00100000
+    
 backStr:
     .db lang_str_castle, 0
 optionsStr:
@@ -369,6 +466,14 @@ forceQuitStr:
 
 totalThreads:
     .db 0
-
+topThread:
+    .db 0
+cursorWasAtBottom:
+    .db 0
+displayedThreads:
+    .db 0
+hasToRedraw:
+    .db 0
+    
 castlePath:
     .db "/bin/castle", 0
