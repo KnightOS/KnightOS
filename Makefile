@@ -29,6 +29,7 @@ all:
 	make TI83pSE
 	make TI84p
 	make TI84pSE
+	make TI84pCSE
 
 TI73: PLATFORM := TI73
 TI73: FAT := 17
@@ -64,6 +65,13 @@ TI84pSE: PRIVEDGED := 7C
 TI84pSE: KEY := 0A
 TI84pSE: UPGRADEEXT := 8xu
 TI84pSE: directories userland
+
+TI84pCSE: PLATFORM := TI84pCSE
+TI84pCSE: FAT := E7
+TI84pCSE: PRIVEDGED := EC
+TI84pCSE: KEY := 0A
+TI84pCSE: UPGRADEEXT := 8cu
+TI84pCSE: directories userland
 
 .PHONY: kernel
 
