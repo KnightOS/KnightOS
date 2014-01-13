@@ -17,8 +17,8 @@ else
 ASPREFIX=mono 
 EMUPREFIX=wine 
 endif
-AS=$(ASPREFIX)build/sass.exe
-EMU=$(EMUPREFIX)build/Wabbitemu.exe
+AS=$(ASPREFIX)kernel/build/sass.exe
+EMU=$(EMUPREFIX)kernel/build/Wabbitemu.exe
 INCLUDE=inc/;kernel/bin/;lang/$(LANG)/;kernel/inc/
 ASFLAGS=--encoding "Windows-1252"
 .DEFAULT_GOAL=TI84pSE
