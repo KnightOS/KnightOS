@@ -25,10 +25,6 @@ returnToCastle:
     jp killCurrentThread
     
 start:
-    ; Boot status codes
-    cp 1 ; ON+MODE pressed ; 0x820E
-    jr z, launchCastle
-    
     ; Set init memory to be permanent
     kcall(_)
 _:  pop ix
@@ -39,26 +35,12 @@ _:  pop ix
     kld(de, castlePath)
     ld (ix + 3), e
     ld (ix + 4), d
-    
-    call getKey
-    cp kT
-    jr z, launchTerminal
 
+    ; TODO: Read /etc/inittab instead
 launchCastle:
     kld(de, castlePath)
     call launchProgram
     ret
-    
-launchTerminal:
-    kld(de, terminalPath)
-    di
-    call launchProgram
-    kld(hl, returnToCastle)
-    call setReturnPoint
-    ei
-    ret
 
 castlePath:
     .db "/bin/castle", 0
-terminalPath:
-    .db "/bin/terminal", 0
