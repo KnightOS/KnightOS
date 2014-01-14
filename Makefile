@@ -69,7 +69,7 @@ TI84pSE: directories userland
 TI84pCSE: PLATFORM := TI84pCSE
 TI84pCSE: FAT := F7
 TI84pCSE: PRIVEDGED := FC
-TI84pCSE: KEY := 0A
+TI84pCSE: KEY := 0F
 TI84pCSE: UPGRADEEXT := 8cu
 TI84pCSE: directories userland
 
