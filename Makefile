@@ -5,7 +5,7 @@
 # Set lang with `make [platform] LANG=[langauge]`
 LANG=en_us
 # Default packages: base castle threadlist unixcommon terminal demos
-PACKAGES=base castle threadlist demos osrecv
+PACKAGES=base castle threadlist demos osrecv license
 
 # Paths
 PACKAGEPATH=packages
@@ -100,6 +100,9 @@ castle:
 
 threadlist:
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/threadlist/" $(PACKAGEPATH)/threadlist/threadlist.asm temp/bin/threadlist
+
+license:
+	cp LICENSE temp/etc/LICENSE
 
 demos: applib
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/" $(PACKAGEPATH)/demos/count.asm temp/bin/count
