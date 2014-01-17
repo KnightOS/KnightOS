@@ -35,10 +35,6 @@ _:  pop ix
     kld(de, castlePath)
     ld (ix + 3), e
     ld (ix + 4), d
-
-    ; TODO: Read /etc/inittab instead
-launchCastle:
-    kld(de, castlePath)
     call launchProgram
     ret
 
