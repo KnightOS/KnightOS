@@ -84,7 +84,9 @@ kernel:
 userland: kernel $(PACKAGES)
 	cp kernel/bin/kernel-$(PLATFORM).rom bin/$(PLATFORM)/KnightOS-$(LANG).rom
 	$(ASPREFIX)build/BuildFS.exe $(FAT) bin/$(PLATFORM)/KnightOS-$(LANG).rom temp
+ifndef savemockfs
 	rm -rf temp
+endif
 	$(ASPREFIX)build/CreateUpgrade.exe $(PLATFORM) bin/$(PLATFORM)/KnightOS-$(LANG).rom build/$(KEY).key bin/$(PLATFORM)/KnightOS-$(LANG).$(UPGRADEEXT) 00 04 05 $(FAT) $(PRIVEDGED)
 
 base:
