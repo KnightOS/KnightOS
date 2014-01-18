@@ -104,7 +104,7 @@ drawWindow:
         jr nz, _
             ild(hl, castleSprite1)
             ld b, 4
-            ld de, $003C
+            ld de, 0x003C
             call putSprite16OR
 
             ild(hl, castleSprite2)
@@ -130,7 +130,7 @@ _:      pop af \ push af
             dec b
             call PutSpriteOR
 _:      pop af \ pop hl \ push hl \ push af
-        ld de, $0201
+        ld de, 0x0201
         call DrawStrXOR
     pop af
     pop hl

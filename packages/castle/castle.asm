@@ -133,7 +133,7 @@ decrementContrast:
     ld hl, currentContrast
     dec (hl)
     ld a, (hl)
-    cp $DF
+    cp 0xDF
     jr nz, _
     inc (hl)
     inc a
@@ -152,6 +152,7 @@ launch:
     applib(showError)
     kjp(resetToHome)
 _:  di
+    jr $
     call launchProgram
     applib(nz, showError)
     kjp(nz, resetToHome)
