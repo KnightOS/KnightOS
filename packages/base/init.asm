@@ -1,20 +1,7 @@
-; KnightOS init program (/bin/init)
-; Run by the kernel at system boot up, and initializes the system.
-; This is what KnightOS's init code accomplishes:
-; 1. Sets itself to be permanently allocated
-;    a. This is done because it provides the returnToCastle routine, which is set as
-;       the return point for programs launched from the castle. Since /bin/init stops
-;       running once it's finished, we need to set the memory to permanent so that the
-;       returnToCastle routine is never deallocated.
-; 2. Handles boot status codes, such as the ON+MODE handler. In KnightOS, pressing ON+MODE
-;    at any time will return you to the castle.
-; 3. Launches the castle. If "T" is held down on boot up, it will instead launch the
-;    terminal.
-
 .nolist
 #include "kernel.inc"
 .list
-    .db 0, 20
+    .db 0, 50
 .org 0
     jr start
 returnToCastle:
@@ -29,7 +16,7 @@ start:
     kcall(_)
 _:  pop ix
     call memSeekToStart
-    ld (ix + -3), $FE
+    ld (ix + -3), 0xFE
     
     ; Update returnToCastle
     kld(de, castlePath)
