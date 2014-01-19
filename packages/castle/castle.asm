@@ -24,10 +24,10 @@ redrawHome:
 homeLoop:
     kcall(drawHomeIcons)
     call fastCopy
-    
+
 _:  call flushKeys
     call waitKey
-    
+
     cp kRight
     jr z, homeRightKey
     cp kLeft
@@ -73,7 +73,7 @@ homeDownKey:
     jr c, -_
     inc a \ add a, d \ ld d, a
     jr homeLoop
-    
+
 homeSelect:
     ld a, d
     push af
@@ -86,7 +86,7 @@ homeSelect:
         call malloc
         call streamReadToEnd
         call closeStream
-    
+
         ; IX is the config file
         ld bc, 0x0AFF
 _:      inc c
@@ -117,7 +117,7 @@ _:      push bc
     call memSeekToStart
     call free
     kjp(homeLoop)
-    
+
 incrementContrast:
     ld hl, currentContrast
     inc (hl)
@@ -128,7 +128,7 @@ incrementContrast:
     dec a
 _:  out (0x10), a
     kjp(homeLoop)
-    
+
 decrementContrast:
     ld hl, currentContrast
     dec (hl)
@@ -139,7 +139,7 @@ decrementContrast:
     inc a
 _:  out (0x10), a
     kjp(homeLoop)
-    
+
 openThreadList:
     kld(de, threadlist)
     jr _
@@ -152,14 +152,44 @@ launch:
     applib(showError)
     kjp(resetToHome)
 _:  di
+    ; Idea: load a small bootstrapping program into RAM, then kill the castle thread and transfer over to the bootstrap.
+    ; This frees up the castle's memory for the new program, allowing for larger programs to be launched.
+    ; Potential issue: the bootstrap would be allocated shortly after the castle in memory, and therefore only programs
+    ; smaller than the castle in the first place would benefit from this.
+    ; Potential solution: provide an alternative malloc that allocates in the back of RAM
     call launchProgram
     applib(nz, showError)
     kjp(nz, resetToHome)
-    ; ENORMOUS HACK
-    ld hl, userMemory + 5
+    ld bc, castleReturnHandler_end - castleReturnHandler
+    call malloc
+    call reassignMemory
+    push ix \ pop de
+    kld(hl, castleReturnHandler)
+    push de
+        ldir
+    pop de \ ld h, d \ ld l, e
+    ld bc, castleReturnHandler_path - castleReturnHandler
+    add hl, bc
+    ex de, hl
+    inc hl
+    ld (hl), e
+    inc hl
+    ld (hl), d
+    dec hl \ dec hl
     call setReturnPoint
     ret
-    
+
+castleReturnHandler:
+    ; Idea for a kernel function: setThreadStart
+    ; Updates the thread table so that the current block of allocated memory is the start of the thread executable
+    ; Then all further relative loads and such will load as if that were the case
+    ld de, 0
+    call launchProgram
+    jp killCurrentThread
+castleReturnHandler_path:
+    .db "/bin/castle", 0
+castleReturnHandler_end:
+
 powerMenu:
     push de
     kcall(drawPowerMenu)
@@ -168,7 +198,7 @@ powerMenuLoop:
     call fastCopy
     call flushKeys
     call waitKey
-    
+
     cp kUp
     jr z, powerMenuUp
     cp kDown
@@ -181,9 +211,9 @@ powerMenuLoop:
     kjp(z, resetToHome)
     cp kZoom
     kjp(z, resetToHome)
-    
+
     jr powerMenuLoop
-    
+
 powerMenuUp:
     ld a, 38
     cp e
@@ -195,7 +225,7 @@ powerMenuUp:
     ld e, a
     call putSpriteOR
     jr powerMenuLoop
-    
+
 powerMenuDown:
     ld a, 50
     cp e
@@ -206,7 +236,7 @@ powerMenuDown:
     ld e, a
     call PutSpriteOR
     jr powerMenuLoop
-    
+
 powerMenuSelect:
     ld a, e
     pop de
@@ -216,7 +246,7 @@ powerMenuSelect:
     jr z, confirmRestart
     call suspendDevice
     kjp(redrawHome)
-    
+
 confirmShutDown:
     ld hl, boot
     jr confirmSelection
