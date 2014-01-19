@@ -131,7 +131,7 @@ _:      pop af \ push af
             call PutSpriteOR
 _:      pop af \ pop hl \ push hl \ push af
         ld de, 0x0201
-        call DrawStrXOR
+        call drawStrXOR
     pop af
     pop hl
     pop bc

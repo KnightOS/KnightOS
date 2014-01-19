@@ -152,7 +152,6 @@ launch:
     applib(showError)
     kjp(resetToHome)
 _:  di
-    jr $
     call launchProgram
     applib(nz, showError)
     kjp(nz, resetToHome)
