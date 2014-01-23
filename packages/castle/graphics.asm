@@ -15,25 +15,25 @@ _:  ld a, 8
     add a, d
     ld d, a
     djnz -_
-    
+
     kld(hl, hotkeyLeftSprite)
     ld b, 8
     ld de, 0x0038
     call putSpriteOR
-    
+
     kld(hl, hotkeyRightSprite)
     ld de, 0x5838
     call putSpriteOR
-    
+
     ld hl, 0x000A
     ld de, 0x5F0A
     call drawLine
-    
+
     kld(hl, batteryIndicatorSprite)
     ld b, 4
     ld de, 0x193B
     call putSpriteOR
-    
+
     call getBatteryLevel
     xor a
     cp b
@@ -45,7 +45,7 @@ _:  ld l, 60
     call setPixel
     inc a
     djnz -_
-_:    
+_:
 #ifdef CLOCK
     ; Get time
     push ix
@@ -57,35 +57,35 @@ _:
     pop ix
 #endif
     ret
-    
+
 drawHome:
     kld(hl, hotkeyPlusSprite)
     ld b, 5
     ld de, 0x013A
     call putSpriteOR
-    
+
     kld(hl, hotkeyArrowRightSprite)
     ld de, 0x593A
     call putSpriteOR
-    
+
     kld(hl, menuArrowSprite)
     ld b, 3
     ld de, 0x353B
     call putSpriteOR
-    
+
     ld de, lang_more_position
     kld(hl, moreString)
     call drawStr
-    
+
     ld de, lang_menu_position
     kld(hl, menuString)
     call drawStr
-    
+
     ld de, lang_running_position
     kld(hl, runningString)
     call drawStr
     ret
-    
+
 drawHomeIcons:
     push de
     ld a, d
@@ -95,28 +95,26 @@ drawHomeIcons:
         call rectAND
         ld e, 0 \ ld l, 3 \ ld c, 69 \ ld b, 7
         call rectAND
-        
+
         ld hl, 0x0021
         ld de, 0x5F21
         call drawLine
-        
+
         ; Load config
         kld(de, configPath)
         call openFileRead
-        push de
-            call getStreamInfo
-        pop de
+        call getStreamInfo
         call malloc
         call streamReadBuffer
         call closeStream
-        
+
         ; First row
         ld de, 0x020E
         ld bc, 0x0500
 _:      ; Check to see if this item is selected
         pop af \ push af
         cp c \ kcall(z, drawSelectionRectangle) \ inc c
-        
+
         ld l, (ix)
         ld h, (ix + 1)
         ld a, 0xFF
@@ -125,27 +123,27 @@ _:      ; Check to see if this item is selected
             kld(hl, emptySlotIcon)
             inc ix \ inc ix
             jr ++_
-            
+
 _:          ld bc, 4
             add ix, bc
             push ix \ pop hl
             ld bc, 32
             add ix, bc
-_:      
+_:
             ld b, 16
             call putSprite16OR
         pop bc
         ld a, 19
         add a, d \ ld d, a
         djnz ---_
-    
+
         ; Second row
         ld de, 0x0225
         ld bc, 0x0505
 _:      ; Check to see if this item is selected
         pop af \ push af
         cp c \ kcall(z, drawSelectionRectangle) \ inc c
-        
+
         ld l, (ix)
         ld h, (ix + 1)
         ld a, 0xFF
@@ -154,27 +152,27 @@ _:      ; Check to see if this item is selected
             kld(hl, emptySlotIcon)
             inc ix \ inc ix
             jr ++_
-            
+
 _:          ld bc, 4
             add ix, bc
             push ix \ pop hl
             ld bc, 32
             add ix, bc
-_:      
+_:
             ld b, 16
             call putSprite16OR
         pop bc
         ld a, 19
         add a, d \ ld d, a
         djnz ---_
-        
+
     pop af
     dec ix
     call memSeekToStart
     call free
     pop de
     ret
-    
+
 drawSelectionRectangle:
     push de \ push hl \ push bc \ push af
         ; Find name string
@@ -202,7 +200,7 @@ _:      ld a, e ; Get x
         call rectXOR
     pop af \ pop bc \ pop hl \ pop de
     ret
-    
+
 drawSelectedName:
     push ix
         call memSeekToStart
@@ -215,7 +213,7 @@ drawSelectedName:
         call drawStr
     pop de
     ret
-    
+
 drawEmptySlotName:
     push de
         kld(hl, naString)
@@ -223,7 +221,7 @@ drawEmptySlotName:
         call drawStr
     pop de
     ret
-    
+
 drawPowerMenu:
     ld e, 27
     ld l, 36
@@ -275,12 +273,12 @@ drawPowerMenu:
     ld b, 5
     call putSpriteOR
     ret
-    
+
 castleTopSprite: ; 8x3
     .db 0b11110000
     .db 0b10010000
     .db 0b10011111
-    
+
 hotkeyLeftSprite: ; 8x8
     .db 0b01111100
     .db 0b10000010
@@ -290,7 +288,7 @@ hotkeyLeftSprite: ; 8x8
     .db 0b00000001
     .db 0b00000001
     .db 0b10000010
-    
+
 hotkeyRightSprite: ; 8x8
     .db 0b00111110
     .db 0b01000001
@@ -300,45 +298,45 @@ hotkeyRightSprite: ; 8x8
     .db 0b10000000
     .db 0b10000000
     .db 0b01000001
-    
+
 hotkeyPlusSprite: ; 8x5
     .db 0b00100000
     .db 0b00100000
     .db 0b11111000
     .db 0b00100000
     .db 0b00100000
-    
+
 hotkeyArrowLeftSprite: ; 8x5
     .db 0b0010000
     .db 0b0100000
     .db 0b1111100
     .db 0b0100000
     .db 0b0010000
-    
+
 hotkeyArrowRightSprite: ; 8x5
     .db 0b0010000
     .db 0b0001000
     .db 0b1111100
     .db 0b0001000
     .db 0b0010000
-    
+
 hotkeyArrowUpSprite: ; 8x5
     .db 0b0010000
     .db 0b0111000
     .db 0b1010100
     .db 0b0010000
     .db 0b0010000
-    
+
 menuArrowSprite: ; 8x3
     .db 0b00100000
     .db 0b01110000
     .db 0b11111000
-    
+
 menuArrowSpriteFlip: ; 8x3
     .db 0b11111000
     .db 0b01110000
     .db 0b00100000
-    
+
 batteryIndicatorSprite: ; 8x4
     .db 0b11111100
     .db 0b10000110
@@ -351,7 +349,7 @@ selectionIndicatorSprite: ; 8x5
     .db 0b11100000
     .db 0b11000000
     .db 0b10000000
-   
+
 defaultIconSprite: ; 16x16
     .db 0b01111111, 0b11111110
     .db 0b11111111, 0b11111111
