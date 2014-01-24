@@ -107,6 +107,8 @@ _:  pop af \ push af
         push ix \ pop hl
         add hl, de \ ex de, hl
     pop af
+    call memSeekToStart
+    call free
     kjp(launch)
 _:      push bc
             ld bc, 34
