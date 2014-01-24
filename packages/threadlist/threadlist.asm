@@ -2,7 +2,7 @@
 #include "kernel.inc"
 #include "threadlist.lang"
 .list
-    .db 0, 20
+    .db 0, 50
 .org 0
 start:
     call getLcdLock
@@ -189,6 +189,7 @@ _:  call flushKeys
     jr -_
 
 launchCastle:
+    jr $
     kld(de, castlePath)
     di
     call launchProgram
