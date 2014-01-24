@@ -38,7 +38,7 @@ You may repeat this procedure with the official OS upgrade file to install the s
 
 For the TI-84+ CSE, the process is a bit more involved. You must first install the stock OS (or
 just leave it there if you already have it). Then, download and install Brandon Wilson's
-[UOSRECV](http://www.cemetech.net/forum/viewtopic.php?t=9111) tool. Run it with `Asm(prgmUOSRECV)`
+[UOSRECV](http://brandonw.net/calcstuff/uosrecv.zip) tool. Run it with `Asm(prgmUOSRECV)`
 on the target calculator. Then, you can send the KnightOS upgrade file to your TI-84+ CSE using
 **TI-Connect only**. It does not work with TiLP. I have had success sending it with TI-Connect
 in a VM, though.
