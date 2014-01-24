@@ -189,7 +189,6 @@ _:  call flushKeys
     jr -_
 
 launchCastle:
-    jr $
     kld(de, castlePath)
     di
     call launchProgram
