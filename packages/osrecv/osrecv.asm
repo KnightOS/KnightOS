@@ -24,27 +24,8 @@
 .db 0, 20
 .org 0
 start:
-    ;Try finding the jump point -- if we can't, bail out now
+    call getLcdLock
     di
-    in a, (6)
-    push af
-    in a, (0x0E)
-    push af
-    ld a, BOOT0_ROM_PAGE
-    call outputPage
-    ld ix, jumpPointPattern
-    ld de, 0x4000
-    call FindPattern
-    pop bc
-    ld a, b
-    out (0x0E), a
-    pop bc
-    ld a, b
-    out (6), a
-    jr z, stillGood
-errorReturn:
-    jp boot
-stillGood:
     ; Move executable to 0x9D95 so we don't have to relocate everything
     kld(hl, start)
     ld de, 0x9D95
@@ -53,17 +34,31 @@ stillGood:
     jp 0x9D95 + tiosStart
 tiosStart:
     .org 0x9D95 + tiosStart
+    ld iy, 0x9340 ; plotSScreen on TIOS
     ld hl, (kernelGarbage)
     ld (kernelGarbage + 1), hl
 
     ; Display unlocking message
+.macro showMessage(string)
+    push hl
+    push de
+        call clearBuffer
+        ld hl, string
+        ld de, 0
+        ld b, 0
+        call drawStr
+        call fastCopy
+    pop de
+    pop hl
+.endmacro
+    showMessage(sUnlocking)
 
     call unlockFlash
 
     ; Display "preparing" message
+    showMessage(sPreparing)
 
     ; Copy the first boot page to RAM
-    di
     ld a, BOOT0_ROM_PAGE
     call outputPage
     ld a, BOOT0_RAM_PAGE & 0x7F
@@ -76,7 +71,6 @@ tiosStart:
     ; Copy the second boot page to RAM
     ld a,BOOT1_ROM_PAGE
     call outputPage
-    di
     ld a, BOOT1_RAM_PAGE & 0x7F
     out (5), a
     ld hl, 0x4000
@@ -112,7 +106,7 @@ tiosStart:
 
     ; HACK: This is assuming that the second boot page still has enough room at the end for the hardware stack
     ; (which is the case on every version I've ever seen)
-    ld sp, 0xFFFF
+    ld sp, 0
 
     ;Patch the boot page BCALL jump table
     ld a, BOOT0_RAM_PAGE | 0x80
@@ -133,25 +127,23 @@ tiosStart:
     ld de, 0x412C ; safe place beyond jump table and replacement routines
     call FindPattern
     jr nz, skipReadPattern
-#define USBBufferReadCodeLocation USBBufferReadCode - USBBufferCodeStart + 0x4000
     ld hl, (kernelGarbage) ; Important?
-    ld (hl), 0C3h
+    ld (hl), 0xC3
     inc hl
-    ld (hl), USBBufferReadCodeLocation & 0xFF
+    ld (hl), (USBBufferReadCode-USBBufferCodeStart+0x4000) & 0xFF
     inc hl
-    ld (hl), USBBufferReadCodeLocation >> 8
+    ld (hl), (USBBufferReadCode-USBBufferCodeStart+0x4000) >> 8
 skipReadPattern:
     ld ix, bufferWritePattern
     ld de, 0x412C ; safe place beyond jump table and replacement routines
     call FindPattern
     jr nz, skipWritePattern
-#define USBBufferWriteCodeLocation USBBufferWriteCode - USBBufferCodeStart + 0x4000
     ld hl, (kernelGarbage)
     ld (hl), 0xC3
     inc hl
-    ld (hl), USBBufferWriteCodeLocation & 0xFF
+    ld (hl), (USBBufferWriteCode-USBBufferCodeStart+0x4000) & 0xFF
     inc hl
-    ld (hl), USBBufferWriteCodeLocation >> 8
+    ld (hl), (USBBufferWriteCode-USBBufferCodeStart+0x4000) >> 8
 skipWritePattern:
 #endif
 
@@ -171,7 +163,7 @@ bufferReadPattern:
     sla a
     out (5), a
     inc a
-    or 80h
+    or 0x80
     out (7), a
     ld b, (hl)
     .db 0xFF
@@ -216,14 +208,9 @@ USBBufferCodeEnd:
 sError:
     .db "Error!", 0
 sUnlocking:
-    .db "Unlocking Flash", 0xCE, 0
+    .db "Unlocking Flash...", 0
 sPreparing:
-#ifdef TI84PCSE
-    .db "Preparing to receive OS", 0xCE, 0
-#else
-    .db "Preparing to    "
-    .db "receive OS", 0xCE,0
-#endif
+    .db "Preparing to receive OS...\n\nUOSRECV by BrandonW", 0
 ; We'll want to jump just beyond here (past the valid OS check) and start receiving the OS.
 jumpPointPattern:
     ld hl, (0x0056)

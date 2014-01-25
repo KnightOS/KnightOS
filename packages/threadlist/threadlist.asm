@@ -49,7 +49,7 @@ doUp:
     ld a, e
     cp 12
     jr nz, doUp_noScroll
-    
+
     kld(a, (topThread))
     or a
     jr z, mainLoop
@@ -447,12 +447,12 @@ moreThreadsUpSprite: ; 8x3
     .db 0b00100000
     .db 0b01110000
     .db 0b11111000
-    
+
 moreThreadsDownSprite: ; 8x3
     .db 0b11111000
     .db 0b01110000
     .db 0b00100000
-    
+
 backStr:
     .db lang_str_castle, 0
 optionsStr:
@@ -474,6 +474,6 @@ displayedThreads:
     .db 0
 hasToRedraw:
     .db 0
-    
+
 castlePath:
     .db "/bin/castle", 0
