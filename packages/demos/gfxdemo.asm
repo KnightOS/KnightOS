@@ -38,7 +38,9 @@ _:  ld iy, 0b0000000000011111 ; Blue
     applib(appWaitKey)
     jr nz, -_
 
-    call setLegacyLcdMode
+    ; TODO: More color demos
+
+    ret
 
 _:  call allocScreenBuffer
     
