@@ -14,25 +14,29 @@ start:
     kld(de, applibPath)
     call loadLibrary
     
+    call resetLegacyLcdMode
     call getLcdLock
     call getKeypadLock
 
-    call resetLegacyLcdMode
+    call colorSupported
     jr nz, _
-    ld iy, 0b1111100000000000 ; Red
+_:  ld iy, 0b1111100000000000 ; Red
     call clearColorLcd
     call flushKeys
-    call waitKey
+    applib(appWaitKey)
+    jr nz, -_
 
-    ld iy, 0b0000011111100000 ; Green
+_:  ld iy, 0b0000011111100000 ; Green
     call clearColorLcd
     call flushKeys
-    call waitKey
+    applib(appWaitKey)
+    jr nz, -_
 
-    ld iy, 0b0000000000011111 ; Blue
+_:  ld iy, 0b0000000000011111 ; Blue
     call clearColorLcd
     call flushKeys
-    call waitKey
+    applib(appWaitKey)
+    jr nz, -_
 
     call setLegacyLcdMode
 

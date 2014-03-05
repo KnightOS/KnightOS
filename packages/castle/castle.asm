@@ -11,6 +11,7 @@ start:
     call getKeypadLock
 
     call allocScreenBuffer
+
     kld(de, applibPath)
     call loadLibrary
 resetToHome:

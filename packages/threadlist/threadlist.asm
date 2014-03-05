@@ -154,6 +154,9 @@ doSelect:
     call flushKeys
     di
     ld a, (ix)
+    bit 3, (ix + 5)
+    call nz, resetLegacyLcdMode
+    ; TODO: This could be more elegant
     ld (hwLockLcd), a
     ld (hwLockKeypad), a
     call resumeThread

@@ -31,6 +31,7 @@ jumpTable:
 
 ; Same as kernel getKey, but listens for
 ; F1 and F5 and acts accordingly
+; Z is reset if the thread lost focus during this call
 appGetKey:
     call getKey
     jr checkKey
@@ -44,6 +45,7 @@ checkKey:
     ijp(z, launchCastle)
     cp kGraph
     ijp(z, launchThreadList)
+    cp a
     ret
 
 launchCastle:
@@ -54,17 +56,18 @@ launchCastle:
     pop de
     call suspendCurrentThread
     call flushKeys
-    xor a
+    or 1
     ret
 
 launchThreadList:
     push de
         ild(de, threadListPath)
         di
-        call launchProgram ; This is called several times when it should be called once
+        call launchProgram
     pop de
     call suspendCurrentThread
-    xor a
+    call flushKeys
+    or 1
     ret
 
 ; Inputs:   IY: Screen buffer
