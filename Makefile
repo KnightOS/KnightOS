@@ -78,6 +78,9 @@ TI84pCSE: directories userland
 run: TI84pSE
 	$(EMU) bin/TI84pSE/KnightOS-$(LANG).rom
 
+runcolor: TI84pCSE
+	$(EMU) bin/TI84pCSE/KnightOS-$(LANG).rom
+
 kernel:
 	cd kernel && make $(PLATFORM)
 

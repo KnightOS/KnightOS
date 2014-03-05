@@ -17,7 +17,26 @@ start:
     call getLcdLock
     call getKeypadLock
 
-    call allocScreenBuffer
+    call resetLegacyLcdMode
+    jr nz, _
+    ld iy, 0b1111100000000000 ; Red
+    call clearColorLcd
+    call flushKeys
+    call waitKey
+
+    ld iy, 0b0000011111100000 ; Green
+    call clearColorLcd
+    call flushKeys
+    call waitKey
+
+    ld iy, 0b0000000000011111 ; Blue
+    call clearColorLcd
+    call flushKeys
+    call waitKey
+
+    call setLegacyLcdMode
+
+_:  call allocScreenBuffer
     
     kld(hl, windowTitle)
     xor a
