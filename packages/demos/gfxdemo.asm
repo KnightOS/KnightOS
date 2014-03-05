@@ -19,7 +19,7 @@ start:
     call getKeypadLock
 
     call colorSupported
-    jr nz, _
+    jr nz, .noColor
 _:  ld iy, 0b1111100000000000 ; Red
     call clearColorLcd
     call flushKeys
@@ -42,7 +42,8 @@ _:  ld iy, 0b0000000000011111 ; Blue
 
     ret
 
-_:  call allocScreenBuffer
+.noColor:
+    call allocScreenBuffer
     
     kld(hl, windowTitle)
     xor a
