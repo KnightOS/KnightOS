@@ -211,9 +211,9 @@ powerMenuLoop:
     cp kEnter
     jr z, powerMenuSelect
     cp kClear
-    kjp(z, resetToHome)
+    kjp(z, pop_resetToHome)
     cp kZoom
-    kjp(z, resetToHome)
+    kjp(z, pop_resetToHome)
 
     jr powerMenuLoop
 
@@ -249,6 +249,10 @@ powerMenuSelect:
     jr z, confirmRestart
     call suspendDevice
     kjp(redrawHome)
+
+pop_resetToHome:
+    pop de
+    kjp(resetToHome)
 
 confirmShutDown:
     ld hl, boot
