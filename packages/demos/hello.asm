@@ -52,10 +52,14 @@ testMessage:
     xor a
     ld b, a
     applib(showMessage)
-    kld(hl, options)
-    ld c, a
-    add a \ add a \ add a \ add c
-    add l \ ld l, a \ jr nc, $+3 \ inc h
+    or a ; cp 0
+    jr nz, _
+    kld(hl, option1)
+    kld(de, dismiss)
+    xor a
+    applib(showMessage)
+    jr redraw
+_:  kld(hl, option2)
     kld(de, dismiss)
     xor a
     applib(showMessage)
@@ -73,7 +77,9 @@ messageText:
     .db "Hello, world!\nThis is a test", 0
 options:
     .db 2
+option1:
     .db "Option 1", 0
+option2:
     .db "Option 2", 0
 dismiss:
     .db 1
