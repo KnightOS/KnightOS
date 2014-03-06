@@ -16,7 +16,8 @@ an existing repository.
 Once you have the source and submodules, run `make` from the root of the repository to build
 KnightOS for the TI-84+ SE. You may specify a target (i.e. `make TI83p`) to build for another
 calculator model. You may additionally specify a language (i.e. `make LANG=de`) to use a
-language other than English. Your binaries will appear in the bin folder.
+language other than English. Your binaries will appear in the bin folder. You can use the ROM
+files on an emulator like WabbitEmu, or send the 73u/8xu/8cu files to an actual device.
 
 On Windows, run make from Cygwin.
 
@@ -42,6 +43,10 @@ just leave it there if you already have it). Then, download and install Brandon 
 on the target calculator. Then, you can send the KnightOS upgrade file to your TI-84+ CSE using
 **TI-Connect only**. It does not work with TiLP. I have had success sending it with TI-Connect
 in a VM, though.
+
+**This process also applies to newer TI-84+ calculators, which have the 1.03 boot code.** You can
+find out your boot code from TIOS by pressing Alpha+S from the MODE screen. From KnightOS, the
+"hello world" demo currently shows your boot code version.
 
 ## Supported Devices
 
