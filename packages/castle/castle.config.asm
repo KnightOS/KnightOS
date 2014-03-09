@@ -101,7 +101,7 @@ demoStr:
     .db lang_demo, 0
 demoPath:
     .db "/bin/gfxdemo", 0
-    
+
 countStr:
     .db lang_countingTest, 0
 countPath:
@@ -110,3 +110,8 @@ osrecvStr:
     .db "OS Receiver", 0
 osrecvPath:
     .db "/bin/osrecv", 0
+    
+colorTestPath:
+    .db "/bin/colorTest", 0
+colorTestStr:
+    .db "Quick color test", 0

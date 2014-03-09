@@ -1,3 +1,19 @@
+.macro div64()
+    ; sra h
+    .db 0xCB, 0x2C
+    rr l
+    .db 0xCB, 0x2C
+    rr l
+    .db 0xCB, 0x2C
+    rr l
+    .db 0xCB, 0x2C
+    rr l
+    .db 0xCB, 0x2C
+    rr l
+    .db 0xCB, 0x2C
+    rr l
+.endmacro
+
 ; KnightOS graphical demo
 ; Portions of the color demo provided by Christopher Mitchell
 .nolist
@@ -20,7 +36,8 @@ start:
     call getKeypadLock
 
     call colorSupported
-    jr nz, .noColor
+    kjp(nz, noColor)
+    
     ; Short intro message in legacy mode
     call allocScreenBuffer
     call clearBuffer
@@ -79,19 +96,209 @@ _:
     call clearColorLcd
     jr -_
 
-.sprite:
-    .dw 0xf800, 0xf800, 0x07e0, 0x07e0, 0x001f, 0x001f, 0xffff, 0xffff
-    .dw 0xf800, 0xf800, 0x07e0, 0x07e0, 0x001f, 0x001f, 0xffff, 0xffff
-    .dw 0xf800, 0xf800, 0x07e0, 0x07e0, 0x001f, 0x001f, 0xffff, 0xffff
-    .dw 0xf800, 0xf800, 0x07e0, 0x07e0, 0x001f, 0x001f, 0xffff, 0xffff
-    .dw 0xf800, 0xf800, 0x07e0, 0x07e0, 0x001f, 0x001f, 0xffff, 0xffff
-    .dw 0xf800, 0xf800, 0x07e0, 0x07e0, 0x001f, 0x001f, 0xffff, 0xffff
-    .dw 0xf800, 0xf800, 0x07e0, 0x07e0, 0x001f, 0x001f, 0xffff, 0xffff
-    .dw 0xf800, 0xf800, 0x07e0, 0x07e0, 0x001f, 0x001f, 0xffff, 0xffff
-    
-.noColor:
+noColor:
     call allocScreenBuffer
     
+#define AWESOMENESS
+#ifdef AWESOMENESS
+    xor a
+    kld((angle), a)
+.demoLoop:
+    kld(a, (angle))
+    call isin
+    kld((curSin), a)
+    kld(a, (angle))
+    call icos
+    kld((curCos), a)
+    
+    kld(hl, windowTitle)
+    xor a
+    applib(drawWindow)
+    
+    ; first rotate and projects the vertices
+    
+    xor a
+    kld((vertexNb), a)
+    kld(hl, vertices)
+    
+.renderLoop:
+    push hl
+        kld(de, currentVertex)
+        ld bc, 6
+        ldir
+        
+        ; rx = x * cos(a) + z * sin(a)
+        kld(a, (curCos))
+        kld(de, (currentVertex))
+        call sDEMulA
+        push hl
+            kld(a, (curSin))
+            kld(de, (currentVertex + 4))
+            call sDEMulA
+        pop de
+        add hl, de
+        div64()
+        kld((currentRVertex), hl)
+        
+        ; ry = x * (cos(0) - cos(2a))/2 + y * cos(a) + z * -sin(2a)/2
+        kld(a, (angle))
+        add a, a
+        call icos
+        ld b, a
+        xor a
+        call icos
+        sub b
+        ; sra a
+        .db 0xCB, 0x2F
+        kld(de, (currentVertex))
+        call sDEMulA
+        push hl
+            kld(a, (curCos))
+            kld(de, (currentVertex + 2))
+            call sDEMulA
+            push hl
+                kld(a, (angle))
+                add a, a
+                call isin
+                neg
+                ; sra a
+                .db 0xCB, 0x2F
+                kld(de, (currentVertex + 4))
+                call sDEMulA
+            pop de
+            add hl, de
+        pop de
+        add hl, de
+        div64()
+        kld((currentRVertex + 2), hl)
+        
+        ; rz = x * -sin(2a)/2 + y * sin(a) + z * (cos(0) + cos(2a))/2
+        ; camera offset for the sake of visibility : rz += 150
+        kld(a, (angle))
+        add a, a
+        call isin
+        neg
+        ; sra a
+        .db 0xCB, 0x2F
+        kld(de, (currentVertex))
+        call sDEMulA
+        push hl
+            kld(a, (curSin))
+            kld(de, (currentVertex + 2))
+            call sDEMulA
+            push hl
+                xor a
+                call icos
+                ld b, a
+                kld(a, (angle))
+                add a, a
+                call icos
+                add a, b
+                ; sra a
+                .db 0xCB, 0x2F
+                kld(de, (currentVertex + 4))
+                call sDEMulA
+            pop de
+            add hl, de
+        pop de
+        add hl, de
+        div64()
+        ld de, 150
+        add hl, de
+        ; kld((currentRVertex + 4), hl)
+        
+        ; px = rx * fov / rz + 48
+        ld d, h
+        ld e, l
+        ; 42 * 64 = 0x0A80
+        ld a, 0x0A
+        ld c, 0x80
+        call divACbyDE
+        ld h, a
+        ld l, c
+        push hl
+            ld b, h
+            kld(de, (currentRVertex))
+            call DEMulBC
+            div64()
+            ld de, 48
+            add hl, de
+            ld c, l
+            kld(hl, projected)
+            kld(a, (vertexNb))
+            add a, a
+            ld e, a
+            ld d, 0
+            add hl, de
+            ld (hl), c
+            inc hl
+            ex (sp), hl
+            
+            ; py = ry * fov / rz + 32
+            ld c, l
+            ld b, h
+            kld(de, (currentRVertex + 2))
+            call DEMulBC
+            div64()
+            ld de, 32
+            add hl, de
+            ex (sp), hl
+        pop de
+        ld (hl), e
+    pop hl
+    ld de, 6
+    add hl, de
+    kld(a, (vertexNb))
+    inc a
+    kld((vertexNb), a)
+    cp 8
+    kjp(c, .renderLoop)
+    
+    ; then, draw lines between the vertices
+    kld(de, linksList)
+    ld b, 12 ; 12 sides for a cube
+.linesLoop:
+    push bc
+        push de
+            ld a, (de)
+            kld(hl, projected)
+            add a, a
+            ld c, a
+            ld b, 0
+            add hl, bc
+            ld d, (hl)
+            inc hl
+            ld e, (hl)
+        pop bc \ inc bc \ push bc
+            ld a, (bc)
+            kld(hl, projected)
+            add a, a
+            ld c, a
+            ld b, 0
+            add hl, bc
+            ld a, (hl)
+            inc hl
+            ld l, (hl)
+            ld h, a
+            call drawLine
+        pop de
+        inc de
+    pop bc
+    djnz .linesLoop
+    
+    ; we're done rendering
+    call fastCopy
+    call clearBuffer
+    applib(appGetKey)
+    kjp(nz, .demoLoop)
+    cp kClear
+    ret z
+    kld(hl, angle)
+    inc (hl)
+    kjp(.demoLoop)
+
+#else
+
     kld(hl, windowTitle)
     xor a
     applib(drawWindow)
@@ -131,6 +338,37 @@ doLeft:
 doRight:
     inc d
     jr -_
+    
+#endif
+    
+curSin:
+    .db 0
+curCos:
+    .db 0
+angle:
+    .db 0
+    
+vertexNb:
+    .db 0
+currentVertex:
+    .dw 0, 0, 0
+currentRVertex:
+    .dw 0, 0, 0
+vertices:
+    .dw -40, 40, 40
+    .dw 40, 40, 40
+    .dw 40, -40, 40
+    .dw -40, -40, 40
+    .dw -40, 40, -40
+    .dw 40, 40, -40
+    .dw 40, -40, -40
+    .dw -40, -40, -40
+projected:
+    .block 8 * 2
+linksList:
+    .db 0, 1, 1, 2, 2, 3, 3, 0
+    .db 4, 5, 5, 6, 6, 7, 7, 4
+    .db 0, 4, 1, 5, 2, 6, 3, 7
     
 threadListPath:
     .db "/bin/threadlist", 0
