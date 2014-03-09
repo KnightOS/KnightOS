@@ -254,7 +254,7 @@ noColor:
     kjp(c, .renderLoop)
     
     ; then, draw lines between the vertices
-    kld(de, linksList)
+    kld(de, indicies)
     ld b, 12 ; 12 sides for a cube
 .linesLoop:
     push bc
@@ -320,7 +320,7 @@ vertices:
     .dw -40, -40, -40
 projected:
     .block 8 * 2
-linksList:
+indicies:
     .db 0, 1, 1, 2, 2, 3, 3, 0
     .db 4, 5, 5, 6, 6, 7, 7, 4
     .db 0, 4, 1, 5, 2, 6, 3, 7
