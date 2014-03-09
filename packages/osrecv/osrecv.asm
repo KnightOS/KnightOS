@@ -24,7 +24,7 @@
 .db 0, 20
 .org 0
 start:
-    call getLcdLock
+    pcall(getLcdLock)
     di
     ; Move executable to 0x9D95 so we don't have to relocate everything
     kld(hl, start)
@@ -42,18 +42,18 @@ tiosStart:
 .macro showMessage(string)
     push hl
     push de
-        call clearBuffer
+        pcall(clearBuffer)
         ld hl, string
         ld de, 0
         ld b, 0
-        call drawStr
-        call fastCopy
+        pcall(drawStr)
+        pcall(fastCopy)
     pop de
     pop hl
 .endmacro
     showMessage(sUnlocking)
 
-    call unlockFlash
+    pcall(unlockFlash)
 
     ; Display "preparing" message
     showMessage(sPreparing)

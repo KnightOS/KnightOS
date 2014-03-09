@@ -7,13 +7,13 @@
     .db 0, 50
 .org 0
 start:
-    call getLcdLock
-    call getKeypadLock
+    pcall(getLcdLock)
+    pcall(getKeypadLock)
 
-    call allocScreenBuffer
+    pcall(allocScreenBuffer)
 
     kld(de, applibPath)
-    call loadLibrary
+    pcall(loadLibrary)
 resetToHome:
     ei
     ld d, 0
@@ -24,10 +24,10 @@ redrawHome:
     pop de
 homeLoop:
     kcall(drawHomeIcons)
-    call fastCopy
+    pcall(fastCopy)
 
-_:  call flushKeys
-    call waitKey
+_:  pcall(flushKeys)
+    pcall(waitKey)
 
     cp kRight
     jr z, homeRightKey
@@ -80,13 +80,13 @@ homeSelect:
     push af
         ; Load config
         kld(de, configPath)
-        call openFileRead
+        pcall(openFileRead)
         push de
-            call getStreamInfo
+            pcall(getStreamInfo)
         pop de
-        call malloc
-        call streamReadToEnd
-        call closeStream
+        pcall(malloc)
+        pcall(streamReadToEnd)
+        pcall(closeStream)
 
         ; IX is the config file
         ld bc, 0x0AFF
@@ -104,12 +104,12 @@ _:  pop af \ push af
         ; This is the correct slot
         ld e, (ix)
         ld d, (ix + 1)
-        call memSeekToStart
+        pcall(memSeekToStart)
         push ix \ pop hl
         add hl, de \ ex de, hl
     pop af
-    call memSeekToStart
-    call free
+    pcall(memSeekToStart)
+    pcall(free)
     kjp(launch)
 _:      push bc
             ld bc, 34
@@ -117,8 +117,8 @@ _:      push bc
         pop bc
         djnz ---_
     pop af
-    call memSeekToStart
-    call free
+    pcall(memSeekToStart)
+    pcall(free)
     kjp(homeLoop)
 
 incrementContrast:
@@ -160,12 +160,12 @@ _:  di
     ; Potential issue: the bootstrap would be allocated shortly after the castle in memory, and therefore only programs
     ; smaller than the castle in the first place would benefit from this.
     ; Potential solution: provide an alternative malloc that allocates in the back of RAM
-    call launchProgram
+    pcall(launchProgram)
     applib(nz, showError)
     kjp(nz, resetToHome)
     ld bc, castleReturnHandler_end - castleReturnHandler
-    call malloc
-    call reassignMemory
+    pcall(malloc)
+    pcall(reassignMemory)
     push ix \ pop de
     kld(hl, castleReturnHandler)
     push de
@@ -179,7 +179,7 @@ _:  di
     inc hl
     ld (hl), d
     dec hl \ dec hl
-    call setReturnPoint
+    pcall(setReturnPoint)
     ret
 
 castleReturnHandler:
@@ -187,8 +187,8 @@ castleReturnHandler:
     ; Updates the thread table so that the current block of allocated memory is the start of the thread executable
     ; Then all further relative loads and such will load as if that were the case
     ld de, 0
-    call launchProgram
-    jp killCurrentThread
+    pcall(launchProgram)
+    pcall(killCurrentThread)
 castleReturnHandler_path:
     .db "/bin/castle", 0
 castleReturnHandler_end:
@@ -198,9 +198,9 @@ powerMenu:
     kcall(drawPowerMenu)
     ld e, 38
 powerMenuLoop:
-    call fastCopy
-    call flushKeys
-    call waitKey
+    pcall(fastCopy)
+    pcall(flushKeys)
+    pcall(waitKey)
 
     cp kUp
     jr z, powerMenuUp
@@ -221,23 +221,23 @@ powerMenuUp:
     ld a, 38
     cp e
     jr z, powerMenuLoop
-    call putSpriteAND
+    pcall(putSpriteAND)
     ld a, e
     ld e, 6
     sub e
     ld e, a
-    call putSpriteOR
+    pcall(putSpriteOR)
     jr powerMenuLoop
 
 powerMenuDown:
     ld a, 50
     cp e
     jr z, powerMenuLoop
-    call putSpriteAND
+    pcall(putSpriteAND)
     ld a, 6
     add a, e
     ld e, a
-    call PutSpriteOR
+    pcall(PutSpriteOR)
     jr powerMenuLoop
 
 powerMenuSelect:
@@ -247,7 +247,7 @@ powerMenuSelect:
     jr z, confirmShutDown
     cp 50
     jr z, confirmRestart
-    call suspendDevice
+    pcall(suspendDevice)
     kjp(redrawHome)
 
 pop_resetToHome:
@@ -255,10 +255,10 @@ pop_resetToHome:
     kjp(resetToHome)
 
 confirmShutDown:
-    ld hl, boot
+    ld hl, 0 ; boot
     jr confirmSelection
 confirmRestart:
-    ld hl, reboot
+    ld hl, 0x18 ; reboot
 confirmSelection:
     push hl
         kld(hl, confirmMessage)

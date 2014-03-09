@@ -14,59 +14,59 @@
 start:
     ; Load dependencies
     kld(de, applibPath)
-    call loadLibrary
+    pcall(loadLibrary)
     
-    call getLcdLock
-    call getKeypadLock
+    pcall(getLcdLock)
+    pcall(getKeypadLock)
 
-    call colorSupported
+    pcall(colorSupported)
     kjp(nz, noColor)
     
     ; Short intro message in legacy mode
-    call allocScreenBuffer
-    call clearBuffer
+    pcall(allocScreenBuffer)
+    pcall(clearBuffer)
     kld(hl, introString)
     ld de, 0
     ld b, 0
-    call drawStr
-    call fastCopy
-    call flushKeys
-    call waitKey
-    call resetLegacyLcdMode
+    pcall(drawStr)
+    pcall(fastCopy)
+    pcall(flushKeys)
+    pcall(waitKey)
+    pcall(resetLegacyLcdMode)
 
 _:  ld iy, 0b1111100000000000 ; Red
-    call clearColorLcd
-    call flushKeys
+    pcall(clearColorLcd)
+    pcall(flushKeys)
     applib(appWaitKey)
     jr nz, -_
 
 _:  ld iy, 0b0000011111100000 ; Green
-    call clearColorLcd
-    call flushKeys
+    pcall(clearColorLcd)
+    pcall(flushKeys)
     applib(appWaitKey)
     jr nz, -_
 
 _:  ld iy, 0b0000000000011111 ; Blue
-    call clearColorLcd
-    call flushKeys
+    pcall(clearColorLcd)
+    pcall(flushKeys)
     applib(appWaitKey)
     jr nz, -_
     
 _:  ld h, 0
     ld d, 0
-    call randA
+    pcall(randA)
     ld l, a
-    call randA
+    pcall(randA)
     ld e, a
-    call randA
+    pcall(randA)
     ld b, a
-    call randA
+    pcall(randA)
     ld c, a
-    call randA
+    pcall(randA)
     ld iyl, a
-    call randA
+    pcall(randA)
     ld iyh, a
-    call colorRectangle
+    pcall(colorRectangle)
     applib(appGetKey)
     jr nz, .handleRedraw
     cp kClear
@@ -76,11 +76,11 @@ _:  ld h, 0
     
 .handleRedraw:
     ld iy, 0b0000000000011111
-    call clearColorLcd
+    pcall(clearColorLcd)
     jr -_
 
 noColor:
-    call allocScreenBuffer
+    pcall(allocScreenBuffer)
 
 .macro div64()
     ; sra h
@@ -102,10 +102,10 @@ noColor:
     kld((angle), a)
 .demoLoop:
     kld(a, (angle))
-    call isin
+    pcall(isin)
     kld((curSin), a)
     kld(a, (angle))
-    call icos
+    pcall(icos)
     kld((curCos), a)
     
     kld(hl, windowTitle)
@@ -113,7 +113,7 @@ noColor:
     applib(drawWindow)
     kld(hl, exitString)
     ld de, 0x0208
-    call drawStr
+    pcall(drawStr)
     
     ; first rotate and projects the vertices
     xor a
@@ -129,11 +129,11 @@ noColor:
         ; rx = x * cos(a) + z * sin(a)
         kld(a, (curCos))
         kld(de, (currentVertex))
-        call sDEMulA
+        pcall(sDEMulA)
         push hl
             kld(a, (curSin))
             kld(de, (currentVertex + 4))
-            call sDEMulA
+            pcall(sDEMulA)
         pop de
         add hl, de
         div64()
@@ -142,28 +142,28 @@ noColor:
         ; ry = x * (cos(0) - cos(2a))/2 + y * cos(a) + z * -sin(2a)/2
         kld(a, (angle))
         add a, a
-        call icos
+        pcall(icos)
         ld b, a
         xor a
-        call icos
+        pcall(icos)
         sub b
         ; sra a
         .db 0xCB, 0x2F
         kld(de, (currentVertex))
-        call sDEMulA
+        pcall(sDEMulA)
         push hl
             kld(a, (curCos))
             kld(de, (currentVertex + 2))
-            call sDEMulA
+            pcall(sDEMulA)
             push hl
                 kld(a, (angle))
                 add a, a
-                call isin
+                pcall(isin)
                 neg
                 ; sra a
                 .db 0xCB, 0x2F
                 kld(de, (currentVertex + 4))
-                call sDEMulA
+                pcall(sDEMulA)
             pop de
             add hl, de
         pop de
@@ -175,28 +175,28 @@ noColor:
         ; camera offset for the sake of visibility : rz += 150
         kld(a, (angle))
         add a, a
-        call isin
+        pcall(isin)
         neg
         ; sra a
         .db 0xCB, 0x2F
         kld(de, (currentVertex))
-        call sDEMulA
+        pcall(sDEMulA)
         push hl
             kld(a, (curSin))
             kld(de, (currentVertex + 2))
-            call sDEMulA
+            pcall(sDEMulA)
             push hl
                 xor a
-                call icos
+                pcall(icos)
                 ld b, a
                 kld(a, (angle))
                 add a, a
-                call icos
+                pcall(icos)
                 add a, b
                 ; sra a
                 .db 0xCB, 0x2F
                 kld(de, (currentVertex + 4))
-                call sDEMulA
+                pcall(sDEMulA)
             pop de
             add hl, de
         pop de
@@ -212,13 +212,13 @@ noColor:
         ; 42 * 64 = 0x0A80
         ld a, 0x0A
         ld c, 0x80
-        call divACbyDE
+        pcall(divACbyDE)
         ld h, a
         ld l, c
         push hl
             ld b, h
             kld(de, (currentRVertex))
-            call DEMulBC
+            pcall(DEMulBC)
             div64()
             ld de, 48
             add hl, de
@@ -237,7 +237,7 @@ noColor:
             ld c, l
             ld b, h
             kld(de, (currentRVertex + 2))
-            call DEMulBC
+            pcall(DEMulBC)
             div64()
             ld de, 32
             add hl, de
@@ -279,15 +279,15 @@ noColor:
             inc hl
             ld l, (hl)
             ld h, a
-            call drawLine
+            pcall(drawLine)
         pop de
         inc de
     pop bc
     djnz .linesLoop
     
     ; we're done rendering
-    call fastCopy
-    call clearBuffer
+    pcall(fastCopy)
+    pcall(clearBuffer)
     applib(appGetKey)
     kjp(nz, .demoLoop)
     cp kClear
@@ -339,9 +339,9 @@ introString:
 .equ nballs 10
 ballDemo:
     ld iy, 0xFFFF
-    call clearColorLcd
+    pcall(clearColorLcd)
     ld bc, nballs * 5 + 1
-    call malloc
+    pcall(malloc)
     inc ix
     ld a, r
     ld (ix + -1), a
@@ -355,19 +355,19 @@ InitSetupLoop:
     inc hl
     ld (hl), d ;x
     inc hl
-    call randA
+    pcall(randA)
     and 0x02
     dec a
     ld (hl), a ;x velocity
     inc hl
-    call randA
+    pcall(randA)
     cp 240 - 16
     jr c,InitSetupLoop_XOK
     and 0x7F
 InitSetupLoop_XOK:
     ld (hl), a ;y
     inc hl
-    call randA
+    pcall(randA)
     and 0x02
     dec a
     ld (hl), a ;y velocity
@@ -394,14 +394,14 @@ ballTimeLoop:
         push hl
             ex de, hl
             ld a, 0x52 ;"Vertical" = X for us
-            call writeLcdRegister
+            pcall(writeLcdRegister)
             ld a, 0x21 ;"Vertical" = X for us
-            call writeLcdRegister
+            pcall(writeLcdRegister)
             push hl
                 ld de, 15
                 add hl, de
                 ld a, 0x53 ;"Vertical" = X for us
-                call writeLcdRegister
+                pcall(writeLcdRegister)
                 pop hl
             pop de
         ld a, (de)
@@ -444,10 +444,10 @@ ballTimeLoop_NoXFlip:
             ex de, hl
             ld h, 0
             ld a, 0x50 ;"Horizontal" = Y for us
-            call writeLcdRegister
+            pcall(writeLcdRegister)
             ld h, 0
             ld a, 0x20 ;"Horizontal" = Y for us
-            call writeLcdRegister
+            pcall(writeLcdRegister)
         pop de
         ld a, (de)
         add a, l
@@ -490,7 +490,7 @@ ballRender2:
     kjp(nz, BallTimeLoop)
     
     applib(appGetKey)
-    call nz, clearColorLcd
+    pcall(nz, clearColorLcd)
     cp kClear
     kjp(nz, ballTime)
 

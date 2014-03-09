@@ -5,10 +5,10 @@
     .db 0, 50
 .org 0
 start:
-    call getLcdLock
-    call getKeypadLock
+    pcall(getLcdLock)
+    pcall(getKeypadLock)
 
-    call allocScreenBuffer
+    pcall(allocScreenBuffer)
     xor a
     kld((topThread), a)
     kld((cursorWasAtBottom), a)
@@ -22,9 +22,9 @@ redraw:
     xor a
     kld((hasToRedraw), a)
 mainLoop:
-    call fastCopy
-    call flushKeys
-    call waitKey
+    pcall(fastCopy)
+    pcall(flushKeys)
+    pcall(waitKey)
 
     cp kClear
     kjp(z, launchCastle)
@@ -62,10 +62,10 @@ doUp:
     ld a, e
     add a, 6
 doUp_noScroll:
-    call putSpriteXOR
+    pcall(putSpriteXOR)
     sub 6
     ld e, a
-    call putSpriteOR
+    pcall(putSpriteOR)
     push hl
     push de
         push ix \ pop hl
@@ -119,10 +119,10 @@ doDown:
     ld a, e
     sub 6
 doDown_noScroll:
-    call putSpriteXOR
+    pcall(putSpriteXOR)
     add a, 6
     ld e, a
-    call putSpriteOR
+    pcall(putSpriteOR)
     push hl \ push de
         push ix \ pop hl
         ; Loop to the next available thread
@@ -151,16 +151,16 @@ _:      pop ix
     kjp(mainLoop)
 
 doSelect:
-    call flushKeys
+    pcall(flushKeys)
     di
     ld a, (ix)
     bit 3, (ix + 5)
-    call nz, resetLegacyLcdMode
+    pcall(nz, resetLegacyLcdMode)
     ; TODO: This could be more elegant
     ld (hwLockLcd), a
     ld (hwLockKeypad), a
-    call resumeThread
-    jp killCurrentThread
+    pcall(resumeThread)
+    pcall(killCurrentThread)
 
 doKill:
     xor a
@@ -168,7 +168,7 @@ doKill:
     kld((topThread), a)
     di
     ld a, (ix)
-    call killThread
+    pcall(killThread)
     ei
     kjp(redraw - 3)
 
@@ -177,10 +177,10 @@ doOptions:
     kld((cursorWasAtBottom), a)
     kld((topThread), a)
     kcall(drawOptions)
-    call fastCopy
+    pcall(fastCopy)
 
-_:  call flushKeys
-    call waitKey
+_:  pcall(flushKeys)
+    pcall(waitKey)
     cp kClear
     kjp(z, redraw - 3)
     cp kGraph
@@ -194,27 +194,27 @@ _:  call flushKeys
 launchCastle:
     kld(de, castlePath)
     di
-    call launchProgram
-    jp killCurrentThread
+    pcall(launchProgram)
+    pcall(killCurrentThread)
 
 noThreads:
     kcall(drawInterface)
     ld b, 0
     ld de, lang_noPrograms_position
     kld(hl, noProgramsStr)
-    call drawStr
+    pcall(drawStr)
 
-    call fastCopy
+    pcall(fastCopy)
 
-_:  call flushKeys
-    call waitKey
+_:  pcall(flushKeys)
+    pcall(waitKey)
 
     cp kClear
     jr z, _
     cp kYEqu
     jr nz, -_
 
-_:  call flushKeys
+_:  pcall(flushKeys)
     jr launchCastle
 
 drawThreads:
@@ -261,7 +261,7 @@ dispThread:
         cp e
         ld a, c
         jr c, noDispThread
-        call drawStr
+        pcall(drawStr)
 noDispThread:
         inc a
         kld((totalThreads), a)
@@ -277,7 +277,7 @@ skipThread:                                             ; to here or everyone's 
     kld(hl, moreThreadsUpSprite)
     ld b, 3
     ld de, 90 * 256 + 12
-    call PutSpriteOR
+    pcall(PutSpriteOR)
 noTopSprite:
     kld(a, (totalThreads))
     kld(hl, topThread)
@@ -287,7 +287,7 @@ noTopSprite:
     kld(hl, moreThreadsDownSprite)
     ld b, 3
     ld de, 90 * 256 + 49
-    call PutSpriteOR
+    pcall(PutSpriteOR)
 noBottomSprite:
     kld(a, (cursorWasAtBottom))
     ld hl, 1 * 256 + 12
@@ -298,22 +298,22 @@ noBottomSprite:
     ex de, hl
     ld b, 5
     kld(hl, selectionIndicatorSprite)
-    call PutSpriteOR
+    pcall(PutSpriteOR)
     ret
 
 drawInterface:
-    call clearBuffer
+    pcall(clearBuffer)
     ; Castle top
     xor a
     ld l, 2
-    call setPixel
+    pcall(setPixel)
     kld(hl, castleTopSprite)
     ld b, 12
     ld de, 0x0100
 _:    ld a, 8
     push bc
         ld b, 3
-        call putSpriteOR
+        pcall(putSpriteOR)
     pop bc
     add a, d
     ld d, a
@@ -322,75 +322,75 @@ _:    ld a, 8
     kld(hl, hotkeyLeftSprite)
     ld b, 8
     ld de, 0x0038
-    call putSpriteOR
+    pcall(putSpriteOR)
 
     kld(hl, hotkeyRightSprite)
     ld de, 0x5838
-    call putSpriteOR
+    pcall(putSpriteOR)
 
     kld(hl, hotkeyArrowLeftSprite)
     ld b, 5
     ld de, 0x003A
-    call putSpriteOR
+    pcall(putSpriteOR)
 
     kld(hl, hotkeyPlusSprite)
     ld b, 5
     ld de, 0x5A3A
-    call putSpriteOR
+    pcall(putSpriteOR)
 
     kld(hl, backStr)
     ld de, lang_castle_position
-    call drawStr
+    pcall(drawStr)
 
     kld(hl, optionsStr)
     ld de, lang_options_position
-    call drawStr
+    pcall(drawStr)
 
     kld(hl, runningProgramsStr)
     ld de, lang_runningPrograms_position
-    call drawStr
+    pcall(drawStr)
 
     ld hl, 0x000A
     ld de, 0x5F0A
-    call drawLine
+    pcall(drawLine)
     ret
 
 drawOptions:
     kld(hl, hotkeyPlusSprite)
     ld de, 0x5A3A
-    call putSpriteXOR
+    pcall(putSpriteXOR)
 
     kld(hl, hotkeyArrowUpSprite)
     ld de, 0x593A
-    call putSpriteOR
+    pcall(putSpriteOR)
 
     ld e, 55 - (61 - (lang_forceQuit_position >> 8))
     ld l, 48
     ld c, 96 - 54 + (61 - (lang_forceQuit_position >> 8))
     ld b, 56 - 47
-    call rectOR
+    pcall(rectOR)
     ld e, 56 - (61 - (lang_forceQuit_position >> 8))
     ld l, 49
     ld c, 95 - 55 + (61 - (lang_forceQuit_position >> 8))
     ld b, 55 - 48
-    call rectXOR
+    pcall(rectXOR)
     ld e, 87
     ld l, 56
     ld c, 9
     ld b, 2
-    call rectAND
+    pcall(rectAND)
     ld a, 87
     ld l, 57
-    call setPixel
+    pcall(setPixel)
 
     kld(hl, forceQuitStr)
     ld de, lang_forceQuit_position
-    call drawStr
+    pcall(drawStr)
 
     kld(hl, selectionIndicatorSprite)
     ld b, 5
     ld de, ((57  - (61 - (lang_forceQuit_position >> 8))) * 256) + 50
-    call putSpriteOR
+    pcall(putSpriteOR)
     ret
 
 castleTopSprite: ; 8x3

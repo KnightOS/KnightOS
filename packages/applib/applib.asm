@@ -33,11 +33,11 @@ jumpTable:
 ; F1 and F5 and acts accordingly
 ; Z is reset if the thread lost focus during this call
 appGetKey:
-    call getKey
+    pcall(getKey)
     jr checkKey
 
 appWaitKey:
-    call waitKey
+    pcall(waitKey)
     jr checkKey
 
 checkKey:
@@ -49,26 +49,26 @@ checkKey:
     ret
 
 launchCastle:
-    call fullScreenWindow
+    pcall(fullScreenWindow)
     push de
         ild(de, castlePath)
         di
-        call launchProgram
+        pcall(launchProgram)
     pop de
-    call suspendCurrentThread
-    call flushKeys
+    pcall(suspendCurrentThread)
+    pcall(flushKeys)
     or 1
     ret
 
 launchThreadList:
-    call fullScreenWindow
+    pcall(fullScreenWindow)
     push de
         ild(de, threadListPath)
         di
-        call launchProgram
+        pcall(launchProgram)
     pop de
-    call suspendCurrentThread
-    call flushKeys
+    pcall(suspendCurrentThread)
+    pcall(flushKeys)
     or 1
     ret
 
@@ -84,25 +84,25 @@ drawWindow:
     push bc
     push hl
     push af
-        call clearBuffer
+        pcall(clearBuffer)
         ld e, 0
         ld l, 0
         ld c, 96
         ld b, 59
-        call rectOR
+        pcall(rectOR)
         ld e, 1
         ld l, 7
         ld c, 94
         ld b, 51
-        call rectXOR
+        pcall(rectXOR)
 
         push af
             xor a
             ld l, 0
-            call resetPixel
+            pcall(resetPixel)
 
             ld a, 95
-            call resetPixel
+            pcall(resetPixel)
         pop af
 
         bit 0, a
@@ -110,33 +110,33 @@ drawWindow:
             ild(hl, castleSprite1)
             ld b, 4
             ld de, 0x003C
-            call putSprite16OR
+            pcall(putSprite16OR)
 
             ild(hl, castleSprite2)
             ld d, 16
-            call putSpriteOR
+            pcall(putSpriteOR)
 _:      pop af \ push af
         bit 1, a
         jr nz, _
             ild(hl, threadListSprite)
             ld de, 89 * 256 + 59
             ld b, 5
-            call putSpriteOR
+            pcall(putSpriteOR)
 _:      pop af \ push af
         bit 2, a
         jr z, _
             ild(hl, menuSprite1)
             ld b, 4
             ld de, 40 * 256 + 60
-            call putSprite16OR
+            pcall(putSprite16OR)
 
             ild(hl, menuSprite2)
             ld d, 56
             dec b
-            call PutSpriteOR
+            pcall(PutSpriteOR)
 _:      pop af \ pop hl \ push hl \ push af
         ld de, 0x0201
-        call drawStrXOR
+        pcall(drawStrXOR)
     pop af
     pop hl
     pop bc
@@ -166,12 +166,12 @@ showMessage:
                     ld e, 18
                     ld l, 16
                     ld bc, (49 - 15) * 256 + (78 - 17)
-                    call rectOR
+                    pcall(rectOR)
 
                     ld e, 19
                     ld l, 17
                     ld bc, (48 - 16) * 256 + (77 - 18)
-                    call rectXOR
+                    pcall(rectXOR)
 
                     ; Draw our nice icon. Note, in the future it might be nice to have a table of
                     ; different icons and then do something like
@@ -185,17 +185,17 @@ showMessage:
                     ld b, 8
                     ld de, 20 * 256 + 18
                     ild(hl, exclamationSprite1)
-                    call putSpriteOR
+                    pcall(putSpriteOR)
                     ld e, 26
                     ild(hl, exclamationSprite2)
-                    call putSpriteOR
+                    pcall(putSpriteOR)
 .skipIcon:
         pop bc \ pop hl \ pop de \ pop af \ push hl \ push bc \ push af \ push de
                     ; For now we'll hardcode the location of the text, but if wider icons get
                     ; implemented the text's X coordinate needs to be calculated (or pre-stored).
                     ld de, 26 * 256 + 18 ; d = 26, e = 18
                     ld b, d ; margin
-                    call drawStr
+                    pcall(drawStr)
 
                     ; Draw all the options
                     ld de, 24 * 256 + 37
@@ -204,14 +204,14 @@ showMessage:
                 ld c, (hl)
                 dec c ; We need our number of options to be zero-based
                 inc hl ; Go to start of first string
-                call drawStr
+                pcall(drawStr)
                 ld a, c
                 or a
                 jr z, _ ; Skip drawing second option if there isn't one
                 xor a
                 push bc \ ld bc, -1 \ cpir \ pop bc ; Seek to end of string
-                ld a, '\n' \ call drawChar
-                call drawStr
+                ld a, '\n' \ pcall(drawChar)
+                pcall(drawStr)
 
 _:          pop af \ push af ; default option
                 cp c
@@ -227,12 +227,12 @@ _:              ld b, 5 ; height of sprite
                     pop af
                     ; Draw!
                     ild(hl, selectionIndicatorSprite)
-                    call putSpriteOR
+                    pcall(putSpriteOR)
 
-                    call fastCopy
+                    pcall(fastCopy)
                     push af
-_:                      call flushKeys
-                        call waitKey
+_:                      pcall(flushKeys)
+                        pcall(waitKey)
                         cp kEnter
                         jr z, .answerloop_Select
                         cp k2nd
@@ -243,14 +243,14 @@ _:                      call flushKeys
                         jr nz, -_ ; fall thru to .answerloop_Up
 .answerloop_Up:
                     pop af
-                    call putSpriteXOR
+                    pcall(putSpriteXOR)
                     or a
                     jr z, .answerloop
                     dec a
                     jr .answerloop
 .answerloop_Down:
                     pop af
-                    call putSpriteXOR
+                    pcall(putSpriteXOR)
                     cp c
                     jr z, .answerloop
                     inc a
@@ -320,7 +320,7 @@ setCharSetFromKey:
     icall(z, setAlphaKey)
     cp k2nd
     icall(z, set2ndKey)
-    call flushKeys
+    pcall(flushKeys)
     xor a
     ret
 
@@ -355,7 +355,7 @@ drawCharSetIndicator:
         ild(hl, clearCharSetSprite)
         ld de, 0x5C02
         ld b, 4
-        call putSpriteOR
+        pcall(putSpriteOR)
 
         ild(a, (charSet))
         ; Get sprite in HL
@@ -365,7 +365,7 @@ drawCharSetIndicator:
         ld l, a
         jr nc, $+3 \ inc h
         ; Draw sprite
-        call putSpriteXOR
+        pcall(putSpriteXOR)
     pop af
     pop bc
     pop de
@@ -407,7 +407,7 @@ showError:
             push de
             push ix
                 push hl \ pop ix
-                call memSeekToStart
+                pcall(memSeekToStart)
                 push ix \ pop bc
             pop ix
             pop hl

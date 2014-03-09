@@ -4,11 +4,11 @@
     .db 0, 50
 .org 0
     kld(de, inittab)
-    call openFileRead
-    call getStreamInfo
-    call malloc
-    call streamReadToEnd
-    call closeStream
+    pcall(openFileRead)
+    pcall(getStreamInfo)
+    pcall(malloc)
+    pcall(streamReadToEnd)
+    pcall(closeStream)
     ld d, b \ ld b, c \ ld c, d
     inc c
     push ix \ pop de
@@ -26,8 +26,8 @@
 .launch:
         xor a
         ld (ix), a
-        call launchProgram
-        call contextSwitch
+        pcall(launchProgram)
+        pcall(contextSwitch)
         inc ix
         push ix \ pop de
         djnz .loop
@@ -36,7 +36,7 @@
 
 .end:
     pop ix
-    call free
+    pcall(free)
     ret
 
 inittab:

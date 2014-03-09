@@ -1,16 +1,16 @@
 drawChrome:
-    call clearBuffer
+    pcall(clearBuffer)
     ; Castle top
     xor a
     ld l, 2
-    call setPixel
+    pcall(setPixel)
     kld(hl, castleTopSprite)
     ld b, 12
     ld de, 0x0100
 _:  ld a, 8
     push bc
         ld b, 3
-        call putSpriteOR
+        pcall(putSpriteOR)
     pop bc
     add a, d
     ld d, a
@@ -19,41 +19,41 @@ _:  ld a, 8
     kld(hl, hotkeyLeftSprite)
     ld b, 8
     ld de, 0x0038
-    call putSpriteOR
+    pcall(putSpriteOR)
 
     kld(hl, hotkeyRightSprite)
     ld de, 0x5838
-    call putSpriteOR
+    pcall(putSpriteOR)
 
     ld hl, 0x000A
     ld de, 0x5F0A
-    call drawLine
+    pcall(drawLine)
 
     kld(hl, batteryIndicatorSprite)
     ld b, 4
     ld de, 0x193B
-    call putSpriteOR
+    pcall(putSpriteOR)
 
-    call getBatteryLevel
+    pcall(getBatteryLevel)
     xor a
     cp b
     jr z, ++_
     ld a, 26
 _:  ld l, 60
-    call setPixel
+    pcall(setPixel)
     inc l
-    call setPixel
+    pcall(setPixel)
     inc a
     djnz -_
 _:
 #ifdef CLOCK
     ; Get time
     push ix
-        call getTime
+        pcall(getTime)
         ; TODO
         kld(hl, dummyTimeString)
         ld de, (69 << 8) | 4
-        call drawStr
+        pcall(drawStr)
     pop ix
 #endif
     ret
@@ -62,28 +62,28 @@ drawHome:
     kld(hl, hotkeyPlusSprite)
     ld b, 5
     ld de, 0x013A
-    call putSpriteOR
+    pcall(putSpriteOR)
 
     kld(hl, hotkeyArrowRightSprite)
     ld de, 0x593A
-    call putSpriteOR
+    pcall(putSpriteOR)
 
     kld(hl, menuArrowSprite)
     ld b, 3
     ld de, 0x353B
-    call putSpriteOR
+    pcall(putSpriteOR)
 
     ld de, lang_more_position
     kld(hl, moreString)
-    call drawStr
+    pcall(drawStr)
 
     ld de, lang_menu_position
     kld(hl, menuString)
-    call drawStr
+    pcall(drawStr)
 
     ld de, lang_running_position
     kld(hl, runningString)
-    call drawStr
+    pcall(drawStr)
     ret
 
 drawHomeIcons:
@@ -92,21 +92,21 @@ drawHomeIcons:
     push af
         ; Clear away old icons
         ld e, 0 \ ld l, 11 \ ld c, 96 \ ld b, 45
-        call rectAND
+        pcall(rectAND)
         ld e, 0 \ ld l, 3 \ ld c, 69 \ ld b, 7
-        call rectAND
+        pcall(rectAND)
 
         ld hl, 0x0021
         ld de, 0x5F21
-        call drawLine
+        pcall(drawLine)
 
         ; Load config
         kld(de, configPath)
-        call openFileRead
-        call getStreamInfo
-        call malloc
-        call streamReadBuffer
-        call closeStream
+        pcall(openFileRead)
+        pcall(getStreamInfo)
+        pcall(malloc)
+        pcall(streamReadBuffer)
+        pcall(closeStream)
 
         ; First row
         ld de, 0x020E
@@ -131,7 +131,7 @@ _:          ld bc, 4
             add ix, bc
 _:
             ld b, 16
-            call putSprite16OR
+            pcall(putSprite16OR)
         pop bc
         ld a, 19
         add a, d \ ld d, a
@@ -160,7 +160,7 @@ _:          ld bc, 4
             add ix, bc
 _:
             ld b, 16
-            call putSprite16OR
+            pcall(putSprite16OR)
         pop bc
         ld a, 19
         add a, d \ ld d, a
@@ -168,8 +168,8 @@ _:
 
     pop af
     dec ix
-    call memSeekToStart
-    call free
+    pcall(memSeekToStart)
+    pcall(free)
     pop de
     ret
 
@@ -194,23 +194,23 @@ _:      ld a, e ; Get x
         ld e, a
         ld bc, 0x1414
         push de \ push hl \ push bc
-            call rectOR
+            pcall(rectOR)
         pop bc \ pop hl \ pop de
         inc e \ inc l \ dec b \ dec b \ dec c \ dec c
-        call rectXOR
+        pcall(rectXOR)
     pop af \ pop bc \ pop hl \ pop de
     ret
 
 drawSelectedName:
     push ix
-        call memSeekToStart
+        pcall(memSeekToStart)
         add ix, bc
         push ix \ pop hl
     pop ix
     ; Draw name string
     push de
         ld de, 0x0104
-        call drawStr
+        pcall(drawStr)
     pop de
     ret
 
@@ -218,7 +218,7 @@ drawEmptySlotName:
     push de
         kld(hl, naString)
         ld de, 0x0104
-        call drawStr
+        pcall(drawStr)
     pop de
     ret
 
@@ -227,51 +227,51 @@ drawPowerMenu:
     ld l, 36
     ld c, 67-26
     ld b, 56-35
-    call rectOR
+    pcall(rectOR)
     ld e, 28
     ld l, 37
     ld c, 66-27
     ld b, 55-36
-    call rectXOR
+    pcall(rectXOR)
     ld de, 0x2339
     ld hl, 0x233F
-    call drawLine
+    pcall(drawLine)
     ld de, 0x3B39
     ld hl, 0x3B3F
-    call drawLine
+    pcall(drawLine)
 
     ld e, 36
     ld l, 56
     ld c, 23
     ld b, 1
-    call rectXOR
+    pcall(rectXOR)
 
     kld(hl, sleepString)
     ld de, lang_sleep_position
-    call drawStr
+    pcall(drawStr)
 
     kld(hl, shutdownString)
     ld de, lang_shutdown_position
-    call drawStr
+    pcall(drawStr)
 
     kld(hl, restartString)
     ld de, lang_restart_position
-    call drawStr
+    pcall(drawStr)
 
     kld(hl, menuArrowSprite)
     ld de, 0x353B
     ld b, 3
-    call putSpriteXOR
+    pcall(putSpriteXOR)
 
     kld(hl, menuArrowSpriteFlip)
     ld de, 0x353B
     ld b, 3
-    call putSpriteOR
+    pcall(putSpriteOR)
 
     kld(hl, selectionIndicatorSprite)
     ld de, 0x1D26
     ld b, 5
-    call putSpriteOR
+    pcall(putSpriteOR)
     ret
 
 castleTopSprite: ; 8x3

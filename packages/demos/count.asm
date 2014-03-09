@@ -10,14 +10,14 @@
     .db 0b00000010
     .db lang_description, 0
 start:
-    call getLcdLock
-    call getKeypadLock
+    pcall(getLcdLock)
+    pcall(getKeypadLock)
 
-    call allocScreenBuffer
+    pcall(allocScreenBuffer)
 
     ; Load dependencies
     kld(de, applibPath)
-    call loadLibrary
+    pcall(loadLibrary)
     ld b, 0
 _:  push bc
         kld(hl, windowTitle)
@@ -27,14 +27,14 @@ _:  push bc
         ld b, 2
         ld de, 0x0208
         kld(hl, helloString)
-        call drawStr
+        pcall(drawStr)
     pop bc
 
     ld a, b \ inc b
     ld de, 0x0210
-    call drawHexA
+    pcall(drawHexA)
 
-    call fastCopy
+    pcall(fastCopy)
     applib(appGetKey)
 
     cp kClear
