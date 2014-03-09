@@ -4,11 +4,21 @@
 
 # Set lang with `make [platform] LANG=[langauge]`
 LANG=en_us
-# Default packages: base castle threadlist unixcommon terminal demos
-PACKAGES=base castle threadlist demos osrecv license
+
+# Package configuration
+#
+# To manually specify packages to build, uncomment this: 
+# PACKAGES=applib base castle threadlist demos osrecv
+#
+# Or to automatically build all packages, uncomment this:
+PACKAGES=$(wildcard packages/*)
+# End config.
+
+PACKBUF=$(patsubst %, %.package, $(PACKAGES))
 
 # Paths
-PACKAGEPATH=packages
+TOPDIR=$(shell pwd)
+PACKAGEPATH=$(TOPDIR)/packages
 
 ifeq ($(OS),Windows_NT)
 ASPREFIX=
@@ -17,9 +27,10 @@ else
 ASPREFIX=mono 
 EMUPREFIX=wine 
 endif
-AS=$(ASPREFIX)kernel/build/sass.exe
+
+AS=$(ASPREFIX)$(TOPDIR)/kernel/build/sass.exe
 EMU=$(EMUPREFIX)kernel/build/Wabbitemu.exe
-INCLUDE=inc/;kernel/bin/;lang/$(LANG)/;kernel/inc/
+INCLUDE=$(TOPDIR)/inc/;$(TOPDIR)/kernel/bin/;$(TOPDIR)/lang/$(LANG)/;$(TOPDIR)/kernel/inc/
 ASFLAGS=--encoding "Windows-1252"
 .DEFAULT_GOAL=TI84pSE
 
@@ -36,42 +47,42 @@ TI73: FAT := 17
 TI73: PRIVEDGED := 1C
 TI73: KEY := 02
 TI73: UPGRADEEXT := 73u
-TI73: directories userland
+TI73: userland
 
 TI83p: PLATFORM := TI83p
 TI83p: FAT := 17
 TI83p: PRIVEDGED := 1C
 TI83p: KEY := 04
 TI83p: UPGRADEEXT := 8xu
-TI83p: directories userland
+TI83p: userland
 
 TI83pSE: PLATFORM := TI83pSE
 TI83pSE: FAT := 77
 TI83pSE: PRIVEDGED := 7C
 TI83pSE: KEY := 04
 TI83pSE: UPGRADEEXT := 8xu
-TI83pSE: directories userland
+TI83pSE: userland
 
 TI84p: PLATFORM := TI84p
 TI84p: FAT := 37
 TI84p: PRIVEDGED := 3C
 TI84p: KEY := 0A
 TI84p: UPGRADEEXT := 8xu
-TI84p: directories userland
+TI84p: userland
 
 TI84pSE: PLATFORM := TI84pSE
 TI84pSE: FAT := 77
 TI84pSE: PRIVEDGED := 7C
 TI84pSE: KEY := 0A
 TI84pSE: UPGRADEEXT := 8xu
-TI84pSE: directories userland
+TI84pSE: userland
 
 TI84pCSE: PLATFORM := TI84pCSE
 TI84pCSE: FAT := F7
 TI84pCSE: PRIVEDGED := FC
 TI84pCSE: KEY := 0F
 TI84pCSE: UPGRADEEXT := 8cu
-TI84pCSE: directories userland
+TI84pCSE: userland
 
 .PHONY: kernel
 
@@ -84,39 +95,25 @@ runcolor: TI84pCSE
 kernel:
 	cd kernel && make $(PLATFORM)
 
-userland: kernel $(PACKAGES)
+userland: kernel directories buildpkgs license
 	cp kernel/bin/kernel-$(PLATFORM).rom bin/$(PLATFORM)/KnightOS-$(LANG).rom
 	$(ASPREFIX)build/BuildFS.exe $(FAT) bin/$(PLATFORM)/KnightOS-$(LANG).rom temp
 ifndef savemockfs
 	rm -rf temp
 endif
-	$(ASPREFIX)build/CreateUpgrade.exe $(PLATFORM) bin/$(PLATFORM)/KnightOS-$(LANG).rom build/$(KEY).key bin/$(PLATFORM)/KnightOS-$(LANG).$(UPGRADEEXT) 00 01 04 05 $(FAT) $(PRIVEDGED)
+	$(ASPREFIX)build/CreateUpgrade.exe $(PLATFORM) bin/$(PLATFORM)/KnightOS-$(LANG).rom build/$(KEY).key \
+			bin/$(PLATFORM)/KnightOS-$(LANG).$(UPGRADEEXT) 00 01 04 05 $(FAT) $(PRIVEDGED)
 
-base:
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/base/" $(PACKAGEPATH)/base/init.asm temp/bin/init
-	cp $(PACKAGEPATH)/base/inittab temp/etc/inittab
+%.package: %
+	echo $? $<
+	cd $(TOPDIR)/$<; \
+	make AS="$(AS)" ASFLAGS="$(ASFLAGS)" PLATFORM="$(PLATFORM)" INCLUDE="$(INCLUDE)" \
+			PACKAGEPATH="$(PACKAGEPATH)" OUTDIR="$(TOPDIR)/temp";
 
-applib:
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/applib/" $(PACKAGEPATH)/applib/applib.asm temp/lib/applib
+buildpkgs: directories $(PACKBUF)
 
-castle:
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/castle/" $(PACKAGEPATH)/castle/castle.asm temp/bin/castle
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/castle/" $(PACKAGEPATH)/castle/castle.config.asm temp/etc/castle.config
-
-threadlist:
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/threadlist/" $(PACKAGEPATH)/threadlist/threadlist.asm temp/bin/threadlist
-
-license:
+license: directories
 	cp LICENSE temp/etc/LICENSE
-
-demos: applib
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/" $(PACKAGEPATH)/demos/count.asm temp/bin/count
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/" $(PACKAGEPATH)/demos/hello.asm temp/bin/hello
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/" $(PACKAGEPATH)/demos/gfxdemo.asm temp/bin/gfxdemo
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/" $(PACKAGEPATH)/demos/todo.asm temp/bin/todo
-
-osrecv:
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/osrecv/" $(PACKAGEPATH)/osrecv/osrecv.asm temp/bin/osrecv
 
 directories:
 	mkdir -p bin/$(PLATFORM)
