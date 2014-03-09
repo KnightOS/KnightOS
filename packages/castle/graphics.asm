@@ -409,7 +409,7 @@ restartString:
 noProgramsInstalledString:
     .db lang_noPrograms, 0
 configPath:
-    .db "/etc/castle.config", 0
+    .db "/etc/castle.conf", 0
 naString:
     .db lang_nonApp, 0
 #ifdef CLOCK
