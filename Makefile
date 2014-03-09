@@ -17,8 +17,9 @@ PACKAGES=$(wildcard packages/*)
 PACKBUF=$(patsubst %, %.package, $(PACKAGES))
 
 # Paths
-TOPDIR=$(shell pwd)
-PACKAGEPATH=$(TOPDIR)/packages
+PACKAGEPATH=packages
+# Where packages are placed relative to the top directory
+PKGREL=../../
 
 ifeq ($(OS),Windows_NT)
 ASPREFIX=
@@ -28,11 +29,14 @@ ASPREFIX=mono
 EMUPREFIX=wine 
 endif
 
-AS=$(ASPREFIX)$(TOPDIR)/kernel/build/sass.exe
+AS=$(ASPREFIX)kernel/build/sass.exe
 EMU=$(EMUPREFIX)kernel/build/Wabbitemu.exe
-INCLUDE=$(TOPDIR)/inc/;$(TOPDIR)/kernel/bin/;$(TOPDIR)/lang/$(LANG)/;$(TOPDIR)/kernel/inc/
+INCLUDE=inc/;kernel/bin/;lang/$(LANG)/;kernel/inc/
 ASFLAGS=--encoding "Windows-1252"
 .DEFAULT_GOAL=TI84pSE
+
+PACKAGE_AS=$(ASPREFIX)$(PKGREL)kernel/build/sass.exe
+PACKAGE_INCLUDE=$(PKGREL)inc/;$(PKGREL)kernel/bin/;$(PKGREL)lang/$(LANG)/;$(PKGREL)kernel/inc/
 
 all:
 	make TI73
@@ -105,10 +109,11 @@ endif
 			bin/$(PLATFORM)/KnightOS-$(LANG).$(UPGRADEEXT) 00 01 04 05 $(FAT) $(PRIVEDGED)
 
 %.package: %
+	echo $(TOPDIR)
 	echo $? $<
-	cd $(TOPDIR)/$<; \
-	make AS="$(AS)" ASFLAGS="$(ASFLAGS)" PLATFORM="$(PLATFORM)" INCLUDE="$(INCLUDE)" \
-			PACKAGEPATH="$(PACKAGEPATH)" OUTDIR="$(TOPDIR)/temp";
+	cd $<; \
+	make AS="$(PACKAGE_AS)" ASFLAGS="$(ASFLAGS)" PLATFORM="$(PLATFORM)" INCLUDE="$(PACKAGE_INCLUDE)" \
+				PACKAGEPATH="$(PACKAGEPATH)" OUTDIR="$(PKGREL)temp";
 
 buildpkgs: directories $(PACKBUF)
 
