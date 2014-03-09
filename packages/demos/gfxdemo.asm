@@ -1,19 +1,3 @@
-.macro div64()
-    ; sra h
-    .db 0xCB, 0x2C
-    rr l
-    .db 0xCB, 0x2C
-    rr l
-    .db 0xCB, 0x2C
-    rr l
-    .db 0xCB, 0x2C
-    rr l
-    .db 0xCB, 0x2C
-    rr l
-    .db 0xCB, 0x2C
-    rr l
-.endmacro
-
 ; KnightOS graphical demo
 ; Portions of the color demo provided by Christopher Mitchell
 .nolist
@@ -21,7 +5,7 @@
 #include "applib.inc"
 #include "gfxdemo.lang"
 .list
-    .db 0, 500 ; Stack size
+    .db 0, 100 ; Stack size
 .org 0
     jr start
     .db 'K'
@@ -68,8 +52,7 @@ _:  ld iy, 0b0000000000011111 ; Blue
     applib(appWaitKey)
     jr nz, -_
     
-_:
-    ld h, 0
+_:  ld h, 0
     ld d, 0
     call randA
     ld l, a
@@ -98,9 +81,23 @@ _:
 
 noColor:
     call allocScreenBuffer
+
+.macro div64()
+    ; sra h
+    .db 0xCB, 0x2C
+    rr l
+    .db 0xCB, 0x2C
+    rr l
+    .db 0xCB, 0x2C
+    rr l
+    .db 0xCB, 0x2C
+    rr l
+    .db 0xCB, 0x2C
+    rr l
+    .db 0xCB, 0x2C
+    rr l
+.endmacro
     
-#define AWESOMENESS
-#ifdef AWESOMENESS
     xor a
     kld((angle), a)
 .demoLoop:
@@ -114,9 +111,11 @@ noColor:
     kld(hl, windowTitle)
     xor a
     applib(drawWindow)
+    kld(hl, exitString)
+    ld de, 0x0208
+    call drawStr
     
     ; first rotate and projects the vertices
-    
     xor a
     kld((vertexNb), a)
     kld(hl, vertices)
@@ -297,50 +296,6 @@ noColor:
     inc (hl)
     kjp(.demoLoop)
 
-#else
-
-    kld(hl, windowTitle)
-    xor a
-    applib(drawWindow)
-    
-    ld b, 2
-    ld de, 0x0208
-    kld(hl, exitString)
-    call drawStr
-    
-    kld(hl, smileySprite)
-    ld de, 0x0210
-_:  ld b, 5
-    call putSpriteXor
-    call fastCopy
-    applib(appGetKey)
-    call putSpriteXor
-    cp kClear
-    ret z
-    cp kUp
-    jr z, doUp
-    cp kDown
-    jr z, doDown
-    cp kLeft
-    jr z, doLeft
-    cp kRight
-    jr z, doRight
-    jr -_
-doUp:
-    dec e
-    jr -_
-doDown:
-    inc e
-    jr -_
-doLeft:
-    dec d
-    jr -_
-doRight:
-    inc d
-    jr -_
-    
-#endif
-    
 curSin:
     .db 0
 curCos:
@@ -370,21 +325,12 @@ linksList:
     .db 4, 5, 5, 6, 6, 7, 7, 4
     .db 0, 4, 1, 5, 2, 6, 3, 7
     
-threadListPath:
-    .db "/bin/threadlist", 0
-    
 exitString:
     .db lang_exitString, 0
 windowTitle:
     .db lang_windowTitle, 0
 applibPath:
     .db "/lib/applib", 0
-smileySprite:
-    .db 0b01010000
-    .db 0b01010000
-    .db 0b00000000
-    .db 0b10001000
-    .db 0b01110000
 introString:
     .db "Graphical demo for KnightOS\n\n"
     .db "Portions of this demo by\nChristopher Mitchell\n\n"
