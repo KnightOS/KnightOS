@@ -49,6 +49,7 @@ checkKey:
     ret
 
 launchCastle:
+    call fullScreenWindow
     push de
         ild(de, castlePath)
         di
@@ -60,6 +61,7 @@ launchCastle:
     ret
 
 launchThreadList:
+    call fullScreenWindow
     push de
         ild(de, threadListPath)
         di
