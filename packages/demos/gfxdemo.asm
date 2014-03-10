@@ -52,7 +52,8 @@ _:  ld iy, 0b0000000000011111 ; Blue
     applib(appWaitKey)
     jr nz, -_
     
-_:  ld h, 0
+_:  pcall(flushKeys)
+    ld h, 0
     ld d, 0
     pcall(randA)
     ld l, a
@@ -69,8 +70,8 @@ _:  ld h, 0
     pcall(colorRectangle)
     applib(appGetKey)
     jr nz, .handleRedraw
-    cp kClear
-    jr nz, -_
+    or a
+    jr z, -_
     
     kjp(ballDemo)
     
@@ -338,6 +339,7 @@ introString:
 
 .equ nballs 10
 ballDemo:
+    pcall(flushKeys)
     ld iy, 0xFFFF
     pcall(clearColorLcd)
     ld bc, nballs * 5 + 1
@@ -491,10 +493,11 @@ ballRender2:
     
     applib(appGetKey)
     pcall(nz, clearColorLcd)
-    cp kClear
-    kjp(nz, ballTime)
+    or a
+    kjp(z, ballTime)
 
-    jp fullScreenWindow
+    pcall(fullScreenWindow)
+    ret
     
 redBall:
     .db 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
