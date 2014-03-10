@@ -106,7 +106,7 @@ ifndef savemockfs
 	rm -rf temp
 endif
 	$(ASPREFIX)build/CreateUpgrade.exe $(PLATFORM) bin/$(PLATFORM)/KnightOS-$(LANG).rom build/$(KEY).key \
-			bin/$(PLATFORM)/KnightOS-$(LANG).$(UPGRADEEXT) 00 01 04 05 $(FAT) $(PRIVEDGED)
+			bin/$(PLATFORM)/KnightOS-$(LANG).$(UPGRADEEXT) 00 01 02 03 04 05 $(FAT) $(PRIVEDGED)
 
 %.package: %
 	echo $(TOPDIR)
