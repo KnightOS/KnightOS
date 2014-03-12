@@ -28,8 +28,13 @@ redraw:
     ld de, 0x0208
     kld(hl, helloString)
     pcall(drawStr)
+
+    kld(hl, kernelString)
+    pcall(drawStr)
+
+    ld hl, kernelVersion
+    pcall(drawStr)
     
-    ld de, 0x0219
     kld(hl, bootCodeString)
     pcall(drawStr)
     
@@ -69,8 +74,10 @@ helloString:
     .db lang_helloString, 0
 windowTitle:
     .db lang_windowTitle, 0
+kernelString:
+    .db "\n\nKernel Version: \n", 0
 bootCodeString:
-    .db "Boot Code Version: \n", 0
+    .db "\n\nBoot Code Version: \n", 0
 applibPath:
     .db "/lib/applib", 0
 messageText:
