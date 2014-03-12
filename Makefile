@@ -101,11 +101,11 @@ kernel:
 
 userland: kernel directories buildpkgs license
 	cp kernel/bin/kernel-$(PLATFORM).rom bin/$(PLATFORM)/KnightOS-$(LANG).rom
-	$(ASPREFIX)build/BuildFS.exe $(FAT) bin/$(PLATFORM)/KnightOS-$(LANG).rom temp
+	$(ASPREFIX)kernel/build/BuildFS.exe $(FAT) bin/$(PLATFORM)/KnightOS-$(LANG).rom temp
 ifndef savemockfs
 	rm -rf temp
 endif
-	$(ASPREFIX)build/CreateUpgrade.exe $(PLATFORM) bin/$(PLATFORM)/KnightOS-$(LANG).rom build/$(KEY).key \
+	$(ASPREFIX)kernel/build/CreateUpgrade.exe $(PLATFORM) bin/$(PLATFORM)/KnightOS-$(LANG).rom kernel/build/$(KEY).key \
 			bin/$(PLATFORM)/KnightOS-$(LANG).$(UPGRADEEXT) 00 01 02 03 04 05 $(FAT) $(PRIVEDGED)
 
 %.package: %
