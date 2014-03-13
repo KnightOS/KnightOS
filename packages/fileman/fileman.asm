@@ -119,7 +119,8 @@ _:      pop bc
     pop de
     ; All sorted, now draw it
 
-    ld de, 0x0808
+drawList:
+    ld d, 0x08
     push bc
         kld(ix, (directoryList))
         ld a, b
@@ -139,6 +140,19 @@ _:  pop bc
     jr .done
 
 .draw:
+    push af
+        ld a, e
+        cp 0x38 ; Stop drawing at Y=0x38
+        jr nz, _
+        kld(hl, downCaretIcon)
+        ld b, 3
+        push de
+            ld de, 0x5934
+            pcall(putSpriteOR)
+        pop de
+    pop af
+    ret
+_:  pop af
     ld l, (ix)
     ld h, (ix + 1)
     pcall(drawStr)
@@ -160,19 +174,141 @@ _:      ld d, 2
     ret
 
 .done:
-    ; Draw remainder of UI
-    ld e, 8 ; x
-    ld l, 7 ; y
-    ld c, 87 ; w
-    ld b, 7 ; h
-    pcall(rectXOR)
+    push bc
+        ld a, b
+        add c
+        ld b, 0
+        ld c, a
+        jr nc, $+3
+        inc b
+        push bc
 
-keyLoop:
-    pcall(fastCopy)
-    pcall(flushKeys)
-    applib(appWaitKey)
-    jr nz, keyLoop
-    ; Handle keys (TODO)
+            ; Draw remainder of UI
+            ld e, 8 ; x
+            ld l, 7 ; y
+            ld c, 87 ; w
+            ld b, 7 ; h
+            pcall(rectXOR)
+
+            ld d, 0 ; Index
+
+idleLoop:
+            pcall(fastCopy)
+            pcall(flushKeys)
+            applib(appWaitKey)
+            jr nz, idleLoop
+
+            cp kDown
+            jr z, .handleDown
+            cp kUp
+            kjp(z, .handleUp)
+            cp kEnter
+            kjp(z, .handleEnter)
+            cp k2nd
+            kjp(z, .handleEnter)
+            cp kRight
+            kjp(z, .handleEnter)
+            cp kDel
+            kjp(z, .handleDelete)
+            cp kClear
+            kjp(z, .exit)
+            jr idleLoop
+.handleDown:
+        pop bc
+        ld a, d
+        inc a
+        cp c
+        push bc
+            ld c, 87
+            ld b, 7
+            jr nc, idleLoop
+            ld a, d
+            add a, a
+            add a, a
+            add a, d
+            add a, d ; A *= 6
+            add a, 7
+            ld l, a
+            pcall(rectXOR)
+            add a, 6
+            ld l, a
+            pcall(rectXOR)
+            inc d
+            kjp(idleLoop)
+.handleUp:
+            ld a, d
+            or a
+            jr z, idleLoop
+            add a, a
+            add a, a
+            add a, d
+            add a, d ; A *= 6
+            add a, 7
+            ld l, a
+            pcall(rectXOR)
+            sub a, 6
+            ld l, a
+            pcall(rectXOR)
+            dec d
+            kjp(idleLoop)
+.handleEnter:
+        pop bc
+    pop bc
+    ; Determine if it's a file or a directory
+    ld a, d
+    cp b
+    jr nc, openFile
+.resumeDirectory:
+    ; Handle directory
+    add a, a
+    kld(hl, (directoryList))
+    add l
+    ld l, a
+    jr nc, $+3
+    inc h
+    ld e, (hl)
+    inc hl
+    ld d, (hl)
+    kld(hl, (currentPath))
+    xor a
+    ld bc, 0
+    cpir
+    dec hl
+    ; TODO: Support trailing slashes in low-level filesystem driver
+    ;ld a, '/'
+    ;ld (hl), a
+    ;inc hl
+    ex de, hl
+    pcall(stringLength)
+    inc bc
+    ldir
+    kjp(doListing)
+.handleDelete:
+            kjp(idleLoop)
+.exit:
+        pop bc
+    pop bc
+    ret
+
+openFile:
+    xor a
+    cp d
+    jr nz, .continue
+    kld(hl, (currentPath))
+    inc hl
+    ld a, (hl)
+    or a
+    jr z, .continue ; If it's not root, we may have clicked ".."
+    kld(hl, (currentPath))
+    ld a, '/'
+    cpdr
+    inc hl
+    inc hl
+    xor a
+    ld (hl), a
+    kjp(doListing)
+.continue:
+    ; TODO: Ask applib to open this file
     ret
 
 listCallback:
@@ -214,11 +350,14 @@ _:          ; Handle file
 
 currentPath:
     .dw 0
-; These are lists of pointers to allocated strings with node names
 fileList:
     .dw 0
 directoryList:
     .dw 0
+totalFiles:
+    .db 0
+totalDirectories:
+    .db 0
 
 applibPath:
     .db "/lib/applib", 0
@@ -241,5 +380,7 @@ fileIcon:
     .db 0b10001000
     .db 0b11111000
     .db 0
-testFile:
-    .db "abc", 0
+downCaretIcon:
+    .db 0b11111000
+    .db 0b01110000
+    .db 0b00100000

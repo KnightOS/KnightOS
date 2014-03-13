@@ -85,15 +85,16 @@ drawWindow:
     push hl
     push af
         pcall(clearBuffer)
+        ; "window"
         ld e, 0
         ld l, 0
         ld c, 96
-        ld b, 59
+        ld b, 57
         pcall(rectOR)
         ld e, 1
         ld l, 7
         ld c, 94
-        ld b, 51
+        ld b, 49
         pcall(rectXOR)
 
         push af
@@ -107,32 +108,28 @@ drawWindow:
 
         bit 0, a
         jr nz, _
-            ild(hl, castleSprite1)
-            ld b, 4
-            ld de, 0x003C
-            pcall(putSprite16OR)
-
-            ild(hl, castleSprite2)
-            ld d, 16
+            ild(hl, castleSprite)
+            ld b, 5
+            ld de, 0x013A
             pcall(putSpriteOR)
 _:      pop af \ push af
         bit 1, a
         jr nz, _
             ild(hl, threadListSprite)
-            ld de, 89 * 256 + 59
-            ld b, 5
+            ld de, 89 * 256 + 58
+            ld b, 6
             pcall(putSpriteOR)
 _:      pop af \ push af
         bit 2, a
         jr z, _
-            ild(hl, menuSprite1)
-            ld b, 4
-            ld de, 40 * 256 + 60
-            pcall(putSprite16OR)
+            ild(hl, menuText)
+            ld de, 40 * 256 + 58
+            pcall(drawStr)
 
-            ild(hl, menuSprite2)
+            ild(hl, menuSprite)
             ld d, 56
-            dec b
+            inc e
+            ld b, 3
             pcall(PutSpriteOR)
 _:      pop af \ pop hl \ push hl \ push af
         ld de, 0x0201
@@ -446,35 +443,31 @@ castlePath:
 threadlistPath:
     .db "/bin/threadlist", 0
 
-castleSprite1: ; 16x4
-    .db 0b10100110, 0b01101101
-    .db 0b11101000, 0b10101001
-    .db 0b10101000, 0b10100101
-    .db 0b11100110, 0b01101100
-
-castleSprite2: ; 8x4
-    .db 0b00110010
-    .db 0b10010101
-    .db 0b00010110
-    .db 0b10010011
-
-threadListSprite: ; 8x5
+castleSprite:
+    .db 0b10101000
     .db 0b00000000
-    .db 0b00011100
-    .db 0b00001100
-    .db 0b00010100
-    .db 0b00100000
+    .db 0b10101000
+    .db 0b00000000
+    .db 0b10101000
 
-menuSprite1: ; 16x4
-    .db 0b10100100, 0b11001010
-    .db 0b11101010, 0b10101010
-    .db 0b11101100, 0b10101010
-    .db 0b10100110, 0b10101110
+castleText:
+    .db "Castle", 0
 
-menuSprite2: ; 8x3
+threadListSprite:
+    .db 0b10111100
+    .db 0b00000000
+    .db 0b10111100
+    .db 0b00000000
+    .db 0b10111100
+    .db 0b00000000
+
+menuSprite:
     .db 0b00100000
     .db 0b01110000
     .db 0b11111000
+
+menuText:
+    .db "Menu", 0
 
 clearCharSetSprite:
     .db 0b11100000

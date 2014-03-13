@@ -131,6 +131,9 @@ directories:
 	touch temp/testfileA
 	touch temp/testfileB
 	touch temp/testfileC
+	#touch temp/testfileD
+	#touch temp/testfileE
+	#touch temp/testfileF
 
 clean:
 	cd kernel && make clean
