@@ -86,26 +86,23 @@ drawWindow:
     push af
         pcall(clearBuffer)
         ; "window"
-        ld e, 0
-        ld l, 0
-        ld c, 96
-        ld b, 57
-        pcall(rectOR)
+        push iy \ pop hl
+        ld (hl), 0xff
+        ld e, l
+        ld d, h
+        inc de
+        ld bc, 57 * 12 - 1
+        ldir
+        
         ld e, 1
         ld l, 7
         ld c, 94
         ld b, 49
         pcall(rectXOR)
-
-        push af
-            xor a
-            ld l, 0
-            pcall(resetPixel)
-
-            ld a, 95
-            pcall(resetPixel)
-        pop af
-
+        
+        res 7, (iy + 0)
+        res 0, (iy + 11)
+        
         bit 0, a
         jr nz, _
             ild(hl, castleSprite)
