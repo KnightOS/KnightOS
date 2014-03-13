@@ -175,15 +175,6 @@ keyLoop:
     ; Handle keys (TODO)
     ret
 
-sortComparer:
-    in a, (6) ; TODO: This, but in a cross-platform way
-    push af
-        pcall(indirect16HLDE)
-        pcall(compareStrings)
-    pop af
-    out (6), a
-    ret
-
 listCallback:
     exx
         push bc
