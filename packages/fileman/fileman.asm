@@ -29,7 +29,7 @@ start:
     kld((currentPath), hl)
     
     ; Allocate space for fileList and directoryList
-    ld bc, 1024 ; Max 512 subdirectories and 512 files per directory
+    ld bc, 512 ; Max 256 subdirectories and 256 files per directory
     pcall(malloc)
     push ix \ pop hl
     kld((fileList), hl)
@@ -51,29 +51,115 @@ doListing:
     ld a, (hl)
     or a ; cp 0
     ld de, 0x0208
-    push de ; See ->
-    jr z, _
+    push de
+        jr z, _
         ; Draw the ".." (not done for root directory)
         ld b, 6
-        kld(hl, folderIcon)
+        kld(hl, directoryIcon)
         pcall(putSpriteOR)
         ld d, 0x09
         kld(hl, upText)
         pcall(drawStr)
-        inc sp \ inc sp \ push de
+    inc sp \ inc sp \ push de
 
-_:  kld(hl, (currentPath))
-    ex de, hl
-    kld(hl, listCallback)
-    exx
-        pop de ; <- this
-        ld b, 0x06
-    exx
-    pcall(listDirectory)
+_:      kld(hl, (currentPath))
+        ex de, hl
+        kld(hl, listCallback)
+        exx
+            ld bc, 0
+        exx
+        pcall(listDirectory)
+        exx
+        push bc
+            exx
+        pop bc
+        ; B: Num directories
+        ; C: Num files
+        ; Sort results
+        push bc
+            ld a, b
+            or a
+            jr z, _
+            kld(ix, (directoryList))
+            pcall(memSeekToStart)
+            kld((directoryList), ix)
+            push ix \ pop hl
+            ld d, h \ ld e, l
+            ld a, b
+            ld b, 0
+            ld c, a
+            add hl, bc
+            add hl, bc
+            ex hl, de
+            dec de \ dec de
+            ld bc, 2
+            ; This is weird. We know this pcall is on page 0x00, so this
+            ; just takes it apart and gets the address in the jump table
+            ; directly so that we can offer it to callbackSort
+            ld ix, 0x4000 - (((compareStrings_sort >> 8) + 1) * 3)
+            pcall(callbackSort) ; Sort directory list
+_:      pop bc \ push bc
+            ld a, c
+            or a
+            jr z, _
+            kld(ix, (fileList))
+            pcall(memSeekToStart)
+            kld((fileList), ix)
+            push ix \ pop hl
+            ld d, h \ ld e, l
+            ld b, 0
+            add hl, bc
+            add hl, bc
+            ex hl, de
+            dec de \ dec de
+            ld bc, 2
+            ld ix, 0x4000 - (((compareStrings_sort >> 8) + 1) * 3)
+            pcall(callbackSort) ; Sort file list
+_:      pop bc
+    pop de
+    ; All sorted, now draw it
 
-    ; Sort results
-    ; TODO
+    ld de, 0x0808
+    push bc
+        kld(ix, (directoryList))
+        ld a, b
+        or a
+        jr z, _
+        xor a
+        kcall(.draw)
+_:  pop bc \ push bc
+        kld(ix, (fileList))
+        ld a, c
+        ld b, a
+        or a
+        jr z, _
+        ld a, 1
+        kcall(.draw)
+_:  pop bc
+    jr .done
 
+.draw:
+    ld l, (ix)
+    ld h, (ix + 1)
+    pcall(drawStr)
+    push bc
+        ld b, 6
+        or a
+        jr z, _
+        kld(hl, fileIcon)
+        jr ++_
+_:      kld(hl, directoryIcon)
+_:      ld d, 2
+        pcall(putSpriteOR)
+        ld d, 8
+        ld b, 8
+        pcall(newline)
+    pop bc
+    inc ix \ inc ix
+    djnz .draw
+    ret
+
+.done:
     ; Draw remainder of UI
     ld e, 8 ; x
     ld l, 7 ; y
@@ -89,18 +175,49 @@ keyLoop:
     ; Handle keys (TODO)
     ret
 
+sortComparer:
+    in a, (6) ; TODO: This, but in a cross-platform way
+    push af
+        pcall(indirect16HLDE)
+        pcall(compareStrings)
+    pop af
+    out (6), a
+    ret
+
 listCallback:
     exx
-        kld(hl, fileIcon)
-        cp fsFile
-        jr z, _
-        kld(hl, folderIcon)
-_:      ld d, 2
-        pcall(putSpriteOR)
-        ld hl, kernelGarbage
-        ld d, 9
-        pcall(drawStr)
-        pcall(newline)
+        push bc
+            ld hl, kernelGarbage
+            pcall(stringLength)
+            inc bc ; Include delimiter
+            pcall(malloc) ; TODO: Handle out of memory (how?)
+            push ix \ pop de
+            ldir
+
+            cp fsFile
+            jr z, _
+            ; Handle directory
+            kld(hl, (directoryList))
+            push ix \ pop de
+            ld (hl), e
+            inc hl
+            ld (hl), d
+            inc hl
+            kld((directoryList), hl)
+        pop bc
+        inc b
+    exx
+    ret
+_:          ; Handle file
+            kld(hl, (fileList))
+            push ix \ pop de
+            ld (hl), e
+            inc hl
+            ld (hl), d
+            inc hl
+            kld((fileList), hl)
+        pop bc
+        inc c
     exx
     ret
 
@@ -119,7 +236,7 @@ upText:
 titlePrefix:
     .db "File Manager: /", 0
 titlePrefixEnd:
-folderIcon:
+directoryIcon:
     .db 0b11100000
     .db 0b10011000
     .db 0b11101000
@@ -133,3 +250,5 @@ fileIcon:
     .db 0b10001000
     .db 0b11111000
     .db 0
+testFile:
+    .db "abc", 0

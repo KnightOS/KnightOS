@@ -128,6 +128,9 @@ directories:
 	mkdir -p temp/etc
 	mkdir -p temp/home
 	mkdir -p temp/lib
+	touch temp/testfileA
+	touch temp/testfileB
+	touch temp/testfileC
 
 clean:
 	cd kernel && make clean
