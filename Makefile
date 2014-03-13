@@ -31,12 +31,12 @@ endif
 
 AS=$(ASPREFIX)kernel/build/sass.exe
 EMU=$(EMUPREFIX)kernel/build/Wabbitemu.exe
-INCLUDE=inc/;kernel/bin/;lang/$(LANG)/;kernel/inc/
+INCLUDE=inc/;kernel/bin/;lang/$(LANG)/
 ASFLAGS=--encoding "Windows-1252"
 .DEFAULT_GOAL=TI84pSE
 
 PACKAGE_AS=$(ASPREFIX)$(PKGREL)kernel/build/sass.exe
-PACKAGE_INCLUDE=$(PKGREL)inc/;$(PKGREL)kernel/bin/;$(PKGREL)lang/$(LANG)/;$(PKGREL)kernel/inc/
+PACKAGE_INCLUDE=$(PKGREL)inc/;$(PKGREL)lang/$(LANG)/;$(PKGREL)kernel/bin/;
 
 all:
 	make TI73
@@ -125,9 +125,9 @@ directories:
 	rm -rf temp
 	mkdir -p temp
 	mkdir -p temp/bin
-	mkdir -p temp/lib
 	mkdir -p temp/etc
-	mkdir -p temp/etc/man
+	mkdir -p temp/home
+	mkdir -p temp/lib
 
 clean:
 	cd kernel && make clean

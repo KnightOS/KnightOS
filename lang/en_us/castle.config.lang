@@ -6,7 +6,7 @@
 #define lang_blockDude "Block Dude"
 #define lang_textEditor "Text Editor"
 #define lang_calendar "Calendar"
-#define lang_fileBrowser "File Browser"
+#define lang_fileManager "File Manager"
 #define lang_matrixEditor "Matrix Editor"
 #define lang_connectToPC "Connect to PC"
 #define lang_settings "Settings"
