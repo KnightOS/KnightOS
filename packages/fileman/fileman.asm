@@ -217,7 +217,20 @@ idleLoop:
         pop bc
         ld a, d
         inc a
-        cp c
+        push hl
+        push af
+            kld(hl, (currentPath))
+            inc hl
+            ld a, (hl)
+            or a
+            jr nz, _
+        pop af
+        pop hl
+        jr ++_
+_:      pop af
+        pop hl
+        dec a
+_:      cp c
         push bc
             ld c, 87
             ld b, 7
