@@ -27,7 +27,7 @@ start:
     ex de, hl
     dec hl \ dec hl
     kld((currentPath), hl)
-    
+
     ; Allocate space for fileList and directoryList
     ld bc, 512 ; Max 256 subdirectories and 256 files per directory
     pcall(malloc)
@@ -45,7 +45,7 @@ doListing:
     push ix \ pop hl
     ld a, 0b00000100
     applib(drawWindow)
-    
+
     kld(hl, (currentPath))
     inc hl
     ld a, (hl)
