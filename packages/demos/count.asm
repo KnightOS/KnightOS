@@ -1,6 +1,6 @@
 .nolist
 #include "kernel.inc"
-#include "applib.inc"
+#include "corelib.inc"
 #include "count.lang"
 .list
     .db 0, 50
@@ -16,13 +16,13 @@ start:
     pcall(allocScreenBuffer)
 
     ; Load dependencies
-    kld(de, applibPath)
+    kld(de, corelibPath)
     pcall(loadLibrary)
     ld b, 0
 _:  push bc
         kld(hl, windowTitle)
         xor a
-        applib(drawWindow)
+        core(drawWindow)
 
         ld b, 2
         ld de, 0x0208
@@ -35,7 +35,7 @@ _:  push bc
     pcall(drawHexA)
 
     pcall(fastCopy)
-    applib(appGetKey)
+    core(appGetKey)
 
     cp kClear
     jr nz, -_
@@ -45,7 +45,5 @@ helloString:
     .db lang_hello, 0
 windowTitle:
     .db lang_windowTitle, 0
-libTextPath:
-    .db "/lib/libtext", 0
-applibPath:
-    .db "/lib/applib", 0
+corelibPath:
+    .db "/lib/core", 0

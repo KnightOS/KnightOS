@@ -1,6 +1,6 @@
 .nolist
 #include "kernel.inc"
-#include "applib.inc"
+#include "corelib.inc"
 #include "castle.lang"
 .list
     .db 0, 50
@@ -11,7 +11,7 @@ start:
 
     pcall(allocScreenBuffer)
 
-    kld(de, applibPath)
+    kld(de, corelibPath)
     pcall(loadLibrary)
 resetToHome:
     ei
@@ -151,7 +151,7 @@ launch:
     jr nz, _
     or 1
     ld a, errTooManyThreads
-    applib(showError)
+    core(showError)
     kjp(resetToHome)
 _:  di
     ; Idea: load a small bootstrapping program into RAM, then kill the castle thread and transfer over to the bootstrap.
@@ -160,7 +160,7 @@ _:  di
     ; smaller than the castle in the first place would benefit from this.
     ; Potential solution: provide an alternative malloc that allocates in the back of RAM
     pcall(launchProgram)
-    applib(nz, showError)
+    core(nz, showError)
     kjp(nz, resetToHome)
     ld bc, castleReturnHandler_end - castleReturnHandler
     pcall(malloc)
@@ -264,7 +264,7 @@ confirmSelection:
         kld(de, shutdownOptions)
         xor a
         ld b, a
-        applib(showMessage)
+        core(showMessage)
     pop hl
     or a
     jr nz, _
@@ -277,8 +277,8 @@ _:  ld a, 2 \ out (0x10), a
 
 threadlist:
     .db "/bin/threadlist", 0
-applibPath:
-    .db "/lib/applib", 0
+corelibPath:
+    .db "/lib/core", 0
 confirmMessage:
     .db lang_confirmShutdown, 0
 shutdownOptions:

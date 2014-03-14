@@ -1,6 +1,6 @@
 .nolist
 #include "kernel.inc"
-#include "applib.inc"
+#include "corelib.inc"
 #include "hello.lang"
 .list
     .db 0, 50
@@ -16,13 +16,13 @@ start:
     pcall(allocScreenBuffer)
     
     ; Load dependencies
-    kld(de, applibPath)
+    kld(de, corelibPath)
     pcall(loadLibrary)
     
 redraw:
     kld(hl, windowTitle)
     xor a
-    applib(drawWindow)
+    core(drawWindow)
     
     ld b, 2
     ld de, 0x0208
@@ -44,7 +44,7 @@ redraw:
     
 _:  pcall(fastCopy)
     pcall(flushKeys)
-    applib(appWaitKey)
+    core(appWaitKey)
     cp kMode
     jr z, testMessage
     cp kClear
@@ -56,18 +56,18 @@ testMessage:
     kld(de, options)
     xor a
     ld b, a
-    applib(showMessage)
+    core(showMessage)
     or a ; cp 0
     jr nz, _
     kld(hl, option1)
     kld(de, dismiss)
     xor a
-    applib(showMessage)
+    core(showMessage)
     jr redraw
 _:  kld(hl, option2)
     kld(de, dismiss)
     xor a
-    applib(showMessage)
+    core(showMessage)
     jr redraw
     
 helloString:
@@ -78,8 +78,8 @@ kernelString:
     .db "\n\nKernel Version: \n", 0
 bootCodeString:
     .db "\n\nBoot Code Version: \n", 0
-applibPath:
-    .db "/lib/applib", 0
+corelibPath:
+    .db "/lib/core", 0
 messageText:
     .db "Hello, world!\nThis is a test", 0
 options:

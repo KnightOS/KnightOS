@@ -2,7 +2,7 @@
 ; Portions of the color demo provided by Christopher Mitchell
 .nolist
 #include "kernel.inc"
-#include "applib.inc"
+#include "corelib.inc"
 #include "gfxdemo.lang"
 .list
     .db 0, 100 ; Stack size
@@ -12,12 +12,12 @@
     .db 0b00000010
     .db lang_description, 0
 start:
-    ; Load dependencies
-    kld(de, applibPath)
-    pcall(loadLibrary)
-    
     pcall(getLcdLock)
     pcall(getKeypadLock)
+
+    ; Load dependencies
+    kld(de, corelibPath)
+    pcall(loadLibrary)
 
     pcall(colorSupported)
     kjp(nz, noColor)
@@ -37,19 +37,19 @@ start:
 _:  ld iy, 0b1111100000000000 ; Red
     pcall(clearColorLcd)
     pcall(flushKeys)
-    applib(appWaitKey)
+    core(appWaitKey)
     jr nz, -_
 
 _:  ld iy, 0b0000011111100000 ; Green
     pcall(clearColorLcd)
     pcall(flushKeys)
-    applib(appWaitKey)
+    core(appWaitKey)
     jr nz, -_
 
 _:  ld iy, 0b0000000000011111 ; Blue
     pcall(clearColorLcd)
     pcall(flushKeys)
-    applib(appWaitKey)
+    core(appWaitKey)
     jr nz, -_
     
 _:  pcall(flushKeys)
@@ -68,7 +68,7 @@ _:  pcall(flushKeys)
     pcall(randA)
     ld iyh, a
     pcall(colorRectangle)
-    applib(appGetKey)
+    core(appGetKey)
     jr nz, .handleRedraw
     or a
     jr z, -_
@@ -111,7 +111,7 @@ noColor:
     
     kld(hl, windowTitle)
     xor a
-    applib(drawWindow)
+    core(drawWindow)
     kld(hl, exitString)
     ld de, 0x0208
     pcall(drawStr)
@@ -289,7 +289,7 @@ noColor:
     ; we're done rendering
     pcall(fastCopy)
     pcall(clearBuffer)
-    applib(appGetKey)
+    core(appGetKey)
     kjp(nz, .demoLoop)
     cp kClear
     ret z
@@ -330,8 +330,8 @@ exitString:
     .db lang_exitString, 0
 windowTitle:
     .db lang_windowTitle, 0
-applibPath:
-    .db "/lib/applib", 0
+corelibPath:
+    .db "/lib/core", 0
 introString:
     .db "Graphical demo for KnightOS\n\n"
     .db "Portions of this demo by\nChristopher Mitchell\n\n"
@@ -491,7 +491,7 @@ ballRender2:
     ld a, b
     kjp(nz, BallTimeLoop)
     
-    applib(appGetKey)
+    core(appGetKey)
     pcall(nz, clearColorLcd)
     or a
     kjp(z, ballTime)

@@ -1,6 +1,6 @@
 .nolist
 #include "kernel.inc"
-#include "applib.inc"
+#include "corelib.inc"
 .list
     .db 0, 100
 .org 0
@@ -12,7 +12,7 @@ start:
     pcall(getLcdLock)
     pcall(getKeypadLock)
 
-    kld(de, applibPath)
+    kld(de, corelibPath)
     pcall(loadLibrary)
 
     pcall(allocScreenBuffer)
@@ -44,7 +44,7 @@ doListing:
     pcall(memSeekToStart)
     push ix \ pop hl
     ld a, 0b00000100
-    applib(drawWindow)
+    core(drawWindow)
 
     kld(hl, (currentPath))
     inc hl
@@ -195,7 +195,7 @@ _:      ld d, 2
 idleLoop:
             pcall(fastCopy)
             pcall(flushKeys)
-            applib(appWaitKey)
+            core(appWaitKey)
             jr nz, idleLoop
 
             cp kDown
@@ -321,7 +321,7 @@ openFile:
     ld (hl), a
     kjp(doListing)
 .continue:
-    ; TODO: Ask applib to open this file
+    ; TODO: Ask corelib to open this file
     ret
 
 listCallback:
@@ -372,8 +372,8 @@ totalFiles:
 totalDirectories:
     .db 0
 
-applibPath:
-    .db "/lib/applib", 0
+corelibPath:
+    .db "/lib/core", 0
 upText:
     .db "..\n", 0
 titlePrefix:

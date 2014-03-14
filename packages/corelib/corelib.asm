@@ -1,4 +1,4 @@
-; KnightOS applib
+; KnightOS corelib
 ; General purpose application library
 
 .nolist
