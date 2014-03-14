@@ -37,19 +37,19 @@ start:
 _:  ld iy, 0b1111100000000000 ; Red
     pcall(clearColorLcd)
     pcall(flushKeys)
-    core(appWaitKey)
+    corelib(appWaitKey)
     jr nz, -_
 
 _:  ld iy, 0b0000011111100000 ; Green
     pcall(clearColorLcd)
     pcall(flushKeys)
-    core(appWaitKey)
+    corelib(appWaitKey)
     jr nz, -_
 
 _:  ld iy, 0b0000000000011111 ; Blue
     pcall(clearColorLcd)
     pcall(flushKeys)
-    core(appWaitKey)
+    corelib(appWaitKey)
     jr nz, -_
     
 _:  pcall(flushKeys)
@@ -68,7 +68,7 @@ _:  pcall(flushKeys)
     pcall(randA)
     ld iyh, a
     pcall(colorRectangle)
-    core(appGetKey)
+    corelib(appGetKey)
     jr nz, .handleRedraw
     or a
     jr z, -_
@@ -111,7 +111,7 @@ noColor:
     
     kld(hl, windowTitle)
     xor a
-    core(drawWindow)
+    corelib(drawWindow)
     kld(hl, exitString)
     ld de, 0x0208
     pcall(drawStr)
@@ -289,7 +289,7 @@ noColor:
     ; we're done rendering
     pcall(fastCopy)
     pcall(clearBuffer)
-    core(appGetKey)
+    corelib(appGetKey)
     kjp(nz, .demoLoop)
     cp kClear
     ret z
@@ -491,7 +491,7 @@ ballRender2:
     ld a, b
     kjp(nz, BallTimeLoop)
     
-    core(appGetKey)
+    corelib(appGetKey)
     pcall(nz, clearColorLcd)
     or a
     kjp(z, ballTime)

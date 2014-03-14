@@ -22,7 +22,7 @@ start:
 redraw:
     kld(hl, windowTitle)
     xor a
-    core(drawWindow)
+    corelib(drawWindow)
     
     ld b, 2
     ld de, 0x0208
@@ -44,7 +44,7 @@ redraw:
     
 _:  pcall(fastCopy)
     pcall(flushKeys)
-    core(appWaitKey)
+    corelib(appWaitKey)
     cp kMode
     jr z, testMessage
     cp kClear
@@ -56,18 +56,18 @@ testMessage:
     kld(de, options)
     xor a
     ld b, a
-    core(showMessage)
+    corelib(showMessage)
     or a ; cp 0
     jr nz, _
     kld(hl, option1)
     kld(de, dismiss)
     xor a
-    core(showMessage)
+    corelib(showMessage)
     jr redraw
 _:  kld(hl, option2)
     kld(de, dismiss)
     xor a
-    core(showMessage)
+    corelib(showMessage)
     jr redraw
     
 helloString:

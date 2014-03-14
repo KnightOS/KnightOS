@@ -1,7 +1,7 @@
-.macro core(addr)
+.macro corelib(addr)
     lcall(corelibId, addr)
 .endmacro
-.macro core(cc, addr)
+.macro corelib(cc, addr)
     lcall(corelibId, cc, addr)
 .endmacro
 

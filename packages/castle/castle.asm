@@ -151,7 +151,7 @@ launch:
     jr nz, _
     or 1
     ld a, errTooManyThreads
-    core(showError)
+    corelib(showError)
     kjp(resetToHome)
 _:  di
     ; Idea: load a small bootstrapping program into RAM, then kill the castle thread and transfer over to the bootstrap.
@@ -160,7 +160,7 @@ _:  di
     ; smaller than the castle in the first place would benefit from this.
     ; Potential solution: provide an alternative malloc that allocates in the back of RAM
     pcall(launchProgram)
-    core(nz, showError)
+    corelib(nz, showError)
     kjp(nz, resetToHome)
     ld bc, castleReturnHandler_end - castleReturnHandler
     pcall(malloc)
@@ -264,7 +264,7 @@ confirmSelection:
         kld(de, shutdownOptions)
         xor a
         ld b, a
-        core(showMessage)
+        corelib(showMessage)
     pop hl
     or a
     jr nz, _

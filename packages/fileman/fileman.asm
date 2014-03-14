@@ -44,7 +44,7 @@ doListing:
     pcall(memSeekToStart)
     push ix \ pop hl
     ld a, 0b00000100
-    core(drawWindow)
+    corelib(drawWindow)
 
     kld(hl, (currentPath))
     inc hl
@@ -195,7 +195,7 @@ _:      ld d, 2
 idleLoop:
             pcall(fastCopy)
             pcall(flushKeys)
-            core(appWaitKey)
+            corelib(appWaitKey)
             jr nz, idleLoop
 
             cp kDown

@@ -22,7 +22,7 @@ start:
 _:  push bc
         kld(hl, windowTitle)
         xor a
-        core(drawWindow)
+        corelib(drawWindow)
 
         ld b, 2
         ld de, 0x0208
@@ -35,7 +35,7 @@ _:  push bc
     pcall(drawHexA)
 
     pcall(fastCopy)
-    core(appGetKey)
+    corelib(appGetKey)
 
     cp kClear
     jr nz, -_
