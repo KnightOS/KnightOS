@@ -72,13 +72,17 @@ launchThreadList:
     or 1
     ret
 
-; Inputs:   IY: Screen buffer
-;           HL: Window title text
-;           A: Flags:
-;               Bit 0: Set to skip castle graphic
-;               Bit 1: Set to skip thread list graphic
-;               Bit 2: Set to draw menu graphic (note the opposite use from others)
-; Clears the buffer, then draws the standard frame and other items on it
+;; drawWindow [applib]
+;;  Draws a window layout on the screen buffer.
+;; Inputs:
+;;  IY: Screen buffer
+;;  HL: Window title text
+;;  A: Flags:
+;;     Bit 0: Set to skip castle graphic
+;;     Bit 1: Set to skip thread list graphic
+;;     Bit 2: Set to draw menu graphic (note the opposite use from others)
+;; Notes:
+;;  Clears the buffer, then draws the standard frame and other items on it
 drawWindow:
     push de
     push bc
@@ -257,12 +261,16 @@ _:                      pcall(flushKeys)
     pop hl
     ret
 
-; Returns a character (ANSI) in A based on the pressed key.
-; Returns actual raw keypress in B.
-; Uses the upper-right hand corner of the screen to display
-; input information, assumes you have a window chrome prepared.
-; Possible values include \n and backspace (0x08).
-; Also watches for F1/F5 to launch castle/thread list
+;; getCharacterInput [applib]
+;;  Gets a key input from the user.
+;; Outputs:
+;;  A: ANSI character
+;;  B: raw keypress
+;; Notes:
+;;  Uses the upper-right hand corner of the screen to display
+;;  input information, assumes you have a window chrome prepared.
+;;  Possible values include \n and backspace (0x08).
+;;  Also watches for F1/F5 to launch castle/thread list
 getCharacterInput:
     icall(drawCharSetIndicator)
 
