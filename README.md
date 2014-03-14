@@ -19,7 +19,7 @@ calculator model. You may additionally specify a language (i.e. `make LANG=de`) 
 language other than English. Your binaries will appear in the bin folder. You can use the ROM
 files on an emulator like WabbitEmu, or send the 73u/8xu/8cu files to an actual device.
 
-On Windows, run make from Cygwin.
+On Windows, run make from Cygwin. You also need git for Cygwin installed.
 
 ## Installation
 
