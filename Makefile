@@ -74,7 +74,7 @@ TI84pCSE: userland
 AS=$(ASPREFIX)kernel/build/sass.exe
 EMU=$(EMUPREFIX)kernel/build/Wabbitemu.exe
 ASFLAGS=--encoding "Windows-1252"
-INCLUDE=inc/;kernel/bin/$(PLATFORM);lang/$(LANG)/
+INCLUDE=inc/;kernel/bin/$(PLATFORM);lang/$(LANG)/;temp/include/;
 .DEFAULT_GOAL=TI84pSE
 
 PACKAGE_AS=$(ASPREFIX)$(PKGREL)kernel/build/sass.exe
@@ -89,8 +89,10 @@ run: TI84pSE
 runcolor: TI84pCSE
 	$(EMU) bin/TI84pCSE/KnightOS-$(LANG).rom
 
-kernel:
+kernel: directories
 	cd kernel && make $(PLATFORM)
+	mkdir -p temp/include/
+	cp kernel/bin/$(PLATFORM)/kernel.inc temp/include/kernel.inc
 
 userland: kernel directories buildpkgs license
 	cp kernel/bin/$(PLATFORM)/kernel.rom bin/$(PLATFORM)/KnightOS-$(LANG).rom
