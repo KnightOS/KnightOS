@@ -3,6 +3,7 @@
 .nolist
 #include "kernel.inc"
 #include "corelib.inc"
+#include "threeDlib.inc"
 #include "gfxdemo.lang"
 .list
     .db 0, 100 ; Stack size
@@ -12,12 +13,15 @@
     .db 0b00000010
     .db lang_description, 0
 start:
-    pcall(getLcdLock)
-    pcall(getKeypadLock)
-
     ; Load dependencies
     kld(de, corelibPath)
     pcall(loadLibrary)
+    
+    kld(de, threeDlibPath)
+    pcall(loadLibrary)
+    
+    pcall(getLcdLock)
+    pcall(getKeypadLock)
 
     pcall(colorSupported)
     kjp(nz, noColor)
@@ -81,34 +85,21 @@ _:  pcall(flushKeys)
     jr -_
 
 noColor:
-    pcall(allocScreenBuffer)
 
-.macro div64()
-    ; sra h
-    .db 0xCB, 0x2C
-    rr l
-    .db 0xCB, 0x2C
-    rr l
-    .db 0xCB, 0x2C
-    rr l
-    .db 0xCB, 0x2C
-    rr l
-    .db 0xCB, 0x2C
-    rr l
-    .db 0xCB, 0x2C
-    rr l
+.macro sdiv64()
+    add hl, hl
+    sbc a, a
+    add hl, hl
+    rla
+    ld l, h
+    ld h, a
 .endmacro
     
-    xor a
-    kld((angle), a)
-.demoLoop:
-    kld(a, (angle))
-    pcall(isin)
-    kld((curSin), a)
-    kld(a, (angle))
-    pcall(icos)
-    kld((curCos), a)
+    pcall(allocScreenBuffer)
     
+    ld hl, 0
+    kld((angle), hl)
+.demoLoop:
     kld(hl, windowTitle)
     xor a
     corelib(drawWindow)
@@ -123,128 +114,30 @@ noColor:
     
 .renderLoop:
     push hl
-        kld(de, currentVertex)
-        ld bc, 6
-        ldir
+        kld(de, currentRVertex)
+        kld(bc, (angle))
         
-        ; rx = x * cos(a) + z * sin(a)
-        kld(a, (curCos))
-        kld(de, (currentVertex))
-        pcall(sDEMulA)
-        push hl
-            kld(a, (curSin))
-            kld(de, (currentVertex + 4))
-            pcall(sDEMulA)
-        pop de
-        add hl, de
-        div64()
-        kld((currentRVertex), hl)
+        threeDlib(rotateVertex)
+        threeDlib(projectVertex)
         
-        ; ry = x * (cos(0) - cos(2a))/2 + y * cos(a) + z * -sin(2a)/2
-        kld(a, (angle))
+        ld bc, 48
+        add hl, bc
+        ex de, hl
+        ld bc, 32
+        add hl, bc
+        
+        kld(a, (vertexNb))
         add a, a
-        pcall(icos)
-        ld b, a
-        xor a
-        pcall(icos)
-        sub b
-        ; sra a
-        .db 0xCB, 0x2F
-        kld(de, (currentVertex))
-        pcall(sDEMulA)
+        ld c, a
+        ld b, 0
         push hl
-            kld(a, (curCos))
-            kld(de, (currentVertex + 2))
-            pcall(sDEMulA)
-            push hl
-                kld(a, (angle))
-                add a, a
-                pcall(isin)
-                neg
-                ; sra a
-                .db 0xCB, 0x2F
-                kld(de, (currentVertex + 4))
-                pcall(sDEMulA)
-            pop de
-            add hl, de
-        pop de
-        add hl, de
-        div64()
-        kld((currentRVertex + 2), hl)
-        
-        ; rz = x * -sin(2a)/2 + y * sin(a) + z * (cos(0) + cos(2a))/2
-        ; camera offset for the sake of visibility : rz += 150
-        kld(a, (angle))
-        add a, a
-        pcall(isin)
-        neg
-        ; sra a
-        .db 0xCB, 0x2F
-        kld(de, (currentVertex))
-        pcall(sDEMulA)
-        push hl
-            kld(a, (curSin))
-            kld(de, (currentVertex + 2))
-            pcall(sDEMulA)
-            push hl
-                xor a
-                pcall(icos)
-                ld b, a
-                kld(a, (angle))
-                add a, a
-                pcall(icos)
-                add a, b
-                ; sra a
-                .db 0xCB, 0x2F
-                kld(de, (currentVertex + 4))
-                pcall(sDEMulA)
-            pop de
-            add hl, de
-        pop de
-        add hl, de
-        div64()
-        ld de, 150
-        add hl, de
-        ; kld((currentRVertex + 4), hl)
-        
-        ; px = rx * fov / rz + 48
-        ld d, h
-        ld e, l
-        ; 42 * 64 = 0x0A80
-        ld a, 0x0A
-        ld c, 0x80
-        pcall(divACbyDE)
-        ld h, a
-        ld l, c
-        push hl
-            ld b, h
-            kld(de, (currentRVertex))
-            pcall(DEMulBC)
-            div64()
-            ld de, 48
-            add hl, de
-            ld c, l
             kld(hl, projected)
-            kld(a, (vertexNb))
-            add a, a
-            ld e, a
-            ld d, 0
-            add hl, de
-            ld (hl), c
+            add hl, bc
+            ld (hl), e
             inc hl
-            ex (sp), hl
-            
-            ; py = ry * fov / rz + 32
-            ld c, l
-            ld b, h
-            kld(de, (currentRVertex + 2))
-            pcall(DEMulBC)
-            div64()
-            ld de, 32
-            add hl, de
-            ex (sp), hl
         pop de
         ld (hl), e
+        
     pop hl
     ld de, 6
     add hl, de
@@ -293,8 +186,22 @@ noColor:
     kjp(nz, .demoLoop)
     cp kClear
     ret z
-    kld(hl, angle)
-    inc (hl)
+    kld(hl, (angle))
+    
+    cp kDown
+    jr nz, $ + 4
+    dec l \ dec l
+    cp kLeft
+    jr nz, $ + 4
+    dec h \ dec h
+    cp kRight
+    jr nz, $ + 4
+    inc h \ inc h
+    cp kUp
+    jr nz, $ + 4
+    inc l \ inc l
+    
+    kld((angle), hl)
     kjp(.demoLoop)
 
 curSin:
@@ -302,7 +209,7 @@ curSin:
 curCos:
     .db 0
 angle:
-    .db 0
+    .db 0, 0
     
 vertexNb:
     .db 0
@@ -331,7 +238,9 @@ exitString:
 windowTitle:
     .db lang_windowTitle, 0
 corelibPath:
-    .db "/lib/core", 0
+    .db "/lib/corelib", 0
+threeDlibPath:
+    .db "/lib/threeD", 0
 introString:
     .db "Graphical demo for KnightOS\n\n"
     .db "Portions of this demo by\nChristopher Mitchell\n\n"
