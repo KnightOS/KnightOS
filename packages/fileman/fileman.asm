@@ -311,7 +311,65 @@ idleLoop:
     ldir
     jr freeAndLoopBack
 .handleDelete:
-            kjp(idleLoop)
+        pop bc
+    pop bc
+    ld a, d
+    cp b
+    jr c, .deleteDirectory
+    push de
+    push bc
+        kld(hl, deletionMessage)
+        kld(de, deletionOptions)
+        xor a
+        ld b, 0
+        corelib(showMessage)
+    pop bc
+    pop de
+    or a ; cp 0
+    kjp(z, freeAndLoopBack)
+    ; DELETE IT
+    ; Load it onto currentPath for a moment
+    ld a, d
+    sub b
+    add a, a
+    kld(hl, (fileList))
+    add l
+    ld l, a
+    jr nc, $+3
+    inc h
+    ld e, (hl)
+    inc hl
+    ld d, (hl)
+    kld(hl, (currentPath))
+    xor a
+    ld bc, 0
+    cpir
+    dec hl
+    ex de, hl
+    pcall(stringLength)
+    inc bc
+    ; TEMP (until we get trailing slashing into the path)
+    ex de, hl
+    ld a, '/'
+    ld (hl), a
+    inc hl
+    ex de, hl
+    ; /TEMP
+    ldir
+    kld(de, (currentPath))
+    pcall(deleteFile)
+    ex de, hl
+    pcall(stringLength)
+    add hl, bc
+    ld a, '/'
+    cpdr
+    inc hl
+    xor a
+    ld (hl), a
+    jr freeAndLoopBack
+.deleteDirectory:
+    ; TODO: delete directories
+    kjp(freeAndLoopBack)
 .exit:
         pop bc
     pop bc
@@ -439,3 +497,9 @@ downCaretIcon:
     .db 0b11111000
     .db 0b01110000
     .db 0b00100000
+deletionMessage:
+    .db "Are you sure\nyou want to\ndelete this?", 0
+deletionOptions:
+    .db 2
+    .db "Cancel", 0
+    .db "Delete", 0
