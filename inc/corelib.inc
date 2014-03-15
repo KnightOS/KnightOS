@@ -1,11 +1,11 @@
-.macro applib(addr)
-    lcall(applibId, addr)
+.macro corelib(addr)
+    lcall(corelibId, addr)
 .endmacro
-.macro applib(cc, addr)
-    lcall(applibId, cc, addr)
+.macro corelib(cc, addr)
+    lcall(corelibId, cc, addr)
 .endmacro
 
-applibId .equ 0x02
+corelibId .equ 0x02
 
 appGetKey .equ 6
 appWaitKey .equ 9
