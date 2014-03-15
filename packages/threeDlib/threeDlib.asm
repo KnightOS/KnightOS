@@ -33,7 +33,8 @@ jumpTable:
 ;; Inputs:
 ;;  HL: location of the 3D vertex
 ;;  DE: where to write the resulting vertex
-;;  BC: location of the two angles, X then Y
+;;  C: X angle
+;;  B: Y angle
 ;; Outputs:
 ;;  DE: rotated vertex written there
 ;; Notes:
@@ -42,13 +43,10 @@ jumpTable:
 rotateVertex:
     push af \ push hl
         push de
+            ild((angles), bc)
             push bc
                 ild(de, currentVertex)
                 ld bc, 6
-                ldir
-            pop hl \ push hl
-                ild(de, angles)
-                ld bc, 2
                 ldir
                 
                 ild(hl, curCosX)
