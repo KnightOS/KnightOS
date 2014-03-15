@@ -3,7 +3,7 @@
 .nolist
 #include "kernel.inc"
 #include "corelib.inc"
-#include "threeDlib.inc"
+#include "fx3dlib.inc"
 #include "gfxdemo.lang"
 .list
     .db 0, 100 ; Stack size
@@ -17,7 +17,7 @@ start:
     kld(de, corelibPath)
     pcall(loadLibrary)
     
-    kld(de, threeDlibPath)
+    kld(de, fx3dlibPath)
     pcall(loadLibrary)
     
     pcall(getLcdLock)
@@ -117,8 +117,8 @@ noColor:
         kld(de, currentRVertex)
         kld(bc, (angle))
         
-        threeDlib(rotateVertex)
-        threeDlib(projectVertex)
+        fx3dlib(rotateVertex)
+        fx3dlib(projectVertex)
         
         ld bc, 48
         add hl, bc
@@ -239,8 +239,8 @@ windowTitle:
     .db lang_windowTitle, 0
 corelibPath:
     .db "/lib/corelib", 0
-threeDlibPath:
-    .db "/lib/threeD", 0
+fx3dlibPath:
+    .db "/lib/fx3d", 0
 introString:
     .db "Graphical demo for KnightOS\n\n"
     .db "Portions of this demo by\nChristopher Mitchell\n\n"
