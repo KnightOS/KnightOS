@@ -9,6 +9,6 @@
 *.vshost.exe
 *.pdb
 *.mdb
-/bin/
+bin/
 temp/
 *.swp
