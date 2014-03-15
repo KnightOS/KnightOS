@@ -3,6 +3,7 @@
 #include "corelib.inc"
 #include "castle.lang"
 .list
+
     .db 0, 50
 .org 0
 start:

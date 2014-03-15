@@ -1,4 +1,13 @@
-all:
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/fileman/" fileman.asm $(OUTDIR)/bin/fileman
+OUTDIR:=bin/
+BINDIR:=$(OUTDIR)bin/
 
-.PHONY: all
+all: $(BINDIR)fileman
+
+$(BINDIR)fileman: fileman.asm
+	mkdir -p $(BINDIR)
+	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/fileman/" fileman.asm $(BINDIR)fileman
+
+clean:
+	rm -rf $(OUTDIR)
+
+.PHONY: all clean

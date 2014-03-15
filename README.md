@@ -65,7 +65,7 @@ The following devices are supported:
 | TI-84 Plus Pocket SE | TI84pSE       |
 
 The make target is listed next to each supported device. To build KnightOS for that device, use
-`make [target]`.
+`make [target]`. Use `make clean` before trying to build for a new target.
 
 ## Help, Bugs, Feedback
 

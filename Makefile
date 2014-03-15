@@ -8,7 +8,7 @@ LANG=en_us
 # Package configuration
 #
 # To manually specify packages to build, uncomment this: 
-# PACKAGES=applib base castle threadlist demos osrecv
+# PACKAGES=demos
 #
 # Or to automatically build all packages, uncomment this:
 PACKAGES=$(wildcard packages/*)
@@ -28,23 +28,6 @@ else
 ASPREFIX=mono 
 EMUPREFIX=wine 
 endif
-
-AS=$(ASPREFIX)kernel/build/sass.exe
-EMU=$(EMUPREFIX)kernel/build/Wabbitemu.exe
-INCLUDE=inc/;kernel/bin/;lang/$(LANG)/
-ASFLAGS=--encoding "Windows-1252"
-.DEFAULT_GOAL=TI84pSE
-
-PACKAGE_AS=$(ASPREFIX)$(PKGREL)kernel/build/sass.exe
-PACKAGE_INCLUDE=$(PKGREL)inc/;$(PKGREL)lang/$(LANG)/;$(PKGREL)kernel/bin/;
-
-all:
-	make TI73
-	make TI83p
-	make TI83pSE
-	make TI84p
-	make TI84pSE
-	make TI84pCSE
 
 TI73: PLATFORM := TI73
 TI73: FAT := 17
@@ -88,7 +71,17 @@ TI84pCSE: KEY := 0F
 TI84pCSE: UPGRADEEXT := 8cu
 TI84pCSE: userland
 
-.PHONY: kernel
+AS=$(ASPREFIX)kernel/build/sass.exe
+EMU=$(EMUPREFIX)kernel/build/Wabbitemu.exe
+ASFLAGS=--encoding "Windows-1252"
+INCLUDE=inc/;kernel/bin/$(PLATFORM);lang/$(LANG)/
+.DEFAULT_GOAL=TI84pSE
+
+PACKAGE_AS=$(ASPREFIX)$(PKGREL)kernel/build/sass.exe
+PACKAGE_INCLUDE=$(PKGREL)inc/;$(PKGREL)lang/$(LANG)/;$(PKGREL)kernel/bin/$(PLATFORM);
+
+.PHONY: kernel userland run runcolor buildpkgs license directories clean %.package \
+	TI73 TI83p TI83pSE TI84p TI84pSE TI84pCSE
 
 run: TI84pSE
 	$(EMU) bin/TI84pSE/KnightOS-$(LANG).rom
@@ -100,24 +93,25 @@ kernel:
 	cd kernel && make $(PLATFORM)
 
 userland: kernel directories buildpkgs license
-	cp kernel/bin/kernel-$(PLATFORM).rom bin/$(PLATFORM)/KnightOS-$(LANG).rom
+	cp kernel/bin/$(PLATFORM)/kernel.rom bin/$(PLATFORM)/KnightOS-$(LANG).rom
 	$(ASPREFIX)kernel/build/BuildFS.exe $(FAT) bin/$(PLATFORM)/KnightOS-$(LANG).rom temp
 ifndef savemockfs
-	rm -rf temp
+	@rm -rf temp
 endif
 	$(ASPREFIX)kernel/build/CreateUpgrade.exe $(PLATFORM) bin/$(PLATFORM)/KnightOS-$(LANG).rom kernel/build/$(KEY).key \
 			bin/$(PLATFORM)/KnightOS-$(LANG).$(UPGRADEEXT) 00 01 02 03 04 05 $(FAT) $(PRIVEDGED)
 
 %.package: %
-	echo $(TOPDIR)
-	echo $? $<
-	cd $<; \
+	@cd $<; \
 	make AS="$(PACKAGE_AS)" ASFLAGS="$(ASFLAGS)" PLATFORM="$(PLATFORM)" INCLUDE="$(PACKAGE_INCLUDE)" \
-				PACKAGEPATH="$(PACKAGEPATH)" OUTDIR="$(PKGREL)temp";
+				PACKAGEPATH="$(PACKAGEPATH)";
+	@cd $<; \
+	cp -r bin/* "$(PKGREL)temp";
 
 buildpkgs: directories $(PACKBUF)
 
 license: directories
+	mkdir -p temp/etc/
 	cp LICENSE temp/etc/LICENSE
 
 directories:
@@ -128,14 +122,11 @@ directories:
 	mkdir -p temp/etc
 	mkdir -p temp/home
 	mkdir -p temp/lib
-	touch temp/testfileA
-	touch temp/testfileB
-	touch temp/testfileC
-	#touch temp/testfileD
-	#touch temp/testfileE
-	#touch temp/testfileF
 
 clean:
+	@for f in $(PACKAGES) ; do \
+		cd $$f ; make clean ; cd $(PKGREL); \
+	done
 	cd kernel && make clean
 	rm -rf bin
 	rm -rf temp
