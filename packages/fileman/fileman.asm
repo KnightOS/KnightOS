@@ -18,14 +18,17 @@ start:
     pcall(allocScreenBuffer)
 
     ; Set current path
-    ld bc, 1024 + 13
+    ld bc, 1024 + (titlePrefixEnd - titlePrefix)
     pcall(malloc)
     push ix \ pop de
     kld(hl, titlePrefix)
     ld bc, titlePrefixEnd - titlePrefix
     ldir
     ex de, hl
-    dec hl \ dec hl
+    ld a, '/'
+    ld bc, 0
+    cpdr
+    inc hl
     kld((currentPath), hl)
 
     ; Allocate space for fileList and directoryList
@@ -49,76 +52,94 @@ doListing:
     kld(hl, (currentPath))
     inc hl
     ld a, (hl)
-    or a ; cp 0
-    ld de, 0x0208
-    push de
+    dec hl
+    or a ; cp 0 (basically, test if we're at the root
+    jr z, _
+
+    ; Add a .. entry if this is not the root
+    kld(hl, (directoryList))
+    kld(de, dotdot)
+    ld (hl), e
+    inc hl
+    ld (hl), d
+    inc hl
+    kld((directoryList), hl)
+
+_:  kld(hl, (currentPath))
+    ex de, hl
+    kld(hl, listCallback)
+    exx
+        ld bc, 0
+    exx
+    pcall(listDirectory)
+    exx
+    push bc
+        exx
+    pop bc
+    ; B: Num directories
+    ; C: Num files
+    ; Sort results
+    kld(hl, (currentPath))
+    inc hl
+    ld a, (hl)
+    or a
+    jr z, _ 
+    inc b ; Add the imaginary '..' entry
+_:  push bc
+        ld a, b
+        or a
+        jr z, ++_
+        kld(ix, (directoryList))
+        pcall(memSeekToStart)
+        kld((directoryList), ix)
+        ld a, b
+        ld b, 0
+        ld c, a
+        ; Check for root and move past the .. if not
+        kld(hl, (currentPath))
+        inc hl
+        ld a, (hl)
+        push ix \ pop hl
+        or a ; cp 0
         jr z, _
-        ; Draw the ".." (not done for root directory)
-        ld b, 6
-        kld(hl, directoryIcon)
-        pcall(putSpriteOR)
-        ld d, 0x09
-        kld(hl, upText)
-        pcall(drawStr)
-    inc sp \ inc sp \ push de
-
-_:      kld(hl, (currentPath))
-        ex de, hl
-        kld(hl, listCallback)
-        exx
-            ld bc, 0
-        exx
-        pcall(listDirectory)
-        exx
-        push bc
-            exx
-        pop bc
-        ; B: Num directories
-        ; C: Num files
-        ; Sort results
-        push bc
-            ld a, b
-            or a
-            jr z, _
-            kld(ix, (directoryList))
-            pcall(memSeekToStart)
-            kld((directoryList), ix)
-            push ix \ pop hl
-            ld d, h \ ld e, l
-            ld a, b
-            ld b, 0
-            ld c, a
-            add hl, bc
-            add hl, bc
-            ex hl, de
-            dec de \ dec de
-            ld bc, 2
-            ; This is weird. We know this pcall is on page 0x00, so this
-            ; just takes it apart and gets the address in the jump table
-            ; directly so that we can offer it to callbackSort
-            ld ix, 0x4000 - (((compareStrings_sort >> 8) + 1) * 3)
-            pcall(callbackSort) ; Sort directory list
-_:      pop bc \ push bc
-            ld a, c
-            or a
-            jr z, _
-            kld(ix, (fileList))
-            pcall(memSeekToStart)
-            kld((fileList), ix)
-            push ix \ pop hl
-            ld d, h \ ld e, l
-            ld b, 0
-            add hl, bc
-            add hl, bc
-            ex hl, de
-            dec de \ dec de
-            ld bc, 2
-            ld ix, 0x4000 - (((compareStrings_sort >> 8) + 1) * 3)
-            pcall(callbackSort) ; Sort file list
-_:      pop bc
-    pop de
+        ; We are not on the root, so skip the .. entry for sorting
+        inc hl \ inc hl
+        dec bc
+_:      ld d, h \ ld e, l
+        add hl, bc
+        add hl, bc
+        ex hl, de
+        dec de \ dec de
+        ld bc, 2
+        ; This is weird. We know this pcall is on page 0x00, so this
+        ; just takes it apart and gets the address in the jump table
+        ; directly so that we can offer it to callbackSort
+        ld ix, 0x4000 - (((compareStrings_sort >> 8) + 1) * 3)
+        pcall(callbackSort) ; Sort directory list
+    pop bc \ push bc
+        ld a, c
+        or a
+        jr z, _
+        kld(ix, (fileList))
+        pcall(memSeekToStart)
+        kld((fileList), ix)
+        push ix \ pop hl
+        ld d, h \ ld e, l
+        ld b, 0
+        add hl, bc
+        add hl, bc
+        ex hl, de
+        dec de \ dec de
+        ld bc, 2
+        ld ix, 0x4000 - (((compareStrings_sort >> 8) + 1) * 3)
+        pcall(callbackSort) ; Sort file list
+_:  pop bc
+    ld a, b
+    kld((totalDirectories), a)
+    ld a, c
+    kld((totalFiles), a)
     ; All sorted, now draw it
-
+    ld e, 8
 drawList:
     ld d, 0x08
     push bc
@@ -202,6 +223,10 @@ idleLoop:
             jr z, .handleDown
             cp kUp
             kjp(z, .handleUp)
+            cp kLeft
+            kjp(z, .handleParent)
+            cp kClear
+            kjp(z, .handleParent)
             cp kEnter
             kjp(z, .handleEnter)
             cp k2nd
@@ -210,27 +235,14 @@ idleLoop:
             kjp(z, .handleEnter)
             cp kDel
             kjp(z, .handleDelete)
-            cp kClear
+            cp kMode
             kjp(z, .exit)
             jr idleLoop
 .handleDown:
         pop bc
         ld a, d
         inc a
-        push hl
-        push af
-            kld(hl, (currentPath))
-            inc hl
-            ld a, (hl)
-            or a
-            jr nz, _
-        pop af
-        pop hl
-        jr ++_
-_:      pop af
-        pop hl
-        dec a
-_:      cp c
+        cp c
         push bc
             ld c, 87
             ld b, 7
@@ -270,8 +282,7 @@ _:      cp c
     ; Determine if it's a file or a directory
     ld a, d
     cp b
-    jr nc, openFile
-.resumeDirectory:
+    kjp(nc, openFile)
     ; Handle directory
     add a, a
     kld(hl, (directoryList))
@@ -282,6 +293,9 @@ _:      cp c
     ld e, (hl)
     inc hl
     ld d, (hl)
+    ld a, (de)
+    cp '.'
+    jr z, .handleParent_noPop
     kld(hl, (currentPath))
     xor a
     ld bc, 0
@@ -295,23 +309,17 @@ _:      cp c
     pcall(stringLength)
     inc bc
     ldir
-    kjp(doListing)
+    jr freeAndLoopBack
 .handleDelete:
             kjp(idleLoop)
 .exit:
         pop bc
     pop bc
     ret
-
-openFile:
-    xor a
-    cp d
-    jr nz, .continue
-    kld(hl, (currentPath))
-    inc hl
-    ld a, (hl)
-    or a
-    jr z, .continue ; If it's not root, we may have clicked ".."
+.handleParent:
+        pop bc
+    pop bc
+.handleParent_noPop:
     kld(hl, (currentPath))
     ld a, '/'
     cpdr
@@ -319,8 +327,40 @@ openFile:
     inc hl
     xor a
     ld (hl), a
+    ;jr freeAndLoopBack
+
+freeAndLoopBack:
+    kld(a, (totalDirectories))
+    or a
+    jr z, +_
+    ld b, a
+    kld(hl, (directoryList))
+.freeDirs:
+    ld e, (hl)
+    inc hl
+    ld d, (hl)
+    inc hl
+    push de \ pop ix
+    ld a, (ix)
+    cp '.'
+    pcall(nz, free)
+    djnz .freeDirs
+_:  kld(a, (totalFiles))
+    or a
+    kjp(z, doListing)
+    ld b, a
+    kld(hl, (fileList))
+.freeFiles:
+    ld e, (hl)
+    inc hl
+    ld d, (hl)
+    inc hl
+    push de \ pop ix
+    pcall(free)
+    djnz .freeFiles
     kjp(doListing)
-.continue:
+
+openFile:
     ; TODO: Ask corelib to open this file
     ret
 
@@ -376,8 +416,10 @@ corelibPath:
     .db "/lib/core", 0
 upText:
     .db "..\n", 0
+dotdot:
+    .db "..", 0
 titlePrefix:
-    .db "File Manager: /", 0
+    .db "File Manager: /home", 0
 titlePrefixEnd:
 directoryIcon:
     .db 0b11100000
