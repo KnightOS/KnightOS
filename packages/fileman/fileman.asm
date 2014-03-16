@@ -141,22 +141,40 @@ drawList:
     corelib(drawWindow)
 
     ld de, 0x0808
+    kld(a, (scrollTop))
+    ld h, a
     push bc
         kld(ix, (directoryList))
-        ld a, b
-        or a
-        jr z, _
         xor a
-        kcall(.draw)
-_:  pop bc \ push bc
+_:      cp h
+        jr z, _
+        dec h
+        inc ix \ inc ix
+        dec b
+        jr nz, -_
+_:      ld a, b
+        or a
+        jr z, .drawFiles
+        xor a
+        push hl \ kcall(.draw) \ pop hl
+.drawFiles:
+    pop bc \ push bc
         kld(ix, (fileList))
-        ld a, c
+        xor a
+_:      cp h
+        jr z, _
+        dec h
+        inc ix \ inc ix
+        dec b
+        jr nz, -_
+_:      ld a, c
         ld b, a
         or a
-        jr z, _
+        jr z, ._done
         ld a, 1
         kcall(.draw)
-_:  pop bc
+._done:
+    pop bc
     jr .done
 
 .draw:
@@ -205,12 +223,22 @@ _:      ld d, 2
 
             ; Draw remainder of UI
             ld e, 8 ; x
-            ld l, 7 ; y
+            kld(a, (scrollOffset))
+            kld(hl, scrollTop)
+            sub (hl)
+            ld l, a
+            add a, a
+            add a, a
+            add a, l
+            add a, l
+            add a, 7
+            ld l, a ; y
             ld c, 87 ; w
             ld b, 7 ; h
             pcall(rectXOR)
 
-            ld d, 0 ; Index
+            kld(a, (scrollOffset))
+            ld d, a ; Index
 
 idleLoop:
             pcall(fastCopy)
@@ -219,7 +247,7 @@ idleLoop:
             jr nz, idleLoop
 
             cp kDown
-            jr z, .handleDown
+            kjp(z, .handleDown)
             cp kUp
             kjp(z, .handleUp)
             cp kLeft
@@ -247,6 +275,12 @@ idleLoop:
             ld b, 7
             jr nc, idleLoop
             ld a, d
+            push hl
+                kld(hl, scrollTop)
+                sub (hl)
+            pop hl
+            cp 7
+            jr z, .tryScrollDown
             add a, a
             add a, a
             add a, d
@@ -258,23 +292,54 @@ idleLoop:
             ld l, a
             pcall(rectXOR)
             inc d
+            ld a, d
+            kld((scrollOffset), a)
             kjp(idleLoop)
+.tryScrollDown:
+            inc d
+            ld a, d
+            kld((scrollOffset), a)
+            kld(hl, scrollTop)
+            inc (hl)
+        pop bc
+    pop bc
+    kjp(drawList)
 .handleUp:
             ld a, d
             or a
-            jr z, idleLoop
-            add a, a
-            add a, a
-            add a, d
-            add a, d ; A *= 6
-            add a, 7
+            kjp(z, idleLoop)
+            push hl
+                kld(hl, scrollTop)
+                sub (hl)
+            pop hl
+            or a ; cp 0
+            jr z, .tryScrollUp
+            push de
+                ld d, a
+                add a, a
+                add a, a
+                add a, d
+                add a, d ; A *= 6
+                add a, 7
+            pop de
             ld l, a
             pcall(rectXOR)
             sub a, 6
             ld l, a
             pcall(rectXOR)
             dec d
+            ld a, d
+            kld((scrollOffset), a)
             kjp(idleLoop)
+.tryScrollUp:
+            dec d
+            ld a, d
+            kld((scrollOffset), a)
+            kld(hl, scrollTop)
+            dec (hl)
+        pop bc
+    pop bc
+    kjp(drawList)
 .handleEnter:
         pop bc
     pop bc
@@ -308,7 +373,7 @@ idleLoop:
     pcall(stringLength)
     inc bc
     ldir
-    jr freeAndLoopBack
+    kjp(freeAndLoopBack)
 .handleDelete:
         pop bc
     pop bc
@@ -387,6 +452,10 @@ idleLoop:
     ;jr freeAndLoopBack
 
 freeAndLoopBack:
+    xor a
+    kld((scrollTop), a)
+    kld((scrollOffset), a)
+
     kld(a, (totalDirectories))
     or a
     jr z, +_
@@ -470,6 +539,8 @@ totalDirectories:
     .db 0
 scrollOffset:
     .db 0
+scrollTop:
+    .db 0
 
 corelibPath:
     .db "/lib/core", 0
@@ -478,7 +549,7 @@ upText:
 dotdot:
     .db "..", 0
 titlePrefix:
-    .db "File Manager: /home", 0
+    .db "File Manager: /bin", 0
 titlePrefixEnd:
 directoryIcon:
     .db 0b11100000
