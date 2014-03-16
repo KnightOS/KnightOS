@@ -9,3 +9,4 @@ fx3dlibId .equ 0x03
 
 rotateVertex .equ 6
 projectVertex .equ 9
+drawTriangle .equ 12
