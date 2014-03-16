@@ -41,14 +41,6 @@ start:
     kld((directoryList), hl)
 
 doListing:
-    pcall(clearBuffer)
-    kld(hl, (currentPath))
-    push hl \ pop ix
-    pcall(memSeekToStart)
-    push ix \ pop hl
-    ld a, 0b00000100
-    corelib(drawWindow)
-
     kld(hl, (currentPath))
     inc hl
     ld a, (hl)
@@ -139,9 +131,16 @@ _:  pop bc
     ld a, c
     kld((totalFiles), a)
     ; All sorted, now draw it
-    ld e, 8
 drawList:
-    ld d, 0x08
+    pcall(clearBuffer)
+    kld(hl, (currentPath))
+    push hl \ pop ix
+    pcall(memSeekToStart)
+    push ix \ pop hl
+    ld a, 0b00000100
+    corelib(drawWindow)
+
+    ld de, 0x0808
     push bc
         kld(ix, (directoryList))
         ld a, b
@@ -468,6 +467,8 @@ directoryList:
 totalFiles:
     .db 0
 totalDirectories:
+    .db 0
+scrollOffset:
     .db 0
 
 corelibPath:
