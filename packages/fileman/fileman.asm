@@ -560,7 +560,7 @@ upText:
 dotdot:
     .db "..", 0
 titlePrefix:
-    .db "File Manager: /bin", 0
+    .db "File Manager: /home", 0
 titlePrefixEnd:
 directoryIcon:
     .db 0b11100000
