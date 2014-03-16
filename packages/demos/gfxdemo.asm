@@ -179,6 +179,13 @@ noColor:
     pop bc
     djnz .linesLoop
     
+    kld(hl, (projected))
+    kld(de, (projected + 2))
+    kld(bc, (projected + 4))
+    fx3dlib(drawTriangle)
+    kld(de, (projected + 6))
+    fx3dlib(drawTriangle)
+    
     ; we're done rendering
     pcall(fastCopy)
     pcall(clearBuffer)
@@ -186,22 +193,12 @@ noColor:
     kjp(nz, .demoLoop)
     cp kClear
     ret z
+    
     kld(hl, (angle))
-    
-    cp kDown
-    jr nz, $ + 4
-    dec l \ dec l
-    cp kLeft
-    jr nz, $ + 4
-    dec h \ dec h
-    cp kRight
-    jr nz, $ + 4
-    inc h \ inc h
-    cp kUp
-    jr nz, $ + 4
-    inc l \ inc l
-    
+    inc h
+    inc l
     kld((angle), hl)
+    
     kjp(.demoLoop)
 
 curSin:
