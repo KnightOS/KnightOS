@@ -222,7 +222,15 @@ _:      ld d, 2
         push bc
 
             ; Draw remainder of UI
-            ld e, 8 ; x
+            kld(a, (scrollTop))
+            or a
+            jr z, _
+            kld(hl, upCaretIcon)
+            ld de, 0x5908
+            ld b, 3
+            pcall(putSpriteOR)
+
+_:          ld e, 8 ; x
             kld(a, (scrollOffset))
             kld(hl, scrollTop)
             sub (hl)
@@ -281,11 +289,14 @@ idleLoop:
             pop hl
             cp 7
             jr z, .tryScrollDown
-            add a, a
-            add a, a
-            add a, d
-            add a, d ; A *= 6
-            add a, 7
+            push de
+                ld d, a
+                add a, a
+                add a, a
+                add a, d
+                add a, d ; A *= 6
+                add a, 7
+            pop de
             ld l, a
             pcall(rectXOR)
             add a, 6
@@ -569,6 +580,10 @@ downCaretIcon:
     .db 0b11111000
     .db 0b01110000
     .db 0b00100000
+upCaretIcon:
+    .db 0b00100000
+    .db 0b01110000
+    .db 0b11111000
 deletionMessage:
     .db "Are you sure\nyou want to\ndelete this?", 0
 deletionOptions:
