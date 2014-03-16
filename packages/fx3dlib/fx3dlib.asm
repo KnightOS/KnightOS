@@ -17,6 +17,7 @@ jumpTable:
     ret \ nop \ nop
     jp rotateVertex
     jp projectVertex
+    jp drawTriangle
     .db 0xff
     
 .macro sdiv64()
@@ -28,13 +29,12 @@ jumpTable:
     ld h, a
 .endmacro
     
-;; rotateVertex [3dfxlib]
+;; rotateVertex [fx3dlib]
 ;;  Rotates a 3D vertex according to two angles.
 ;; Inputs:
 ;;  HL: location of the 3D vertex
 ;;  DE: where to write the resulting vertex
-;;  C: X angle
-;;  B: Y angle
+;;  C, B: X, Y angles
 ;; Outputs:
 ;;  DE: rotated vertex written there
 ;; Notes:
@@ -190,7 +190,7 @@ rotateVertex:
     pop hl \ pop af
     ret
     
-;; projectVertex [3dfxlib]
+;; projectVertex [fx3dlib]
 ;;  Projects a 3D vertex into 2D coordinates.
 ;; Inputs:
 ;;  DE: location of the 3D vertex
@@ -231,7 +231,7 @@ projectVertex:
         pop de
     pop bc \ pop af
     ret
-
+    
 currentVertex:
     .dw 0, 0, 0
 currentRVertex:
@@ -245,5 +245,231 @@ curSinX:
 curCosY:
     .db 0
 curSinY:
+    .db 0
+    
+;; drawTriangle [fx3dlib]
+;;  Draws a filled triangle on the screen buffer.
+;; Inputs:
+;;  L, H: X1, Y1
+;;  E, D: X2, Y2
+;;  C, B: X3, Y3
+;;  A: 0 for white, non-zero for black
+;; Notes:
+;;
+drawTriangle:
+    push hl \ push de \ push bc \ push af
+        ild((x1), hl)
+        ild((x2), de)
+        ild((x3), bc)
+        
+        ; sort coordinates
+        ld a, d
+        cp h
+        jr nc, .pt12sorted
+        ; next checks do it right
+        ex de, hl
+        ild((x1), hl)
+        ild((x2), de)
+.pt12sorted:
+        ld a, b
+        cp d
+        jr nc, .pt23sorted
+        ild((x2), bc)
+        ild((x3), de)
+        push bc
+            ld c, e
+            ld b, d
+        pop de
+.pt23sorted:
+        ld a, d
+        cp h
+        jr nc, .pt12sorted_again
+        ex de, hl
+        ild((x1), hl)
+        ild((x2), de)
+.pt12sorted_again:
+        
+        ; dx1 = (x2 - x1) * 256 / (y2 - y1)
+        ; beware the division by 0
+        ld a, d
+        sub h
+        jr z, .dx1NoDiv
+        ld b, a
+        ld a, e
+        sub l
+        ld c, a
+        jr z, .dx1done
+        ld a, b
+        ld e, a
+        rla
+        sbc a, a
+        ld d, a
+        ld a, c
+        ld c, 0
+        pcall(sdivACbyDE)
+        jr .dx1done
+.dx1NoDiv:
+        ld a, e
+        sub l
+        ld c, 0
+.dx1done:
+        ild(hl, dx1)
+        ld (hl), c
+        inc hl
+        ld (hl), a
+        
+        ; dx2 = (x3 - x1) * 256 / (y3 - y1)
+        ; BUT registers are stashed due to the previous calculations
+        ild(hl, (x1))
+        ild(de, (x3))
+        ld a, d
+        sub h
+        jr z, .dx2NoDiv
+        ld b, a
+        ld a, e
+        sub l
+        ld c, a
+        jr z, .dx2done
+        ld a, b
+        ld e, a
+        rla
+        sbc a, a
+        ld d, a
+        ld a, c
+        ld c, 0
+        pcall(sdivACbyDE)
+        jr .dx2done
+.dx2NoDiv:
+        ld a, e
+        sub l
+        ld c, 0
+.dx2done:
+        ild(hl, dx2)
+        ld (hl), c
+        inc hl
+        ld (hl), a
+        
+        ; dx3 = (x3 - x2) * 256 / (y3 - y2)
+        ild(hl, (x2))
+        ild(de, (x3))
+        ld a, d
+        sub h
+        jr z, .dx3NoDiv
+        ld b, a
+        ld a, e
+        sub l
+        ld c, a
+        jr z, .dx3done
+        ld a, b
+        ld e, a
+        rla
+        sbc a, a
+        ld d, a
+        ld a, c
+        ld c, 0
+        pcall(sdivACbyDE)
+        jr .dx3done
+.dx3NoDiv:
+        ld a, e
+        sub l
+        ld c, 0
+.dx3done:
+        ild(hl, dx3)
+        ld (hl), c
+        inc hl
+        ld (hl), a
+        
+        ; px1 = px2 = x1 * 256
+        ; h = (x1)
+        ild(hl, (x1 - 1))
+        ld l, 0
+        ild((px1), hl)
+        ild((px2), hl)
+        
+        ; indicates if we're on the first or second edge
+        ld b, l
+.drawLoop:
+        ; drawHLine(y1, px1 / 256, px2 / 256)
+        ; but later
+        ild(a, (px2 + 1))
+        ild(de, (px1 + 1))
+        cp e
+        jr nc, .noSwitch
+        ld c, a
+        ld a, e
+        ld e, c
+.noSwitch:
+        sub e
+        ld c, a
+        inc c
+        push bc
+            ld b, 1
+            ild(hl, (y1))
+            pcall(rectOR)
+        pop bc
+        
+        ; px1 += currentEdge ? dx3 : dx1
+        xor a
+        cp b
+        ild(hl, (px1))
+        jr z, .firstEdge
+.secondEdge:
+        ild(de, (dx3))
+        jr ._
+.firstEdge:
+        ild(de, (dx1))
+._:
+        add hl, de
+        ild((px1), hl)
+        
+        ; px2 += dx2
+        ild(hl, (px2))
+        ild(de, (dx2))
+        add hl, de
+        ild((px2), hl)
+        
+        ; if(y1++ >= y2) currentEdge = 1
+        ild(hl, y1)
+        inc (hl)
+        ld a, (hl)
+        inc hl
+        inc hl
+        cp (hl)
+        jr c, .noNextEdge
+        ld b, 1
+.noNextEdge:
+        ; while(y1 <= y3)
+        inc hl
+        inc hl
+        dec a
+        cp (hl)
+        jr c, .drawLoop
+        
+    pop af \ pop bc \ pop de \ pop hl
+    ret
+    
+x1:
+    .db 0
+y1:
+    .db 0
+x2:
+    .db 0
+y2:
+    .db 0
+x3:
+    .db 0
+y3:
+    .db 0
+px1:
+    .dw 0
+px2:
+    .dw 0
+dx1:
+    .dw 0
+dx2:
+    .dw 0
+dx3:
+    .dw 0
+triangleColor:
     .db 0
     
