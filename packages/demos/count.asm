@@ -37,7 +37,7 @@ _:  push bc
     pcall(fastCopy)
     corelib(appGetKey)
 
-    cp kClear
+    cp kMode
     jr nz, -_
     ret
 

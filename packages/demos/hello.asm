@@ -46,30 +46,9 @@ _:  pcall(fastCopy)
     pcall(flushKeys)
     corelib(appWaitKey)
     cp kMode
-    jr z, testMessage
-    cp kClear
-    ret z
-    jr -_
+    jr nz, -_
+    ret
 
-testMessage:
-    kld(hl, messageText)
-    kld(de, options)
-    xor a
-    ld b, a
-    corelib(showMessage)
-    or a ; cp 0
-    jr nz, _
-    kld(hl, option1)
-    kld(de, dismiss)
-    xor a
-    corelib(showMessage)
-    jr redraw
-_:  kld(hl, option2)
-    kld(de, dismiss)
-    xor a
-    corelib(showMessage)
-    jr redraw
-    
 helloString:
     .db lang_helloString, 0
 windowTitle:
@@ -80,14 +59,3 @@ bootCodeString:
     .db "\n\nBoot Code Version: \n", 0
 corelibPath:
     .db "/lib/core", 0
-messageText:
-    .db "Hello, world!\nThis is a test", 0
-options:
-    .db 2
-option1:
-    .db "Option 1", 0
-option2:
-    .db "Option 2", 0
-dismiss:
-    .db 1
-    .db "Dismiss", 0

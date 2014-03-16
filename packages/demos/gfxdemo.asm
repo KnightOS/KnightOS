@@ -191,7 +191,7 @@ noColor:
     pcall(clearBuffer)
     corelib(appGetKey)
     kjp(nz, .demoLoop)
-    cp kClear
+    cp kMode
     ret z
     
     kld(hl, (angle))

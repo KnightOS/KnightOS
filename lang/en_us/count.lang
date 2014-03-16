@@ -2,5 +2,5 @@
 
 ; Text
 #define lang_description "Counting Demo"
-#define lang_hello "Press [Clear] to exit."
+#define lang_hello "Press [MODE] to exit."
 #define lang_windowTitle "Counting Demo"

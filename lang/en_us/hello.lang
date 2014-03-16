@@ -2,5 +2,5 @@
 
 ; Text
 #define lang_description "Hello world"
-#define lang_helloString "Hello, world!\nPress [Clear] to exit."
+#define lang_helloString "Hello, world!\nPress [MODE] to exit."
 #define lang_windowTitle "Hello world"
