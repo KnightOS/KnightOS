@@ -185,7 +185,7 @@ noColor:
     fx3dlib(drawTriangle)
     kld(hl, (projected))
     kld(de, (projected + 4))
-    kld(bc, (projected + 6)
+    kld(bc, (projected + 6))
     fx3dlib(drawTriangle)
     
     ; we're done rendering
