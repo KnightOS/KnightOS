@@ -92,6 +92,7 @@ runcolor: TI84pCSE
 kernel: directories
 	cd kernel && make $(PLATFORM)
 	mkdir -p temp/include/
+	mkdir -p temp/share/
 	cp kernel/bin/$(PLATFORM)/kernel.inc temp/include/kernel.inc
 
 userland: kernel directories buildpkgs license
