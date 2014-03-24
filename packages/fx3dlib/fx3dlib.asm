@@ -98,8 +98,7 @@ rotateVertex:
             sub (hl)
             pcall(icos)
             sub b
-            ; sra a
-            .db 0xCB, 0x2F
+            sra a
             ild(de, (currentVertex))
             pcall(sDEMulA)
             push hl
@@ -120,8 +119,7 @@ rotateVertex:
                     pcall(isin)
                     neg
                     sub b
-                    ; sra a
-                    .db 0xCB, 0x2F
+                    sra a
                     ild(de, (currentVertex + 4))
                     pcall(sDEMulA)
                 pop de
@@ -145,8 +143,7 @@ rotateVertex:
             sub (hl)
             pcall(isin)
             sub b
-            ; sra a
-            .db 0xCB, 0x2F
+            sra a
             ild(de, (currentVertex))
             pcall(sDEMulA)
             push hl
@@ -166,8 +163,7 @@ rotateVertex:
                     sub (hl)
                     pcall(icos)
                     add a, b
-                    ; sra a
-                    .db 0xCB, 0x2F
+                    sra a
                     ild(de, (currentVertex + 4))
                     pcall(sDEMulA)
                 pop de
