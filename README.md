@@ -35,19 +35,6 @@ battery. Plug your calculator into the computer.
 
 You may repeat this procedure with the official OS upgrade file to install the stock OS again.
 
-### TI-84+ Color Silver Edition
-
-For the TI-84+ CSE, the process is a bit more involved. You must first install the stock OS (or
-just leave it there if you already have it). Then, download and install Brandon Wilson's
-[UOSRECV](http://brandonw.net/calcstuff/uosrecv.zip) tool. Run it with `Asm(prgmUOSRECV)`
-on the target calculator. Then, you can send the KnightOS upgrade file to your TI-84+ CSE using
-**TI-Connect only**. It does not work with TiLP. I have had success sending it with TI-Connect
-in a VM, though.
-
-**This process also applies to newer TI-84+ calculators, which have the 1.03 boot code.** You can
-find out your boot code from TIOS by pressing Alpha+S from the MODE screen. From KnightOS, the
-"hello world" demo currently shows your boot code version.
-
 ## Supported Devices
 
 The following devices are supported:
@@ -65,7 +52,9 @@ The following devices are supported:
 | TI-84 Plus Pocket SE | TI84pSE       |
 
 The make target is listed next to each supported device. To build KnightOS for that device, use
-`make [target]`. Use `make clean` before trying to build for a new target.
+`make [target]`. Use `make clean` before trying to build for a new target. On the TI-84+ Color
+Silver Edition, you may want to use `make TI84pCSE UPGRADEEXT=8xu` if sending KnightOS to a
+calculator using TiLP version 1.17 or less.
 
 ## Help, Bugs, Feedback
 
