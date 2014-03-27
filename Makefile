@@ -132,7 +132,7 @@ endif
 		dd bs=1 if=bin/exploit.bin of=bin/$(PLATFORM)/KnightOS-$(LANG).rom seek=$(EXPLOIT_ADDRESS) conv=notrunc;\
 		echo -ne "\xFF" | dd bs=1 of=bin/$(PLATFORM)/KnightOS-$(LANG).rom seek=38 conv=notrunc;\
 		echo -ne "\xFF" | dd bs=1 of=bin/$(PLATFORM)/KnightOS-$(LANG).rom seek=86 conv=notrunc;\
-		$(ASPREFIX)kernel/build/CreateUpgrade.exe --signature exploit/valid.bin $(PLATFORM) bin/$(PLATFORM)/KnightOS-$(LANG).rom kernel/build/$(KEY).key \
+		$(ASPREFIX)kernel/build/CreateUpgrade.exe --signature exploit/signature.bin $(PLATFORM) bin/$(PLATFORM)/KnightOS-$(LANG).rom kernel/build/$(KEY).key \
 				bin/$(PLATFORM)/KnightOS-$(LANG).$(UPGRADEEXT) 00 01 02 03 04 05 06 $(PRIVLEDGED) $(EXPLOIT_PAGES);\
 		rm temp.rom;\
 	else\
