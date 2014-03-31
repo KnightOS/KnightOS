@@ -71,7 +71,7 @@ _:  pcall(flushKeys)
     ld iyl, a
     pcall(randA)
     ld iyh, a
-    pcall(colorRectangle)
+    pcall(clipColorRectangle)
     corelib(appGetKey)
     jr nz, .handleRedraw
     or a
