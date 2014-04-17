@@ -13,6 +13,12 @@ cloned the repository yet, use `git clone --recursive git://github.com/KnightSof
 to clone recursively. Otherwise, use `git submodule update --init` to clone submodules for
 an existing repository.
 
+You will also need the dependencies. Follow the instructions for each dependency:
+
+* [genkfs](https://github.com/KnightOS/genkfs)
+
+There are AUR packages for those of you on Arch Linux.
+
 Once you have the source and submodules, run `make` from the root of the repository to build
 KnightOS for the TI-84+ SE. You may specify a target (i.e. `make TI83p`) to build for another
 calculator model. You may additionally specify a language (i.e. `make LANG=de`) to use a
