@@ -120,7 +120,7 @@ exploit:
 
 userland: kernel directories buildpkgs license exploit
 	cp kernel/bin/$(PLATFORM)/kernel.rom bin/$(PLATFORM)/KnightOS-$(LANG).rom
-	$(ASPREFIX)kernel/build/BuildFS.exe $(FAT) bin/$(PLATFORM)/KnightOS-$(LANG).rom temp
+	genkfs bin/$(PLATFORM)/KnightOS-$(LANG).rom temp
 ifndef savemockfs
 	@rm -rf temp
 endif
