@@ -1,11 +1,22 @@
-.nolist
 #include "kernel.inc"
 #include "corelib.inc"
 #include "castle.lang"
-.list
-
-    .db 0, 50
-.org 0
+    .db "KEXC"
+    .db KEXC_ENTRY_POINT
+    .dw start
+    .db KEXC_STACK_SIZE
+    .dw 50
+    .db KEXC_KERNEL_VER
+    .db 0, 6
+    .db KEXC_NAME
+    .dw name
+    .db KEXC_DESCRIPTION
+    .dw description
+    .db KEXC_HEADER_END
+name:
+    .db "Castle", 0
+description:
+    .db "KnightOS program launcher", 0
 start:
     pcall(getLcdLock)
     pcall(getKeypadLock)

@@ -1,17 +1,21 @@
 ; KnightOS graphical demo
 ; Portions of the color demo provided by Christopher Mitchell
-.nolist
 #include "kernel.inc"
 #include "corelib.inc"
 #include "fx3dlib.inc"
 #include "gfxdemo.lang"
-.list
-    .db 0, 100 ; Stack size
-.org 0
-    jr start
-    .db 'K'
-    .db 0b00000010
-    .db lang_description, 0
+    .db "KEXC"
+    .db KEXC_ENTRY_POINT
+    .dw start
+    .db KEXC_STACK_SIZE
+    .dw 100
+    .db KEXC_KERNEL_VER
+    .db 0, 6
+    .db KEXC_NAME
+    .dw name
+    .db KEXC_HEADER_END
+name:
+    .db "Graphical Demo", 0
 start:
     ; Load dependencies
     kld(de, corelibPath)

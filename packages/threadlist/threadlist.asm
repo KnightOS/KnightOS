@@ -1,9 +1,13 @@
-.nolist
 #include "kernel.inc"
 #include "threadlist.lang"
-.list
-    .db 0, 50
-.org 0
+    .db "KEXC"
+    .db KEXC_ENTRY_POINT
+    .dw start
+    .db KEXC_STACK_SIZE
+    .dw 50
+    .db KEXC_KERNEL_VER
+    .db 0, 6
+    .db KEXC_HEADER_END
 start:
     pcall(getLcdLock)
     pcall(getKeypadLock)
@@ -75,17 +79,13 @@ doUp_loop:
         sub 8
         ld l, a
         push hl
-            inc hl \ ld e, (hl) \ inc hl \ ld d, (hl)
-            ex de, hl \ inc hl \ inc hl
             ld a, (hl)
-            cp 'K'
+            ld b, KEXC_NAME
+            ex de, hl
+            pcall(getThreadHeader)
+            ex de, hl
             jr z, _
-                pop hl \ jr doDown_loop
-_:          inc hl
-            ld a, (hl)
-            bit 1, a
-            jr nz, _
-                pop hl \ jr doUp_loop
+            pop hl \ jr doUp_loop
 _:      pop ix
     pop de
     pop hl
@@ -131,17 +131,13 @@ doDown_loop:
         add a, l
         ld l, a
         push hl
-            inc hl \ ld e, (hl) \ inc hl \ ld d, (hl)
-            ex de, hl \ inc hl \ inc hl
             ld a, (hl)
-            cp 'K'
+            ld b, KEXC_NAME
+            ex de, hl
+            pcall(getThreadHeader)
+            ex de, hl
             jr z, _
-                pop hl \ jr doDown_loop
-_:          inc hl
-            ld a, (hl)
-            bit 1, a
-            jr nz, _
-                pop hl \ jr doDown_loop
+            pop hl \ jr doDown_loop
 _:      pop ix
     pop de
     pop hl
@@ -223,25 +219,24 @@ drawThreads:
     kld((displayedThreads), a)
     ld de, (5 * 256) + 12
     ld hl, threadTable
-    ld a, (activeThreads) \ dec a \ ld b, a
+    ld a, (activeThreads) \ ld b, a
 drawThreads_loop:
     push hl \ push de
-        inc hl
         push de
-            ld e, (hl) \ inc hl \ ld d, (hl)
-            ld a, 2 \ add a, e \ ld e, a
-            ex de, hl
+        push bc
             ld a, (hl)
-            cp 'K' ; Check magic number
-            jr z, _
-                pop de \ jr skipThread
-_:          inc hl
-            ld a, (hl)
-            bit 1, a ; Check thread visibility
-            jr nz, _
-                pop de \ jr skipThread
-_:          inc hl
-        pop de                                          ; please pleaaaaase optimize from here
+            inc hl \ ld c, (hl)
+            inc hl \ ld b, (hl)
+            push bc
+                ld b, KEXC_NAME
+                ex de, hl
+                pcall(getThreadHeader)
+            pop bc
+            jr nz, pop_skipThread
+            or a
+            adc hl, bc ; HL points to thread name
+        pop bc
+        pop de
         push hl
             kld(a, (totalThreads))
             kld(hl, topThread)
@@ -265,7 +260,11 @@ dispThread:
 noDispThread:
         inc a
         kld((totalThreads), a)
-skipThread:                                             ; to here or everyone's gonna throw up
+        jr skipThread
+pop_skipThread:
+        pop bc
+        pop de
+skipThread:
     pop de \ pop hl
     ld a, 6 \ add a, e \ ld e, a
     ld a, 8 \ add a, l \ ld l, a

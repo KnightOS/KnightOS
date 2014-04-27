@@ -1,14 +1,18 @@
-.nolist
 #include "kernel.inc"
 #include "corelib.inc"
 #include "hello.lang"
-.list
-    .db 0, 50
-.org 0
-    jr start
-    .db 'K'
-    .db 0b00000010
-    .db lang_description, 0
+    .db "KEXC"
+    .db KEXC_ENTRY_POINT
+    .dw start
+    .db KEXC_STACK_SIZE
+    .dw 20
+    .db KEXC_KERNEL_VER
+    .db 0, 6
+    .db KEXC_NAME
+    .dw name
+    .db KEXC_HEADER_END
+name:
+    .db "Hello World", 0
 start:
     pcall(getLcdLock)
     pcall(getKeypadLock)

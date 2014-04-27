@@ -1,8 +1,17 @@
-.nolist
 #include "kernel.inc"
-.list
-    .db 0, 50
-.org 0
+    .db "KEXC"
+    .db KEXC_ENTRY_POINT
+    .dw start
+    .db KEXC_STACK_SIZE
+    .dw 20
+    .db KEXC_KERNEL_VER
+    .db 0, 6
+    .db KEXC_NAME
+    .dw name
+    .db KEXC_HEADER_END
+name:
+    .db "init", 0
+start:
     kld(de, inittab)
     pcall(openFileRead)
     pcall(getStreamInfo)
@@ -40,4 +49,4 @@
     ret
 
 inittab:
-    .db "/etc/inittab", 0
+    .asciiz "/etc/inittab"

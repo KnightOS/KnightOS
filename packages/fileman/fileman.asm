@@ -1,12 +1,16 @@
-.nolist
 #include "kernel.inc"
 #include "corelib.inc"
-.list
-    .db 0, 100
-.org 0
-    jr start
-    .db 'K'
-    .db 0b00000010
+    .db "KEXC"
+    .db KEXC_ENTRY_POINT
+    .dw start
+    .db KEXC_STACK_SIZE
+    .dw 100
+    .db KEXC_KERNEL_VER
+    .db 0, 6
+    .db KEXC_NAME
+    .dw name
+    .db KEXC_HEADER_END
+name:
     .db "File Manager", 0
 start:
     pcall(getLcdLock)
