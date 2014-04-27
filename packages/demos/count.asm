@@ -12,6 +12,8 @@
     .db 0, 6
     .db KEXC_NAME
     .dw name
+    .db KEXC_THREAD_FLAGS
+    .db THREAD_NON_SUSPENDABLE, 0
     .db KEXC_HEADER_END
 name:
     .db "Counting Demo", 0
