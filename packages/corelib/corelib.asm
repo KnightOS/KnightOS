@@ -445,16 +445,48 @@ showErrorAndQuit:
 ;;  Opens a file with the associated application.
 ;; Inputs:
 ;;  DE: Path to file
-;;  A: 0 to block, 1 to launch asyncronously
 ;; Outputs:
+;;  A: New thread ID
 ;;  Z: Set on success, reset on failure
 ;; Notes:
 ;;  This checks to see if it's a KEXC, then looks in /etc/magic,
 ;;  then /etc/extensions, and then if it looks like a text file, it
 ;;  opens it with /etc/editor. If all of that fails, it returns NZ.
 open:
-    or 1 ; Temp, fail
+    di
+    ex de, hl
+
+    ; Copy HL into some new memory really quick
+    pcall(stringLength)
+    inc bc
+    pcall(malloc)
+    jr nz, .fail
+    push ix \ pop de
+    ldir
+
+    ild(de, testPath)
+    pcall(launchProgram)
+    jr nz, .fail
+
+    pcall(reassignMemory)
+    push ix \ pop hl
+    pcall(setInitialDE)
+    ld h, 1 ; "open file"
+    pcall(setInitialA)
+    ild(hl, open_returnPoint)
+    pcall(setReturnPoint)
+
+    ei
+    cp a
     ret
+.fail:
+    ei
+    ret
+
+open_returnPoint:
+    ild(de, castlePath)
+    pcall(launchProgram)
+    pcall(killCurrentThread)
 
 #include "errors.asm"
 #include "characters.asm"
@@ -469,6 +501,8 @@ extensionsPath:
     .db "/etc/extensions", 0
 editorPath:
     .db "/etc/editor", 0
+testPath:
+    .db "/bin/textview", 0
 
 castleSprite:
     .db 0b10101000

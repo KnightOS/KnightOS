@@ -512,13 +512,29 @@ openFile:
     ld e, (hl)
     inc hl
     ld d, (hl)
-    ld a, 1 ; Nonblocking because we're just going to exit after it launches (probably)
-    corelib(open)
-    ; TODO: This is kind of broken
-    ; What we should do is launch the program castle-style, with a little bootstrap to
-    ; get back to this thread when it exits
-    ; There's some more weirdness here but I added /etc/launcher to help
-    ret z
+    ; Copy DE into the current path, but not for long
+    kld(hl, (currentPath))
+    xor a
+    ld bc, 0
+    cpir
+    dec hl
+    ld a, '/'
+    ld (hl), a ; TODO: This won't be required after we support trailing /
+    push hl
+        inc hl
+        ex de, hl
+        pcall(stringLength)
+        inc bc
+        ldir
+        kld(de, (currentPath))
+        corelib(open)
+    pop hl
+    jr nz, .fail
+    xor a
+    ld (hl), a ; Remove slash from path
+    ; TODO: Something?
+    pcall(killCurrentThread)
+.fail:
     ; It failed to open, complain to the user
     kld(hl, openFailMessage)
     kld(de, openFailOptions)
