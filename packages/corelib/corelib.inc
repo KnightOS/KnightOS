@@ -19,6 +19,7 @@ launchThreadList .equ 30
 showMessage .equ 33
 showError .equ 36
 showErrorAndQuit .equ 39
+open .equ 42
 
 ; Character sets
 charSetUppercase .equ 0

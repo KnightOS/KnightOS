@@ -109,8 +109,6 @@ runcolor: TI84pCSE
 
 kernel: directories
 	cd kernel && make $(PLATFORM)
-	mkdir -p temp/include/
-	mkdir -p temp/share/
 	cp kernel/bin/$(PLATFORM)/kernel.inc temp/include/kernel.inc
 
 exploit:
@@ -120,6 +118,7 @@ exploit:
 
 userland: kernel directories buildpkgs license exploit
 	cp kernel/bin/$(PLATFORM)/kernel.rom bin/$(PLATFORM)/KnightOS-$(LANG).rom
+	git describe --dirty=+ > temp/etc/version
 	genkfs bin/$(PLATFORM)/KnightOS-$(LANG).rom temp
 ifndef savemockfs
 	@rm -rf temp
@@ -161,6 +160,9 @@ directories:
 	mkdir -p temp/etc
 	mkdir -p temp/home
 	mkdir -p temp/lib
+	mkdir -p temp/share
+	mkdir -p temp/include
+	mkdir -p temp/var
 
 clean:
 	@for f in $(PACKAGES) ; do \

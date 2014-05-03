@@ -27,6 +27,7 @@ jumpTable:
     jp showMessage
     jp showError
     jp showErrorAndQuit
+    jp open
     .db 0xFF
 
 ; Same as kernel getKey, but listens for
@@ -72,7 +73,7 @@ launchThreadList:
     or 1
     ret
 
-;; drawWindow [applib]
+;; drawWindow [corelib]
 ;;  Draws a window layout on the screen buffer.
 ;; Inputs:
 ;;  IY: Screen buffer
@@ -141,7 +142,7 @@ _:      pop af \ pop hl \ push hl \ push af
     pop de
     ret
 
-;; showMessage [applib]
+;; showMessage [corelib]
 ;;  Displays a message box on the screen buffer.
 ;; Inputs:
 ;;  HL: Message text
@@ -261,7 +262,7 @@ _:                      pcall(flushKeys)
     pop hl
     ret
 
-;; getCharacterInput [applib]
+;; getCharacterInput [corelib]
 ;;  Gets a key input from the user.
 ;; Outputs:
 ;;  A: ANSI character
@@ -389,7 +390,7 @@ getCharSet:
     ild(a, (charSet))
     ret
 
-;; showError [applib]
+;; showError [corelib]
 ;;  Displays a user-friendly error message if appliciable.
 ;; Inputs:
 ;;  A: Error code
@@ -426,7 +427,7 @@ showError_exitEarly:
     pop af
     ret
 
-;; showErrorAndQuit [applib]
+;; showErrorAndQuit [corelib]
 ;;  Displays a user-friendly error message, if applicable,
 ;;  then quits the current thread.  This function does not
 ;;  return if NZ and if A != 0.
@@ -440,6 +441,21 @@ showErrorAndQuit:
         icall(showError)
         jp exitThread
 
+;; open [corelib]
+;;  Opens a file with the associated application.
+;; Inputs:
+;;  DE: Path to file
+;;  A: 0 to block, 1 to launch asyncronously
+;; Outputs:
+;;  Z: Set on success, reset on failure
+;; Notes:
+;;  This checks to see if it's a KEXC, then looks in /etc/magic,
+;;  then /etc/extensions, and then if it looks like a text file, it
+;;  opens it with /etc/editor. If all of that fails, it returns NZ.
+open:
+    or 1 ; Temp, fail
+    ret
+
 #include "errors.asm"
 #include "characters.asm"
 
@@ -447,6 +463,12 @@ castlePath:
     .db "/bin/castle", 0
 threadlistPath:
     .db "/bin/threadlist", 0
+magicPath:
+    .db "/etc/magic", 0
+extensionsPath:
+    .db "/etc/extensions", 0
+editorPath:
+    .db "/etc/editor", 0
 
 castleSprite:
     .db 0b10101000

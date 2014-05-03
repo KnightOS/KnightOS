@@ -502,8 +502,30 @@ _:  kld(a, (totalFiles))
     kjp(doListing)
 
 openFile:
-    ; TODO: Ask corelib to open this file
-    ret
+    dec a ; TODO: Why?
+    add a, a
+    kld(hl, (fileList))
+    add l
+    ld l, a
+    jr nc, $+3
+    inc h
+    ld e, (hl)
+    inc hl
+    ld d, (hl)
+    ld a, 1 ; Nonblocking because we're just going to exit after it launches (probably)
+    corelib(open)
+    ; TODO: This is kind of broken
+    ; What we should do is launch the program castle-style, with a little bootstrap to
+    ; get back to this thread when it exits
+    ; There's some more weirdness here but I added /etc/launcher to help
+    ret z
+    ; It failed to open, complain to the user
+    kld(hl, openFailMessage)
+    kld(de, openFailOptions)
+    xor a
+    ld b, 0
+    corelib(showMessage)
+    kjp(freeAndLoopBack)
 
 listCallback:
     exx
@@ -594,3 +616,8 @@ deletionOptions:
     .db 2
     .db "Cancel", 0
     .db "Delete", 0
+openFailMessage:
+    .db "Sorry, this\nfile could not\nbe opened.", 0
+openFailOptions:
+    .db 1
+    .db "Dismiss", 0
