@@ -25,11 +25,35 @@ start:
 
         pcall(allocScreenBuffer)
         pcall(clearBuffer)
-        kld(hl, test)
-        ld de, 0
-        ld b, 0
-        pcall(drawStr)
+
+        ld de, 0x0006
+        ld hl, 96 << 8 | 6
+        pcall(drawLine)
     pop hl
+    ld de, 0
+    ld b, 0
+    pcall(drawStr)
+    ld a, ':'
+    pcall(drawChar)
+
+    ex de, hl
+    pcall(openFileRead)
+    ret nz
+    ; For testing purposes, we'll load the file into RAM
+    pcall(getStreamInfo)
+    inc bc
+    pcall(malloc)
+    ret nz
+    pcall(streamReadToEnd)
+    pcall(closeStream)
+
+    pcall(memSeekToEnd)
+    ld (ix), 0
+    pcall(memSeekToStart)
+    
+    push ix \ pop hl
+    ld b, 0
+    ld de, 0x000A
     pcall(drawStr)
 
     pcall(fastCopy)
@@ -40,5 +64,3 @@ start:
 
 corelibPath:
     .db "/lib/core", 0
-test:
-    .db "File: ", 0
