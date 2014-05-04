@@ -146,6 +146,9 @@ endif
 				PACKAGEPATH="$(PACKAGEPATH)";
 	@cd $<; \
 	cp -r bin/* "$(PKGREL)temp";
+	if [ -d bin/inc/ ]; then\
+		cp -ru bin/inc/* "$(PKGREL)inc";\
+	fi
 
 buildpkgs: directories $(PACKBUF)
 

@@ -3,7 +3,7 @@ LIBDIR:=$(OUTDIR)lib/
 INCDIR:=$(OUTDIR)include/
 ETCDIR:=$(OUTDIR)etc/
 
-all: $(LIBDIR)core $(INCDIR)corelib.inc $(ETCDIR)extensions $(ETCDIR)magic $(ETCDIR)editor
+all: $(LIBDIR)core $(INCDIR)corelib.inc $(ETCDIR)extensions $(ETCDIR)magic
 
 $(LIBDIR)core: corelib.asm characters.asm errors.asm
 	mkdir -p $(LIBDIR)
@@ -22,10 +22,6 @@ $(ETCDIR)magic:
 	# This is just an empty file by default
 	mkdir -p $(ETCDIR)
 	touch $(ETCDIR)magic
-
-$(ETCDIR)editor:
-	mkdir -p $(ETCDIR)
-	echo -n "/bin/textedit" > $(ETCDIR)editor
 
 clean:
 	rm -rf $(OUTDIR)
