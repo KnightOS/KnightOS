@@ -54,7 +54,7 @@ start:
     push ix \ pop hl
     ld b, 0
     ld de, 0x000A
-    pcall(drawStr)
+    pcall(wrapStr)
 
     pcall(fastCopy)
 
