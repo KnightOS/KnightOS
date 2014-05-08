@@ -30,6 +30,7 @@ EMUPREFIX=wine
 endif
 
 TI73: PLATFORM := TI73
+TI73: DEVICE := TI-73
 TI73: FAT := 17
 TI73: PRIVEDGED := 1C
 TI73: KEY := 02
@@ -38,6 +39,7 @@ TI73: EXPLOIT := 0
 TI73: userland
 
 TI83p: PLATFORM := TI83p
+TI83p: DEVICE := TI-83+
 TI83p: FAT := 17
 TI83p: PRIVEDGED := 1C
 TI83p: KEY := 04
@@ -46,6 +48,7 @@ TI83p: EXPLOIT := 0
 TI83p: userland
 
 TI83pSE: PLATFORM := TI83pSE
+TI83pSE: DEVICE := TI-83+SE
 TI83pSE: FAT := 77
 TI83pSE: PRIVEDGED := 7C
 TI83pSE: KEY := 04
@@ -54,6 +57,7 @@ TI83pSE: EXPLOIT := 0
 TI83pSE: userland
 
 TI84p: PLATFORM := TI84p
+TI84p: DEVICE := TI-84+
 TI84p: FAT := 37
 TI84p: PRIVEDGED := 3C
 TI84p: KEY := 0A
@@ -62,6 +66,7 @@ TI84p: EXPLOIT := 0
 TI84p: userland
 
 TI84pSE: PLATFORM := TI84pSE
+TI84pSE: DEVICE := TI-84+SE
 TI84pSE: FAT := 77
 TI84pSE: PRIVEDGED := 7C
 TI84pSE: KEY := 0A
@@ -76,6 +81,7 @@ TI84pSE: EXPLOIT := 0
 TI84pSE: userland
 
 TI84pCSE: PLATFORM := TI84pCSE
+TI84pCSE: DEVICE := TI-84+CSE
 TI84pCSE: FAT := F7
 TI84pCSE: PRIVEDGED := FC
 TI84pCSE: KEY := 0F
@@ -132,11 +138,11 @@ endif
 		dd bs=1 if=bin/exploit.bin of=bin/$(PLATFORM)/KnightOS-$(LANG).rom seek=$(EXPLOIT_ADDRESS) conv=notrunc;\
 		echo -ne "\xFF" | dd bs=1 of=bin/$(PLATFORM)/KnightOS-$(LANG).rom seek=38 conv=notrunc;\
 		echo -ne "\xFF" | dd bs=1 of=bin/$(PLATFORM)/KnightOS-$(LANG).rom seek=86 conv=notrunc;\
-		$(ASPREFIX)kernel/build/CreateUpgrade.exe --signature exploit/signature.bin $(PLATFORM) bin/$(PLATFORM)/KnightOS-$(LANG).rom kernel/build/$(KEY).key \
+		mktiupgrade -p -s exploit/signature.bin -d $(DEVICE) -n $(KEY) bin/$(PLATFORM)/KnightOS-$(LANG).rom \
 				bin/$(PLATFORM)/KnightOS-$(LANG).$(UPGRADEEXT) 00 01 02 03 04 05 06 $(PRIVLEDGED) $(EXPLOIT_PAGES);\
 		rm temp.rom;\
 	else\
-		$(ASPREFIX)kernel/build/CreateUpgrade.exe $(PLATFORM) bin/$(PLATFORM)/KnightOS-$(LANG).rom kernel/build/$(KEY).key \
+		mktiupgrade -p -d $(DEVICE) -k kernel/build/$(KEY).key bin/$(PLATFORM)/KnightOS-$(LANG).rom \
 			bin/$(PLATFORM)/KnightOS-$(LANG).$(UPGRADEEXT) 00 01 02 03 04 05 06 $(FAT) $(PRIVEDGED);\
 	fi
 

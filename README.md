@@ -16,6 +16,7 @@ an existing repository.
 You will also need the dependencies. Follow the instructions for each dependency:
 
 * [genkfs](https://github.com/KnightOS/genkfs)
+* [mktiupgrade](https://github.com/KnightOS/mktiupgrade)
 
 There are AUR packages for those of you on Arch Linux.
 
