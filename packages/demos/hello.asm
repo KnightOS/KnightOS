@@ -49,9 +49,14 @@ redraw:
 _:  pcall(fastCopy)
     pcall(flushKeys)
     corelib(appWaitKey)
+    cp kPRGM
+    jr z, .kernelDebugger
     cp kMode
     jr nz, -_
     ret
+.kernelDebugger:
+    rst 0x30
+    jr -_
 
 helloString:
     .db lang_helloString, 0
