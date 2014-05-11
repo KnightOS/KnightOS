@@ -139,7 +139,7 @@ endif
 		echo -ne "\xFF" | dd bs=1 of=bin/$(PLATFORM)/KnightOS-$(LANG).rom seek=38 conv=notrunc;\
 		echo -ne "\xFF" | dd bs=1 of=bin/$(PLATFORM)/KnightOS-$(LANG).rom seek=86 conv=notrunc;\
 		mktiupgrade -p -s exploit/signature.bin -d $(DEVICE) -n $(KEY) bin/$(PLATFORM)/KnightOS-$(LANG).rom \
-				bin/$(PLATFORM)/KnightOS-$(LANG).$(UPGRADEEXT) 00 01 02 03 04 05 06 $(PRIVLEDGED) $(EXPLOIT_PAGES);\
+				bin/$(PLATFORM)/KnightOS-$(LANG).$(UPGRADEEXT) 00 01 02 03 04 05 06 $(PRIVEDGED) $(EXPLOIT_PAGES);\
 		rm temp.rom;\
 	else\
 		mktiupgrade -p -d $(DEVICE) -k kernel/build/$(KEY).key bin/$(PLATFORM)/KnightOS-$(LANG).rom \
