@@ -67,39 +67,37 @@
 .db 0x20, 0x54, 0x2f, 0x54, 0x29, 0x54, 0x29, 0x58
 .db 0x2f, 0x50, 0x20, 0x40, 0x2a, 0x40, 0x25, 0x40
 
-#include "castle.config.lang"
-
 graphStr:
-    .db lang_graph, 0
+    .db "Graph", 0
 mathStr:
-    .db lang_math, 0
+    .db "Math", 0
 textEditStr:
-    .db lang_textEditor, 0
+    .db "Text Editor", 0
 calendarStr:
-    .db lang_calendar, 0
+    .db "Calendar", 0
 fileManagerStr:
-    .db lang_fileManager, 0
+    .db "File Manager", 0
 matrixEditorStr:
-    .db lang_matrixEditor, 0
+    .db "Matrix Editor", 0
 connectStr:
-    .db lang_connectToPC, 0
+    .db "Connect to PC", 0
 settingsStr:
-    .db lang_settings, 0
+    .db "Settings", 0
 todoPath:
     .db "/does/not/exist", 0
 
 helloStr:
-    .db lang_hello, 0
+    .db "Hello World!", 0
 helloPath:
     .db "/bin/hello", 0
     
 demoStr:
-    .db lang_demo, 0
+    .db "Demo", 0
 demoPath:
     .db "/bin/gfxdemo", 0
 
 countStr:
-    .db lang_countingTest, 0
+    .db "Counting Demo", 0
 countPath:
     .db "/bin/count", 0
     

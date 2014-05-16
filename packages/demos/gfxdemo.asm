@@ -3,7 +3,6 @@
 #include "kernel.inc"
 #include "corelib.inc"
 #include "fx3dlib.inc"
-#include "gfxdemo.lang"
     .db "KEXC"
     .db KEXC_ENTRY_POINT
     .dw start
@@ -237,9 +236,9 @@ indicies:
     .db 0, 4, 1, 5, 2, 6, 3, 7
     
 exitString:
-    .db lang_exitString, 0
+    .db "Press [MODE] to exit.", 0
 windowTitle:
-    .db lang_windowTitle, 0
+    .db "Graphical Demo", 0
 corelibPath:
     .db "/lib/corelib", 0
 fx3dlibPath:

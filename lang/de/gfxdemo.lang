@@ -1,6 +1,0 @@
-; German language file for /bin/demo
-
-; Text
-#define lang_description "Demo"
-#define lang_exitString "Drücke [Clear] zum Beenden."
-#define lang_windowTitle "Demo"

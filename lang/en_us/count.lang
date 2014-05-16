@@ -1,6 +1,0 @@
-; English language file for /etc/castle.config
-
-; Text
-#define lang_description "Counting Demo"
-#define lang_hello "Press [MODE] to exit."
-#define lang_windowTitle "Counting Demo"

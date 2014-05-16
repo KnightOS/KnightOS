@@ -1,6 +1,0 @@
-; Dutch language file for /bin/hello
-
-; Text
-#define lang_description "Hallo wereld"
-#define lang_helloString "Hallo, wereld!\nDruk op [Clear] om af te sluiten."
-#define lang_windowTitle "Hallo wereld"

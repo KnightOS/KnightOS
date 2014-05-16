@@ -1,4 +1,0 @@
-; German language file for /bin/todo
-
-; Text
-#define lang_todo "Diese Funktion wurde noch nicht implementiert.\nBeliebige Taste zum Beenden drücken."

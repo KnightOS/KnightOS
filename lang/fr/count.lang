@@ -1,6 +1,0 @@
-; English language file for /etc/castle.config
-
-; Text
-#define lang_description "Demo de comptage"
-#define lang_hello "[Clear] pour quitter."
-#define lang_windowTitle "Demo de comptage"

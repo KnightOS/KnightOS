@@ -1,6 +1,0 @@
-; Dutch language file for /bin/demo
-
-; Text
-#define lang_description "Demo"
-#define lang_exitString "Druk op [Clear] om af te sluiten."
-#define lang_windowTitle "Demo"

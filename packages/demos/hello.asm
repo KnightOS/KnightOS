@@ -1,6 +1,5 @@
 #include "kernel.inc"
 #include "corelib.inc"
-#include "hello.lang"
     .db "KEXC"
     .db KEXC_ENTRY_POINT
     .dw start
@@ -59,9 +58,9 @@ _:  pcall(fastCopy)
     jr -_
 
 helloString:
-    .db lang_helloString, 0
+    .db "Hello, world!", 0
 windowTitle:
-    .db lang_windowTitle, 0
+    .db "Hello, world!", 0
 kernelString:
     .db "\n\nKernel Version: \n", 0
 bootCodeString:

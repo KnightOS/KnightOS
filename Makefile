@@ -2,9 +2,6 @@
 
 # Common variables
 
-# Set lang with `make [platform] LANG=[langauge]`
-LANG=en_us
-
 # Package configuration
 #
 # To manually specify packages to build, uncomment this: 
@@ -98,20 +95,20 @@ TI84pCSE: userland
 AS=$(ASPREFIX)kernel/build/sass.exe
 EMU=$(EMUPREFIX)kernel/build/Wabbitemu.exe
 ASFLAGS=--encoding "Windows-1252"
-INCLUDE=inc/;kernel/bin/$(PLATFORM);lang/$(LANG)/;temp/include/;
+INCLUDE=inc/;kernel/bin/$(PLATFORM);temp/include/;
 .DEFAULT_GOAL=TI84pSE
 
 PACKAGE_AS=$(ASPREFIX)$(PKGREL)kernel/build/sass.exe
-PACKAGE_INCLUDE=$(PKGREL)inc/;$(PKGREL)lang/$(LANG)/;$(PKGREL)kernel/bin/$(PLATFORM);
+PACKAGE_INCLUDE=$(PKGREL)inc/;$(PKGREL)kernel/bin/$(PLATFORM);
 
 .PHONY: kernel userland run runcolor buildpkgs license directories clean %.package exploit \
 	TI73 TI83p TI83pSE TI84p TI84pSE TI84pCSE
 
 run: TI84pSE
-	$(EMU) bin/TI84pSE/KnightOS-$(LANG).rom
+	$(EMU) bin/TI84pSE/KnightOS-$(PLATFORM).rom
 
 runcolor: TI84pCSE
-	$(EMU) bin/TI84pCSE/KnightOS-$(LANG).rom
+	$(EMU) bin/TI84pCSE/KnightOS-$(PLATFORM).rom
 
 kernel: directories
 	cd kernel && make $(PLATFORM)
@@ -123,27 +120,27 @@ exploit:
 	fi
 
 userland: kernel directories buildpkgs license exploit
-	cp kernel/bin/$(PLATFORM)/kernel.rom bin/$(PLATFORM)/KnightOS-$(LANG).rom
+	cp kernel/bin/$(PLATFORM)/kernel.rom bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom
 	echo "KnightOS version:" >> temp/etc/version
 	git describe --dirty=+ >> temp/etc/version
-	genkfs bin/$(PLATFORM)/KnightOS-$(LANG).rom temp
+	genkfs bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom temp
 ifndef savemockfs
 	@rm -rf temp
 endif
 	if [ $(EXPLOIT) -eq 1 ]; then\
-		cp bin/$(PLATFORM)/KnightOS-$(LANG).rom temp.rom;\
-		dd bs=1 if=temp.rom of=bin/$(PLATFORM)/KnightOS-$(LANG).rom skip=$(EXPLOIT_ADDRESS_FAT) seek=$(EXPLOIT_ADDRESS_FAT_BACKUP) conv=notrunc;\
-		dd bs=1 if=exploit/pageF3_exploit.bin of=bin/$(PLATFORM)/KnightOS-$(LANG).rom seek=$(EXPLOIT_ADDRESS_F3) conv=notrunc;\
-		dd bs=1 if=exploit/pageF4_exploit.bin of=bin/$(PLATFORM)/KnightOS-$(LANG).rom seek=$(EXPLOIT_ADDRESS_F4) conv=notrunc;\
-		dd bs=1 if=bin/exploit.bin of=bin/$(PLATFORM)/KnightOS-$(LANG).rom seek=$(EXPLOIT_ADDRESS) conv=notrunc;\
-		echo -ne "\xFF" | dd bs=1 of=bin/$(PLATFORM)/KnightOS-$(LANG).rom seek=38 conv=notrunc;\
-		echo -ne "\xFF" | dd bs=1 of=bin/$(PLATFORM)/KnightOS-$(LANG).rom seek=86 conv=notrunc;\
-		mktiupgrade -p -s exploit/signature.bin -d $(DEVICE) -n $(KEY) bin/$(PLATFORM)/KnightOS-$(LANG).rom \
-				bin/$(PLATFORM)/KnightOS-$(LANG).$(UPGRADEEXT) 00 01 02 03 04 05 06 $(PRIVEDGED) $(EXPLOIT_PAGES);\
+		cp bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom temp.rom;\
+		dd bs=1 if=temp.rom of=bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom skip=$(EXPLOIT_ADDRESS_FAT) seek=$(EXPLOIT_ADDRESS_FAT_BACKUP) conv=notrunc;\
+		dd bs=1 if=exploit/pageF3_exploit.bin of=bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom seek=$(EXPLOIT_ADDRESS_F3) conv=notrunc;\
+		dd bs=1 if=exploit/pageF4_exploit.bin of=bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom seek=$(EXPLOIT_ADDRESS_F4) conv=notrunc;\
+		dd bs=1 if=bin/exploit.bin of=bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom seek=$(EXPLOIT_ADDRESS) conv=notrunc;\
+		echo -ne "\xFF" | dd bs=1 of=bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom seek=38 conv=notrunc;\
+		echo -ne "\xFF" | dd bs=1 of=bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom seek=86 conv=notrunc;\
+		mktiupgrade -p -s exploit/signature.bin -d $(DEVICE) -n $(KEY) bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom \
+				bin/$(PLATFORM)/KnightOS-$(PLATFORM).$(UPGRADEEXT) 00 01 02 03 04 05 06 $(PRIVEDGED) $(EXPLOIT_PAGES);\
 		rm temp.rom;\
 	else\
-		mktiupgrade -p -d $(DEVICE) -k kernel/build/$(KEY).key bin/$(PLATFORM)/KnightOS-$(LANG).rom \
-			bin/$(PLATFORM)/KnightOS-$(LANG).$(UPGRADEEXT) 00 01 02 03 04 05 06 $(FAT) $(PRIVEDGED);\
+		mktiupgrade -p -d $(DEVICE) -k kernel/build/$(KEY).key bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom \
+			bin/$(PLATFORM)/KnightOS-$(PLATFORM).$(UPGRADEEXT) 00 01 02 03 04 05 06 $(FAT) $(PRIVEDGED);\
 	fi
 
 %.package: %

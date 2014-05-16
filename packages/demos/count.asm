@@ -1,7 +1,6 @@
 .nolist
 #include "kernel.inc"
 #include "corelib.inc"
-#include "count.lang"
 .list
     .db "KEXC"
     .db KEXC_ENTRY_POINT
@@ -50,8 +49,8 @@ _:  push bc
     ret
 
 helloString:
-    .db lang_hello, 0
+    .db "Press [MODE] to exit.", 0
 windowTitle:
-    .db lang_windowTitle, 0
+    .db "Counting Demo", 0
 corelibPath:
     .db "/lib/core", 0

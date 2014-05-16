@@ -1,6 +1,5 @@
 #include "kernel.inc"
 #include "corelib.inc"
-#include "castle.lang"
     .db "KEXC"
     .db KEXC_ENTRY_POINT
     .dw start
@@ -292,8 +291,8 @@ threadlist:
 corelibPath:
     .db "/lib/core", 0
 confirmMessage:
-    .db lang_confirmShutdown, 0
+    .db "Are you sure?\nUnsaved data\nmay be lost.", 0
 shutdownOptions:
     .db 2
-    .db lang_no, 0
-    .db lang_yes, 0
+    .db "No", 0
+    .db "Yes", 0

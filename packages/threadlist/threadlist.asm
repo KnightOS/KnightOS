@@ -1,5 +1,4 @@
 #include "kernel.inc"
-#include "threadlist.lang"
     .db "KEXC"
     .db KEXC_ENTRY_POINT
     .dw start
@@ -196,7 +195,7 @@ launchCastle:
 noThreads:
     kcall(drawInterface)
     ld b, 0
-    ld de, lang_noPrograms_position
+    ld de, (1 << 8) + 12
     kld(hl, noProgramsStr)
     pcall(drawStr)
 
@@ -338,15 +337,15 @@ _:    ld a, 8
     pcall(putSpriteOR)
 
     kld(hl, backStr)
-    ld de, lang_castle_position
+    ld de, 9 * 256 + 58
     pcall(drawStr)
 
     kld(hl, optionsStr)
-    ld de, lang_options_position
+    ld de, 64 * 256 + 58
     pcall(drawStr)
 
     kld(hl, runningProgramsStr)
-    ld de, lang_runningPrograms_position
+    ld de, 1 * 256 + 4
     pcall(drawStr)
 
     ld hl, 0x000A
@@ -363,14 +362,14 @@ drawOptions:
     ld de, 0x593A
     pcall(putSpriteOR)
 
-    ld e, 55 - (61 - (lang_forceQuit_position >> 8))
+    ld e, 55 - (61 - ((61 * 256 + 50) >> 8)) ; TODO: Wat
     ld l, 48
-    ld c, 96 - 54 + (61 - (lang_forceQuit_position >> 8))
+    ld c, 96 - 54 + (61 - ((61 * 256 + 50) >> 8))
     ld b, 56 - 47
     pcall(rectOR)
-    ld e, 56 - (61 - (lang_forceQuit_position >> 8))
+    ld e, 56 - (61 - ((61 * 256 + 50) >> 8))
     ld l, 49
-    ld c, 95 - 55 + (61 - (lang_forceQuit_position >> 8))
+    ld c, 95 - 55 + (61 - ((61 * 256 + 50) >> 8))
     ld b, 55 - 48
     pcall(rectXOR)
     ld e, 87
@@ -383,12 +382,12 @@ drawOptions:
     pcall(setPixel)
 
     kld(hl, forceQuitStr)
-    ld de, lang_forceQuit_position
+    ld de, 61 * 256 + 50
     pcall(drawStr)
 
     kld(hl, selectionIndicatorSprite)
     ld b, 5
-    ld de, ((57  - (61 - (lang_forceQuit_position >> 8))) * 256) + 50
+    ld de, ((57  - (61 - ((61 * 256 + 50) >> 8))) * 256) + 50
     pcall(putSpriteOR)
     ret
 
@@ -456,15 +455,15 @@ moreThreadsDownSprite: ; 8x3
     .db 0b00100000
 
 backStr:
-    .db lang_str_castle, 0
+    .db "Castle", 0
 optionsStr:
-    .db lang_str_options, 0
+    .db "Options", 0
 runningProgramsStr:
-    .db lang_str_runningPrograms, 0
+    .db "Running Programs", 0
 noProgramsStr:
-    .db lang_str_noPrograms, 0
+    .db "No programs running!", 0
 forceQuitStr:
-    .db lang_str_forceQuit, 0
+    .db "Force Quit", 0
 
 totalThreads:
     .db 0

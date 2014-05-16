@@ -73,15 +73,15 @@ drawHome:
     ld de, 0x353B
     pcall(putSpriteOR)
 
-    ld de, lang_more_position
+    ld de, 0x093A
     kld(hl, moreString)
     pcall(drawStr)
 
-    ld de, lang_menu_position
+    ld de, 0x253A
     kld(hl, menuString)
     pcall(drawStr)
 
-    ld de, lang_running_position
+    ld de, 0x3E3A
     kld(hl, runningString)
     pcall(drawStr)
     ret
@@ -247,15 +247,15 @@ drawPowerMenu:
     pcall(rectXOR)
 
     kld(hl, sleepString)
-    ld de, lang_sleep_position
+    ld de, 0x2126
     pcall(drawStr)
 
     kld(hl, shutdownString)
-    ld de, lang_shutdown_position
+    ld de, 0x212C
     pcall(drawStr)
 
     kld(hl, restartString)
-    ld de, lang_restart_position
+    ld de, 0x2132
     pcall(drawStr)
 
     kld(hl, menuArrowSprite)
@@ -387,31 +387,31 @@ emptySlotIcon: ; 16x16
     .db 0b11010101, 0b01010101
 
 moreString:
-    .db lang_more, 0
+    .db "More", 0
 runningString:
-    .db lang_running, 0
+    .db "Running", 0
 menuString:
-    .db lang_menu, 0
+    .db "Menu", 0
 backString:
-    .db lang_back, 0
+    .db "Back", 0
 optionsString:
-    .db lang_options, 0
+    .db "Options", 0
 addToCastleString:
-    .db lang_addToCastle, 0
+    .db "Add to Castle", 0
 removeFromCastleString:
-    .db lang_removeFromCastle, 0
+    .db "Remove from Castle", 0
 sleepString:
-    .db lang_sleep, 0
+    .db "Sleep", 0
 shutdownString:
-    .db lang_shutDown, 0
+    .db "Shut Down", 0
 restartString:
-    .db lang_restart, 0
+    .db "Restart", 0
 noProgramsInstalledString:
-    .db lang_noPrograms, 0
+    .db "No programs installed!", 0
 configPath:
     .db "/etc/castle.conf", 0
 naString:
-    .db lang_nonApp, 0
+    .db "[n/a]", 0
 #ifdef CLOCK
 dummyTimeString:
     .db "12:00 AM", 0

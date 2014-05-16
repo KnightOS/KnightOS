@@ -1,6 +1,0 @@
-; English language file for /bin/demo
-
-; Text
-#define lang_description "Graphical Demo"
-#define lang_exitString "Press [MODE] to exit."
-#define lang_windowTitle "Graphical Demo"
