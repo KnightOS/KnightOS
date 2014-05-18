@@ -199,7 +199,25 @@ _:  pop af
     ld h, (ix + 1)
     pcall(drawStr)
     push bc
-        ld b, 6
+        or a
+        jr z, _
+        ; File size
+        pcall(stringLength)
+        or a
+        adc hl, bc
+        inc hl
+        push af
+            push de
+                ld e, (hl)
+                inc hl
+                ld d, (hl)
+                inc hl
+                ld a, (hl)
+                ex de, hl
+            pop de
+            kcall(drawFileSize)
+        pop af
+_:      ld b, 6
         or a
         jr z, _
         kld(hl, fileIcon)
@@ -543,9 +561,35 @@ openFile:
     corelib(showMessage)
     kjp(freeAndLoopBack)
 
+; AHL: File size
+; E: Y pos
+drawFileSize:
+    ; TODO: Files >65535 bytes
+    ld d, 96 - 11
+    push bc
+        ld b, 0
+_:      ld c, 10
+        pcall(divHLbyC)
+        add a, '0'
+        pcall(drawChar)
+        ld a, -8
+        add a, d
+        ld d, a
+        ld c, 0
+        pcall(cpHLBC)
+        jr nz, -_
+    pop bc
+    ret
+
 listCallback:
+    push hl
     exx
+    pop hl
         push bc
+            cp fsFile
+            jr z, _
+
+            ; Handle directory
             ld hl, kernelGarbage
             pcall(stringLength)
             inc bc ; Include delimiter
@@ -553,9 +597,6 @@ listCallback:
             push ix \ pop de
             ldir
 
-            cp fsFile
-            jr z, _
-            ; Handle directory
             kld(hl, (directoryList))
             push ix \ pop de
             ld (hl), e
@@ -568,6 +609,29 @@ listCallback:
     exx
     ret
 _:          ; Handle file
+            push hl
+                ld hl, kernelGarbage
+                pcall(stringLength)
+                ld a, 4
+                add c \ ld c, a \ jr nc, $+3 \ inc b ; Add delimter, file size
+                pcall(malloc) ; TODO: Handle out of memory (how?)
+                push ix \ pop de
+                dec bc \ dec bc \ dec bc
+                ldir
+            pop hl
+            ; File size
+            ld bc, -6
+            or a
+            adc hl, bc
+            ld a, (hl)
+            ld (de), a
+            dec hl \ inc de
+            ld a, (hl)
+            ld (de), a
+            dec hl \ inc de
+            ld a, (hl)
+            ld (de), a
+
             kld(hl, (fileList))
             push ix \ pop de
             ld (hl), e
