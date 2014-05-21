@@ -31,40 +31,17 @@ redraw:
     ld de, 0x0208
     kld(hl, helloString)
     pcall(drawStr)
-
-    kld(hl, kernelString)
-    pcall(drawStr)
-
-    ld hl, kernelVersion
-    pcall(drawStr)
-    
-    kld(hl, bootCodeString)
-    pcall(drawStr)
-    
-    pcall(getBootCodeVersionString)
-    pcall(drawStr)
-    push hl \ pop ix
-    pcall(free)
     
 _:  pcall(fastCopy)
     pcall(flushKeys)
     corelib(appWaitKey)
-    cp kPRGM
-    jr z, .kernelDebugger
     cp kMode
-    jr nz, -_
-    ret
-.kernelDebugger:
-    rst 0x30
+    ret z
     jr -_
 
 helloString:
-    .db "Hello, world!", 0
+    .db "Hello, world!\nPress [MODE] to exit.", 0
 windowTitle:
     .db "Hello, world!", 0
-kernelString:
-    .db "\n\nKernel Version: \n", 0
-bootCodeString:
-    .db "\n\nBoot Code Version: \n", 0
 corelibPath:
     .db "/lib/core", 0

@@ -121,8 +121,7 @@ exploit:
 
 userland: kernel directories buildpkgs license exploit
 	cp kernel/bin/$(PLATFORM)/kernel.rom bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom
-	echo "KnightOS version:" >> temp/etc/version
-	git describe --dirty=+ >> temp/etc/version
+	git describe --dirty=+ > temp/etc/version
 	genkfs bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom temp
 ifndef savemockfs
 	@rm -rf temp
