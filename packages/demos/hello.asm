@@ -43,6 +43,7 @@ redraw:
     
     pcall(getBootCodeVersionString)
     pcall(drawStr)
+    push hl \ pop ix
     pcall(free)
     
 _:  pcall(fastCopy)
