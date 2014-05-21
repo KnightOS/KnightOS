@@ -1,5 +1,9 @@
 # Contributing to KnightOS
 
+Everyone who wishes to be involved in KnightOS is strongly encouraged to join the IRC channel and
+chat with others involved in the project. You can join at
+[#knightos on irc.freenode.net](http://webchat.freenode.net/?channels=knightos&uio=d4).
+
 If you wish to contribute, please create a fork and submit pull requests. If your pull requests are
 frequent and high-quality and you wish to have a deeper role in the project, you should get in touch
 and you may be granted access to the repository and assigned tasks.
