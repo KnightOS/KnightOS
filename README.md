@@ -6,6 +6,8 @@ in a Unix-like enviornment. KnightOS is written entirely in z80 assembly, with a
 built toolchain. Additionally, the [KnightOS kernel](https://github.com/KnightSoft/kernel)
 is standalone, and you can use it as the basis for your own powerful operating systems.
 
+You can download the latest (experimental) version here: http://www.knightos.org/download/
+
 ## Building KnightOS
 
 To build KnightOS from source, make sure you have all git submodules first. If you haven't
