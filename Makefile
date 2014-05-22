@@ -105,10 +105,10 @@ PACKAGE_INCLUDE=$(PKGREL)inc/;$(PKGREL)kernel/bin/$(PLATFORM);
 	TI73 TI83p TI83pSE TI84p TI84pSE TI84pCSE
 
 run: TI84pSE
-	$(EMU) bin/TI84pSE/KnightOS-$(PLATFORM).rom
+	$(EMU) bin/TI84pSE/KnightOS-TI84pSE.rom
 
 runcolor: TI84pCSE
-	$(EMU) bin/TI84pCSE/KnightOS-$(PLATFORM).rom
+	$(EMU) bin/TI84pCSE/KnightOS-TI84pCSE.rom
 
 kernel: directories
 	cd kernel && make $(PLATFORM)
