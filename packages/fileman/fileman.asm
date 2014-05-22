@@ -169,7 +169,7 @@ _:      cp h
         jr z, _
         dec h
         inc ix \ inc ix
-        dec b
+        dec c
         jr nz, -_
 _:      ld a, c
         ld b, a
@@ -185,14 +185,17 @@ _:      ld a, c
     push af
         ld a, e
         cp 0x38 ; Stop drawing at Y=0x38
-        jr nz, _
+        jr nz, ++_
+        ld a, b
+        or a
+        jr z, _
         kld(hl, downCaretIcon)
         ld b, 3
         push de
             ld de, 0x5934
             pcall(putSpriteOR)
         pop de
-    pop af
+_:  pop af
     ret
 _:  pop af
     ld l, (ix)
