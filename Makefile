@@ -18,14 +18,6 @@ PACKAGEPATH=packages
 # Where packages are placed relative to the top directory
 PKGREL=../../
 
-ifeq ($(OS),Windows_NT)
-ASPREFIX=
-EMUPREFIX=
-else
-ASPREFIX=mono 
-EMUPREFIX=wine 
-endif
-
 TI73: PLATFORM := TI73
 TI73: DEVICE := TI-73
 TI73: FAT := 17
@@ -92,13 +84,13 @@ TI84pCSE: EXPLOIT_ADDRESS_FAT := 4046848
 TI84pCSE: EXPLOIT_ADDRESS_FAT_BACKUP := 3850240
 TI84pCSE: userland
 
-AS=$(ASPREFIX)kernel/build/sass.exe
-EMU=$(EMUPREFIX)kernel/build/Wabbitemu.exe
+AS=sass
+EMU=wabbitemu
 ASFLAGS=--encoding "Windows-1252"
 INCLUDE=inc/;kernel/bin/$(PLATFORM);temp/include/;
 .DEFAULT_GOAL=TI84pSE
 
-PACKAGE_AS=$(ASPREFIX)$(PKGREL)kernel/build/sass.exe
+PACKAGE_AS=sass
 PACKAGE_INCLUDE=$(PKGREL)inc/;$(PKGREL)kernel/bin/$(PLATFORM);
 
 .PHONY: kernel userland run runcolor buildpkgs license directories clean %.package exploit \
