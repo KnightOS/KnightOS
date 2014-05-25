@@ -8,7 +8,8 @@
     .db KEXC_KERNEL_VER
     .db 0, 6
     .db KEXC_NAME
-    .dw name
+name_ptr:
+    .dw titlePrefix
     .db KEXC_HEADER_END
 name:
     .db "File Manager", 0
@@ -34,6 +35,15 @@ start:
     cpdr
     inc hl
     kld((currentPath), hl)
+    push ix \ pop hl
+    push hl
+        pcall(getCurrentThreadId)
+        pcall(getEntryPoint)
+        ld b, h \ ld c, l
+    pop hl
+    or a
+    sbc hl, bc
+    kld((name_ptr), hl)
 
     ; Allocate space for fileList and directoryList
     ld bc, 512 ; Max 256 subdirectories and 256 files per directory
