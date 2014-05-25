@@ -11,8 +11,6 @@
 name_ptr:
     .dw titlePrefix
     .db KEXC_HEADER_END
-name:
-    .db "File Manager", 0
 start:
     pcall(getLcdLock)
     pcall(getKeypadLock)
