@@ -150,6 +150,11 @@ drawList:
     pcall(memSeekToStart)
     push ix \ pop hl
     ld a, 0b00000100
+    push bc
+        ld bc, initialPath - titlePrefix
+        or a
+        add hl, bc
+    pop bc
     corelib(drawWindow)
 
     ld de, 0x0808
@@ -677,7 +682,9 @@ upText:
 dotdot:
     .db "..", 0
 titlePrefix:
-    .db "File Manager: /home", 0
+    .db "File Manager: "
+initialPath:
+    .db "/home", 0
 titlePrefixEnd:
 directoryIcon:
     .db 0b11100000
