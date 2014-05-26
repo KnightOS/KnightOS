@@ -30,7 +30,7 @@ start:
     ex de, hl
     ld a, '/'
     ld bc, 0
-    cpdr
+    cpdr \ cpdr ; Note: this prevents us from having / be the initial path
     inc hl
     kld((currentPath), hl)
     push ix \ pop hl
@@ -408,20 +408,23 @@ idleLoop:
     ld d, (hl)
     ld a, (de)
     cp '.'
-    jr z, .handleParent_noPop
+    kjp(z, .handleParent_noPop)
     kld(hl, (currentPath))
     xor a
     ld bc, 0
     cpir
     dec hl
-    ; TODO: Support trailing slashes in low-level filesystem driver
-    ;ld a, '/'
-    ;ld (hl), a
-    ;inc hl
     ex de, hl
     pcall(stringLength)
     inc bc
     ldir
+    ex de, hl
+    dec hl
+    ld a, '/' ; Add trailing slash
+    ld (hl), a
+    inc hl
+    xor a
+    ld (hl), a
     kjp(freeAndLoopBack)
 .handleDelete:
         pop bc
@@ -461,13 +464,6 @@ idleLoop:
     ex de, hl
     pcall(stringLength)
     inc bc
-    ; TEMP (until we get trailing slashing into the path)
-    ex de, hl
-    ld a, '/'
-    ld (hl), a
-    inc hl
-    ex de, hl
-    ; /TEMP
     ldir
     kld(de, (currentPath))
     pcall(deleteFile)
@@ -492,11 +488,17 @@ idleLoop:
     pop bc
 .handleParent_noPop:
     kld(hl, (currentPath))
+    push hl \ pop de
+    pcall(stringLength)
+    add hl, bc
     ld a, '/'
-    cpdr
+    ld bc, 0
+    cpdr \ cpdr
+    inc hl \ inc hl
+    pcall(cpHLDE)
+    jr nz, _
     inc hl
-    inc hl
-    xor a
+_:  xor a
     ld (hl), a
     ;jr freeAndLoopBack
 
@@ -552,10 +554,7 @@ openFile:
     ld bc, 0
     cpir
     dec hl
-    ld a, '/'
-    ld (hl), a ; TODO: This won't be required after we support trailing /
     push hl
-        inc hl
         ex de, hl
         pcall(stringLength)
         inc bc
@@ -564,8 +563,6 @@ openFile:
         corelib(open)
     pop hl
     jr nz, .fail
-    xor a
-    ld (hl), a ; Remove slash from path
     ; TODO: Something?
     pcall(killCurrentThread)
 .fail:
@@ -684,7 +681,7 @@ dotdot:
 titlePrefix:
     .db "File Manager: "
 initialPath:
-    .db "/home", 0
+    .db "/home/", 0
 titlePrefixEnd:
 directoryIcon:
     .db 0b11100000

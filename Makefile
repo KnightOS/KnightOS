@@ -154,6 +154,8 @@ directories:
 	mkdir -p temp/bin
 	mkdir -p temp/etc
 	mkdir -p temp/home
+	mkdir -p temp/var/foo/bar
+	echo "Hi there" > temp/var/foo/bar/foobar
 	mkdir -p temp/lib
 	mkdir -p temp/share
 	mkdir -p temp/include
