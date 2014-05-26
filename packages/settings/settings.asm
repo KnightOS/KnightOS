@@ -95,7 +95,7 @@ etcVersion:
 windowTitle:
     .db "System Settings", 0
 systemVersionStr:
-    .db "System version:\n", 0
+    .db "KnightOS version:\n", 0
 kernelVersionStr:
     .db "Kernel version:\n", 0
 bootCodeVersionStr:
