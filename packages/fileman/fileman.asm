@@ -538,7 +538,7 @@ _:  kld(a, (totalFiles))
     kjp(doListing)
 
 openFile:
-    dec a ; TODO: Why?
+    sub b
     add a, a
     kld(hl, (fileList))
     add l
