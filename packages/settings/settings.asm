@@ -35,6 +35,7 @@ start:
     push de
         kld(de, etcVersion)
         pcall(openFileRead)
+        jr nz, .noVersion
         pcall(getStreamInfo)
         pcall(malloc)
         inc bc
@@ -47,6 +48,7 @@ start:
         ld (hl), a
         push ix \ pop hl
     pop de
+.writeVersion:
     ld b, 2
     inc d \ inc d \ inc d
     pcall(drawStr)
@@ -88,6 +90,11 @@ _:  pcall(fastCopy)
     jr nz, -_
     ret
 
+.noVersion:
+    pop de
+    kld(hl, notFoundStr)
+    jr .writeVersion
+
 corelibPath:
     .db "/lib/core", 0
 etcVersion:
@@ -102,6 +109,8 @@ bootCodeVersionStr:
     .db "Boot Code version:\n", 0
 backStr:
     .db "Back", 0
+notFoundStr:
+    .db "Not found\n", 0
 
 caretIcon:
     .db 0b10000000
