@@ -15,12 +15,7 @@ cloned the repository yet, use `git clone --recursive git://github.com/KnightSof
 to clone recursively. Otherwise, use `git submodule update --init` to clone submodules for
 an existing repository.
 
-You will also need the dependencies. Follow the instructions for each dependency:
-
-* [genkfs](https://github.com/KnightOS/genkfs)
-* [mktiupgrade](https://github.com/KnightOS/mktiupgrade)
-
-There are AUR packages for those of you on Arch Linux.
+You also need to install the kernel's dependencies. See instructions in the kernel readme.
 
 Once you have the source and submodules, run `make` from the root of the repository to build
 KnightOS for the TI-84+ SE. You may specify a target (i.e. `make TI83p`) to build for another
