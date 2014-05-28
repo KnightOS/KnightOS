@@ -216,14 +216,18 @@ projectVertex:
             ; y = ry * FOV / rz
             ld b, h
             ild(de, (currentVertex + 2))
-            pcall(DEMulBC)
+            push de
+                pcall(mul16By16To32)
+            pop de
             sdiv64()
             ex (sp), hl
             ; x = rx * FOV / rz
             ld c, l
             ld b, h
             ild(de, (currentVertex))
-            pcall(DEMulBC)
+            push de
+                pcall(mul16By16To32)
+            pop de
             sdiv64()
         pop de
     pop af
