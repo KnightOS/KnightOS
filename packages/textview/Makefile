@@ -12,7 +12,7 @@ $(BINDIR)textview: textview.asm
 
 $(ETCDIR)editor:
 	mkdir -p $(ETCDIR)
-	echo -n "/etc/textview" > $(ETCDIR)editor
+	echo -n "/bin/textview" > $(ETCDIR)editor
 
 clean:
 	rm -rf $(OUTDIR)
