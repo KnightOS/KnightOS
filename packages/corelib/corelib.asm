@@ -513,9 +513,9 @@ open:
             ld (ix), 0
         pop ix
 
-        ; Read the file contents
         pcall(streamReadBuffer)
         jr nz, .fail
+        pcall(closeStream)
     push ix \ pop de \ pop hl
 
     ; Launch the text editor
