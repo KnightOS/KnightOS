@@ -563,8 +563,10 @@ openFile:
         corelib(open)
     pop hl
     jr nz, .fail
-    ; TODO: Something?
-    pcall(killCurrentThread)
+    xor a
+    ld (hl), a
+    pcall(suspendCurrentThread)
+    kjp(freeAndLoopBack)
 .fail:
     ; It failed to open, complain to the user
     kld(hl, openFailMessage)
