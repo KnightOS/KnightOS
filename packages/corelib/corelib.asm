@@ -474,9 +474,16 @@ open:
         pcall(compareStrings)
         pcall(free)
     pop de
-    ; If the file is a KEXC, directly launch it
-    jr z, .isKEXC
 
+    ; If the file is a KEXC, directly launch it
+    jr nz, .notKEXC
+    pcall(launchProgram)
+    jr nz, .fail
+    ild(hl, open_returnPoint)
+    pcall(setReturnPoint)
+    jr .end
+
+.notKEXC:
     ; Else, open it with the text editor
     ex de, hl
 
@@ -488,14 +495,36 @@ open:
     push ix \ pop de
     ldir
 
-    ild(de, testPath)
+    push ix
+        ; Read the editor executable from /etc/editor
+        ild(de, editorPath)
+        pcall(openFileRead)
+        jr nz, .fail
+        
+        ; Get the size of the file contents and allocate memory for it
+        pcall(getStreamInfo)
+        jr nz, .fail
+        inc bc
+        pcall(malloc)
+        jr nz, .fail
+        dec bc
+        push ix
+            add ix, bc
+            ld (ix), 0
+        pop ix
 
-.isKEXC:
+        pcall(streamReadBuffer)
+        jr nz, .fail
+        pcall(closeStream)
+    push ix \ pop de \ pop hl
+
+    ; Launch the text editor
     pcall(launchProgram)
     jr nz, .fail
 
+    ; Tell the editor the path of the text file
+    push hl \ pop ix
     pcall(reassignMemory)
-    push ix \ pop hl
     pcall(setInitialDE)
     ld h, 1 ; "open file"
     pcall(setInitialA)
@@ -507,6 +536,10 @@ open:
     ret
 .fail:
     ei
+    ret
+.end:
+    ei
+    cp a
     ret
 
 open_returnPoint:
@@ -527,8 +560,6 @@ extensionsPath:
     .db "/etc/extensions", 0
 editorPath:
     .db "/etc/editor", 0
-testPath:
-    .db "/bin/textview", 0
 
 kexcString:
     .db "KEXC", 0
