@@ -157,20 +157,13 @@ openThreadList:
     kld(de, threadlist)
     jr _
 launch:
-    ld a, (activeThreads)
-    cp maxThreads - 1
-    jr nz, _
-    or 1
-    ld a, errTooManyThreads
-    corelib(showError)
-    kjp(resetToHome)
 _:  di
     ; Idea: load a small bootstrapping program into RAM, then kill the castle thread and transfer over to the bootstrap.
     ; This frees up the castle's memory for the new program, allowing for larger programs to be launched.
     ; Potential issue: the bootstrap would be allocated shortly after the castle in memory, and therefore only programs
     ; smaller than the castle in the first place would benefit from this.
     ; Potential solution: provide an alternative malloc that allocates in the back of RAM
-    pcall(launchProgram)
+    corelib(open)
     corelib(nz, showError)
     kjp(nz, resetToHome)
     ld bc, castleReturnHandler_end - castleReturnHandler
