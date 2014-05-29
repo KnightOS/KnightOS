@@ -616,5 +616,3 @@ selectionIndicatorSprite:
     .db 0b11100000
     .db 0b11000000
     .db 0b10000000
-
-.db 0 ; TEMP
