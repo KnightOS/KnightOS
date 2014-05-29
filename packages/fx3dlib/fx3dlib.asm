@@ -18,7 +18,7 @@ jumpTable:
     jp rotateVertex
     jp projectVertex
     jp drawTriangle
-    .db 0xff
+    .db 0xFF
     
 .macro sdiv64()
     add hl, hl

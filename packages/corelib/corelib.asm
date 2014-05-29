@@ -454,23 +454,20 @@ showErrorAndQuit:
 ;;  opens it with /etc/editor. If all of that fails, it returns NZ.
 open:
     di
+    ; Check for KEXC
     push de
-        ; Check to see if the file is a KEXC
-        ; Open the file
         pcall(openFileRead)
         jr nz, .fail
 
-        ; Allocate some memory for the KEXC text
         ld bc, 5
         pcall(malloc)
         jr nz, .fail
 
-        ; Read the first four characters
         dec bc
         pcall(streamReadBuffer)
         jr nz, .fail
+        pcall(closeStream)
 
-        ; Compare them to "KEXC"
         ld (ix + 4), 0
         push ix \ pop hl
         ild(de, kexcString)
