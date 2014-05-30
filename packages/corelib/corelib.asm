@@ -453,93 +453,102 @@ showErrorAndQuit:
 ;;  then /etc/extensions, and then if it looks like a text file, it
 ;;  opens it with /etc/editor. If all of that fails, it returns NZ.
 open:
-    di
-    ; Check for KEXC
-    push de
-        pcall(openFileRead)
+    ld a, i
+    push af
+        di
+        ; Check for KEXC
+        push de
+            pcall(openFileRead)
+            jr nz, .fail
+
+            ld bc, 5
+            pcall(malloc)
+            jr nz, .fail
+
+            dec bc
+            pcall(streamReadBuffer)
+            jr nz, .fail
+            pcall(closeStream)
+
+            ld (ix + 4), 0
+            push ix \ pop hl
+            ild(de, kexcString)
+            pcall(compareStrings)
+            pcall(free)
+        pop de
+
+        ; If the file is a KEXC, directly launch it
+        jr nz, .notKEXC
+        pcall(launchProgram)
+        ld (kernelGarbage), a
         jr nz, .fail
-
-        ld bc, 5
-        pcall(malloc)
-        jr nz, .fail
-
-        dec bc
-        pcall(streamReadBuffer)
-        jr nz, .fail
-        pcall(closeStream)
-
-        ld (ix + 4), 0
-        push ix \ pop hl
-        ild(de, kexcString)
-        pcall(compareStrings)
-        pcall(free)
-    pop de
-
-    ; If the file is a KEXC, directly launch it
-    jr nz, .notKEXC
-    pcall(launchProgram)
-    jr nz, .fail
-    ild(hl, open_returnPoint)
-    pcall(setReturnPoint)
-    jr .end
+        ild(hl, open_returnPoint)
+        pcall(setReturnPoint)
+        jr .end
 
 .notKEXC:
-    ; Else, open it with the text editor
-    ex de, hl
+        ; Else, open it with the text editor
+        ex de, hl
 
-    ; Copy HL into some new memory really quick
-    pcall(stringLength)
-    inc bc
-    pcall(malloc)
-    jr nz, .fail
-    push ix \ pop de
-    ldir
-
-    push ix
-        ; Read the editor executable from /etc/editor
-        ild(de, editorPath)
-        pcall(openFileRead)
-        jr nz, .fail
-        
-        ; Get the size of the file contents and allocate memory for it
-        pcall(getStreamInfo)
-        jr nz, .fail
+        ; Copy HL into some new memory really quick
+        pcall(stringLength)
         inc bc
         pcall(malloc)
         jr nz, .fail
-        dec bc
+        push ix \ pop de
+        ldir
+
         push ix
-            add ix, bc
-            ld (ix), 0
-        pop ix
+            ; Read the editor executable from /etc/editor
+            ild(de, editorPath)
+            pcall(openFileRead)
+            jr nz, .fail
+            
+            ; Get the size of the file contents and allocate memory for it
+            pcall(getStreamInfo)
+            jr nz, .fail
+            inc bc
+            pcall(malloc)
+            jr nz, .fail
+            dec bc
+            push ix
+                add ix, bc
+                ld (ix), 0
+            pop ix
 
-        pcall(streamReadBuffer)
+            pcall(streamReadBuffer)
+            jr nz, .fail
+            pcall(closeStream)
+        push ix \ pop de \ pop hl
+
+        ; Launch the text editor
+        pcall(launchProgram)
+        ld (kernelGarbage), a
         jr nz, .fail
-        pcall(closeStream)
-    push ix \ pop de \ pop hl
 
-    ; Launch the text editor
-    pcall(launchProgram)
-    jr nz, .fail
+        ; Tell the editor the path of the text file
+        push hl \ pop ix
+        pcall(reassignMemory)
+        pcall(setInitialDE)
+        ld h, 1 ; "open file"
+        pcall(setInitialA)
+        ild(hl, open_returnPoint)
+        pcall(setReturnPoint)
 
-    ; Tell the editor the path of the text file
-    push hl \ pop ix
-    pcall(reassignMemory)
-    pcall(setInitialDE)
-    ld h, 1 ; "open file"
-    pcall(setInitialA)
-    ild(hl, open_returnPoint)
-    pcall(setReturnPoint)
+        jr .end
 
-    ei
-    cp a
-    ret
 .fail:
+    pop af
+    ijp(po, _)
     ei
+_:  ld a, (kernelGarbage)
     ret
+
 .end:
+    pop af
+    ijp(po, _)
     ei
-    cp a
+_:  ld a, (kernelGarbage)
     ret
 
 open_returnPoint:
