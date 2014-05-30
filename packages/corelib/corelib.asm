@@ -539,16 +539,18 @@ open:
 
 .fail:
     pop af
+    ld a, (kernelGarbage)
     ijp(po, _)
     ei
-_:  ld a, (kernelGarbage)
+_:  or 1
     ret
 
 .end:
     pop af
+    ld a, (kernelGarbage)
     ijp(po, _)
     ei
-_:  ld a, (kernelGarbage)
+_:  cp a
     ret
 
 open_returnPoint:
