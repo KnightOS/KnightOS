@@ -18,6 +18,10 @@ jumpTable:
     jp rotateVertex
     jp projectVertex
     jp drawTriangle
+    jp makeVector
+    jp dotProduct
+    jp crossProduct
+    jp testBackface
     .db 0xFF
     
 .macro sdiv64()
@@ -40,6 +44,7 @@ jumpTable:
 ;; Notes:
 ;;  Each coordinate is two-bytes long. Each angle
 ;;  is in [0, 255].
+;;  Destroys AF, BC, DE, HL
 rotateVertex:
     ld a, i
     di
@@ -130,7 +135,6 @@ rotateVertex:
             ild((currentRVertex + 2), hl)
             
             ; rz = x * (sin(ax - ay) - sin(ax + ay))/2 + y * sin(ax) + z * (cos(ax - ay) + cos(ax + ay))/2
-            ; camera offset for the sake of visibility : rz += 150
             ild(hl, angles)
             ld a, (hl)
             inc hl
@@ -171,8 +175,6 @@ rotateVertex:
             pop de
             add hl, de
             sdiv64()
-            ld de, 150
-            add hl, de
             ild((currentRVertex + 4), hl)
             
             ild(hl, currentRVertex)
@@ -195,6 +197,7 @@ rotateVertex:
 ;; Notes:
 ;;  Outputted coordinates are relative to (0, 0),
 ;;  not the center of the screen.
+;;  Destroys AF, BC, DE, HL
 projectVertex:
     ld a, i
     di
@@ -207,6 +210,10 @@ projectVertex:
         ; FOV = 42
         ; 42 * 64 = 0x0A80
         ild(de, (currentVertex + 4))
+        ; add 150 to the Z coordinate because that's where the camera is
+        ld hl, 150
+        add hl, de
+        ex de, hl
         ld a, 0x0A
         ld c, 0x80
         pcall(divACbyDE)
@@ -257,7 +264,7 @@ curSinY:
 ;;  C, B: X3, Y3
 ;;  A: 0 for white, non-zero for black
 ;; Notes:
-;;
+;;  Destroys AF, BC, DE, HL
 drawTriangle:
     ld a, i
     di
@@ -481,3 +488,315 @@ dx3:
 triangleColor:
     .db 0
     
+;; makeVector [fx3dlib]
+;;  Creates a vector out of two 3D points.
+;; Inputs:
+;;  HL: location of first point
+;;  DE: location of second point
+;;  IX: where to write the resulting vector
+;; Outputs:
+;;  IX: resulting vector written there
+;; Notes:
+;;  The vector and both points must have 2 bytes per coordinate.
+;;  Destroys AF, BC, DE, HL
+makeVector:
+    ; X
+    ld c, (hl)
+    inc hl
+    ld b, (hl)
+    inc hl
+    ex de, hl
+    ld a, (hl)
+    inc hl
+    push hl
+        ld h, (hl)
+        ld l, a
+        or a
+        sbc hl, bc
+        ld (ix + 0), l
+        ld (ix + 1), h
+    pop hl
+    inc hl
+    
+    ; Y
+    ex de, hl
+    ld c, (hl)
+    inc hl
+    ld b, (hl)
+    inc hl
+    ex de, hl
+    ld a, (hl)
+    inc hl
+    push hl
+        ld h, (hl)
+        ld l, a
+        or a
+        sbc hl, bc
+        ld (ix + 2), l
+        ld (ix + 3), h
+    pop hl
+    inc hl
+    
+    ; Z
+    ex de, hl
+    ld c, (hl)
+    inc hl
+    ld b, (hl)
+    inc hl
+    ex de, hl
+    ld a, (hl)
+    inc hl
+    push hl
+        ld h, (hl)
+        ld l, a
+        or a
+        sbc hl, bc
+        ld (ix + 4), l
+        ld (ix + 5), h
+    pop hl
+    inc hl
+    ret
+
+;; dotProduct [fx3dlib]
+;;  Calculates the dot product of two 3D vectors.
+;; Inputs:
+;;  HL: location of first vector
+;;  DE: location of second vector
+;; Outputs:
+;;  HL: dot product of the two vectors
+;; Notes:
+;;  The two vectors must have 2 bytes per coordinate.
+;;  Destroys flags, BC, DE, HL
+dotProduct:
+    ; parameter order is kept for the sake of consistency
+    push de \ pop ix
+    ; X
+    ld c, (hl)
+    inc hl
+    ld b, (hl)
+    inc hl
+    ld e, (ix + 0)
+    ld d, (ix + 1)
+    push hl
+        pcall(mul16By16To32)
+        ex (sp), hl
+        ; Y
+        ld c, (hl)
+        inc hl
+        ld b, (hl)
+        inc hl
+        ld e, (ix + 2)
+        ld d, (ix + 3)
+        push hl
+            pcall(mul16By16To32)
+            ex (sp), hl
+            ; Z
+            ld c, (hl)
+            inc hl
+            ld b, (hl)
+            ld e, (ix + 4)
+            ld d, (ix + 5)
+            pcall(mul16By16To32)
+            ; sum everything
+        pop de
+        add hl, de
+    pop de
+    add hl, de
+    ret
+
+;; crossProduct [fx3dlib]
+;;  Calculates the cross product of two 3D vectors,
+;;  being the normal vector of the plane formed by
+;;  those vectors.
+;; Inputs:
+;;  HL: location of first vector
+;;  DE: location of second vector
+;;  IX: where to write the resulting vector
+;; Outputs:
+;;  IX: resulting vector written there, scaled down by 64 to prevent overflows
+;;  Destroys AF, BC, DE, HL
+crossProduct:
+    ld a, i
+    push af
+        di
+        push de
+            ild(de, .vec1)
+            ld bc, 6
+            ldir
+        pop hl
+        ild(de, .vec2)
+        ld bc, 6
+        ldir
+        
+        ; x = y1 * z2 - z1 * y2
+        ild(bc, (.vec1 + 4))
+        ild(de, (.vec2 + 2))
+        pcall(mul16By16To32)
+        push hl
+            ild(bc, (.vec1 + 2))
+            ild(de, (.vec2 + 4))
+            pcall(mul16By16To32)
+        pop de
+        or a
+        sbc hl, de
+        sdiv64()
+        ld (ix + 0), l
+        ld (ix + 1), h
+        
+        ; y = z1 * x2 - x1 * z2
+        ild(bc, (.vec1))
+        ild(de, (.vec2 + 4))
+        pcall(mul16By16To32)
+        push hl
+            ild(bc, (.vec1 + 4))
+            ild(de, (.vec2))
+            pcall(mul16By16To32)
+        pop de
+        or a
+        sbc hl, de
+        sdiv64()
+        ld (ix + 2), l
+        ld (ix + 3), h
+        
+        ; z = x1 * y2 - y1 * x2
+        ild(bc, (.vec1 + 2))
+        ild(de, (.vec2))
+        pcall(mul16By16To32)
+        push hl
+            ild(bc, (.vec1))
+            ild(de, (.vec2 + 2))
+            pcall(mul16By16To32)
+        pop de
+        or a
+        sbc hl, de
+        sdiv64()
+        ld (ix + 4), l
+        ld (ix + 5), h
+    pop af
+    ret po
+    ei
+    ret
+.vec1:
+    .dw 0, 0, 0
+.vec2:
+    .dw 0, 0, 0
+    
+;; testBackface [fx3dlib]
+;;  Tests if a face is "turning its back" to the viewer.
+;; Inputs:
+;;  BC: location of the face index
+;;  HL: location of the vertices list
+;; Outputs:
+;;  C set if the face is backfacing
+;; Notes:
+;;  HL must point to a list of **rotated** vertices !
+;;  All vertices must have 2-bytes cooridnates.
+;;  The face index is a list of 1-byte offsets in the vertices list.
+;;  Destroys AF, BC, DE, HL, IX
+testBackface:
+    ld a, i
+    push af
+        di
+        push hl
+            ; Create and copy first vector
+            ld a, (bc)
+            add a, a
+            ld d, a
+            add a, a
+            add a, d
+            ld e, a
+            ld d, 0
+            push hl
+                add hl, de
+                ; save the vertex, we'll need it for later
+                ; and moreover we can use it to calculate both vectors
+                ild(de, .pointForLater)
+                push bc
+                    ld bc, 6
+                    ldir
+                pop bc
+            pop hl
+            inc bc
+            
+            ld a, (bc)
+            add a, a
+            ld d, a
+            add a, a
+            add a, d
+            ld e, a
+            ld d, 0
+            add hl, de
+            ex de, hl
+            ild(hl, .pointForLater)
+            ild(ix, .vec1)
+            push bc
+                icall(makeVector)
+            pop bc
+        pop hl
+        
+        ; Create and copy second vector
+        ; we already have one point of it
+        inc bc
+        ld a, (bc)
+        add a, a
+        ld d, a
+        add a, a
+        add a, d
+        ld e, a
+        ld d, 0
+        add hl, de
+        ex de, hl
+        ild(hl, .pointForLater)
+        ild(ix, .vec2)
+        icall(makeVector)
+        
+        ; Now do the actual test
+        ; See if the angle between the normal vector of the face and the camera (which never moves)
+        ; is negative, if so the face is backfacing. This is found by using the dot product.
+        
+        ; First, get the normal vector. Easy enough.
+        ild(hl, .vec1)
+        ild(de, .vec2)
+        ild(ix, .normal)
+        icall(crossProduct)
+        
+        ; Now, perform a dot product between it and the camera translated into a point of the face's space
+        ; First, translate the camera. It's always at (0, 0, -150) in world space.
+        ild(de, (.pointForLater))
+        ld hl, 0
+        or a
+        sbc hl, de
+        ild((.pointForLater), hl)
+        
+        ild(de, (.pointForLater + 2))
+        ld hl, 0
+        or a
+        sbc hl, de
+        ild((.pointForLater + 2), hl)
+        
+        ild(de, (.pointForLater + 4))
+        ld hl, -150
+        or a
+        sbc hl, de
+        ild((.pointForLater + 4), hl)
+        
+        ; Now do the actual product
+        ild(hl, .normal)
+        ild(de, .pointForLater)
+        icall(dotProduct)
+        
+        ; See the sign of the result to know if the face is backfacing.
+    pop af
+    ijp(po, .noInterrupt)
+    ei
+.noInterrupt:
+    rl h
+    ret
+.vec1:
+    .dw 0, 0, 0
+.vec2:
+    .dw 0, 0, 0
+.normal:
+    .dw 0, 0, 0
+.pointForLater:
+    .dw 0, 0, 0
