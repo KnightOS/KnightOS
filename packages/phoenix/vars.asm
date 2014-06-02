@@ -22,7 +22,7 @@ data_zero_start:                        ; area cleared on newgame
 
 saved_flag:     .db     0               ; 1 if saved game here
 
-posqueue:       .ds     20              ; queue of positions (for helper)
+posqueue:       .fill   20              ; queue of positions (for helper)
 player_y:       .db     0               ; player ship coordinates
 player_x:       .db     0
 enemies_left:   .db     0               ; # enemies still alive
@@ -48,9 +48,9 @@ time_score:     .dw     0               ; time bonus (counts down)
 completed:      .db     0
 money_counter:  .db     0               ; countdown to next money bonus
 
-pb_array:       .ds     pb_size*pb_num
-e_array:        .ds     e_size*e_num
-eb_array:       .ds     eb_size*eb_num
+pb_array:       .fill   pb_size*pb_num
+e_array:        .fill   e_size*e_num
+eb_array:       .fill   eb_size*eb_num
 
 data_zero_end:                          ; end of area cleared on newgame
 

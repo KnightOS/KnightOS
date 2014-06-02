@@ -57,34 +57,37 @@ no_saved_game:
     ;call level_selector      ; level section 
 
     kcall(title_screen)
-    ret
 
-;prepare_new_game:
-;    ld hl, player_y
-;    ld (hl), 70         ; Player Y coord = 70
-;    inc hl
-;    ld (hl), 60         ; Player X coord = 60
-;    inc hl
-;    inc hl
-;    inc hl
-;    ld (hl), 16         ; Status of player's ship
-;
-;    ld hl, 19000
-;    ld (time_score), hl
-;    ld a, 4
-;    ld (money_counter), a
-;
-;pre_main_loop:
-;    call convert_settings    ; decode configuration
-;    ld hl, -6
-;    add hl, sp
-;    ld (collision_done + 1), hl
-;    xor a
-;    ld      (x_offset), a
-;    
-;;############## Game main loop
-;    
-;main_loop:
+prepare_new_game:
+    kld(hl, player_y)
+    ld (hl), 70         ; Player Y coord = 70
+    inc hl
+    ld (hl), 60         ; Player X coord = 60
+    inc hl
+    inc hl
+    inc hl
+    ld (hl), 16         ; Status of player's ship
+
+    ld hl, 19000
+    kld((time_score), hl)
+    ld a, 4
+    kld((money_counter), a)
+
+pre_main_loop:
+    kcall(convert_settings)    ; decode configuration
+    ; This does some SMC to load the current stack pointer (less 3 PUSHes)
+    ; into collision_done. I don't know why and it seems esoteric, we should
+    ; refactor it away.
+    ld hl, -6
+    add hl, sp
+    kld((collision_done + 1), hl)
+    xor a
+    kld((x_offset), a)
+    ret
+    
+;############## Game main loop
+    
+main_loop:
 ;    call frame_init
 ;
 ;    call clear_buffer       ; Prepare main display buffer

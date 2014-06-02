@@ -22,36 +22,39 @@ collision_check:
 
 ;############## Ensure that X1 < X2 + W2
 
-        ld      de,(test_coords)    ; E = X2, D = W2
-        ld      a,(hl)              ; A = X1
-        sub     e                   ; A = X1 - X2
-        jr      c,cc1               ; (X1 < X2) --> (X1 < X2 + W2)
-        cp      d
-        ret     nc                  ; Exit if (X1 - X2) >= W2
-        inc     hl
-        jr      cc2                 ; (X2 <= X1) --> (X2 < X1 + W1)
+    kld(de, (test_coords))    ; E = X2, D = W2
+    ld a, (hl)              ; A = X1
+    sub e                   ; A = X1 - X2
+    jr c, cc1               ; (X1 < X2) --> (X1 < X2 + W2)
+    cp d
+    ret nc                  ; Exit if (X1 - X2) >= W2
+    inc hl
+    jr cc2                 ; (X2 <= X1) --> (X2 < X1 + W1)
 
 ;############## Ensure that X2 < X1 + W1
 
-cc1:    neg                         ; A = X2 - X1 (which is > 0)
-        inc     hl
-        cp      (hl)
-        ret     nc                  ; Exit if (X2 - X1) >= W1
+cc1: 
+    neg                         ; A = X2 - X1 (which is > 0)
+    inc hl
+    cp (hl)
+    ret nc                  ; Exit if (X2 - X1) >= W1
 
 ;############## Ensure that Y1 < Y2 + H2
 
-cc2:    ld      de,(test_coords+2)  ; E = Y2, D = H2
-        inc     hl
-        ld      a,(hl)              ; A = Y1
-        sub     e                   ; A = Y1 - Y2
-        jr      c,cc3               ; (Y1 < Y2) --> (Y1 < Y2 + H2)
-        cp      d                   ; Carry set if (Y1 - Y2) < H2
-        ret                         ; End of testing (last cond. certain
-                                    ; since Y2 <= Y1, due to jr c,cc3)
+cc2: 
+    kld(de, (test_coords+2))  ; E = Y2, D = H2
+    inc hl
+    ld a, (hl)              ; A = Y1
+    sub e                   ; A = Y1 - Y2
+    jr c, cc3               ; (Y1 < Y2) --> (Y1 < Y2 + H2)
+    cp d                   ; Carry set if (Y1 - Y2) < H2
+    ret                         ; End of testing (last cond. certain
+                                 ; since Y2 <= Y1, due to jr c,cc3)
 
 ;############## Ensure that Y2 < Y1 + H1
 
-cc3:    neg                         ; A = Y2 - Y1 (which is > 0)
-        inc     hl
-        cp      (hl)
-        ret                         ; Carry set if (Y2 - Y1) < H1
+cc3: 
+    neg                         ; A = Y2 - Y1 (which is > 0)
+    inc hl
+    cp (hl)
+    ret                         ; Carry set if (Y2 - Y1) < H1
