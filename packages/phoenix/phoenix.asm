@@ -58,10 +58,6 @@ _puts_shim_cur:
 
 puts .equ _puts_shim
 
-FAST_RANDOM:
-    xor a ; TODO
-    ret
-
 #include "main.asm"
 ;#include "extlev.asm"
 ;#include "exchange.asm"

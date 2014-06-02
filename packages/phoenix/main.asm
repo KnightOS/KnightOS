@@ -158,7 +158,6 @@ OTH_FILL:
     ldir
     ret
 
-; Not sure of purpose
 ; Educated guess: checks for arrow keys
 OTH_ARROW:
     ld a, 0b00111111
