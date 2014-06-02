@@ -113,6 +113,8 @@
 
 ;############## Temporary variables
 
+; TODO: Move these nearer to the code that uses them
+
 enemy_buffer:
     .fill 100
 x_offset:

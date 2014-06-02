@@ -13,7 +13,8 @@
 
 perm_vars:                              ; start of variables to save
 
-level_name:     .db     "!!!!!!!!"
+level_name:
+    .db "!!!!!!!!"
 ext_level:
 extlevel:       .db     0
 
@@ -64,20 +65,20 @@ sides_flag:     .db     1
 difficulty:     .db     0               ; 0=easy, 1=medium, 2=hard
 
 high_scores:
-        .db     "Patrick D ",0
-        .dw     30000
-        .db     "Patrick D ",0
-        .dw     25000
-        .db     "Patrick D ",0
-        .dw     20000
-        .db     "Patrick D ",0
-        .dw     18000
-        .db     "Patrick D ",0
-        .dw     16000
-        .db     "Patrick D ",0
-        .dw     14000
-        .db     "Patrick D ",0
+    .db "Patrick D ", 0
+    .dw 30000
+    .db "Patrick D ",0
+    .dw 25000
+    .db "Patrick D ",0
+    .dw 20000
+    .db "Patrick D ",0
+    .dw 18000
+    .db "Patrick D ",0
+    .dw 16000
+    .db "Patrick D ",0
+    .dw 14000
+    .db "Patrick D ",0
 high_scores_end:
-        .dw     8000
+    .dw 8000
 
 perm_vars_end:                          ; end of variables to save

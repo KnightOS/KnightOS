@@ -5,7 +5,7 @@ DEPENDENCIES=
 
 all: $(BINDIR)phoenix
 
-$(BINDIR)phoenix: phoenix.asm
+$(BINDIR)phoenix: *.asm *.i
 	mkdir -p $(BINDIR)
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/phoenix/;$(DEPENDENCIES)" phoenix.asm $(BINDIR)phoenix
 

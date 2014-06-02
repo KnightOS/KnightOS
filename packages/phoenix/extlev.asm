@@ -100,7 +100,7 @@ loop_hunt:
 
 load_external_level:
         xor     a
-        ld      (check_restore),a
+        ld      (check_restore),a ; NOP's check_restore (SMC)
         ld      (saved_flag),a
 
         ld      de,$F00C

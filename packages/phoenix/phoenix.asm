@@ -8,7 +8,7 @@
     .db KEXC_ENTRY_POINT
     .dw start
     .db KEXC_STACK_SIZE
-    .dw 100
+    .dw 200
     .db KEXC_KERNEL_VER
     .db 0, 6
     .db KEXC_NAME
@@ -16,7 +16,6 @@
     .db KEXC_HEADER_END
 name:
     .db "Phoenix", 0
-start:
 
 ;interrupt_entry =$9898
 ;interrupt_byte  =$98
@@ -24,10 +23,6 @@ start:
 ;interrupt_reg   =$99
 
 ;GFX_AREA        =plotsscreen
-
-    ret
-    jr  nc,start
-
 ;D_ZT_STR        =_puts
 ;D_HL_DECI       =_disphl
 ;TX_CHARPUT      =_putc
@@ -38,17 +33,41 @@ start:
 
 #include "phoenixz.i"
 
-    call main
+start:
+    pcall(getLcdLock)
+    pcall(getKeypadLock)
+    pcall(allocScreenBuffer)
+    kcall(main)
+    ret
 
-;############## Include remainder of game files
+_puts_shim:
+    push de
+    push bc
+        ld b, 0
+        kld(de, (_puts_shim_cur))
+        pcall(wrapStr)
+        kld((_puts_shim_cur), de)
+        pcall(stringLength)
+        add hl, bc
+        inc hl
+    pop bc
+    pop de
+    ret
+_puts_shim_cur:
+    .dw 0
+
+puts .equ _puts_shim
+
+FAST_RANDOM:
+    xor a ; TODO
+    ret
 
 #include "main.asm"
 ;#include "extlev.asm"
 ;#include "exchange.asm"
-;#include "lib.asm"
-;#include "lib.asm"
-;#include "title.asm"
-;#include "disp.asm"
+#include "lib.asm"
+#include "title.asm"
+#include "disp.asm"
 ;#include "drwspr.asm"
 ;#include "player.asm"
 ;#include "shoot.asm"
@@ -68,4 +87,4 @@ start:
 ;#include "info.asm"
 ;#include "data.asm"
 ;#include "levels.asm"
-;#include "vars.asm"
+#include "vars.asm"
