@@ -145,8 +145,10 @@ main_loop:
 ;
 ;;############## TI-82 library
 
-; NOTE: Don't know what this is
-; NOTE: Used in disp.asm, title.asm
+; Clears a block of memory
+; BC: Length
+; HL: Block to clear
+; Destroys HL DE BC
 OTH_CLEAR:
     ld (hl), 0
 OTH_FILL:
@@ -156,18 +158,20 @@ OTH_FILL:
     ldir
     ret
 
-;OTH_ARROW:
-;    ld a,%00111111
-;    out (1),a
-;    push ix
-;    pop ix
-;    in a,(1)
-;    or %00001111
-;    ld b,a
-;    ld a,%01111110
-;    out (1),a
-;    push ix
-;    pop ix
-;    in a,(1)
-;    and b
-;    ret
+; Not sure of purpose
+; Educated guess: checks for arrow keys
+OTH_ARROW:
+    ld a, 0b00111111
+    out (1), a
+    push ix
+    pop ix
+    in a, (1)
+    or 0b00001111
+    ld b, a
+    ld a, 0b01111110
+    out (1), a
+    push ix
+    pop ix
+    in a, (1)
+    and b
+    ret
