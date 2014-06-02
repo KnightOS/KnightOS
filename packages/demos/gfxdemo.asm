@@ -102,6 +102,10 @@ noColor:
     
     ld hl, 0
     kld((angle), hl)
+    ; allocate some space to hold the rotated vertices for backface culling
+    ; 8 vertices, 6 bytes each
+    ld bc, 8 * 6
+    pcall(malloc)
 .demoLoop:
     kld(hl, windowTitle)
     xor a
@@ -114,13 +118,19 @@ noColor:
     xor a
     kld((vertexNb), a)
     kld(hl, vertices)
-    
-.renderLoop:
+.calculationLoop:
     push hl
         kld(de, currentRVertex)
         kld(bc, (angle))
         
         fx3dlib(rotateVertex)
+        ; save the rotated vertex for backface culling
+        push ix \ pop de
+        kld(hl, currentRVertex)
+        ld bc, 6
+        ldir
+        push de \ pop ix
+        kld(de, currentRVertex)
         fx3dlib(projectVertex)
         
         ld bc, 48
@@ -148,39 +158,82 @@ noColor:
     inc a
     kld((vertexNb), a)
     cp 8
-    kjp(c, .renderLoop)
+    kjp(c, .calculationLoop)
     
     ; then, draw lines between the vertices
-    kld(de, indicies)
-    ld b, 12 ; 12 sides for a cube
-.linesLoop:
-    push bc
-        push de
-            ld a, (de)
-            kld(hl, projected)
-            add a, a
-            ld c, a
-            ld b, 0
-            add hl, bc
-            ld d, (hl)
-            inc hl
-            ld e, (hl)
-        pop bc \ inc bc \ push bc
-            ld a, (bc)
-            kld(hl, projected)
-            add a, a
-            ld c, a
-            ld b, 0
-            add hl, bc
-            ld a, (hl)
-            inc hl
-            ld l, (hl)
-            ld h, a
-            pcall(drawLine)
-        pop de
-        inc de
-    pop bc
-    djnz .linesLoop
+    ; at this point, all the rotated vertices must be in IX
+    dec ix
+    pcall(memSeekToStart)
+    push ix \ pop hl
+    kld(bc, faces)
+    ; 6 faces in a cube
+    ld a, 6
+.renderLoop:
+    push af
+        push bc \ push hl
+            fx3dlib(testBackface)
+        pop hl \ pop bc
+        jr c, .noDraw
+        
+        push bc \ push hl
+            ; draws 4 lines
+            ld a, 4
+.drawLoop:
+            push af
+                ; retrieve first point
+                dec a
+                ld e, c
+                ld d, b
+                add a, e
+                ld e, a
+                ld a, 0
+                adc a, d
+                ld d, a
+                ld a, (de)
+                add a, a
+                ld e, a
+                ld d, 0
+                kld(hl, projected)
+                add hl, de
+                ld d, (hl)
+                inc hl
+                ld e, (hl)
+                
+            pop af \ push af
+                push de
+                    ; retrieve second point
+                    and 3
+                    ld e, c
+                    ld d, b
+                    add a, e
+                    ld e, a
+                    ld a, 0
+                    adc a, d
+                    ld d, a
+                    ld a, (de)
+                    add a, a
+                    ld e, a
+                    ld d, 0
+                    kld(hl, projected)
+                    add hl, de
+                    ld d, (hl)
+                    inc hl
+                    ld e, (hl)
+                pop hl
+                pcall(drawLine)
+            pop af
+            dec a
+            jr nz, .drawLoop
+        
+        pop hl \ pop bc
+.noDraw:
+        ; 4 vertices per face in a cube
+        inc bc \ inc bc \ inc bc \ inc bc
+    pop af
+    dec a
+    jr nz, .renderLoop
+    
+    push hl \ pop ix
     
     ; we're done rendering
     pcall(fastCopy)
@@ -188,7 +241,7 @@ noColor:
     corelib(appGetKey)
     kjp(nz, .demoLoop)
     cp kMode
-    ret z
+    kjp(z, .exitDemo)
     
     kld(hl, (angle))
     inc h
@@ -196,7 +249,10 @@ noColor:
     kld((angle), hl)
     
     kjp(.demoLoop)
-
+.exitDemo:
+    pcall(free)
+    ret
+    
 curSin:
     .db 0
 curCos:
@@ -211,20 +267,23 @@ currentVertex:
 currentRVertex:
     .dw 0, 0, 0
 vertices:
-    .dw -40, 40, 40
-    .dw 40, 40, 40
-    .dw 40, -40, 40
-    .dw -40, -40, 40
     .dw -40, 40, -40
     .dw 40, 40, -40
     .dw 40, -40, -40
     .dw -40, -40, -40
+    .dw -40, 40, 40
+    .dw 40, 40, 40
+    .dw 40, -40, 40
+    .dw -40, -40, 40
 projected:
     .block 8 * 2
-indicies:
-    .db 0, 1, 1, 2, 2, 3, 3, 0
-    .db 4, 5, 5, 6, 6, 7, 7, 4
-    .db 0, 4, 1, 5, 2, 6, 3, 7
+faces:
+    .db 0, 1, 2, 3
+    .db 5, 4, 7, 6
+    .db 1, 5, 6, 2
+    .db 4, 0, 3, 7
+    .db 4, 5, 1, 0
+    .db 3, 2, 6, 7
     
 exitString:
     .db "Press [MODE] to exit.", 0

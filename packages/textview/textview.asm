@@ -43,7 +43,7 @@ start:
     ex de, hl
     pcall(openFileRead)
     ret nz
-    ; For testing purposes, we'll load the file into RAM
+    ; For testing purposes, we'll load the entire file into RAM
     pcall(getStreamInfo)
     inc bc
     pcall(malloc)
@@ -64,7 +64,7 @@ drawLoop:
 _:  pcall(fastCopy)
 
     pcall(flushKeys)
-    pcall(waitKey)
+    corelib(appWaitKey)
 
     cp kMODE
     ret z

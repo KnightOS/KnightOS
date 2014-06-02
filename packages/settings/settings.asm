@@ -22,10 +22,102 @@ start:
     kld(de, corelibPath)
     pcall(loadLibrary)
     
+redraw:
     kld(hl, windowTitle)
     xor a
     corelib(drawWindow)
+    
+    ; Print items
+    ld de, 0x0508
+    kld(hl, systemInfoStr)
+    ld b, 6
+    pcall(drawStr)
+    
+    kld(hl, debuggerStr)
+    pcall(drawStr)
+    
+    kld(hl, backStr)
+    pcall(drawStr)
+    
+    pcall(newline)
+_:
+    kld(hl, (item))
+    add hl, hl
+    ld b, h
+    ld c, l
+    add hl, hl
+    add hl, bc
+    ld de, 0x0208
+    add hl, de
+    ld e, l
+    kld(hl, caretIcon)
+    ld b, 5
+    pcall(putSpriteOR)
 
+    pcall(fastCopy)
+    pcall(flushKeys)
+    corelib(appWaitKey)
+    jr nz, -_
+    cp kUp
+    kcall(z, doUp)
+    cp kDown
+    kcall(z, doDown)
+    cp k2nd
+    kcall(z, doSelect)
+    cp kEnter
+    kcall(z, doSelect)
+    cp kMode
+    ret z
+    jr -_
+    
+doUp:
+    kld(hl, item)
+    ld a, (hl)
+    or a
+    ret z
+    dec a
+    ld (hl), a
+    kld(hl, caretIcon)
+    pcall(putSpriteXOR)
+    xor a
+    ret
+#define NB_ITEM 3
+doDown:
+    kld(hl, item)
+    ld a, (hl)
+    inc a
+    cp NB_ITEM
+    ret nc
+    ld (hl), a
+    kld(hl, caretIcon)
+    pcall(putSpriteXOR)
+    xor a
+    ret
+doSelect:
+    kld(hl, (item))
+    ld h, 0
+    kld(de, itemTable)
+    add hl, hl
+    add hl, de
+    ld e, (hl)
+    inc hl
+    ld d, (hl)
+    pcall(getCurrentThreadID)
+    pcall(getEntryPoint)
+    add hl, de
+    pop de \ kld(de, redraw) \ push de
+    jp (hl)
+    
+itemTable:
+    .dw printSystemInfo, openKernelDebugger, exit
+    
+printSystemInfo:
+    pcall(clearBuffer)
+    
+    kld(hl, windowTitle)
+    xor a
+    corelib(drawWindow)
+    
     ld de, 0x0208
     ld b, 2
 
@@ -94,7 +186,17 @@ _:  pcall(fastCopy)
     pop de
     kld(hl, notFoundStr)
     jr .writeVersion
-
+    
+openKernelDebugger:
+    rst 0x30
+    ret
+    
+exit:
+    pop hl
+    ret
+    
+item:
+    .db 0
 corelibPath:
     .db "/lib/core", 0
 etcVersion:
@@ -107,6 +209,11 @@ kernelVersionStr:
     .db "Kernel version:\n", 0
 bootCodeVersionStr:
     .db "Boot Code version:\n", 0
+    
+systemInfoStr:
+    .db "System info\n", 0
+debuggerStr:
+    .db "Open kernel debugger\n", 0
 backStr:
     .db "Back", 0
 notFoundStr:

@@ -554,6 +554,7 @@ openFile:
     ld bc, 0
     cpir
     dec hl
+    di
     push hl
         ex de, hl
         pcall(stringLength)
@@ -562,12 +563,34 @@ openFile:
         kld(de, (currentPath))
         corelib(open)
     pop hl
+    push af
+        xor a
+        ld (hl), a
+    pop af
     jr nz, .fail
-    xor a
-    ld (hl), a
+    ; Set up the trampoline
+    ; This is what takes users back to fileman when the program exits
+    push hl
+    push de
+    push ix
+        ld bc, trampoline_end - trampoline
+        pcall(malloc)
+        pcall(reassignMemory)
+        kld(hl, trampoline)
+        push ix \ pop de
+        ldir
+        push ix \ pop hl
+        pcall(setReturnPoint)
+        pcall(getCurrentThreadId)
+        ld (ix + 1), a
+    pop ix
+    pop de
+    pop hl
+    ei
     pcall(suspendCurrentThread)
     kjp(freeAndLoopBack)
 .fail:
+    ei
     ; It failed to open, complain to the user
     kld(hl, openFailMessage)
     kld(de, openFailOptions)
@@ -658,6 +681,16 @@ _:          ; Handle file
         inc c
     exx
     ret
+
+trampoline:
+    ld a, 0 ; Thread ID will be loaded here
+    pcall(getThreadEntry)
+    corelib(nz, launchCastle)
+    ld (hwLockLCD), a
+    ld (hwLockKeypad), a
+    pcall(resumeThread)
+    pcall(killCurrentThread)
+trampoline_end:
 
 currentPath:
     .dw 0
