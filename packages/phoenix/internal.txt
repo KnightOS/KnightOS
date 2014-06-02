@@ -1,0 +1,183 @@
+Phoenix 2.0 for TI-82/83/85/86 by Patrick Davidson - Internal Documentation                
+
+This is the internal documentation for the game Phoenix.  For information
+on using the game, see the file 'PHOENIX.TXT'.  This document explains the
+internal workings of the program.  It is mainly intended for people who
+want to modify the game.
+
+Since there is now a flexible external level format, there will probably
+be fewer reasons why anyone should modify the game, but of course you
+still can do so.  For information on designing external levels, refer
+to 'LEVELS.TXT'.
+
+This file is not yet complete; internal interfaces and data structures are
+not yet described in it.  However, the introduction and description of the
+build process which produces code for all 5 calculators from a single set of
+source files.
+
+ _____________________________________ Table of Contents
+
+ 1. Introduction ..................................................... 26
+ 2. Build process and compatibility system ........................... 59
+ 3. General program flow ............................................ 126
+ 4. Data structures ................................................. 173
+ 5. File-by-file description ........................................ 181
+
+ _____________________________________ Introduction
+
+Phoenix is free/open source software.  This means that everyone is allowed
+to develop modified versions of the game.  Phoenix is now in the public
+domain, so it may be used in any way without restrictions.
+
+I chose this for the simple reason of trying to maximize the usefulness of
+the program.  This provides many benefits, such as:
+
+1) Allowing people who want to have a slightly different game to make it
+   themselves with a minimum of effort.
+2) Allowing intermediately-skilled programmers to learn from the design
+   of the game.
+3) Allowing the more advanced programmers to develop substantially different
+   games based on this one more easily than writing new games from scratch.
+4) Allowing the program to continue even if I stop supporting it myself.
+                           
+However, even though several people have talked to me about making such
+modified games, nobody has actually released one yet.  To try to make it
+easier for people to do that, I am releasing this document which describes
+the internals of the game, and have also added many additional comments to
+the code itself.
+
+This document only provides an overview of the working of the game.  More
+detailed information about specific functions is present in the comments of
+the source files themselves.  (That is, it hopefully will be when/if I get
+around to putting in more complete comments).
+
+This document assumes that the reader has at least basic familiarity with
+programming the Z80-based calculators in assembly.  If you are a complete
+beginner, this is probably not the best resource for learning to program the
+calculators.
+
+ ______________________________________ Build process and compatibility
+
+Beginning with version 0.95, the cross-calculator compatibility has been
+changed to a simpler method that no longer requires running a
+conversion program at any point.
+
+All five versions of the program are built from more or less the same set of
+source files.  To allow this to work, each different calculator has its own
+"main" program file which includes initialization, address definitions, and
+library routines specific to that calculator.  In addition, files dealing
+directly with the display have two versions; one for the narrow-screen
+calculators (82, 83, and 83+) and one for the wide-screen calculators (85 and
+86).  There is also conditional code in some places.
+
+Batch file to automatically build each version are included.  The files
+with names "build8?.bat" build the version specifically for that calculator;
+the 'build.bat' file automatically builds all versions, and deletes the
+temporary files.  Additionally, each build script will automatically make
+the full distribution archive, containing all files needed to distribute
+with the game (that is, the executable, documentation, and source code).
+The TI-86 build file also calls Lite86 to compress the executable, although
+this step is not necessary.
+
+The 'main8?.asm' files are the main source files for each calculator.
+For the files that have separate versions depending on screen width, the
+narrow-screen version's name ends in 12 (because the screen is 12 bytes wide
+for them) and the wide-screen version has a name ending in 16 (because those
+screens are 16 bytes wide).
+
+The program should be built from the main directory as all include
+directives expect files to be included from that subdirectory.  Standard
+include files (that is, stuff like "usgard.h", "ion.inc", etc.) should also
+be in this directory.  You will also need to install the standard build
+tools for each calculator you want to assemble Phoenix for, and make sure
+that the utilities and batch files normally used to compile with them are in
+your path.
+
+The program uses TI-85 style names for RAM addresses and ROM routines.  For
+the TI-86 and Ion, where different naming is normally used, I have added
+new equates in those calculators' main files to make the TI-85 names work.
+
+There are two special considerations needed to keep things compatible across
+calculators, in addition to obvious differences between the calculators.
+One of these is relocation.  Everywhere but the TI-85 (Usgard) the program
+is copied to a constant address by the system.  Usgard normally uses a more
+complex relocation system with a table of internal references to adjust
+pointers to point to the correct address.  However, this is not used for
+Phoenix (from version 1.0 on); instead, the initialization moves the code to
+a constant address.  Thus you can use normal absolute addressed references,
+without having to worry about using R_ or & as you otherwise would when
+programming for Usgard.
+
+The other problem is with ROM calls.  On many calculators, ROM calls can be
+made just by a call to an address.  However, for Ion, "bcall" msut be used
+for many calls, and some calls must use ROM_CALL under Crash.  The solution
+to this is to use ROM_CALL for all calls where it will be needed on any
+calculator; for the calculators where a simple call can be used, ROM_CALL
+will be a macro that expands to a simple call, while it expands to the other
+needed form on the calculators that require that.  So, ROM_CALL should be
+used for all functions except a few simple ones like CP_HL_DE, LD_HL_MHL, and
+GET_KEY where even the TI-82 does not need ROM_CALL.  Of course, even some
+of these simple functions need a "bcall" in Ion, so for them I wrote small
+routines that either do the bcall, or just do the function, to avoid trouble
+(for small things like CP_HL_DE and LD_HL_MHL that are called often, this
+also avoids the slowdown of a "bcall" on the TI-83+).  Also, ROM_CALL is
+defined to expand to a bcall under Ion, so you just use ROM_CALL everywhere.
+
+_______________________________________ General program flow
+
+0. On the TI-85 or TI-86, an external level file is run to play it.  The
+   file writes the level data to a constant address, and then runs the
+   main program.
+
+1. Calculator-specific initialization.  This usually involves setting
+   system flags, and also includes moving the program to a constant
+   address.
+
+2. The interrupt is initialized, and (on the TI-85 or TI-86) the screen
+   side data is initialized.
+
+3. A saved game is checked for.  If found, the game will try to load its
+   level, and fail if it can't.  On the TI-85 or TI-86, this check
+   verifies that the level in memory (that you ran to start the game) is
+   the correct one; for the Ion version, it searches memory for the level.
+   Of course, if you used the internal levels this is much simpler.  Once
+   the level is loaded the main loop is started.
+
+4. Initialize some variables for a new game, and put default images in
+   addresses indicating images.
+
+5. Check for an external level on TI-85 or TI-86, or display level selector
+   if using the Ion version.  The level address variables are set to
+   whatever level is chosen, and external level identification is also put
+   in the game data area (to identify it if you restore).  Note that an
+   external level is always moved to a constant address, so pointers within
+   it can be saved without problems.
+
+6. Display the title screen, where the user can choose the speed and the
+   diffiulty level.
+
+7. Then the game actually plays.  The main loop (slightly different in the
+   narrow and wide screen versions) does everything for the game play.
+   Gameplay is always synchronized to the timer interrupt, with the exact
+   number of interrupts between frames depending on the speed selection.
+
+8. When no enemies remain, the main loop calls the level loader, which uses
+   the level data to set up the new enemies.  The "shop" is a special level
+   with no enemies that you finish immediately (after doing the shop stuff,
+   which is run from the level loader).
+
+9. The end of the game is also a special level, from which the high scores
+   are displayed, and you can possibly enter the table.  This level just
+   resets the level number to 0 so you can restart afterwards.
+
+_______________________________________ Data structures
+
+For enemies, enemy bullets, and player bullets, simple arrays are used.
+These contain one object structure after another.  The defintions
+of these are contained in phoenixz.i.
+
+(more information coming soon ... maybe)
+
+_______________________________________ File-by-file description
+
+(coming soon ... maybe)
