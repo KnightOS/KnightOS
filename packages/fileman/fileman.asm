@@ -751,3 +751,13 @@ openFailMessage:
 openFailOptions:
     .db 1
     .db "Dismiss", 0
+
+; Settings
+showHidden:
+    .db 0
+showSizes:
+    .db 1
+browseRoot:
+    .db 1
+initialDir:
+    .dw 0
