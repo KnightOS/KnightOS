@@ -70,7 +70,7 @@ animated:
     push hl
     inc hl
     kcall(DO_LD_HL_MHL)            ; HL -> sprite list
-    kcall(DO_LD_HL_MHL)            ; HL -> sprite
+    kcall(DO_LD_HL_MHL_EP)            ; HL -> sprite
     kcall(drw_spr_wide)
     pop hl
 

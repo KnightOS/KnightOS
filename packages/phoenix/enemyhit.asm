@@ -273,7 +273,7 @@ collision_yes:
     ld (hl), -1         ; Enemy power to -1
     inc hl
     ld (hl), EM_NONE        ; exploding enemy not moving
-    kld(de, e_imageseq - 1)
+    ld de, e_imageseq - 1
     add hl, de
     ld (hl), 2          ; set image to exploding
     inc hl

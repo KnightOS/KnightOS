@@ -136,7 +136,7 @@ scrolled_rightmost:
     kld((x_offset), a)
 no_scrolling:
 
-;    call hit_enemies        ; Collisions btw. bullets  enemies
+    kcall(hit_enemies)        ; Collisions btw. bullets  enemies
 
     kcall(handle_input)       ; Process control keys
     kld(a, (enemies_left))

@@ -31,6 +31,8 @@ enemy_move:
     pop de
     or a
     jr z, _
+    cp 4
+    jr z, _
     inc a ; Extra thing just for this one use-case
 _:
     ; /end NOTE
