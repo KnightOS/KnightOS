@@ -55,12 +55,8 @@ eb_array:       .fill   eb_size*eb_num
 data_zero_end:                          ; end of area cleared on newgame
 
 invert:         .db     -1
-#ifdef __85OR86__
-speed_option:   .db     2               ; 0=slow, 1=medium, 2=fast
-#else
 speed_option:   .db     1
 scroll_flag:    .db     1
-#endif
 sides_flag:     .db     1
 difficulty:     .db     0               ; 0=easy, 1=medium, 2=hard
 

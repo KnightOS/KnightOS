@@ -88,8 +88,8 @@ pre_main_loop:
 ;############## Game main loop
     
 main_loop:
-;    call frame_init
-;
+    call frame_init
+
 ;    call clear_buffer       ; Prepare main display buffer
 ;
 ;    call init_rand
