@@ -83,18 +83,17 @@ pre_main_loop:
     kld((collision_done + 1), hl)
     xor a
     kld((x_offset), a)
-    ret
     
 ;############## Game main loop
     
 main_loop:
-    call frame_init
+    kcall(frame_init)
 
-;    call clear_buffer       ; Prepare main display buffer
-;
-;    call init_rand
-;
-;    call do_player          ; Move and draw player
+    kcall(clear_buffer)       ; Prepare main display buffer
+
+    kcall(init_rand)
+
+    kcall(do_player)         ; Move and draw player
 ;    call do_companion       ; Move and draw companion ship
 ;
 ;    call enemies            ; Move and draw enemies
@@ -110,7 +109,8 @@ main_loop:
 ;
 ;    call display_money
 ;    call synchronize        ; Wait for next 1/30 second cycle
-;    call display_screen     ; Copy display buffer to video memory
+;    pcall(fastCopy)          ; Copy display buffer to video memory
+    kcall(display_screen)          ; Copy display buffer to video memory
 ;
 ;    ld a, (scroll_flag)
 ;    or a
@@ -137,12 +137,12 @@ main_loop:
 ;
 ;    call hit_enemies        ; Collisions btw. bullets  enemies
 ;
-;    call handle_input       ; Process control keys
+    kcall(handle_input)       ; Process control keys
 ;    ld a, (enemies_left)
 ;    or a
 ;    call z, load_level
-;    jr main_loop
-;
+    jr main_loop
+
 ;;############## TI-82 library
 
 ; Clears a block of memory

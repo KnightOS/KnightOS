@@ -36,7 +36,9 @@ name:
 start:
     pcall(getLcdLock)
     pcall(getKeypadLock)
-    pcall(allocScreenBuffer)
+    ld bc, 16*64 ; Larger screen size than usual
+    pcall(malloc)
+    push ix \ pop iy
     kcall(main)
     ret
 
@@ -65,7 +67,7 @@ puts .equ _puts_shim
 #include "title.asm"
 #include "disp.asm"
 #include "drwspr.asm"
-;#include "player.asm"
+#include "player.asm"
 ;#include "shoot.asm"
 ;#include "bullets.asm"
 ;#include "enemies.asm"

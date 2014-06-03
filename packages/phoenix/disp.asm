@@ -179,65 +179,58 @@ show_loop:
 ;        ld      hl,rightside
 ;        ld      de,MIN_Y+(120<<8)
 ;        jp      drw_spr
-;
-;;############## Clears screen buffer
-;
-;clear_buffer:
-;        ld      (smc_savesp+1),sp
-;        ld      hl,0
-;        ld      sp,GFX_AREA+1024
-;        ld      b,63
-;loop_super_clear:
-;        push    hl
-;        push    hl
-;        push    hl
-;        push    hl
-;        push    hl
-;        push    hl
-;        push    hl
-;        push    hl
-;        djnz    loop_super_clear
-;smc_savesp:
-;        ld      sp,0
-;
-;        ld      hl,GFX_AREA+2
-;        ld      bc,11
-;        jp      OTH_CLEAR
-;	
-;;############## Display entire screen from buffer
-;
-;#define DWAIT in a,($10) \ and %10010000 \ jr nz, $-4
-;
-;display_screen:
-;        ld      a,(invert)
-;        or      a
-;        ld      a,$2f                   ; A = CPL
-;        jr      nz,ds_inverted
-;        xor     a                       ; A = NOP
-;ds_inverted:
-;        ld      (smc_invert),a
-;
-;        ld      a,$80
-;        out     ($10),a
-;        ld      hl,GFX_AREA+2
-;        ld      c,$20
-;dispColumn:
-;        DWAIT
-;        ld      a,c
-;        out     ($10),a
-;        cp      $2c
-;        ret     z
-;        ld      b,64
-;        ld      de,16
-;dispByte:
-;        DWAIT
-;        ld      a,(hl)
-;smc_invert:
-;        cpl                            ; invert or not depending on smc
-;        out     ($11),a
-;        add     hl,de
-;        djnz    dispByte
-;        ld      de,-1023
-;        add     hl,de
-;        inc     c
-;        jr      dispColumn
+
+;############## Clears screen buffer
+
+clear_buffer:
+    push hl
+    push de
+    push bc
+        push iy \ pop hl
+        ld (hl), 0
+        ld d, h
+        ld e, l
+        inc de
+        ld bc, 16*64
+        ldir
+    pop bc
+    pop de
+    pop hl
+    ret
+	
+;############## Display entire screen from buffer
+
+display_screen:
+    kld(a, (invert))
+    or a
+    ld a, 0x2F                   ; A = CPL
+    jr nz, ds_inverted
+    xor a                       ; A = NOP
+ds_inverted:
+    kld((smc_invert), a)
+
+    ld a, 0x80
+    out (0x10), a
+    push iy \ pop hl
+    inc hl \ inc hl
+    ld c, 0x20
+dispColumn:
+    in a, (0x10) \ and 0b10010000 \ jr nz, $-4
+    ld a, c
+    out (0x10), a
+    cp 0x2C
+    ret z
+    ld b, 64
+    ld de, 16
+dispByte:
+    in a, (0x10) \ and 0b10010000 \ jr nz, $-4
+    ld a, (hl)
+smc_invert:
+    cpl                            ; invert or not depending on smc
+    out (0x11), a
+    add hl, de
+    djnz dispByte
+    ld de, -1023
+    add hl, de
+    inc c
+    jr dispColumn
