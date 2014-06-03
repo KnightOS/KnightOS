@@ -67,6 +67,14 @@ prepare_new_game:
     ld a, 4
     kld((money_counter), a)
 
+    ; TEMP: Enable all weapons
+    ld a, 1
+    kld((weapon_2), a)
+    kld((weapon_3), a)
+    kld((weapon_4), a)
+    kld((weapon_5), a)
+    ; End TEMP
+
 pre_main_loop:
     kcall(convert_settings)    ; decode configuration
     ; This does some SMC to load the current stack pointer (less 3 PUSHes)
@@ -91,9 +99,9 @@ main_loop:
 ;    call do_companion       ; Move and draw companion ship
 ;
     kcall(enemies)            ; Move and draw enemies
-;
-;    call player_bullets     ; Move and draw player bullets
-;
+
+    kcall(player_bullets)     ; Move and draw player bullets
+
 ;    call enemy_bullets      ; Move and draw enemy bullets
 ;    call hit_player         ; Collisions involving player
 
@@ -129,11 +137,11 @@ scrolled_rightmost:
 no_scrolling:
 
 ;    call hit_enemies        ; Collisions btw. bullets  enemies
-;
+
     kcall(handle_input)       ; Process control keys
-;    ld a, (enemies_left)
-;    or a
-;    call z, load_level
+    kld(a, (enemies_left))
+    or a
+    ;kcall(z, load_level)
     jr main_loop
 
 ;;############## TI-82 library

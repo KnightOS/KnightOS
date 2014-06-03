@@ -38,7 +38,7 @@ autofire:
 do_shoot:
     ld (hl), d
     push bc
-    ;kcall(player_shoot) ; TODO
+    kcall(player_shoot)
     pop bc
 fire_done:
     kld(hl, player_y)
