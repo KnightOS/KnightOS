@@ -104,6 +104,10 @@ pause_msg:
 
 handle_input:
     pcall(getKey)
+    cp kF1
+    jr z, launchCastle
+    cp kF5
+    jr z, launchThreads
     cp kEnter
     jr z, pause
     cp kMODE
@@ -154,3 +158,18 @@ select_weapon_5:
     ret z
     ld (hl), 4
     ret
+
+launchCastle:
+    kld(de, castlePath)
+    jr _
+launchThreads:
+    kld(de, threadListPath)
+_:  pcall(launchProgram)
+    pcall(suspendCurrentThread)
+    ret
+
+; TODO: Read from /etc/launcher, or integrate with corelib
+castlePath:
+    .db "/bin/castle", 0
+threadListPath:
+    .db "/bin/threadlist", 0

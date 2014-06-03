@@ -74,25 +74,6 @@ smc_gfxmem_start:
     jr drw_spr_main
         
 drw_spr:
-    ; EXPERIMENTAL
-    ; Tries to use the kernel function instead
-    ;inc hl ; Skip width
-    ;ld b, (hl)
-    ;inc hl
-    ;; Swap D and E
-    ;;ld c, e
-    ;;ld e, d
-    ;;ld d, c
-    ;; Adjust X
-    ;ld a, (x_offset)
-    ;sub d
-    ;neg
-    ;ld d, a
-    ;cp 112
-    ;ret nc
-    ;pcall(putSpriteOR)
-    ;ret
-
     kld(a, (x_offset)) ; This adjusts by some offset all sprites move by
     sub d
     neg
