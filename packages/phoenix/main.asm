@@ -141,7 +141,7 @@ no_scrolling:
     kcall(handle_input)       ; Process control keys
     kld(a, (enemies_left))
     or a
-    ;kcall(z, load_level)
+    kcall(z, load_level)
     jr main_loop
 
 ;;############## TI-82 library

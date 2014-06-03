@@ -29,7 +29,7 @@ loop_enemies:
     push bc
 
     push hl
-    ;kcall(enemy_move)              ; call movement routine
+    kcall(enemy_move)              ; call movement routine
     pop hl
 
     push hl

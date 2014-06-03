@@ -13,64 +13,90 @@
 
 ;############## Set up a level
 
-; The coding style here has been fixed, but it's not finished being ported
+entryPoint:
+    .dw 0
 
 restart:
-    ld hl, level
+    kld(hl, level)
     ld (hl), 0
 
 load_level:
-    ld hl, default_data
-    ld de, enemy_buffer         ; zero enemy buffer
+    ; Update defaults
+    kld(bc, (entryPoint))
+    kld(hl, (default_reloc))
+    add hl, bc
+    kld((default_reloc), hl)
+
+    kld(hl, default_data)
+    kld(de, enemy_buffer)         ; zero enemy buffer
     ld bc, e_size
     ldir
 
-    ld hl, e_array              ; set destination position
-    ld (enemy_pointer), hl
+    kld(hl, e_array)              ; set destination position
+    kld((enemy_pointer), hl)
 
-    ld hl, level
+    kld(hl, level)
     ld a, (hl)
     inc (hl)                    ; increment level number
-    ld hl, (level_addr)
+    kld(hl, (level_addr))
     add a, a
-    call ADD_HL_A                ; HL -> position in level list
-    call DO_LD_HL_MHL            ; HL -> level pointer
+    add a, l \ ld l, a \ jr nc, $+3 \ inc h ; HL -> position in level list
+    kcall(DO_LD_HL_MHL_EP)            ; HL -> level pointer
 
     ld a, (hl)                  ; read number of enemies
-    ld (enemies_left), a
+    kld((enemies_left), a)
     inc hl
 
 level_loader:
     ld a, (hl)
     inc hl
-    ld (smc_loader_jump+1), a
+    ; NOTE: This keeps compatability with existing Phoenix levels
+    ; We might be able to skip this step if we relocate the jump table manually.
+    ; Kernel support might be called for here, considering that libraries do this
+    ; exact procedure themselves.
+    ; The purpose of this code is to change A from a multiple of 3 to a multiple
+    ; of 4, since jp is a 3-byte instruction and kjp is 4 bytes.
+    push de
+        ; A /= 3
+        ld d, a
+        ld e, 3
+        pcall(div8by8)
+        ld a, d
+        ; A *= 4
+        sla a \ sla a
+    pop de
+    or a
+    jr nc, _
+    inc a
+_:  kld((smc_loader_jump + 1), a)
 smc_loader_jump:
     jr loader_table
 
 ;############## Command table
 
 loader_table:
-    ret                        ;0
-    jp shop                    ;1
-    jp game_finished           ;4
-    jp set_power               ;7
-    jp set_movetype            ;10
-    jp set_movedata            ;13
-    jp set_movedata2           ;16
-    jp set_imagestill          ;19
-    jp set_imageanim           ;22
-    jp set_firetype            ;25
-    jp set_firerate            ;28
-    jp set_fireweapon          ;31
-    jp set_firepower           ;34
-    jp install_single          ;37
-    jp install_row             ;40
-    jp level_goto              ;43
+    ret                          ;0
+    nop \ nop \ nop \ nop        ;jp shop                    ;1
+    nop \ nop \ nop \ nop        ;jp game_finished           ;4
+    kjp(set_power)               ;7
+    kjp(set_movetype)            ;10
+    kjp(set_movedata)            ;13
+    kjp(set_movedata2)           ;16
+    kjp(set_imagestill)          ;19
+    kjp(set_imageanim)           ;22
+    kjp(set_firetype)            ;25
+    kjp(set_firerate)            ;28
+    kjp(set_fireweapon)          ;31
+    kjp(set_firepower)           ;34
+    kjp(install_single)          ;37
+    kjp(install_row)             ;40
+    kjp(level_goto)              ;43
+    ;kjp(install_standard_row)
 
 ;############## install row with default parameters
 
 install_standard_row:
-    call install_first
+    kcall(install_first)
     ld b, 6-1                           ; B = # of enemies
     ld c, 15                            ; C = spacing
     jr pre_install_loop
@@ -78,52 +104,52 @@ install_standard_row:
 ;############## goto
 
 level_goto:
-    call DO_LD_HL_MHL
+    kcall(DO_LD_HL_MHL_EP)
     jr level_loader
 
 ;############## Set enemy data
 
 set_power:
-    ld de, enemy_buffer+e_pwr
+    kld(de, enemy_buffer+e_pwr)
 copy_byte:
     ldi
 back_to_loader:
     jr level_loader
 
 set_movetype:
-    ld de, enemy_buffer+e_movetype
+    kld(de, enemy_buffer+e_movetype)
     jr copy_byte
 
 set_movedata:
-    ld de, enemy_buffer+e_movedata
+    kld(de, enemy_buffer+e_movedata)
 copy_word:
     ldi
     jr copy_byte
 
 set_movedata2:
-    ld de, enemy_buffer+e_movedata+2
+    kld(de, enemy_buffer+e_movedata+2)
     jr copy_byte
 
 set_imagestill:
     xor a
-    ld (enemy_buffer+e_imageseq), a
-    ld de, enemy_buffer+e_imageptr
+    kld((enemy_buffer+e_imageseq), a)
+    kld(de, enemy_buffer+e_imageptr)
     jr copy_word
 
 set_firetype:
-    ld de, enemy_buffer+e_firetype
+    kld(de, enemy_buffer+e_firetype)
     jr copy_byte
 
 set_firerate:
-    ld de, enemy_buffer+e_firerate
+    kld(de, enemy_buffer+e_firerate)
     jr copy_byte
 
 set_fireweapon:
-    ld de, enemy_buffer+e_fireweapon
+    kld(de, enemy_buffer+e_fireweapon)
     jr copy_byte
 
 set_firepower:
-    ld de, enemy_buffer+e_firepower
+    kld(de, enemy_buffer+e_firepower)
     jr copy_byte
 
 set_imageanim:
@@ -133,19 +159,19 @@ set_imageanim:
     inc hl
     ld a, (de)
     inc de
-    ld (enemy_buffer+e_imageseq), a
-    ld (enemy_buffer+e_imageptr), de
+    kld((enemy_buffer+e_imageseq), a)
+    kld((enemy_buffer+e_imageptr), de)
 back_to_loader_2:
     jr back_to_loader
 
 ;############## Install enemies
 
 install_single:
-    call install_first
+    kcall(install_first)
     jr back_to_loader_2
 
 install_row:
-    call install_first
+    kcall(install_first)
     ld b, (hl)                          ; B = # of enemies
     inc hl
     ld c, (hl)                          ; C = spacing
@@ -154,43 +180,43 @@ install_row:
 pre_install_loop:
     push hl
 install_loop:
-    ld a, (enemy_buffer+e_x)            ; move to next position
+    kld(a, (enemy_buffer+e_x))            ; move to next position
     add a, c
-    ld (enemy_buffer+e_x), a
+    kld((enemy_buffer+e_x), a)
     push bc
-    call install_enemy_buffer
+    kcall(install_enemy_buffer)
     pop bc
     djnz install_loop
     pop hl
     jr back_to_loader_2
 
 install_first:
-    ld de, enemy_buffer+e_x             ; read specified coordinates
+    kld(de, enemy_buffer+e_x)             ; read specified coordinates
     ldi
     inc de                      
     ldi
     push hl
 
-    ld hl, (enemy_buffer+e_imageptr)    ; load image size
-    ld a, (enemy_buffer+e_imageseq)
+    kld(hl, (enemy_buffer+e_imageptr))    ; load image size
+    kld(a, (enemy_buffer+e_imageseq))
     or a
     jr z, not_animated
-    call DO_LD_HL_MHL
+    kcall(DO_LD_HL_MHL_EP)
 not_animated:
-    ld de, enemy_buffer+e_w
+    kld(de, enemy_buffer+e_w)
     ldi
     inc de
     ldi
-    call install_enemy_buffer            ; copy buffer to enemy array
+    kcall(install_enemy_buffer)            ; copy buffer to enemy array
     pop hl
     ret
 
 install_enemy_buffer:
-    ld hl, enemy_buffer
-    ld de, (enemy_pointer)
+    kld(hl, enemy_buffer)
+    kld(de, (enemy_pointer))
     ld bc, e_size
     ldir
-    ld (enemy_pointer), de
+    kld((enemy_pointer), de)
     ret     
  
 ;############## Default enemy data
@@ -201,6 +227,7 @@ default_data:
     .db 0, -60, 0         ; e_movedata
     .db 10, 0, 10, 0       ; e_x, e_w, e_y, e_h
     .db 0               ; e_imageseq
+default_reloc:
     .dw img_enemy_1     ; e_imageptr
     .db FT_RANDOM       ; e_firetype
     .db 2, 0             ; e_firerate, e_firedata

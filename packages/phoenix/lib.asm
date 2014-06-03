@@ -20,6 +20,17 @@ DO_LD_HL_MHL:
     ld l, a
     ret
 
+DO_LD_HL_MHL_EP:
+    ld a, (hl)
+    inc hl
+    ld h, (hl)
+    ld l, a
+    push bc
+        kld(bc, (entryPoint))
+        add hl, bc
+    pop bc
+    ret
+
 ; kernel cpHLDE would do fine here
 ; Leaving this for now because it'd be faster than the pcall
 DO_CP_HL_DE:
@@ -36,7 +47,7 @@ synchronize:
     ; TODO: Change this by clock speed
     push bc
     push af
-        ld b, 0x50
+        ld b, 0x70
 _:      pcall(getKey)
         cp kF1
         kcall(z, launchCastle)
@@ -51,10 +62,9 @@ _:      pcall(getKey)
 
 ;############## Basic computations
 
-; NOTE: Modified to remove ADD_HL_A
 table_look_up:
     add a, a
-    kld(hl, speed_table) ; TODO: Add ebullets.asm
+    kld(hl, speed_table)
 ADD_HL_A:
     add a, l
     ld l, a

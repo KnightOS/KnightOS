@@ -17,23 +17,19 @@
 name:
     .db "Phoenix", 0
 
-;interrupt_entry =$9898
-;interrupt_byte  =$98
-;interrupt_table =$9900
-;interrupt_reg   =$99
-
-;GFX_AREA        =plotsscreen
 ;D_ZT_STR        =_puts
 ;D_HL_DECI       =_disphl
 ;TX_CHARPUT      =_putc
 ;CLEARLCD        =_clrlcdf
-;CURSOR_ROW      =currow
-;CURSOR_COL      =curcol
 ;UNPACK_HL       =_divhlby10
 
 #include "phoenixz.i"
 
 start:
+    pcall(getCurrentThreadId)
+    pcall(getEntryPoint)
+    kld((entryPoint), hl)
+
     pcall(getLcdLock)
     pcall(getKeypadLock)
     ld bc, 16*64 ; Larger screen size than usual
@@ -69,7 +65,7 @@ puts .equ _puts_shim
 #include "shoot.asm"
 #include "bullets.asm"
 #include "enemies.asm"
-;#include "init.asm"
+#include "init.asm"
 #include "enemyhit.asm"
 #include "collide.asm"
 #include "ebullets.asm"
@@ -78,7 +74,7 @@ puts .equ _puts_shim
 ;#include "helper.asm"
 ;#include "eshoot.asm"
 ;#include "score.asm"
-;#include "emove.asm"
+#include "emove.asm"
 #include "images.asm"
 ;#include "info.asm"
 #include "data.asm"
