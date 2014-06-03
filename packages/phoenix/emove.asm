@@ -294,6 +294,10 @@ pattern_move:
     ld a, (de)
     ld d, a
     ld e, b
+    ex de, hl
+    kld(bc, (entryPoint))
+    add hl, bc
+    ex de, hl
 
 no_restart_sequence:
     dec hl
@@ -329,7 +333,7 @@ pattern_wait:
     dec (hl)                    ; decrement countdown
     ret nz
     dec (hl)
-    sbc hl,de
+    sbc hl, de
     ld (hl), EM_PATTERNMAIN     ; advance to in-pattern type
     add hl, de
     add hl, de
@@ -343,7 +347,7 @@ pattern_init:
     ld de, e_y - e_movetype
     add hl, de
     ld a, (hl)                  ; A = given Y coordinate
-    ld (hl),110                ; set Y coordinate to 110
+    ld (hl), 110                ; set Y coordinate to 110
     dec hl
     dec hl
     ld b, (hl)                  ; B = given X coordinate

@@ -27,6 +27,7 @@
 .equ L_GOTO 43     ; go to the following word
 .equ L_DEFAULT_ROW 46     ; install enemy row (X, Y) num = 6, spacing = 15
                         ; do not use this one in external levels
+.equ L_SET_MOVEDATA_REL 49     ; relative set move data
 
 ;############## Enemy movement types
 

@@ -92,7 +92,8 @@ loader_table:
     kjp(install_single)          ;37
     kjp(install_row)             ;40
     kjp(level_goto)              ;43
-    ;kjp(install_standard_row)
+    kjp(install_standard_row)    ;46
+    kjp(set_movedata_rel)        ;49
 
 ;############## install row with default parameters
 
@@ -134,6 +135,10 @@ set_movetype:
     kld(de, enemy_buffer+e_movetype)
     jr copy_byte
 
+set_movedata_rel:
+    kld(de, enemy_buffer+e_movedata)
+    jr copy_word_reloc
+
 set_movedata:
     kld(de, enemy_buffer+e_movedata)
 copy_word:
@@ -167,6 +172,8 @@ set_firepower:
     jr copy_byte
 
 set_imageanim:
+    inc hl \ inc hl
+    kjp(level_loader)
     ld e, (hl)
     inc hl
     ld d, (hl)

@@ -199,10 +199,10 @@ lev7:
     .db L_SET_POWER, 14
     .db L_IMAGE_ANIM
     .dw img_enemy_3
-    .db L_SET_MOVETYPE,EM_PATTERNSTART
+    .db L_SET_MOVETYPE, EM_PATTERNSTART
     .db L_SET_FIRERATE, 4
-    .db L_SET_WEAPON,W_SEMIAIM
-    .db L_SET_MOVEDATA
+    .db L_SET_WEAPON, W_SEMIAIM
+    .db L_SET_MOVEDATA_REL
     .dw circle_pattern
     .db L_INSTALL_ROW, 14, 18, 7, 27
     .db L_INSTALL_ROW, 29, 74, 7, 27
@@ -228,7 +228,7 @@ lev8:
     .db L_SET_MOVETYPE, EM_PATTERNSTART
     .db L_SET_FIRERATE, 4
     .db L_SET_WEAPON, W_SEMIAIM
-    .db L_SET_MOVEDATA
+    .db L_SET_MOVEDATA_REL
     .dw figure_eight_pattern
     .db L_INSTALL_ROW, 14, 18, 13, 15
     .db L_END
@@ -241,7 +241,7 @@ lev9:
     .db L_SET_MOVETYPE, EM_PATTERNSTART
     .db L_SET_FIRERATE, 4
     .db L_SET_WEAPON, W_SEMIAIM
-    .db L_SET_MOVEDATA
+    .db L_SET_MOVEDATA_REL
     .dw oval_pattern
     .db L_INSTALL_ROW, 14, 18, 13, 15
 
@@ -370,7 +370,7 @@ levl:
     .db L_SET_MOVETYPE, EM_PATTERNSTART
     .db L_SET_FIRERATE, 4
     .db L_SET_WEAPON, W_SEMIAIM
-    .db L_SET_MOVEDATA
+    .db L_SET_MOVEDATA_REL
     .dw huge_oval_pattern
     .db L_INSTALL_ROW, 14, 18, 17, 15
 
