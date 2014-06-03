@@ -127,6 +127,7 @@ copy_word_reloc:
         inc hl
         ex de, hl
     pop hl
+    inc hl \ inc hl
     jr back_to_loader
 
 set_movetype:
