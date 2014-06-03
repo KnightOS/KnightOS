@@ -172,8 +172,6 @@ set_firepower:
     jr copy_byte
 
 set_imageanim:
-    inc hl \ inc hl
-    kjp(level_loader)
     ld e, (hl)
     inc hl
     ld d, (hl)

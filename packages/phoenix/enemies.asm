@@ -102,7 +102,7 @@ store_new_anim_data:
 
 restart_sequence:
     ex de, hl                   ; DE -> e_imageseq, HL -> sprite list
-    kcall(DO_LD_HL_MHL)            ; HL -> sprite list new position
+    kcall(DO_LD_HL_MHL_EP)            ; HL -> sprite list new position
     ld a, (hl)                  ; A = time for next image
     inc hl
     ex de, hl
