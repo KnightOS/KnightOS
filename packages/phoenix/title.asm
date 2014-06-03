@@ -86,7 +86,7 @@ options_loop:               ; option main loop
     cp kCLEAR
     jr z, redraw_title
     cp kDEL
-    jr z, redraw_title
+    kjp(z, redraw_title)
     cp kUp
     jr z, options_up
     cp kDown

@@ -100,7 +100,7 @@ install_standard_row:
     kcall(install_first)
     ld b, 6-1                           ; B = # of enemies
     ld c, 15                            ; C = spacing
-    jr pre_install_loop
+    kjp(pre_install_loop)
 
 ;############## goto
 
@@ -207,7 +207,7 @@ install_loop:
     pop bc
     djnz install_loop
     pop hl
-    jr back_to_loader_2
+    kjp(level_loader)
 
 install_first:
     kld(de, enemy_buffer+e_x)             ; read specified coordinates

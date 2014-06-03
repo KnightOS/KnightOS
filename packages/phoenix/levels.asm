@@ -19,7 +19,7 @@ level_table:
     .dw lev1
     .dw lev2
     .dw lev3            ; with boss
-    .dw _shop
+    ;.dw _shop
 
     .dw lev4            ; second set of standard enemies
     .dw lev5    
