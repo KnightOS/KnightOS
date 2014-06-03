@@ -11,8 +11,6 @@
 ;
 ;##################################################################     
 
-; TODO: See if we can't use the kernel sprite functions instead
-
 drw_spr_wide:
     ld a, (hl)
     cp 9
@@ -263,7 +261,7 @@ routine3:
     ld a, 15
     add a, l
     ld l, a
-    jp nc, done3
+    kjp(nc, done3)
     inc h
 done3:
     djnz routine3

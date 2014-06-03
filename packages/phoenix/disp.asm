@@ -164,21 +164,21 @@ show_loop:
 ;        add     hl,de
 ;        djnz    loop_ind
 ;        ret
-;
-;;############## Display sides over the screen
-;	
-;render_sides:
-;        ld      a,(sides_flag)
-;        or      a
-;        ret     z
-;
-;        ld      hl,leftside
-;        ld      de,MIN_Y
-;        call    drw_spr
-;
-;        ld      hl,rightside
-;        ld      de,MIN_Y+(120<<8)
-;        jp      drw_spr
+
+############## Display sides over the screen
+	
+render_sides:
+    kld(a, (sides_flag))
+    or a
+    ret z
+
+    kld(hl, leftside)
+    ld de, MIN_Y
+    kcall(drw_spr)
+
+    kld(hl, rightside)
+    ld de, MIN_Y+(122<<8)
+    kjp(drw_spr)
 
 ;############## Clears screen buffer
 

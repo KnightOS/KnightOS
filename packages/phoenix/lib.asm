@@ -71,7 +71,8 @@ DO_CP_HL_DE:
 ; NOTE: Modified to remove ADD_HL_A
 table_look_up:
     add a, a
-;    kld(hl, speed_table) ; TODO: Add ebullets.asm
+    kld(hl, speed_table) ; TODO: Add ebullets.asm
+ADD_HL_A:
     add a, l
     ld l, a
     ret nc

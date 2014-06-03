@@ -61,8 +61,6 @@ _puts_shim_cur:
 puts .equ _puts_shim
 
 #include "main.asm"
-;#include "extlev.asm"
-;#include "exchange.asm"
 #include "lib.asm"
 #include "title.asm"
 #include "disp.asm"
@@ -70,7 +68,7 @@ puts .equ _puts_shim
 #include "player.asm"
 ;#include "shoot.asm"
 ;#include "bullets.asm"
-;#include "enemies.asm"
+#include "enemies.asm"
 ;#include "init.asm"
 #include "enemyhit.asm"
 #include "collide.asm"
@@ -83,6 +81,6 @@ puts .equ _puts_shim
 ;#include "emove.asm"
 #include "images.asm"
 ;#include "info.asm"
-;#include "data.asm"
-;#include "levels.asm"
+#include "data.asm"
+#include "levels.asm"
 #include "vars.asm"

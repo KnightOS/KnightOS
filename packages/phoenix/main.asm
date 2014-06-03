@@ -14,7 +14,7 @@
 leftside:
     .fill 0xFEB2 - 0xFE70
 rightside:
-    .fill 0xFEF4 - 0xFEB2
+    .fill 0xFEB2 - 0xFE70
 leftsidecoord:
     .db 0
 leftsidevel:
@@ -26,36 +26,30 @@ rightsidevel:
 
 main:
     ld hl, 0x4008
-    ld (leftside), hl
-    ld (rightside), hl
+    kld((leftside), hl)
+    kld((rightside), hl)
 
     kcall(set_up_sides)
 
-    ;ld a, 0xC9 ; RET
-    ;ld (check_restore), a ; NOTE: this is SMC
-
+    ; NOTE: We have to set up a second thread here, I think?
+    ; Only syncronize uses it, afaik. We can probably get away with just sleeping to slow down
+    ; The ISR is in lib.asm
     ;ld hl, timer_interrupt
-
-    ; NOTE: We have to set up a second thread here
     ;ld (custintaddr), hl
     ;ld a, 34
     ;call setupint
 
     ;ei
 
-    ;ld (iy + 13), 0 ; Resets a bunch of text drawing flags
-
-    ;ld hl, level_table ; use default level data
-    ;ld (level_addr), hl
+    kld(hl, level_table) ; use default level data
+    kld((level_addr), hl)
 
     ;call restore_game ; check for saved game
 
-    ;xor a               ; by default, no external level
-    ;ld (extlevel), a
+    xor a ; by default, no external level
+    kld((extlevel), a)
 
 no_saved_game:
-    ;call level_selector      ; level section 
-
     kcall(title_screen)
 
 prepare_new_game:
@@ -96,45 +90,44 @@ main_loop:
     kcall(do_player)         ; Move and draw player
 ;    call do_companion       ; Move and draw companion ship
 ;
-;    call enemies            ; Move and draw enemies
+    kcall(enemies)            ; Move and draw enemies
 ;
 ;    call player_bullets     ; Move and draw player bullets
 ;
 ;    call enemy_bullets      ; Move and draw enemy bullets
 ;    call hit_player         ; Collisions involving player
-;
-;    call scroll_sides
-;    call render_sides
+
+    kcall(scroll_sides)
+    kcall(render_sides)
 ;    call prepare_indicator  ; Prepare the shield indicator
 ;
 ;    call display_money
 ;    call synchronize        ; Wait for next 1/30 second cycle
-;    pcall(fastCopy)          ; Copy display buffer to video memory
-    kcall(display_screen)          ; Copy display buffer to video memory
-;
-;    ld a, (scroll_flag)
-;    or a
-;    jr z, no_scrolling
-;    ld a, (player_x)
-;    cp 28
-;    jr c, scrolled_leftmost
-;    cp 92
-;    jr nc, scrolled_rightmost
-;    sub 28
-;    rra
-;    and 31
-;    sub 16
-;    ld (x_offset), a
-;    jr no_scrolling
-;scrolled_leftmost:
-;    ld a, -16
-;    ld (x_offset), a
-;    jr no_scrolling
-;scrolled_rightmost:
-;    ld a, 16
-;    ld (x_offset), a
-;no_scrolling:
-;
+    kcall(display_screen)    ; Copy display buffer to video memory
+
+    kld(a, (scroll_flag))
+    or a
+    jr z, no_scrolling
+    kld(a, (player_x))
+    cp 28
+    jr c, scrolled_leftmost
+    cp 92
+    jr nc, scrolled_rightmost
+    sub 28
+    rra
+    and 31
+    sub 16
+    kld((x_offset), a)
+    jr no_scrolling
+scrolled_leftmost:
+    ld a, -16
+    kld((x_offset), a)
+    jr no_scrolling
+scrolled_rightmost:
+    ld a, 16
+    kld((x_offset), a)
+no_scrolling:
+
 ;    call hit_enemies        ; Collisions btw. bullets  enemies
 ;
     kcall(handle_input)       ; Process control keys

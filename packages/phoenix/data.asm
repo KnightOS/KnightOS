@@ -14,24 +14,9 @@
 ;############## Save the game
 
 game_save:
-        ld      a,1
-        ld      (saved_flag),a
-        jp      game_exit
+    ret ; TODO
 
 ;############## Test for saved game, restoring if it exists
 
 restore_game:
-        ld      hl,saved_flag
-        ld      a,(hl)
-        or      a
-        ret     z
-
-        ld      a,(extlevel)
-        or      a
-        call    nz,extlevel_saved
-        xor     a
-#ifdef __85OR86__
-        ld      (LEVEL_LOCATION),a
-#endif   
-        ld      (saved_flag),a
-        jp      pre_main_loop
+    ret ; TODO
