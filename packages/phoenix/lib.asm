@@ -50,9 +50,9 @@ synchronize:
         ld b, 0x70
 _:      pcall(getKey)
         cp kF1
-        kcall(z, launchCastle)
+        corelib(z, launchCastle)
         cp kF5
-        kcall(z, launchThreads)
+        corelib(z, launchThreadList)
         djnz -_
     pop af
     pop bc

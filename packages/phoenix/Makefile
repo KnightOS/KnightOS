@@ -1,7 +1,7 @@
 OUTDIR:=bin/
 BINDIR:=$(OUTDIR)bin/
 
-DEPENDENCIES=
+DEPENDENCIES=../corelib/;
 
 all: $(BINDIR)phoenix
 

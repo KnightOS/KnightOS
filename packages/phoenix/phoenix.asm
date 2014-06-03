@@ -4,6 +4,7 @@
 ; Copyright 2005 by Patrick Davidson.  This software may be freely
 ; modified and/or copied with no restrictions.  There is no warranty.
 #include "kernel.inc"
+#include "corelib.inc"
     .db "KEXC"
     .db KEXC_ENTRY_POINT
     .dw start
@@ -26,6 +27,9 @@ name:
 #include "phoenixz.i"
 
 start:
+    kld(de, corelibPath)
+    pcall(loadLibrary)
+
     pcall(getCurrentThreadId)
     pcall(getEntryPoint)
     kld((entryPoint), hl)
@@ -35,8 +39,16 @@ start:
     pcall(getKeypadLock)
     ld bc, 16*64 ; Larger screen size than usual
     pcall(malloc)
+    jr nz, .quit
     push ix \ pop iy
     kcall(main)
+    ret
+.quit:
+    push af
+        pcall(allocScreenBuffer)
+        pcall(nz, exitThread) ; Nothing we can do about it
+    pop af
+    corelib(showErrorAndQuit)
     ret
 
 _puts_shim:
@@ -56,6 +68,9 @@ _puts_shim_cur:
     .dw 0
 
 puts .equ _puts_shim
+
+corelibPath:
+    .db "/lib/core", 0
 
 #include "main.asm"
 #include "lib.asm"
