@@ -77,8 +77,8 @@ smc_loader_jump:
 
 loader_table:
     ret                          ;0
-    nop \ nop \ nop \ nop        ;jp shop                    ;1
-    nop \ nop \ nop \ nop        ;jp game_finished           ;4
+    jr level_loader \ nop \ nop  ;jp shop                    ;1
+    jr level_loader \ nop \ nop  ;jp game_finished           ;1
     kjp(set_power)               ;7
     kjp(set_movetype)            ;10
     kjp(set_movedata)            ;13
