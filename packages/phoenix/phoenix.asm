@@ -73,7 +73,7 @@ puts .equ _puts_shim
 ;#include "hityou.asm"
 ;#include "shop.asm"
 ;#include "helper.asm"
-;#include "eshoot.asm"
+#include "eshoot.asm"
 ;#include "score.asm"
 #include "emove.asm"
 #include "images.asm"

@@ -33,7 +33,7 @@ loop_enemies:
     pop hl
 
     push hl
-    ;kcall(enemy_shoot)             ; call firing routine
+    kcall(enemy_shoot)             ; call firing routine
     pop hl
 
     push hl

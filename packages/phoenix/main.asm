@@ -97,12 +97,12 @@ main_loop:
 
     kcall(do_player)         ; Move and draw player
 ;    call do_companion       ; Move and draw companion ship
-;
+
     kcall(enemies)            ; Move and draw enemies
 
     kcall(player_bullets)     ; Move and draw player bullets
 
-;    call enemy_bullets      ; Move and draw enemy bullets
+    kcall(enemy_bullets)      ; Move and draw enemy bullets
 ;    call hit_player         ; Collisions involving player
 
     kcall(scroll_sides)
