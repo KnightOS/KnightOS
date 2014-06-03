@@ -23,13 +23,17 @@ enemy_bullets:
     ld b, eb_num
 loop_enemy_bullets:
     ld a, (hl)
+    cp -5
+    jr c, _
+    ld a, -6
+    jr ++_
     ; NOTE: This keeps compatability with existing Phoenix levels
     ; We might be able to skip this step if we relocate the jump table manually.
     ; Kernel support might be called for here, considering that libraries do this
     ; exact procedure themselves.
     ; The purpose of this code is to change A from a multiple of 3 to a multiple
     ; of 4, since jp is a 3-byte instruction and kjp is 4 bytes.
-    push de
+_:  push de
         ; A /= 3
         ld d, a
         ld e, 3
@@ -39,7 +43,7 @@ loop_enemy_bullets:
         sla a \ sla a
     pop de
     ; /end NOTE
-    kld((do_enemy_bullet + 1), a) ; SMC
+_:  kld((do_enemy_bullet + 1), a) ; SMC
     push hl
     push bc
     kcall(do_enemy_bullet)
@@ -50,7 +54,7 @@ loop_enemy_bullets:
     djnz loop_enemy_bullets
     ret
 
-    kjp(exploding)              ; This is offset -5 ; NOTE: What does this comment mean? More SMC?
+    kjp(exploding) ; Part of the no_ebullet table
 do_enemy_bullet:
     jr point_to_ebullet_code    ; Updated via SMC
 point_to_ebullet_code:
@@ -73,7 +77,7 @@ no_ebullet:
     nop \ nop \ nop \ nop       ; 44
     nop \ nop \ nop \ nop       ; 48
     nop \ nop \ nop \ nop       ; 52
-    ;kjp(huge_ebullet)          ; 56 ; NOTE: Unsure why this is commented out
+    ;kjp(huge_ebullet)          ; 56
 
 ;############## Huge bullets
 

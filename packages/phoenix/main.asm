@@ -31,15 +31,7 @@ main:
 
     kcall(set_up_sides)
 
-    ; NOTE: We have to set up a second thread here, I think?
-    ; Only syncronize uses it, afaik. We can probably get away with just sleeping to slow down
-    ; The ISR is in lib.asm
-    ;ld hl, timer_interrupt
-    ;ld (custintaddr), hl
-    ;ld a, 34
-    ;call setupint
-
-    ;ei
+    ; NOTE: Interrupt setup removed, we'll have to do difficulty with a different mechanic
 
     kld(hl, level_table) ; use default level data
     kld((level_addr), hl)
@@ -103,7 +95,7 @@ main_loop:
     kcall(player_bullets)     ; Move and draw player bullets
 
     kcall(enemy_bullets)      ; Move and draw enemy bullets
-;    call hit_player         ; Collisions involving player
+    kcall(hit_player)         ; Collisions involving player
 
     kcall(scroll_sides)
     kcall(render_sides)
