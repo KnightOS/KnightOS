@@ -92,7 +92,6 @@ corelibPath:
 ;#include "score.asm"
 #include "emove.asm"
 #include "images.asm"
-    nop \ nop
 ;#include "info.asm"
 #include "data.asm"
 #include "levels.asm"

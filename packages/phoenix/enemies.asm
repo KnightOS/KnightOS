@@ -124,7 +124,7 @@ kill_enemy:
     kcall(FAST_RANDOM)
     and 7
     add a, 4
-    ld (money_counter), a
+    kld((money_counter), a)
 
     ld de, e_w
     add hl, de                   ; HL -> e_w
@@ -133,10 +133,9 @@ kill_enemy:
 
 deploy_bonus:
     xor a
-    ;kld((smc_enemy_bullet_power + 1), a)
+    kld((smc_enemy_bullet_power + 1), a)
     kld(de, bonus_data)
-    ;kjp(fire_enemy_bullet)
-    ret ; temp
+    kjp(fire_enemy_bullet)
 
 bonus_data:
     .db 6
