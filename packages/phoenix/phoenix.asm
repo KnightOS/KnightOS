@@ -29,6 +29,7 @@ start:
     pcall(getCurrentThreadId)
     pcall(getEntryPoint)
     kld((entryPoint), hl)
+    kcall(relocate_defaults)
 
     pcall(getLcdLock)
     pcall(getKeypadLock)

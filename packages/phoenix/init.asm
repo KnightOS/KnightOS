@@ -20,13 +20,14 @@ restart:
     kld(hl, level)
     ld (hl), 0
 
-load_level:
-    ; Update defaults
+relocate_defaults:
     kld(bc, (entryPoint))
     kld(hl, (default_reloc))
     add hl, bc
     kld((default_reloc), hl)
+    ret
 
+load_level:
     kld(hl, default_data)
     kld(de, enemy_buffer)         ; zero enemy buffer
     ld bc, e_size
@@ -66,7 +67,7 @@ level_loader:
         sla a \ sla a
     pop de
     or a
-    jr nc, _
+    jr z, _
     inc a
 _:  kld((smc_loader_jump + 1), a)
 smc_loader_jump:
@@ -134,6 +135,12 @@ set_imagestill:
     xor a
     kld((enemy_buffer+e_imageseq), a)
     kld(de, enemy_buffer+e_imageptr)
+    push bc
+        kld(bc, (entryPoint))
+        ex de, hl
+        add hl, bc
+        ex de, hl
+    pop bc
     jr copy_word
 
 set_firetype:
@@ -161,6 +168,12 @@ set_imageanim:
     inc de
     kld((enemy_buffer+e_imageseq), a)
     kld((enemy_buffer+e_imageptr), de)
+    push bc
+        kld(bc, (entryPoint))
+        ex de, hl
+        add hl, bc
+        ex de, hl
+    pop bc
 back_to_loader_2:
     jr back_to_loader
 
