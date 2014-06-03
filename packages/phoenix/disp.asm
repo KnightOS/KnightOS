@@ -142,28 +142,33 @@ show_loop:
 ;left_side:
 ;        ld      hl,decimal_cash
 ;        jp      display_number_bcd
-;
-;;############## Prepares on-screen shield indicator
-;
-;prepare_indicator:
-;        ld      a,(player_pwr)
-;        or      a
-;        ret     z
-;        ret     m
-;        ld      b,a
-;        ld      hl,GFX_AREA+1024-3
-;        ld      de,-16
-;loop_ind:
-;        set     0,(hl)
-;        add     hl,de
-;        set     0,(hl)
-;        add     hl,de
-;        set     0,(hl)
-;        add     hl,de
-;        set     0,(hl)
-;        add     hl,de
-;        djnz    loop_ind
-;        ret
+
+;############## Prepares on-screen shield indicator
+
+prepare_indicator:
+    kld(a,(player_pwr))
+    or a
+    ret z
+    ret m
+    ld b,a
+    ;ld hl,GFX_AREA+1024-3
+    push iy \ pop hl
+    push bc
+        ld bc, 1024 - 3
+        add hl, bc
+    pop bc
+    ld de,-16
+loop_ind:
+    set 0, (hl)
+    add hl, de
+    set 0, (hl)
+    add hl, de
+    set 0, (hl)
+    add hl, de
+    set 0, (hl)
+    add hl, de
+    djnz loop_ind
+    ret
 
 ############## Display sides over the screen
 	
@@ -177,7 +182,7 @@ render_sides:
     kcall(drw_spr)
 
     kld(hl, rightside)
-    ld de, MIN_Y+(122<<8)
+    ld de, MIN_Y+(120<<8)
     kjp(drw_spr)
 
 ;############## Clears screen buffer

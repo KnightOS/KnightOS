@@ -107,8 +107,8 @@ main_loop:
 
     kcall(scroll_sides)
     kcall(render_sides)
-;    call prepare_indicator  ; Prepare the shield indicator
-;
+    kcall(prepare_indicator)  ; Prepare the shield indicator
+
 ;    call display_money
     kcall(synchronize)       ; Slow things down a bit
     kcall(display_screen)    ; Copy display buffer to video memory
