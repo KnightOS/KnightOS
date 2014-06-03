@@ -14,12 +14,17 @@
 enemy_move:
     inc hl
     ld a, (hl)
+    or a
+    jr z, enemy_move_table
+    cp 3
+    ret z
     ; NOTE: This keeps compatability with existing Phoenix levels
     ; We might be able to skip this step if we relocate the jump table manually.
     ; Kernel support might be called for here, considering that libraries do this
     ; exact procedure themselves.
     ; The purpose of this code is to change A from a multiple of 3 to a multiple
     ; of 4, since jp is a 3-byte instruction and kjp is 4 bytes.
+    dec a
     push de
         ; A /= 3
         ld d, a
@@ -29,12 +34,7 @@ enemy_move:
         ; A *= 4
         sla a \ sla a
     pop de
-    or a
-    jr z, _
-    cp 4
-    jr z, _
-    inc a ; Extra thing just for this one use-case
-_:
+    inc a
     ; /end NOTE
     kld((enemy_move_select + 1), a)
 

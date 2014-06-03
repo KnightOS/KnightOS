@@ -117,6 +117,18 @@ copy_byte:
 back_to_loader:
     jr level_loader
 
+copy_word_reloc:
+    push hl
+        kcall(DO_LD_HL_MHL_EP)
+        ex de, hl
+        ld (hl), e
+        inc hl
+        ld (hl), d
+        inc hl
+        ex de, hl
+    pop hl
+    jr back_to_loader
+
 set_movetype:
     kld(de, enemy_buffer+e_movetype)
     jr copy_byte
@@ -135,13 +147,7 @@ set_imagestill:
     xor a
     kld((enemy_buffer+e_imageseq), a)
     kld(de, enemy_buffer+e_imageptr)
-    push bc
-        kld(bc, (entryPoint))
-        ex de, hl
-        add hl, bc
-        ex de, hl
-    pop bc
-    jr copy_word
+    jr copy_word_reloc
 
 set_firetype:
     kld(de, enemy_buffer+e_firetype)
@@ -167,15 +173,15 @@ set_imageanim:
     ld a, (de)
     inc de
     kld((enemy_buffer+e_imageseq), a)
-    kld((enemy_buffer+e_imageptr), de)
     push bc
         kld(bc, (entryPoint))
         ex de, hl
         add hl, bc
         ex de, hl
     pop bc
+    kld((enemy_buffer+e_imageptr), de)
 back_to_loader_2:
-    jr back_to_loader
+    kjp(level_loader)
 
 ;############## Install enemies
 
