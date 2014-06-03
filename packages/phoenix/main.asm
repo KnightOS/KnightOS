@@ -110,7 +110,7 @@ main_loop:
 ;    call prepare_indicator  ; Prepare the shield indicator
 ;
 ;    call display_money
-;    call synchronize        ; Wait for next 1/30 second cycle
+    kcall(synchronize)       ; Slow things down a bit
     kcall(display_screen)    ; Copy display buffer to video memory
 
     kld(a, (scroll_flag))

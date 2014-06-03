@@ -29,40 +29,23 @@ DO_CP_HL_DE:
     pop     hl
     ret
 
-; TODO: "Interrupts" via threads
-;############## Synchronization
-;
-;synchronize:
-;        ei
-;        ld      hl,timer
-;        ld      a,(speed)
-;        cp      (hl)
-;        jr      c,too_slow
-;
-;loop_wait:
-;        cp      (hl)            ; Test value of 4 - (timer)
-;        jr      nc,loop_wait    ; NC : timer <= 4
-;        ld      (hl),0
-;
-;        ret
-;
-;too_slow:
-;        ld      (hl),0
-;        ret
-;
-;timer_interrupt:
-;        push    af
-;        push    hl
-;        ld      hl,timer
-;        inc     (hl)
-;        pop     hl
-;        pop     af
-;#ifdef __MIRAGE__
-;        ret
-;#else
-;        jp      $38
-;#endif
-;timer_interrupt_end:
+; Waits a while
+; This was done with a custom ISR in the original phoenix
+synchronize:
+    ; TODO: Change this by difficulty
+    ; TODO: Change this by clock speed
+    push bc
+    push af
+        ld b, 0x50
+_:      pcall(getKey)
+        cp kF1
+        kcall(z, launchCastle)
+        cp kF5
+        kcall(z, launchThreads)
+        djnz -_
+    pop af
+    pop bc
+    ret
 
 ; NOTE: Contrast adjustment removed from this part
 
