@@ -31,49 +31,49 @@ loop_bcd:
     djnz loop_bcd
     ret
 
-;;############## Compares BCD numbers
-;;
-;; HL ->number to subtract from other
-;; DE ->number
-;;
-;; Returns with flags indicating comparion results.  Changes A, B, DE, HL.
+;############## Compares BCD numbers
 ;
-;CP_BCD:
-;    ld b, 2
-;cmpl:
-;    ld a, (de)
-;    cp (hl)
-;    ret nz
-;    inc de
-;    inc hl
-;    djnz cmpl
-;    ret
+; HL ->number to subtract from other
+; DE ->number
 ;
-;;############## Convert binary money back to decimal
-;
-;convert_to_decimal:
-;    ld hl, (player_cash)
-;    ROM_CALL(UNPACK_HL)
-;    ld d, a
-;    ROM_CALL(UNPACK_HL)
-;    add a, a
-;    add a, a
-;    add a, a
-;    add a, a
-;    or d
-;    ld d, a
-;    ROM_CALL(UNPACK_HL)
-;    ld e, a
-;    ROM_CALL(UNPACK_HL)
-;    add a, a
-;    add a, a
-;    add a, a
-;    add a, a
-;    or e
-;    ld e, a
-;    ld (decimal_cash), de
-;    ret
-;
+; Returns with flags indicating comparion results.  Changes A, B, DE, HL.
+
+CP_BCD:
+    ld b, 2
+cmpl:
+    ld a, (de)
+    cp (hl)
+    ret nz
+    inc de
+    inc hl
+    djnz cmpl
+    ret
+
+;############## Convert binary money back to decimal
+
+convert_to_decimal:
+    kld(hl, (player_cash))
+    kcall(UNPACK_HL)
+    ld d, a
+    kcall(UNPACK_HL)
+    add a, a
+    add a, a
+    add a, a
+    add a, a
+    or d
+    ld d, a
+    kcall(UNPACK_HL)
+    ld e, a
+    kcall(UNPACK_HL)
+    add a, a
+    add a, a
+    add a, a
+    add a, a
+    or e
+    ld e, a
+    kld((decimal_cash), de)
+    ret
+
 ;############## Display hex/BCD numbers in special text (4 digits)
 ;
 ; HL -> location of number in memory

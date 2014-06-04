@@ -22,7 +22,6 @@ name:
 ;D_HL_DECI       =_disphl
 ;TX_CHARPUT      =_putc
 ;CLEARLCD        =_clrlcdf
-;UNPACK_HL       =_divhlby10
 
 #include "phoenixz.i"
 
@@ -50,6 +49,15 @@ start:
     pop af
     corelib(showErrorAndQuit)
     ret
+
+_unpackhl_shim:
+    push bc
+        ld c, 10
+        pcall(divHLByC)
+    pop bc
+    ret
+    
+.equ UNPACK_HL _unpackhl_shim
 
 _puts_shim:
     push de
