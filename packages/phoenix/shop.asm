@@ -108,7 +108,7 @@ shop_down:
 shop_up:
     ld a, (hl)
     or a
-    jr z, shop_loop
+    kjp(z, shop_loop)
 
     push hl
         add a, a \ ld e, a \ add a, a \ add a, e
