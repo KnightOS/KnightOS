@@ -52,26 +52,28 @@ cmpl:
 ;############## Convert binary money back to decimal
 
 convert_to_decimal:
-    kld(hl, (player_cash))
-    kcall(UNPACK_HL)
-    ld d, a
-    kcall(UNPACK_HL)
-    add a, a
-    add a, a
-    add a, a
-    add a, a
-    or d
-    ld d, a
-    kcall(UNPACK_HL)
-    ld e, a
-    kcall(UNPACK_HL)
-    add a, a
-    add a, a
-    add a, a
-    add a, a
-    or e
-    ld e, a
-    kld((decimal_cash), de)
+    push de
+        kld(hl, (player_cash))
+        kcall(UNPACK_HL)
+        ld d, a
+        kcall(UNPACK_HL)
+        add a, a
+        add a, a
+        add a, a
+        add a, a
+        or d
+        ld d, a
+        kcall(UNPACK_HL)
+        ld e, a
+        kcall(UNPACK_HL)
+        add a, a
+        add a, a
+        add a, a
+        add a, a
+        or e
+        ld e, a
+        kld((decimal_cash), de)
+    pop de
     ret
 
 ;############## Display hex/BCD numbers in special text (4 digits)

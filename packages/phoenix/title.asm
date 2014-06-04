@@ -144,7 +144,7 @@ convert_settings:
     add a, a         ; A = difficulty * 12
     sub b           ; A = difficulty * 11
     kld(hl, difficulty_data)
-    add a, l \ ld l, a \ jr nc, $+3 \ inc h
+    ;add a, l \ ld l, a \ jr nc, $+3 \ inc h ; TODO: Difficulty
     ld de, level_end-7
     ld bc, 6
     ldir

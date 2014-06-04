@@ -19,6 +19,9 @@ shop:
     or l
     ret z
 
+    xor a
+    kld((shop_item), a)
+
     kcall(CLEARLCD)
     ld hl, 0
     kld((_puts_shim_cur), hl)
@@ -31,15 +34,27 @@ shop:
     ld de, 0x120C
     pcall(putSpriteOR)
 
-    xor a
-    kld((shop_item), a)
 
 ;############## Shop main loop
 
 shop_loop:
+    ; Clear out the money space
+    push bc
+    push de
+    push hl
+        ld e, 0
+        ld l, 0x3A
+        ld c, 30
+        ld b, 6
+        pcall(rectAND)
+    pop hl
+    pop de
+    pop bc
+    ;/Clear out
     ld de, 0x003A
     ld a, '$'
     pcall(drawChar)
+    kcall(convert_to_decimal)
     kld(hl, (decimal_cash))
     ld a, h
     ld h, l
@@ -62,7 +77,9 @@ shop_loop:
     cp kCLEAR
     ret z
     cp kEnter
+    push af
     kcall(z, shop_select)
+    pop af
     cp k2nd
     kcall(z, shop_select)
     jr shop_loop
