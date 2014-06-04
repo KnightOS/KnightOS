@@ -63,7 +63,7 @@ start:
 #include "collide.asm"
 #include "ebullets.asm"
 #include "hityou.asm"
-;#include "shop.asm"
+#include "shop.asm"
 ;#include "helper.asm"
 #include "eshoot.asm"
 ;#include "score.asm"

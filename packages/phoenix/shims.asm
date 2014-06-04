@@ -26,10 +26,10 @@ _puts_shim:
 _:      ld a, (hl)
         inc hl
         or a
-        jr z,- _
+        jr z, _
         kcall(_putc_shim)
         jr -_
-    pop af
+_:  pop af
     ret
 _puts_shim_cur:
     .dw 0
@@ -41,3 +41,27 @@ _clrlcdf_shim:
     kld((_puts_shim_cur), hl)
     ret
 CLEARLCD .equ _clrlcdf_shim
+
+_disphl_shim:
+    kld(de, (_puts_shim_cur))
+    pcall(drawHexHL) ; TODO: Do this in decimal
+DispHL .equ _disphl_shim
+
+; HL: num
+; E: Y pos
+drawDecNum:
+    ld d, 96 - 11
+    push bc
+        ld b, 0
+_:      ld c, 10
+        pcall(divHLbyC)
+        add a, '0'
+        pcall(drawChar)
+        ld a, -8
+        add a, d
+        ld d, a
+        ld c, 0
+        pcall(cpHLBC)
+        jr nz, -_
+    pop bc
+    ret

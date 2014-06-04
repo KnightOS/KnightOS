@@ -51,6 +51,8 @@ load_level:
 level_loader:
     ld a, (hl)
     inc hl
+    cp 1
+    kjp(z, shop) ; Special case
     ; NOTE: This keeps compatability with existing Phoenix levels
     ; We might be able to skip this step if we relocate the jump table manually.
     ; Kernel support might be called for here, considering that libraries do this
@@ -77,7 +79,7 @@ smc_loader_jump:
 
 loader_table:
     ret                          ;0
-    jr level_loader \ nop \ nop  ;jp shop                    ;1
+    kjp(shop)                    ;1
     jr level_loader \ nop \ nop  ;jp game_finished           ;1
     kjp(set_power)               ;7
     kjp(set_movetype)            ;10
