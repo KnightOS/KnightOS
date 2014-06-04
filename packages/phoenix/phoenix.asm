@@ -66,7 +66,6 @@ _puts_shim:
     ret
 _puts_shim_cur:
     .dw 0
-
 puts .equ _puts_shim
 
 corelibPath:

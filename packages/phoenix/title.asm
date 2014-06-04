@@ -16,174 +16,115 @@
 title_screen:
     kcall(convert_settings)
 redraw_title:
-    kld(hl, title_main)
-
 show_title:
-    kcall(display_hl_msgs)
-    pcall(fastCopy)
-    pcall(flushKeys)
-    
+    pcall(clearBuffer)
+    ; This could probably be made more efficient
+    ld de, 0x1700
+    ld b, d
+    kld(hl, title_main)
+    pcall(drawStr)
+    kld(hl, author)
+    ld de, 0x0E2F
+    ld b, d
+    pcall(drawStr)
+    ld de, 0x1D08
+    kld(hl, title_options)
+    ld b, d
+    pcall(drawStr)
+    kld(hl, caret_sprite)
+    ld b, 5
+    ld de, 0x1908
+    pcall(putSpriteOR)
+    ld d, 0
+    kjp(initialize_game)
 title_loop:
-    pcall(getKey) ; TODO: corelib integration
-    cp k5
-    jr z, redraw_title
-    cp k4
-    jr z, show_instructions
-    cp k3
-    jr z, show_contact
-    cp k2
-    jr z, _options_screen
-    cp k1
-    kjp(z, initialize_game)
-    cp kAlpha
-    jr z, show_highs
-    cp kMODE
-    jr z, title_exit
-    cp kCLEAR
-    jr z, title_exit
-    cp kDEL
-    jr nz, title_loop
-title_exit:
-    pcall(exitThread)
-
-show_highs:
-    ;kcall(no_high_score)
-    jr redraw_title
-
-show_contact:
-    kld(hl, title_contact)
-    jr show_title
-
-show_instructions:
-    kld(hl, title_instructions)
-    jr show_title
-
-;############## Options screen
-
-_options_screen:             ; initialize options screen
-    xor a
-    kld((option_item), a)
-
-option_redraw:              ; redraw options screen
-    kcall(convert_settings)
-    kld(hl, options_msg)
-    kcall(display_hl_msgs)
     pcall(fastCopy)
-
-option_draw:                ; draw option arrow
-    kcall(option_position)
-    kld(hl, draw_pointer)
-    kcall(puts)
-    pcall(fastCopy)
-
-options_loop:               ; option main loop
     pcall(flushKeys)
-    pcall(getKey)
-    cp k5
-    jr z, redraw_title
-    cp kMODE
-    jr z, redraw_title
-    cp kCLEAR
-    jr z, redraw_title
-    cp kDEL
-    kjp(z, redraw_title)
-    cp kUp
-    jr z, options_up
+    pcall(waitKey)
+
     cp kDown
-    jr z, options_down
+    jr z, .down
+    cp kUp
+    jr z, .up
     cp k2nd
-    jr nz, options_loop
+    jr z, .select
+    cp kEnter
+    jr z, .select
 
-    kld(a, (option_item))     ; dispatch chosen optoin
-    add a, a
-    ld (smc_optionjump + 1), a
-
-smc_optionjump:
-    jr option_jumptable
-option_jumptable:
-    jr option_skill
-    jr option_terrain
-    jr option_speed
-    jr option_side
-    jr option_scroll
-    kjp(redraw_title)
-
-options_up:                 ; move arrow up
-    kcall(option_erase)
-    ld hl, option_item
-    dec (hl)
-    kjp(p, option_draw)
-    ld (hl), 5
-    jr option_draw
-
-options_down:               ; move arrow down
-    kcall(option_erase)
-    kld(hl, option_item)
-    inc (hl)
-    ld a, 6
-    cp (hl)
-    jr nz, option_draw
-    ld (hl), 0
-    jr option_draw
-
-option_erase:               ; erase arrow
-    kcall(option_position)
-    ld hl, erase_pointer
-    kcall(puts)
-    pcall(fastCopy)
-
-option_position:            ; calculate arrow position
-    kld(a, (option_item))
-    add a, 2
-    ld l, a
-    ld h, 0
-    ld (_puts_shim_cur), hl
-    ret
-
-erase_pointer:
-    .db "  ", 0
-draw_pointer:
-    .db "->", 0
-
-option_skill:               ; change skill
-    kld(hl, difficulty)
-    ld c, 3
-option_common:
-    ld a, (hl)
+    cp kMODE
+    pcall(z, exitThread)
+    cp kCLEAR
+    pcall(z, exitThread)
+    cp kDEL
+    pcall(z, exitThread)
+    jr title_loop
+.down:
+    ld a, d
+    cp 5
+    jr z, title_loop
+    push de
+        ; Erase current cursor
+        add a, a \ ld e, a \ add a, a \ add a, e
+        add a, 8
+        ld e, a
+        ld d, 0x19
+        ld b, 5
+        kld(hl, caret_sprite)
+        pcall(putSpriteXOR)
+        ; Draw new one
+        ld a, e
+        add a, 6
+        ld e, a
+        pcall(putSpriteXOR)
+    pop de
+    ld a, d
     inc a
-    cp c
-    jr c, difficulty_ok
-    xor a
-difficulty_ok:
-    ld (hl), a
-goto_option_redraw:
-    kjp(option_redraw)
-    
-option_speed:               ; change speed
-    kld(hl, speed_option)
-    ld c, 2
-    jr option_common
-
-option_terrain:             ; change color
-    ld hl, invert
-    ld a, (hl)
-    cpl
-    ld (hl), a
-    jr goto_option_redraw
-
-option_side:
-    kld(hl, sides_flag)
-    ld a, 1
-    xor (hl)
-    ld (hl), a
-    jr goto_option_redraw
-
-option_scroll:
-    kld(hl, scroll_flag)
-    ld a, 1
-    xor (hl)
-    ld (hl), a
-    jr goto_option_redraw
+    ld d, a
+    jr title_loop
+.up:
+    ld a, d
+    or a
+    jr z, title_loop
+    push de
+        ; Erase current cursor
+        add a, a \ ld e, a \ add a, a \ add a, e
+        add a, 8
+        ld e, a
+        ld d, 0x19
+        ld b, 5
+        kld(hl, caret_sprite)
+        pcall(putSpriteXOR)
+        ; Draw new one
+        ld a, e
+        sub 6
+        ld e, a
+        pcall(putSpriteXOR)
+    pop de
+    ld a, d
+    dec a
+    ld d, a
+    jr title_loop
+.select:
+    ld a, d
+    add a, a
+    kld((.selection + 1), a)
+.selection:
+    jr $
+.table:
+    jr .start_game
+    jr .high_scores
+    jr .instructions
+    jr .settings
+    jr .contact_info
+    pcall(exitThread) ; Last option
+.start_game:
+    kjp(initialize_game)
+.high_scores:
+.instructions:
+.settings:
+.contact_info:
+    ; TODO
+    pcall(exitThread)
 
 ;############## Prepare new game
 
@@ -290,60 +231,41 @@ difficulty_data:
     .db "HARD  ",25     ; hard (cash 25, bonus 15000)
     .dw 15000
     .db 0x0,0x25
-#ifdef ENABLE_CHEATS
-    .db "CHEAT ",100    ; hard (cash 100, bonus 0)
-    .dw 0
-    .db 0x1,0x00
-#endif
+
+options_msg:
+    .db "Use up/down/2nd\n", 0
+    .db 0
+    .db " Level ......\n", 0
+level_end:
+    .db " Backgr .....\n", 0
+terrain_end:
+    .db " Speed ....\n", 0
+speed_end:
+    .db " Sides ...\n", 0
+sides_end:
+    .db " Scrolling ...\n", 0
+scroll_end:
+    .db " Exit options\n", 0
+    .db -1
 
 ;############## Title screen messages
 
 title_main:
-    ; TODO: Replace this with straight strings
-    .db "  Phoenix\n", 0
-    .db " Programmed by\n", 0
-    .db "Patrick Davidson\n", 0
-    .db 0
-    .db " 1 - Start Game\n", 0
-    .db "  2 - Settings\n", 0
-    .db "3 - Contact Info\n", 0
-    .db "4 - Instructions\n", 0
-    .db -1
-
-title_instructions:
-    .db "Arrows Move Ship\n", 0
-    .db "#s Select Weapon\n", 0
-    .db "2nd Fires Weapon\n", 0
-    .db "MORE Saves&Exits\n", 0
-    .db "ENTER Pauses\n", 0
-    .db "+,- Contrast Adj\n", 0
-    .db 0
-    .db "5: Main Menu\n", 0
-    .db -1
-
-title_contact:
-    .db "E-Mail: pad@ocf.\n", 0
-    .db "    berkeley.edu\n", 0
-    .db "Web: www.ocf.ber\n", 0
-    .db " keley.edu/~pad/\n", 0
-    .db "IRC: PatrickD on\n", 0
-    .db "     EfNet #tcpa\n", 0
-    .db 0
-    .db "5: Main Menu\n", 0
-    .db -1
-
-options_msg:
-    .db "Use up/down/2nd\n", 0
-    .db 0     
-    .db "   Level ......\n", 0
-level_end:
-    .db "   Backgr .....\n", 0
-terrain_end:
-    .db "   Speed ....\n", 0
-speed_end:
-    .db "   Sides ...\n", 0 
-sides_end:
-    .db "   Scrolling ...\n", 0
-scroll_end:
-    .db "   Exit options\n", 0
-    .db -1
+    .db "=== Phoenix ===", 0
+author:
+    .db "        Patrick Davidson\n"
+    .db "ported for KnightOS by\n"
+    .db "             Drew DeVault", 0
+title_options:
+    .db "Start Game\n"
+    .db "High Scores\n"
+    .db "Instructions\n"
+    .db "Settings\n"
+    .db "Contact Info\n"
+    .db "Quit", 0
+caret_sprite:
+    .db 0b10000000
+    .db 0b11000000
+    .db 0b11100000
+    .db 0b11000000
+    .db 0b10000000
