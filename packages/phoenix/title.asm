@@ -36,11 +36,10 @@ show_title:
     ld de, 0x1908
     pcall(putSpriteOR)
     ld d, 0
-    kjp(initialize_game)
 title_loop:
     pcall(fastCopy)
+    pcall(getKey)
     pcall(flushKeys)
-    pcall(waitKey)
 
     cp kDown
     jr z, .down
