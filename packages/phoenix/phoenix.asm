@@ -18,10 +18,8 @@
 name:
     .db "Phoenix", 0
 
-;D_ZT_STR        =_puts
 ;D_HL_DECI       =_disphl
 ;TX_CHARPUT      =_putc
-;CLEARLCD        =_clrlcdf
 
 #include "phoenixz.i"
 
@@ -50,35 +48,7 @@ start:
     corelib(showErrorAndQuit)
     ret
 
-_unpackhl_shim:
-    push bc
-        ld c, 10
-        pcall(divHLByC)
-    pop bc
-    ret
-    
-.equ UNPACK_HL _unpackhl_shim
-
-_puts_shim:
-    push de
-    push bc
-        ld b, 0
-        kld(de, (_puts_shim_cur))
-        pcall(wrapStr)
-        kld((_puts_shim_cur), de)
-        pcall(stringLength)
-        add hl, bc
-        inc hl
-    pop bc
-    pop de
-    ret
-_puts_shim_cur:
-    .dw 0
-puts .equ _puts_shim
-
-corelibPath:
-    .db "/lib/core", 0
-
+#include "shims.asm"
 #include "main.asm"
 #include "lib.asm"
 #include "title.asm"
@@ -103,3 +73,6 @@ corelibPath:
 #include "data.asm"
 #include "levels.asm"
 #include "vars.asm"
+
+corelibPath:
+    .db "/lib/core", 0
