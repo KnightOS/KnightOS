@@ -185,7 +185,7 @@ common_weapon_add:
     ret c                       ; if negative, can't purchase
     ex de, hl                   ; DE = money left after purchase
     kld((chosen_weapon), a)       ; set chosen weapon to this one
-    ld hl, weapon_2-1
+    kld(hl, weapon_2-1)
     add a, l \ ld l, a \ jr nc, $+3 \ inc h ; HL -> weapon purchase flag
     ld a, (hl)
     or a

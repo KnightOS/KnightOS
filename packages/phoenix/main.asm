@@ -61,7 +61,7 @@ prepare_new_game:
 
     ; TEMP: Enable all weapons
     ld a, 1
-    kld((weapon_2), a)
+    ;kld((weapon_2), a)
     kld((weapon_3), a)
     kld((weapon_4), a)
     kld((weapon_5), a)
