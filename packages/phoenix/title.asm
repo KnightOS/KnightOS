@@ -14,6 +14,7 @@
 ;############## Main title screen
 
 title_screen:
+    pcall(flushKeys)
     kcall(convert_settings)
 redraw_title:
 show_title:
