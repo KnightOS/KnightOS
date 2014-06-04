@@ -74,87 +74,89 @@ loop_bcd:
 ;    ld (decimal_cash), de
 ;    ret
 ;
-;;############## Display hex/BCD numbers in special text (4 digits)
-;;
-;; HL -> location of number in memory
-;; DE -> graphics buffer address (upper-left corner of number)
+;############## Display hex/BCD numbers in special text (4 digits)
 ;
-;display_number_bcd:
-;    ld b, 2
-;main_bcd_display:
-;    ld a, (hl)
-;    push de
-;    push hl
-;    push bc
-;    call display_a_bcd
-;    pop bc
-;    pop hl
-;    pop de
-;    inc de
-;    inc hl
-;    djnz main_bcd_display
-;    ret
-;
-;display_a_bcd:
-;    push af                      ; Save character
-;    and 15                      ; A = low digit
-;    ld c, a
-;    add a, a
-;    add a, a                   
-;    add a, c
-;    ld c, a
-;    ld b, 0
-;    ld hl, digit_images
-;    add hl, bc                   ; HL -> start of image
-;
-;    ex de, hl                   ; DE -> char image, HL -> screen
-;    push hl                      ; Save screen address
-;    ld c, 16
-;    ld a, 5
-;loop_copy_digit:
-;    push af
-;    ld a, (de)
-;    xor (hl)
-;    ld (hl), a
-;    pop af
-;    inc de
-;    add hl, bc
-;    dec a
-;    jr nz, loop_copy_digit
-;    pop de
-;                                    ; Restore screen address in DE
-;    pop af
-;    rrca
-;    rrca
-;    rrca
-;    rrca
-;    and 15
-;    ld c, a
-;    add a, a
-;    add a, a                    
-;    add a, c
-;    ld c, a
-;    ld hl, digit_images
-;    add hl, bc                   ; HL -> start of image
-;
-;    ex de, hl                   ; DE -> char image, HL -> screen
-;    ld c, 16
-;    ld a, 5
-;loop_or_digit:
-;    push af
-;    ld a, (de)
-;    add a, a
-;    add a, a
-;    add a, a
-;    add a, a
-;    xor (hl)
-;    ld (hl), a
-;    pop af
-;    inc de
-;    add hl, bc
-;    dec a
-;    jr nz, loop_or_digit
-;    ret
+; HL -> location of number in memory
+; DE -> graphics buffer address (upper-left corner of number)
+
+display_number_bcd:
+    ld b, 2
+main_bcd_display:
+    ld a, (hl)
+    push de
+    push hl
+    push bc
+    kcall(display_a_bcd)
+    pop bc
+    pop hl
+    pop de
+    inc de
+    inc hl
+    djnz main_bcd_display
+    ret
+
+; NOTE: This much work just to display a BCD number?
+; Can't you just, you know, draw it as hex
+display_a_bcd:
+    push af                      ; Save character
+    and 15                      ; A = low digit
+    ld c, a
+    add a, a
+    add a, a                   
+    add a, c
+    ld c, a
+    ld b, 0
+    kld(hl, digit_images)
+    add hl, bc                   ; HL -> start of image
+
+    ex de, hl                   ; DE -> char image, HL -> screen
+    push hl                      ; Save screen address
+    ld c, 16
+    ld a, 5
+loop_copy_digit:
+    push af
+    ld a, (de)
+    xor (hl)
+    ld (hl), a
+    pop af
+    inc de
+    add hl, bc
+    dec a
+    jr nz, loop_copy_digit
+    pop de
+                                    ; Restore screen address in DE
+    pop af
+    rrca
+    rrca
+    rrca
+    rrca
+    and 15
+    ld c, a
+    add a, a
+    add a, a                    
+    add a, c
+    ld c, a
+    kld(hl, digit_images)
+    add hl, bc                   ; HL -> start of image
+
+    ex de, hl                   ; DE -> char image, HL -> screen
+    ld c, 16
+    ld a, 5
+loop_or_digit:
+    push af
+    ld a, (de)
+    add a, a
+    add a, a
+    add a, a
+    add a, a
+    xor (hl)
+    ld (hl), a
+    pop af
+    inc de
+    add hl, bc
+    dec a
+    jr nz, loop_or_digit
+    ret
     
 digit_images:
     .db 0b000000100

@@ -131,17 +131,25 @@ show_loop:
     inc e
     jr show_loop
 
-;;############## Show information panel
-;
-;display_money:
-;        ld      de,GFX_AREA+$3b3
-;        ld      a,(player_x)
-;        cp      60
-;        jr      nc,left_side
-;        ld      de,GFX_AREA+$3bb
-;left_side:
-;        ld      hl,decimal_cash
-;        jp      display_number_bcd
+;############## Show information panel
+
+display_money:
+    push bc
+        ;ld de, GFX_AREA+0x3B3
+        push iy \ pop hl
+        ld bc, 0x3B3
+        add hl, bc
+        kld(a, (player_x))
+        cp 60
+        jr nc, left_side
+        ld a, 0x3BB - 0x3B3
+        ;ld de, GFX_AREA+0x3BB
+        add a, l \ ld l, a \ jr nc, $+3 \ inc h
+left_side:
+    pop bc
+    ex de, hl
+    kld(hl, decimal_cash)
+    kjp(display_number_bcd)
 
 ;############## Prepares on-screen shield indicator
 
