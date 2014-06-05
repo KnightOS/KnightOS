@@ -224,7 +224,7 @@ projectVertex:
             ld b, h
             ild(de, (currentVertex + 2))
             push de
-                pcall(mul16By16To32)
+                pcall(mul16By16)
             pop de
             sdiv64()
             ex (sp), hl
@@ -233,7 +233,7 @@ projectVertex:
             ld b, h
             ild(de, (currentVertex))
             push de
-                pcall(mul16By16To32)
+                pcall(mul16By16)
             pop de
             sdiv64()
         pop de
@@ -578,7 +578,7 @@ dotProduct:
     ld e, (ix + 0)
     ld d, (ix + 1)
     push hl
-        pcall(mul16By16To32)
+        pcall(mul16By16)
         ex (sp), hl
         ; Y
         ld c, (hl)
@@ -588,7 +588,7 @@ dotProduct:
         ld e, (ix + 2)
         ld d, (ix + 3)
         push hl
-            pcall(mul16By16To32)
+            pcall(mul16By16)
             ex (sp), hl
             ; Z
             ld c, (hl)
@@ -596,7 +596,7 @@ dotProduct:
             ld b, (hl)
             ld e, (ix + 4)
             ld d, (ix + 5)
-            pcall(mul16By16To32)
+            pcall(mul16By16)
             ; sum everything
         pop de
         add hl, de
@@ -631,11 +631,11 @@ crossProduct:
         ; x = y1 * z2 - z1 * y2
         ild(bc, (.vec1 + 4))
         ild(de, (.vec2 + 2))
-        pcall(mul16By16To32)
+        pcall(mul16By16)
         push hl
             ild(bc, (.vec1 + 2))
             ild(de, (.vec2 + 4))
-            pcall(mul16By16To32)
+            pcall(mul16By16)
         pop de
         or a
         sbc hl, de
@@ -646,11 +646,11 @@ crossProduct:
         ; y = z1 * x2 - x1 * z2
         ild(bc, (.vec1))
         ild(de, (.vec2 + 4))
-        pcall(mul16By16To32)
+        pcall(mul16By16)
         push hl
             ild(bc, (.vec1 + 4))
             ild(de, (.vec2))
-            pcall(mul16By16To32)
+            pcall(mul16By16)
         pop de
         or a
         sbc hl, de
@@ -661,11 +661,11 @@ crossProduct:
         ; z = x1 * y2 - y1 * x2
         ild(bc, (.vec1 + 2))
         ild(de, (.vec2))
-        pcall(mul16By16To32)
+        pcall(mul16By16)
         push hl
             ild(bc, (.vec1))
             ild(de, (.vec2 + 2))
-            pcall(mul16By16To32)
+            pcall(mul16By16)
         pop de
         or a
         sbc hl, de
