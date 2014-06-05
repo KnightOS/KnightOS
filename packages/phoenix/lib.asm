@@ -47,7 +47,7 @@ synchronize:
     ; TODO: Change this by clock speed
     push bc
     push af
-        ld b, 0x70
+        ld b, 0xB0
 _:      pcall(getKey)
         cp kF1
         corelib(z, launchCastle)
