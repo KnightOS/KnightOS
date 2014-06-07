@@ -130,7 +130,7 @@ endif
 				bin/$(PLATFORM)/KnightOS-$(PLATFORM).$(UPGRADEEXT) 00 01 02 03 04 05 06 $(PRIVEDGED) $(EXPLOIT_PAGES);\
 		rm temp.rom;\
 	else\
-		mktiupgrade -p -d $(DEVICE) -k kernel/build/$(KEY).key bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom \
+		mktiupgrade -p -d $(DEVICE) -k kernel/keys/$(KEY).key bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom \
 			bin/$(PLATFORM)/KnightOS-$(PLATFORM).$(UPGRADEEXT) 00 01 02 03 04 05 06 $(FAT) $(PRIVEDGED);\
 	fi
 
