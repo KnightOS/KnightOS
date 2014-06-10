@@ -1,0 +1,62 @@
+
+Thanks to the following people for helping make KnightOS possible:
+
+    Drew DeVault <sir@cmpwn.com>
+    - Project oversight
+    - Most of the kernel
+    - Most of userspace
+
+    George "thirtythreeforty" Hilliard <gh403@msstate.edu>
+    - Sorting
+    - Compression
+    - Cryptography
+    - Various bug fixes and small features
+
+    Mattias "matrefeytontias" Refeyton <mattias@refeyton.fr>
+    - Mathematical functions
+    - Graphical functions and color support
+    - Early support of userspace
+    - Various bug fixes and small features
+
+    Sijmen "Vijfhoek" Schoon <me@libvijfhoek.so>
+    - Low-level filesystem features
+    - Various bug fixes and small features
+
+    Sorunume
+    - Hosting nightly builds
+
+    Dan "Streetwalrus" Elkouby <streetwalkermc@gmail.com>
+    - Maintaining build server
+    - Automated documentation generation
+
+    minus
+    - Toolchain enhancements
+
+    Jose Diez <me@jdiez.me>
+    - Automated documentation generation
+
+    persalteas
+    - Font enhancements
+
+    dragontux
+    - Partial time/date support
+
+    AssemblyBandit
+    - Assistance with color LCD support
+
+    Quigibo and Runer112
+    - Graphics functions taken from Axe Parser
+
+    Patrick Davidson
+    - Original author of Phoenix
+
+Additional thanks go out to our indirect contributors:
+
+- Benjamin Moody for making third party OSes possible
+- Brandon Wilson for reverse engineering efforts
+- DrDnar for reverse engineering efforts
+- z80bits for excellent integer math functions
+
+And thanks to the many others who have helped the platform grow over the years.
+KnightOS is also grateful to its community, who are full of ideas and constantly
+giving useful feedback to the core team.
