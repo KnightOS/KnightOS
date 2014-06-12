@@ -88,15 +88,13 @@ no_up:
 ;############## Control keys (GET_KEY)
 
 pause:
-    ld hl, 0x0104
-    kld((_puts_shim_cur), hl)
-    kld(hl, pause_msg)
-    kcall(puts)
     pcall(flushKeys)
 loop_pause:
-    pcall(getKey)
+    corelib(appGetKey)
+    kcall(nz, display_screen) ; TODO: Dunno why this leaves artifacts on the screen
     cp kEnter
     jr nz, loop_pause
+    pcall(flushKeys)
     ret
 
 pause_msg:
