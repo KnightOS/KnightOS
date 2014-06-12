@@ -6,7 +6,8 @@ chat with others involved in the project. You can join at
 
 If you wish to contribute, please create a fork and submit pull requests. If your pull requests are
 frequent and high-quality and you wish to have a deeper role in the project, you should get in touch
-and you may be granted access to the repository and assigned tasks.
+and you may be granted access to the repository and assigned tasks. Make sure you add yourself to the
+THANKS file in your pull request!
 
 It's also worth noting that small changes are better than broad ones. The all pull requests are
 inspected before merging them, and huge diffs are a pain to inspect and will be rejected. Your code
