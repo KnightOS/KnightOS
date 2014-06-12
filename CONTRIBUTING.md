@@ -1,45 +1,60 @@
-# Contributing to KnightOS
+Want to help out with KnightOS? Great! We'd be happy to have your help. There are
+loads of things to work on. What are you interested in?
 
-Everyone who wishes to be involved in KnightOS is strongly encouraged to join the IRC channel and
-chat with others involved in the project. You can join at
-[#knightos on irc.freenode.net](http://webchat.freenode.net/?channels=knightos&uio=d4).
+Assembly:       You could work directly on the kernel itself, or on the userspace.
+C:              Most of the toolchain is written in C and more work is needed.
+Python:         KDoc generates kernel documentation and could use your assistance.
+HTML/CSS/JS:    knightos.org is always available for improvements.
+LaTeX:          Want to help write the KnightOS manual?
 
-If you wish to contribute, please create a fork and submit pull requests. If your pull requests are
-frequent and high-quality and you wish to have a deeper role in the project, you should get in touch
-and you may be granted access to the repository and assigned tasks. Make sure you add yourself to the
-THANKS file in your pull request!
+If you can't write code, don't despair. Your help is valuable as well! You can
+hang out with us online and offer your thoughts and feedback, and you can test the
+system to make sure everything's in working order. You could also spread the good
+word online and among your friends, getting more people excited about and involved
+in KnightOS.
 
-It's also worth noting that small changes are better than broad ones. The all pull requests are
-inspected before merging them, and huge diffs are a pain to inspect and will be rejected. Your code
-should also be tidy and understandable - this is assembly, after all.
+No matter what you're interested in, come join us on IRC - #knightos on
+irc.freenode.net. We'll be hanging out to chat and direct new contributors and
+excited users to the right place.
 
-## Reporting Bugs, Requesting Features, and Asking Questions
+If you'd like to report bugs or contribute code to the kernel or userspace, the
+rest of this document is for you.
 
-To make sure your bug reports are easy to understand and fix, please follow these guidelines:
+# Reporting Bugs
 
-* Report all issues in English.
-* Search existing issues to make sure your problem has not already been addressed.
-* Ensure your copy of KnightOS and the kernel is up to date.
-* Provide clear instructions on how to reproduce the error.
-* Include any relevant calculator models.
-* Use a descriptive title, and put details in the body.
-  * We should get the general idea when it lands in our inbox, and consult the issue body for details.
-* Include any code examples if you have them.
-* Try to submit to the right place - problems with the kernel [go here](https://github.com/KnightSoft/kernel/issues),
-  and problems with KnightOS programs and libraries [goes here](https://github.com/KnightSoft/KnightOS/issues). If you
-  are unsure where to put your issue, go with the latter, and we'll reassign it if needed.
+Bugs may be reported on GitHub at the following addresses:
 
-We might edit your issues after you've created them. We'll use the comments to ask you for more information and keep
-in touch as we work on it.
+* Userspace: https://github.com/KnightOS/KnightOS/issues
+* Kernel:    https://github.com/KnightOS/kernel/issues
 
-If you'd like to request a feature, create a GitHub issue. Please be clear about what you'd like, and provide any
-details you think would be important. You may also create an issue for any general questions you might have, but note
-that these will be closed rather quickly, even though discussion will continue. You can also join us on IRC to get
-your questions answered, but please be patient - we aren't around 24/7 and it may take some time to answer you.
+Please try to find the right place to submit your issue. If in doubt, submit it to
+the userspace repository. Please follow these guidelines when submitting bug
+reports or feature requests:
 
-## Code Style
+- Use English to report bugs or request features
+- Search existing issues to make sure we don't already know about it
+- Please ensure your system and its kernel are up-to-date
+- Provide clear instructions on how the error may be reproduced
+- Mention what kind of calculator you are using (TI-83+, TI-84+ SE, etc)
 
-A small bit of example code is shown below:
+# Submitting Code
+
+When sending us code, be sure to follow the coding standards we have already set
+in place. See the bottom of this document for examples. The procedure for offering
+code is:
+
+1. Create a fork on GitHub
+2. Make your changes
+3. Send us a pull request
+
+Please hang out in the IRC channel so we can chat with you about your code.
+
+# Code Style
+
+KnightOS is built with many languages and each language has its own style. A short
+example of each is shown here.
+
+## z80 Assembly
 
     labelName:
         ld a, 10 + 0x13
@@ -49,59 +64,89 @@ A small bit of example code is shown below:
             jr c, labelName
         pop bc
         pop af
-    .localLabel
+    .localLabel:
         dec a
         cp 10
         jr z, .localLabel
         ret
 
-Some important notes:
+* Use 0xHEX, not $HEX or HEXh
+* Use local labels where possible
+* Instructions in lowercase
+* camelCase for label names
+* 4 spaces, not tabs
+* Indent your code to reflect stack usage
 
-* All instructions should be in lowercase.
-* Spaces after commas and between operators (+, -, etc)
-* Indent with respect to the stack. You may group push/pop operations before indenting.
-* Indent with four spaces, not tabs.
-* Use local labels (labels preceeded with a '.') whenever possible.
-* Use 0xHEX for hexadecimal literals, not $HEX or HEXh. Also use 0bBINARY.
+## C
 
-## Functional Guidelines
+    char *returns_string(char *a, int b, struct some_struct c) {
+    	b += 10;
+    	int i;
+    	for (i = 0; i < 10; i++) {
+    		b += c.something;
+    	}
+        if (b > 40) {
+            return a - b;
+        }
+    	return a + b;
+    }
 
-All kernel routines should keep all registers intact, aside from those it returns values in.
+* Opening braces on the same line
+* C99 is alright but we don't mind tradition
+* Tabs instead of spaces
+* `char * foobar` instead of `char* foobar`
+* Single-line statments get braces anyway
 
-## Documentation
+## Python
 
-All kernel routines that are included in the jump table should have the following text preceed
-their label:
+    import foo
+    import bar
 
-    ;; functionName [Category]
-    ;;  Description
-    ;; Inputs:
-    ;;  HL: Something
-    ;;  A: Something else
-    ;; Outputs:
-    ;;  BC: Something
-    ;; Notes:
-    ;;  Lorem ipsum
-    functionName:
+    from baz import *
 
-You may omit any section it has no contents. For example, routines with no input would not need
-an "Input" section. Additionally, you do not have to simply list registers - you can also include
-flags, or other forms of input/output.
+    def test(foo, bar):
+        print("hello world")
+        return foo + bar
 
-The "description" field may be in markdown format. If you wish to link to another function, use
-this format: [[functionName]].
+* 4 spaces instead of tabs
+* Group `import a`s seperate from `from a import b`s
+* Pretty much standard Python
 
-Here's an example for "fastCopy":
+## CSS
 
-    ;; fastCopy [Display]
-    ;;  Copies the contents of a 768 byte buffer to the LCD.
-    ;; Inputs:
-    ;;  IY: Screen buffer
-    ;; Outputs:
-    ;;  Buffer is drawn to the LCD
-    ;; Notes:
-    ;;  You must have an LCD lock for this function to work properly. Otherwise, it will simply
-    ;;  return without drawing to the screen. You may acquire an LCD lock with [[getLcdLock]].
-    fastCopy:
+    .foo-bar > a {
+        color: red;
+        background: transparent;
+        border-radius: 5px;
+    }
 
-Do not use the `;;` comment syntax outside of documentation.
+* 4 spaces instead of tabs
+* Opening braces on the same line
+* Use dashed-case for class names and IDs
+
+# JavaScript
+
+    var a = {
+        foo: 'a',
+        bar: 'b',
+        baz: 100
+    };
+
+    function example(a, b, c) {
+        if (typeof c === "undefined") {
+            b = 10;
+        }
+        return a + b + c;
+    }
+
+* 4 spaces instead of tabs
+* Opening brace on the same line
+* Check for undefined with `typeof variable === "undefined"`
+
+# Additional Guidelines
+
+In the kernel, all registers that are not used for output must be kept intact.
+Destroying shadow registers is acceptable but must be documented.
+
+All public kernel functions must be documented. Do not use the ';;' syntax outside
+of documentation.
