@@ -11,11 +11,12 @@ You can download the latest (experimental) version here: http://www.knightos.org
 ## Building KnightOS
 
 To build KnightOS from source, make sure you have all git submodules first. If you haven't
-cloned the repository yet, use `git clone --recursive git://github.com/KnightSoft/KnightOS.git`
+cloned the repository yet, use `git clone --recursive git://github.com/KnightOS/KnightOS.git`
 to clone recursively. Otherwise, use `git submodule update --init` to clone submodules for
 an existing repository.
 
-You also need to install the kernel's dependencies. See instructions in the kernel readme.
+You also need to install the kernel's dependencies. See instructions in the
+[kernel readme](https://github.com/KnightOS/kernel).
 
 Once you have the source and submodules, run `make` from the root of the repository to build
 KnightOS for the TI-84+ SE. You may specify a target (i.e. `make TI83p`) to build for another
