@@ -30,7 +30,7 @@ redraw:
     ld b, 2
     ld de, 0x0208
     kld(hl, helloString)
-    pcall(drawStr)
+    pcall(wrapStr)
     
 _:  pcall(fastCopy)
     pcall(flushKeys)
@@ -40,7 +40,7 @@ _:  pcall(fastCopy)
     jr -_
 
 helloString:
-    .db "Hello, world!\nPress [MODE] to exit.", 0
+    .db "Hello, world! As you can see it's a very long string, so it's fortunate that we have wrapping routines.\nPress [MODE] to exit.", 0
 windowTitle:
     .db "Hello, world!", 0
 corelibPath:
