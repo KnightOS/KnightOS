@@ -87,11 +87,11 @@ TI84pCSE: userland
 AS=sass
 EMU=wabbitemu
 ASFLAGS=--encoding "Windows-1252"
-INCLUDE=inc/;kernel/bin/$(PLATFORM);temp/include/;
+INCLUDE=kernel/bin;temp/include/;
 .DEFAULT_GOAL=TI84pSE
 
 PACKAGE_AS=sass
-PACKAGE_INCLUDE=$(PKGREL)inc/;$(PKGREL)kernel/bin/$(PLATFORM);
+PACKAGE_INCLUDE=$(PKGREL)inc/;$(PKGREL)kernel/bin/;
 
 .PHONY: kernel userland run runcolor buildpkgs license directories clean %.package exploit \
 	TI73 TI83p TI83pSE TI84p TI84pSE TI84pCSE
@@ -104,7 +104,6 @@ runcolor: TI84pCSE
 
 kernel: directories
 	cd kernel && make $(PLATFORM)
-	cp kernel/bin/$(PLATFORM)/kernel.inc temp/include/kernel.inc
 
 exploit:
 	if [ $(EXPLOIT) -eq 1 ]; then\
@@ -154,8 +153,6 @@ directories:
 	mkdir -p temp/bin
 	mkdir -p temp/etc
 	mkdir -p temp/home
-	mkdir -p temp/var/foo/bar
-	echo "Hi there" > temp/var/foo/bar/foobar
 	mkdir -p temp/lib
 	mkdir -p temp/share
 	mkdir -p temp/include
