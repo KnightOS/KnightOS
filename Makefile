@@ -137,7 +137,7 @@ endif
 %.package: %
 	@cd $<; \
 	make AS="$(PACKAGE_AS)" ASFLAGS="$(ASFLAGS)" PLATFORM="$(PLATFORM)" INCLUDE="$(PACKAGE_INCLUDE)" \
-				PACKAGEPATH="$(PACKAGEPATH)";
+				PACKAGEPATH="$(PACKAGEPATH)" KERNEL="../../kernel/";
 	@cd $<; \
 	cp -r bin/* "$(PKGREL)temp";
 
