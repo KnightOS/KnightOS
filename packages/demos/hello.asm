@@ -27,10 +27,10 @@ redraw:
     xor a
     corelib(drawWindow)
     
-    ld b, 2
+    ld a, 2
     ld de, 0x0208
-    ld hl, 95 << 8 | 56         ; Set limits on text area
-    kld(ix, helloString)
+    ld bc, 95 << 8 | 56         ; Set limits on text area
+    kld(hl, helloString)
     pcall(wrapStr)
     
 _:  pcall(fastCopy)

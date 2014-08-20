@@ -54,12 +54,12 @@ start:
     ld (ix), 0			; Set byte pointed to by IX to 0
     pcall(memSeekToStart)	; Set IX to beginning of allocated memory block
     
-    ;push ix \ pop hl		; Ridiculous way to load IX into HL
-    ld b, 2			; Set left margin (indent?) to 0
-    ld de, 0x0208		; Set drawing coordinates to 2,10
-    ld hl, 95 << 8 | 56		; Set limits on text area
+    push ix \ pop hl		; Ridiculous way to load IX into HL
+    ld de, 0x0208		; Set drawing coordinates to 2,8
 
 drawLoop:
+    ld a, 2			; Set left margin to 2
+    ld bc, 95 << 8 | 56		; Set limits on text area
     pcall(wrapStr)		; Draw a bunch of text to screen buffer
 _:  pcall(fastCopy)		; Copy screen buffer to LCD
 
@@ -73,15 +73,15 @@ _:  pcall(fastCopy)		; Copy screen buffer to LCD
     jr z, .down
     cp kEnter
     jr z, .down
-    jr -_			; Loop
+    jr -_
 
 .down:
-    ; If byte at ix is 0 (end of file), then do nothing
-    ld a, (ix)
+    ; If byte at hl is 0 (end of file), then do nothing
+    ld a, (hl)
     or a
     jr z, -_ ; Skip this if at end of file
 
-    push hl			; Push bounding box limits
+    push hl			; Push string pointer
     push de			; and drawing coordinates to stack
         ; Shift text up by one row
         push iy \ pop hl	; Load screen buffer address into HL
@@ -118,7 +118,7 @@ _:  pcall(fastCopy)		; Copy screen buffer to LCD
 	pcall(drawVLine)	
 
     pop de			; Put back drawing coordinates
-    pop hl			; and bounding box limits
+    pop hl			; and string pointer
 
     ; Shift drawing coordinates up by 6 pixels (1 row of text)
     ld a, -6
@@ -126,15 +126,14 @@ _:  pcall(fastCopy)		; Copy screen buffer to LCD
     ld e, a
 
     ld d, 2			; Set X coordinate to 2
-    ld b, 2			; Set margin to 2
 
     ; Hacky workaround
     ; Increment string pointer if its pointing at a newline char
     ; and go back to the loop
-    ld a, (ix)
+    ld a, (hl)
     cp '\n'
     jr nz, drawLoop
-    inc ix
+    inc hl
     jr drawLoop
 
 
