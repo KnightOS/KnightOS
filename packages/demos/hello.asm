@@ -29,7 +29,8 @@ redraw:
     
     ld b, 2
     ld de, 0x0208
-    kld(hl, helloString)
+    ld hl, 95 << 8 | 56         ; Set limits on text area
+    kld(ix, helloString)
     pcall(wrapStr)
     
 _:  pcall(fastCopy)
