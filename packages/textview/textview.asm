@@ -27,13 +27,14 @@ start:
         pcall(loadLibrary)
 
         pcall(allocScreenBuffer)
-    pop de
+    pop hl
 
     ; Draw Window
     xor a                       ; Set flags to draw castle and thread icons
     corelib(drawWindow)
 
     ; Open file or end program if it fails
+    ex de, hl
     pcall(openFileRead)
     ret nz
 
