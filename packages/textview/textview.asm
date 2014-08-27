@@ -81,11 +81,11 @@ _:  ; Wait for key press and interpret it
     cp kMODE
     ret z
     cp kUp
-    kjp( z, .up )
+    jr z, .up
     cp kDown
-    kjp( z, .down )
+    jr z, .down
     cp kEnter
-    kjp( z, .down )
+    jr z, .down
     jr --_
 
 .up:
@@ -115,7 +115,7 @@ _:  ; Wait for key press and interpret it
     kcall(scrollBack)
     ld de, 0x0208               ; Set drawing coordinates to 2,8
 
-    kjp( drawLoop )
+    jr drawLoop
 
 .down:
     ; If byte at hl is 0 (end of file), then do nothing
@@ -167,16 +167,16 @@ _:  ; Wait for key press and interpret it
     ld e, a
     ld d, 2                     ; Set X coordinate to 2
 
-    kjp( drawLoop )
+    kjp(drawLoop)
 
-;; scrollBack [text]
-;;  Moves backwards B lines, taking into account text wrapping, and returns pointer. String must be prepended with 0.
-;; Inputs:
-;;  B: Number of lines to go back
-;;  C: Width of text area
-;;  HL: String pointer (start of current line)
-;; Outputs:
-;;  HL: String pointer (start of previous line)
+; scrollBack [text]
+;  Moves backwards B lines, taking into account text wrapping, and returns pointer. String must be prepended with 0.
+; Inputs:
+;  B: Number of lines to go back
+;  C: Width of text area
+;  HL: String pointer (start of current line)
+; Outputs:
+;  HL: String pointer (start of previous line)
 scrollBack:
     push af
     push bc
@@ -237,7 +237,7 @@ _:          ; Break if char is 0
 _:      pop hl
         jr .end
 _:          ; Divide length of line by width of screen
-            pcall( divHLByC )   
+            pcall(divHLByC)   
             ; If remainder is 0 (each row is exactly the screen width),
             ; then count back width of screen
             or a
@@ -287,7 +287,7 @@ xmeasureChar:
         jr c, _         ; Return 0 if character < 0x20
         pcall(mul16By8)
         ex de, hl
-        kld( hl, xkernel_font )
+        kld(hl, xkernel_font)
         add hl, de
         ld a, (hl)
 .exit:
