@@ -43,11 +43,13 @@ start:
     ; Allocate file size+2 bytes. Gives starting point in IX
     ; End program if memory allocation failed
     inc bc
+    kld((fileLength), bc)
     inc bc
     pcall(malloc)        
     ret nz            
     ld (ix), 0                  ; Prepend file with 0
     inc ix
+    kld((fileStart), ix)
     pcall(streamReadToEnd)
     pcall(closeStream)
 
@@ -55,15 +57,114 @@ start:
     pcall(memSeekToEnd)    
     ld (ix), 0
     pcall(memSeekToStart)
+
+    ; Count the number of wrapped lines of text in the file
+    ; length = 0
+    ; lines = 1
+    ; for char in file:
+    ;   if char == 0:
+    ;       break
+    ;   elif char == \n:
+    ;       lines = lines +1
+    ;       length = 0
+    ;   length = length + measureChar
+    ;       if length > width
+    ;           lines = lines + 1
+    ;           length = measureChar
+    ld b, 0                     ; B = length
+    ld de, 1                    ; DE = lines
+countLoop:
+    inc ix
+    ld a, (ix)
+    or a
+    jr z, .exit
+    cp '\n'
+    jr nz, _
+    inc de
+    ld b, 0
+    jr countLoop
+_:  pcall(measureChar)
+    ld c, a
+    add b
+    ld b, a
+    cp 93
+    jr c, countLoop
+    inc de
+    ld b, c
+    jr countLoop
+.exit: 
+    dec de
+
+    ; If total lines <= 8
+    ; do not draw scroll bar
+    ld bc, 8
+    pcall(cpBCDE)
+    jr nc, ++_
+
+    ; Length of scrollbar
+    ; 50 pixels * 8 lines / total lines
+    ld a, 0x01
+    ld c, 0x90
+    pcall(divACByDE)
+    ld d, a
+    ld e, c
+    ; If result is < 1, set bar length to 1 pixel
+    or c
+    jr nz, _
+    ld de, 1
+    ld a, e
+_:  kld((barLength), a)
+_:
+
+    ; Go back to beginning of file
+    pcall(memSeekToStart)
     inc ix
     
     push ix \ pop hl
     ld de, 0x0208               ; Set drawing coordinates to 2,8
 
 drawLoop:
+    ; Draw Text
     ld a, 2                     ; Set left margin to 2
     ld bc, 95 << 8 | 56         ; Set limits on text area
     pcall(wrapStr)
+
+    ; Don't draw scrollbar if bar length is 0
+    kld(a, (barLength))
+    ld b, a
+    or a
+    jr z, ++_
+    ; Scroll bar position
+    ; 50 pixels * (text pointer - start of file) / (length of file) - length of bar
+    push de
+    push hl
+    push ix
+        kld(bc, (fileStart))
+        sbc hl, bc
+        ex hl, de
+        ld a, 50
+        pcall(mul16by8)
+        push hl \ pop ix
+        ld c, a
+        xor a
+        kld(de, (fileLength))
+        pcall(div32by16)
+        ; Why does it give me ValueTruncated when I load directly into B?
+        kld(a, (barLength))
+        ld b, a
+        ld a, ixl
+        sub a, b
+        ; Set position to 0 if value is negative
+        jr nc, _
+        xor a
+_:      ld c, a
+    pop ix
+    pop hl
+    pop de
+    
+    
+    ; Draw Scrollbar
+    kcall(drawScrollBar)
 _:  pcall(fastCopy)
 
     ; Hacky workaround
@@ -115,7 +216,7 @@ _:  ; Wait for key press and interpret it
     kcall(scrollBack)
     ld de, 0x0208               ; Set drawing coordinates to 2,8
 
-    jr drawLoop
+    kjp(drawLoop)
 
 .down:
     ; If byte at hl is 0 (end of file), then do nothing
@@ -270,6 +371,80 @@ _:      pop hl                  ; copy original string pointer back into HL
     pop bc
     pop af
     ret
+
+; drawScrollBar
+; Inputs:
+;  B: Length of bar in pixels
+;  C: Position of top of bar (0-49)
+;  IY: Screen Buffer
+drawScrollBar:
+    push af
+    push hl
+        push bc
+            ; Draw left side
+            ld a, 94
+            ld l, 7
+            ld c, 49
+            pcall(drawVLine)
+            ; Clear right side
+            ld a, 95
+            kcall(drawVLineAND)
+        ; Draw bar
+        pop bc
+        ; Set Y
+        ld a, 7
+        add c
+        ld l, a
+        ; Set X
+        ld a, 95
+        ; Set length
+        ld c, b
+        pcall(drawVLine)
+    pop hl
+    pop af
+    ret
+
+; drawVLineAND [Display]
+;  Draws a vertical line on the screen buffer using AND (turns pixels OFF) logic.
+;  Does clipping.
+; Inputs:
+;  IY: screen buffer
+;  A, L: X, Y
+;  C: height
+drawVLineAND:
+    push af \ push bc \ push de \ push hl
+        ld b, a
+        ld a, 63
+        sub l
+        cp c
+        jr c, .exitEarly
+        ld a, b
+        pcall(getPixel)
+        cpl
+        ld b, a
+        ld a, h
+        or l
+        jr z, .exitEarly
+        ld a, b
+        ld b, c
+        ld c, a
+        ld de, 12
+.vline_loop:
+        ld a, c
+        and (hl)
+        ld (hl), a
+        add hl, de
+        djnz .vline_loop
+.exitEarly:
+    pop hl \ pop de \ pop bc \ pop af
+    ret
+
+fileStart:
+    .dw 0
+fileLength:
+    .dw 0
+barLength:
+    .db 0
 
 corelibPath:
     .db "/lib/core", 0
