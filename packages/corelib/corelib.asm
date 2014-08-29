@@ -492,15 +492,15 @@ open:
         ; Check for KEXC
         push de
             pcall(openFileRead)
-            jr nz, .fail
+            ijp(nz, .fail)
 
             ld bc, 5
             pcall(malloc)
-            jr nz, .fail
+            ijp(nz, .fail)
 
             dec bc
             pcall(streamReadBuffer)
-            jr nz, .fail
+            ijp(nz, .fail)
             pcall(closeStream)
 
             ld (ix + 4), 0
