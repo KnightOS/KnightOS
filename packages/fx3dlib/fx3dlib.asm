@@ -80,11 +80,11 @@ rotateVertex:
             dec hl
             ld a, (hl)
             ild(de, (currentVertex))
-            pcall(sDEMulA)
+            pcall(smul16By8)
             push hl
                 ild(a, (curSinY))
                 ild(de, (currentVertex + 4))
-                pcall(sDEMulA)
+                pcall(smul16By8)
             pop de
             add hl, de
             sdiv64()
@@ -105,11 +105,11 @@ rotateVertex:
             sub b
             sra a
             ild(de, (currentVertex))
-            pcall(sDEMulA)
+            pcall(smul16By8)
             push hl
                 ild(a, (curCosX))
                 ild(de, (currentVertex + 2))
-                pcall(sDEMulA)
+                pcall(smul16By8)
                 push hl
                     ild(hl, angles)
                     ld a, (hl)
@@ -126,7 +126,7 @@ rotateVertex:
                     sub b
                     sra a
                     ild(de, (currentVertex + 4))
-                    pcall(sDEMulA)
+                    pcall(smul16By8)
                 pop de
                 add hl, de
             pop de
@@ -149,11 +149,11 @@ rotateVertex:
             sub b
             sra a
             ild(de, (currentVertex))
-            pcall(sDEMulA)
+            pcall(smul16By8)
             push hl
                 ild(a, (curSinX))
                 ild(de, (currentVertex + 2))
-                pcall(sDEMulA)
+                pcall(smul16By8)
                 push hl
                     ild(hl, angles)
                     ld a, (hl)
@@ -169,7 +169,7 @@ rotateVertex:
                     add a, b
                     sra a
                     ild(de, (currentVertex + 4))
-                    pcall(sDEMulA)
+                    pcall(smul16By8)
                 pop de
                 add hl, de
             pop de
