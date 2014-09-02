@@ -506,7 +506,7 @@ open:
             ld (ix + 4), 0
             push ix \ pop hl
             ild(de, kexcString)
-            pcall(compareStrings)
+            pcall(strcmp)
             pcall(free)
         pop de
 
@@ -524,7 +524,7 @@ open:
         ex de, hl
 
         ; Copy HL into some new memory really quick
-        pcall(stringLength)
+        pcall(strlen)
         inc bc
         pcall(malloc)
         jr nz, .fail
