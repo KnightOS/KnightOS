@@ -290,7 +290,7 @@ exitString:
 windowTitle:
     .db "Graphical Demo", 0
 corelibPath:
-    .db "/lib/corelib", 0
+    .db "/lib/core", 0
 fx3dlibPath:
     .db "/lib/fx3d", 0
 introString:
