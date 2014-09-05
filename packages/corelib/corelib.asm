@@ -40,7 +40,7 @@ appGetKey:
 
 appWaitKey:
     pcall(waitKey)
-    jr checkKey
+    ;jr checkKey
 
 checkKey:
     cp kYEqu
