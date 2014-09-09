@@ -1,11 +1,11 @@
 #include "kernel.inc"
 #include "config.inc"
-	.db "KEXC"
-	.db KEXC_ENTRY_POINT
-	.dw start
+    .db "KEXC"
+    .db KEXC_ENTRY_POINT
+    .dw start
     .db KEXC_STACK_SIZE
     .dw 100
-	.db KEXC_HEADER_END
+    .db KEXC_HEADER_END
 start:
     pcall(getLcdLock)
     pcall(getKeypadLock)
@@ -128,7 +128,7 @@ start:
     inc de
     djnz .freeLoop
     
-	ret
+    ret
 
 configLibPath:
     .db "/lib/config", 0
