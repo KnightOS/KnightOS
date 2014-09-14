@@ -84,8 +84,6 @@ TI84pCSE: EXPLOIT_ADDRESS_FAT := 4046848
 TI84pCSE: EXPLOIT_ADDRESS_FAT_BACKUP := 3850240
 TI84pCSE: userland
 
-SKIPON:=NO
-
 AS=sass
 EMU=wabbitemu
 ASFLAGS=--encoding "Windows-1252"
@@ -105,7 +103,7 @@ runcolor: TI84pCSE
 	$(EMU) bin/TI84pCSE/KnightOS-TI84pCSE.rom
 
 kernel: directories
-	cd kernel && make $(PLATFORM) SKIPON=$(SKIPON)
+	cd kernel && make $(PLATFORM)
 
 exploit:
 	if [ $(EXPLOIT) -eq 1 ]; then\
