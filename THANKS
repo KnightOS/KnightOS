@@ -41,6 +41,12 @@ Thanks to the following people for helping make KnightOS possible:
     dragontux
     - Partial time/date support
 
+    Christopher "KermM" Mitchell <admin@cemetech.net>
+    - Color graphics demo
+
+    Brandon Wilson <brandonlw@gmail.com>
+    - Exploit for installing on the TI-84+ CSE
+
     AssemblyBandit
     - Assistance with color LCD support
 
@@ -50,10 +56,13 @@ Thanks to the following people for helping make KnightOS possible:
     Patrick Davidson
     - Original author of Phoenix
 
+    James Montelongo
+    - Random number generation in the kernel
+
 Additional thanks go out to our indirect contributors:
 
 - Benjamin Moody for making third party OSes possible
-- Brandon Wilson for reverse engineering efforts
+- Ben Ryves for earlier research on multitasking on TI calculators
 - DrDnar for reverse engineering efforts
 - z80bits for excellent integer math functions
 

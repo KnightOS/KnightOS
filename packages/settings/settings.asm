@@ -33,9 +33,6 @@ redraw:
     ld b, 6
     pcall(drawStr)
     
-    kld(hl, debuggerStr)
-    pcall(drawStr)
-    
     kld(hl, backStr)
     pcall(drawStr)
     
@@ -81,7 +78,7 @@ doUp:
     pcall(putSpriteXOR)
     xor a
     ret
-#define NB_ITEM 3
+#define NB_ITEM 2
 doDown:
     kld(hl, item)
     ld a, (hl)
@@ -109,7 +106,7 @@ doSelect:
     jp (hl)
     
 itemTable:
-    .dw printSystemInfo, openKernelDebugger, exit
+    .dw printSystemInfo, exit
     
 printSystemInfo:
     pcall(clearBuffer)
@@ -187,10 +184,6 @@ _:  pcall(fastCopy)
     kld(hl, notFoundStr)
     jr .writeVersion
     
-openKernelDebugger:
-    rst 0x30
-    ret
-    
 exit:
     pop hl
     ret
@@ -212,8 +205,6 @@ bootCodeVersionStr:
     
 systemInfoStr:
     .db "System info\n", 0
-debuggerStr:
-    .db "Open kernel debugger\n", 0
 backStr:
     .db "Back", 0
 notFoundStr:

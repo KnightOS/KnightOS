@@ -118,7 +118,7 @@ _:      ld d, h \ ld e, l
         ; This is weird. We know this pcall is on page 0x00, so this
         ; just takes it apart and gets the address in the jump table
         ; directly so that we can offer it to callbackSort
-        ld ix, 0x4000 - (((compareStrings_sort >> 8) + 1) * 3)
+        ld ix, 0x4000 - (((strcmp_sort >> 8) + 1) * 3)
         pcall(callbackSort) ; Sort directory list
     pop bc \ push bc
         ld a, c
@@ -135,7 +135,7 @@ _:      ld d, h \ ld e, l
         ex hl, de
         dec de \ dec de
         ld bc, 2
-        ld ix, 0x4000 - (((compareStrings_sort >> 8) + 1) * 3)
+        ld ix, 0x4000 - (((strcmp_sort >> 8) + 1) * 3)
         pcall(callbackSort) ; Sort file list
 _:  pop bc
     ld a, b
@@ -218,7 +218,7 @@ _:  pop af
         or a
         jr z, _
         ; File size
-        pcall(stringLength)
+        pcall(strlen)
         or a
         adc hl, bc
         inc hl
@@ -415,7 +415,7 @@ idleLoop:
     cpir
     dec hl
     ex de, hl
-    pcall(stringLength)
+    pcall(strlen)
     inc bc
     ldir
     ex de, hl
@@ -462,13 +462,13 @@ idleLoop:
     cpir
     dec hl
     ex de, hl
-    pcall(stringLength)
+    pcall(strlen)
     inc bc
     ldir
     kld(de, (currentPath))
     pcall(deleteFile)
     ex de, hl
-    pcall(stringLength)
+    pcall(strlen)
     add hl, bc
     ld a, '/'
     cpdr
@@ -489,7 +489,7 @@ idleLoop:
 .handleParent_noPop:
     kld(hl, (currentPath))
     push hl \ pop de
-    pcall(stringLength)
+    pcall(strlen)
     add hl, bc
     ld a, '/'
     ld bc, 0
@@ -557,7 +557,7 @@ openFile:
     di
     push hl
         ex de, hl
-        pcall(stringLength)
+        pcall(strlen)
         inc bc
         ldir
         kld(de, (currentPath))
@@ -629,7 +629,7 @@ listCallback:
 
             ; Handle directory
             ld hl, kernelGarbage
-            pcall(stringLength)
+            pcall(strlen)
             inc bc ; Include delimiter
             pcall(malloc) ; TODO: Handle out of memory (how?)
             push ix \ pop de
@@ -649,7 +649,7 @@ listCallback:
 _:          ; Handle file
             push hl
                 ld hl, kernelGarbage
-                pcall(stringLength)
+                pcall(strlen)
                 ld a, 4
                 add c \ ld c, a \ jr nc, $+3 \ inc b ; Add delimter, file size
                 pcall(malloc) ; TODO: Handle out of memory (how?)
