@@ -22,8 +22,10 @@ jumpTable:
     jp writeOption
     jp writeOption_u8
     jp writeOption_u16
+    jp writeOption_u32
     jp writeOption_s8
     jp writeOption_s16
+    jp writeOption_s32
     jp writeOption_float
     jp writeOption_bool
     .db 0xFF
@@ -277,8 +279,10 @@ readOption_bool:
 writeOption:
 writeOption_u8:
 writeOption_u16:
+writeOption_u32:
 writeOption_s8:
 writeOption_s16:
+writeOption_s32:
 writeOption_float:
 writeOption_bool:
     ret

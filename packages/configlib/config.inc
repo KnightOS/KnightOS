@@ -19,7 +19,9 @@ readOption_bool .equ 30
 writeOption .equ 33
 writeOption_u8 .equ 36
 writeOption_u16 .equ 39
-writeOption_s8 .equ 42
-writeOption_s16 .equ 45
-writeOption_float .equ 48
-writeOption_bool .equ 51
+writeOption_u32 .equ 42
+writeOption_s8 .equ 45
+writeOption_s16 .equ 48
+writeOption_s32 .equ 51
+writeOption_float .equ 54
+writeOption_bool .equ 57
