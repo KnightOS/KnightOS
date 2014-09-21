@@ -16,6 +16,7 @@ jumpTable:
     jp readOption
     jp readOption_8
     jp readOption_16
+    jp readOption_32
     jp readOption_float
     jp readOption_bool
     jp writeOption
@@ -27,6 +28,17 @@ jumpTable:
     jp writeOption_bool
     .db 0xFF
 
+; Inputs:
+;  HL: string
+; Notes:
+;  Destroys A
+skipSpaces:
+    ld a, (hl)
+    cp ' '
+    ret nz
+    inc hl
+    jr skipSpaces
+    
 ; Inputs:
 ;  D: stream ID
 ;  IX: where to store (saved)
@@ -120,7 +132,7 @@ openConfigWrite:
     ret
     
 ;; closeConfig [configlib]
-;;  Closes an open config file, saving any change
+;;  Closes an opened config file, saving any change
 ;;  made to it.
 ;; Inputs:
 ;;  D: stream ID
@@ -132,7 +144,7 @@ closeConfig:
     ret
     
 ;; readOption [configlib]
-;;  Reads an option as a string in an open config file.
+;;  Reads an option as a string in an opened config file.
 ;; Inputs:
 ;;  D: stream ID
 ;;  HL: pointer to name of option
@@ -145,7 +157,8 @@ closeConfig:
 readOption:
     push de
         ld e, 0
-        ld bc, 0
+        ld b, e
+        ld c, e
         pcall(seek)
         jr nz, .exit
         icall(findVar)
@@ -153,14 +166,9 @@ readOption:
         push ix \ pop hl \ push hl
             ld b, '='
             pcall(strchr)
+            jr nz, .free
             inc hl
-.goToValue:
-            ld a, (hl)
-            cp ' '
-            jr nz, .valueFound
-            inc hl
-            jr .goToValue
-.valueFound:
+            icall(skipSpaces)
             pcall(strlen)
             inc bc
             pcall(malloc)
@@ -170,16 +178,100 @@ readOption:
                 xor a
                 ld (de), a
             pop hl
+.free:
         pop ix
         pcall(free)
 .exit:
     pop de
     ret
     
+;; readOption_8 [configlib]
+;;  Reads an option as a signed byte in an opened config file.
+;; Inputs:
+;;  D: stream ID
+;;  HL: pointer to name of option
+;; Outputs:
+;;  A: signed byte value on success
+;;  Z: set on success, reset on failure
+;; Notes:
+;;  The command will only read the first three digits it will encounter.
+;;  Destroys BC, HL, IX, BC', DE', HL'
 readOption_8:
+    ld b, 3
+    push de
+        icall(readOption_asNum)
+    pop de
+    ld a, l
+    ret
+    
+;; readOption_16 [configlib]
+;;  Reads an option as a signed 16-bits value in an opened config file.
+;; Inputs:
+;;  D: stream ID
+;;  HL: pointer to name of option
+;; Outputs:
+;;  HL: signed 16-bits value on success
+;;  Z: set on success, reset on failure
+;; Notes:
+;;  The command will only read the first 5 digits it will encounter.
+;   Destroys AF, BC, IX, BC', DE', HL'
 readOption_16:
-readOption_s8:
-readOption_s16:
+    ld b, 5
+    push de
+        icall(readOption_asNum)
+    pop de
+    ret
+    
+;; readOption_32 [configlib]
+;;  Reads an option as a signed 32-bits value in an opened config file.
+;; Inputs:
+;;  D: stream ID
+;;  HL: pointer to name of option
+;; Outputs:
+;;  DEHL: signed 32-bits value on success
+;;  Z: set on success, reset on failure
+;; Notes:
+;;  Make sure to save D before calling this if it contains the stream ID.
+;;  The command will only read the first 5 digits it will encounter.
+;;  Destroys AF, BC, IX, BC', DE', HL'
+readOption_32:
+    ld b, 10
+    ijp(readOption_asNum)
+    
+; readOption_asNum
+;  Takes a number of digits to read an option as a number.
+; Inputs:
+;  B: max digits
+;  Same as all the readOption_x number reading routines
+; Outputs:
+;;  DEHL: signed 32-bits value on success
+;;  Z: set on success, reset on failure
+; Notes:
+;  Destroys AF, IX, BC', DE', HL'
+readOption_asNum:
+    push bc
+        ld e, 0
+        ld b, e
+        ld c, e
+        pcall(seek)
+        jr nz, .exit
+        icall(findVar)
+        jr nz, .exit
+        push ix \ pop hl
+        ld b, '='
+        pcall(strchr)
+        jr nz, .free
+        inc hl
+        icall(skipSpaces)
+    pop bc
+    pcall(strtoi)
+.free:
+    pcall(free)
+    ret
+.exit:
+    pop bc
+    ret
+    
 readOption_float:
 readOption_bool:
 writeOption:
