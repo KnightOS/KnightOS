@@ -11,6 +11,7 @@ start:
     pcall(getKeypadLock)
     
     pcall(allocScreenBuffer)
+	pcall(clearBuffer)
     
     kld(de, configLibPath)
     pcall(loadLibrary)
