@@ -146,6 +146,7 @@ buildpkgs: directories $(PACKBUF)
 license: directories
 	mkdir -p temp/etc/
 	cp LICENSE temp/etc/LICENSE
+	cp THANKS temp/etc/THANKS
 
 directories:
 	mkdir -p bin/$(PLATFORM)

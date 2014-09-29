@@ -2,7 +2,7 @@ OUTDIR:=bin/
 BINDIR:=$(OUTDIR)bin/
 ETCDIR:=$(OUTDIR)etc/
 
-DEPENDENCIES=../corelib/
+DEPENDENCIES=../corelib/;../configlib
 
 all: package
 

@@ -1,5 +1,6 @@
 #include "kernel.inc"
 #include "corelib.inc"
+#include "config.inc"
     .db "KEXC"
     .db KEXC_ENTRY_POINT
     .dw start
@@ -16,6 +17,8 @@ start:
     pcall(getKeypadLock)
 
     kld(de, corelibPath)
+    pcall(loadLibrary)
+    kld(de, configlibPath)
     pcall(loadLibrary)
 
     pcall(allocScreenBuffer)
@@ -708,6 +711,8 @@ scrollTop:
     .db 0
 
 corelibPath:
+    .db "/lib/core", 0
+configlibPath:
     .db "/lib/core", 0
 upText:
     .db "..\n", 0
