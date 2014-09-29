@@ -84,23 +84,24 @@ TI84pCSE: EXPLOIT_ADDRESS_FAT := 4046848
 TI84pCSE: EXPLOIT_ADDRESS_FAT_BACKUP := 3850240
 TI84pCSE: userland
 
-AS=sass
-EMU=wabbitemu
-ASFLAGS=--encoding "Windows-1252"
-INCLUDE=kernel/bin;temp/include/;
+AS:=sass
+EMU:=wabbitemu
+EMUFLAGS:=
+ASFLAGS:=--encoding "Windows-1252"
+INCLUDE:=kernel/bin;temp/include/;
 .DEFAULT_GOAL=TI84pSE
 
-PACKAGE_AS=sass
-PACKAGE_INCLUDE=$(PKGREL)inc/;$(PKGREL)kernel/bin/;
+PACKAGE_AS:=sass
+PACKAGE_INCLUDE:=$(PKGREL)inc/;$(PKGREL)kernel/bin/;
 
 .PHONY: kernel userland run runcolor buildpkgs license directories clean %.package exploit \
 	TI73 TI83p TI83pSE TI84p TI84pSE TI84pCSE
 
 run: TI84pSE
-	$(EMU) bin/TI84pSE/KnightOS-TI84pSE.rom
+	$(EMU) $(EMUFLAGS) bin/TI84pSE/KnightOS-TI84pSE.rom
 
 runcolor: TI84pCSE
-	$(EMU) bin/TI84pCSE/KnightOS-TI84pCSE.rom
+	$(EMU) $(EMUFLAGS) bin/TI84pCSE/KnightOS-TI84pCSE.rom
 
 kernel: directories
 	cd kernel && make $(PLATFORM)
