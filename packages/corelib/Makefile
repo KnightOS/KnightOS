@@ -31,6 +31,6 @@ clean:
 	rm -rf corelib-0.1.0.pkg
 
 install: package
-	kpack -e corelib-0.1.0.pkg $(PREFIX)
+	kpack -e -s corelib-0.1.0.pkg $(PREFIX)
 
 .PHONY: all clean

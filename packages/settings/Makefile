@@ -17,6 +17,6 @@ clean:
 	rm -rf settings-0.1.0.pkg
 
 install: package
-	kpack -e settings-0.1.0.pkg $(PREFIX)
+	kpack -e -s settings-0.1.0.pkg $(PREFIX)
 
 .PHONY: all clean

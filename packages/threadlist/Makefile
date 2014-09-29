@@ -17,6 +17,6 @@ clean:
 	rm -rf threadlist-0.1.0.pkg
 
 install:
-	kpack -e threadlist-0.1.0.pkg $(PREFIX)
+	kpack -e -s threadlist-0.1.0.pkg $(PREFIX)
 
 .PHONY: all clean

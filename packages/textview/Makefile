@@ -22,6 +22,6 @@ clean:
 	rm -rf textview-0.1.0.pkg
 
 install: package
-	kpack -e textview-0.1.0.pkg $(PREFIX)
+	kpack -e -s textview-0.1.0.pkg $(PREFIX)
 
 .PHONY: all clean

@@ -20,6 +20,6 @@ clean:
 	rm -rf configlib-0.1.0.pkg
 
 install: package
-	kpack -e configlib-0.1.0.pkg $(PREFIX)
+	kpack -e -s configlib-0.1.0.pkg $(PREFIX)
 
 .PHONY: all clean

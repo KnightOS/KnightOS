@@ -20,6 +20,6 @@ clean:
 	rm -rf fx3dlib-0.1.0.pkg
 
 install: package
-	kpack -e fx3dlib-0.1.0.pkg $(PREFIX)
+	kpack -e -s fx3dlib-0.1.0.pkg $(PREFIX)
 
 .PHONY: all clean

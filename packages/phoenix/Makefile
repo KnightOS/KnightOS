@@ -17,6 +17,6 @@ clean:
 	rm -rf phoenix-0.1.0.pkg
 
 install: package
-	kpack -e phoenix-0.1.0.pkg $(PREFIX)
+	kpack -e -s phoenix-0.1.0.pkg $(PREFIX)
 
 .PHONY: all clean

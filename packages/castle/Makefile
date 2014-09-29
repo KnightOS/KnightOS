@@ -26,6 +26,6 @@ clean:
 	rm -rf castle-0.1.0.pkg
 
 install: package
-	kpack -e castle-0.1.0.pkg $(PREFIX)
+	kpack -e -s castle-0.1.0.pkg $(PREFIX)
 
 .PHONY: all clean

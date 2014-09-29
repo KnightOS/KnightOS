@@ -20,6 +20,6 @@ clean:
 	rm -rf init-0.1.0.pkg
 
 install: package
-	kpack -e init-0.1.0.pkg $(PREFIX)
+	kpack -e -s init-0.1.0.pkg $(PREFIX)
 
 .PHONY: all package clean
