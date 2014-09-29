@@ -2,7 +2,10 @@ OUTDIR:=bin/
 LIBDIR:=$(OUTDIR)lib/
 INCDIR:=$(OUTDIR)include/
 
-all: $(LIBDIR)config $(INCDIR)config.inc
+all: package
+
+package: $(LIBDIR)config $(INCDIR)config.inc
+	kpack configlib-0.1.0.pkg $(OUTDIR)
 
 $(LIBDIR)config: config.asm
 	mkdir -p $(LIBDIR)
@@ -14,5 +17,9 @@ $(INCDIR)config.inc:
 
 clean:
 	rm -rf $(OUTDIR)
+	rm -rf configlib-0.1.0.pkg
+
+install: package
+	kpack -e configlib-0.1.0.pkg $(PREFIX)
 
 .PHONY: all clean

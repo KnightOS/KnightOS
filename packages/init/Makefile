@@ -2,7 +2,10 @@ OUTDIR:=bin/
 BINDIR:=$(OUTDIR)bin/
 ETCDIR:=$(OUTDIR)etc/
 
-all: $(BINDIR)init $(ETCDIR)inittab
+all: package
+
+package: $(BINDIR)init $(ETCDIR)inittab 
+	kpack init-0.1.0.pkg $(OUTDIR)
 
 $(BINDIR)init: init.asm
 	mkdir -p $(BINDIR)
@@ -14,5 +17,9 @@ $(ETCDIR)inittab: inittab
 
 clean:
 	rm -rf $(OUTDIR)
+	rm -rf init-0.1.0.pkg
 
-.PHONY: all clean
+install: package
+	kpack -e init-0.1.0.pkg $(PREFIX)
+
+.PHONY: all package clean

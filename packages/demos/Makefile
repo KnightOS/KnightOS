@@ -3,7 +3,10 @@ BINDIR:=$(OUTDIR)bin/
 
 DEPENDENCIES=../corelib/;../fx3dlib/
 
-all: $(BINDIR)count $(BINDIR)hello $(BINDIR)gfxdemo
+all: package
+
+package: $(BINDIR)count $(BINDIR)hello $(BINDIR)gfxdemo
+	kpack demos-0.1.0.pkg $(OUTDIR)
 
 $(BINDIR)count: count.asm
 	mkdir -p $(BINDIR)
@@ -19,5 +22,9 @@ $(BINDIR)gfxdemo: gfxdemo.asm
 
 clean:
 	rm -rf $(OUTDIR)
+	rm -rf demos-0.1.0.pkg
+
+install: package
+	kpack -e demos-0.1.0.pkg $(PREFIX)
 
 .PHONY: all clean

@@ -4,7 +4,10 @@ ETCDIR:=$(OUTDIR)etc/
 
 DEPENDENCIES=../corelib/
 
-all: $(BINDIR)textview $(ETCDIR)editor
+all: package
+
+package: $(BINDIR)textview $(ETCDIR)editor
+	kpack textview-0.1.0.pkg $(OUTDIR)
 
 $(BINDIR)textview: textview.asm
 	mkdir -p $(BINDIR)
@@ -16,5 +19,9 @@ $(ETCDIR)editor:
 
 clean:
 	rm -rf $(OUTDIR)
+	rm -rf textview-0.1.0.pkg
+
+install: package
+	kpack -e textview-0.1.0.pkg $(PREFIX)
 
 .PHONY: all clean

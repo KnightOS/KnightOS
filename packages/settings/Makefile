@@ -3,7 +3,10 @@ BINDIR:=$(OUTDIR)bin/
 
 DEPENDENCIES=../corelib/
 
-all: $(BINDIR)settings
+all: package
+	
+package: $(BINDIR)settings
+	kpack settings-0.1.0.pkg $(OUTDIR)
 
 $(BINDIR)settings: settings.asm
 	mkdir -p $(BINDIR)
@@ -11,5 +14,9 @@ $(BINDIR)settings: settings.asm
 
 clean:
 	rm -rf $(OUTDIR)
+	rm -rf settings-0.1.0.pkg
+
+install: package
+	kpack -e settings-0.1.0.pkg $(PREFIX)
 
 .PHONY: all clean

@@ -3,7 +3,10 @@ LIBDIR:=$(OUTDIR)lib/
 INCDIR:=$(OUTDIR)include/
 ETCDIR:=$(OUTDIR)etc/
 
-all: $(LIBDIR)core $(INCDIR)corelib.inc $(ETCDIR)extensions $(ETCDIR)magic
+all: package
+	
+package: $(LIBDIR)core $(INCDIR)corelib.inc $(ETCDIR)extensions $(ETCDIR)magic
+	kpack corelib-0.1.0.pkg $(OUTDIR)
 
 $(LIBDIR)core: corelib.asm characters.asm errors.asm
 	mkdir -p $(LIBDIR)
@@ -25,5 +28,9 @@ $(ETCDIR)magic:
 
 clean:
 	rm -rf $(OUTDIR)
+	rm -rf corelib-0.1.0.pkg
+
+install: package
+	kpack -e corelib-0.1.0.pkg $(PREFIX)
 
 .PHONY: all clean

@@ -3,7 +3,10 @@ BINDIR:=$(OUTDIR)bin/
 
 DEPENDENCIES=../corelib/
 
-all: $(BINDIR)threadlist
+all: package
+
+package: $(BINDIR)threadlist
+	kpack threadlist-0.1.0.pkg $(OUTDIR)
 
 $(BINDIR)threadlist: threadlist.asm
 	mkdir -p $(BINDIR)
@@ -11,5 +14,9 @@ $(BINDIR)threadlist: threadlist.asm
 
 clean:
 	rm -rf $(OUTDIR)
+	rm -rf threadlist-0.1.0.pkg
+
+install:
+	kpack -e threadlist-0.1.0.pkg $(PREFIX)
 
 .PHONY: all clean

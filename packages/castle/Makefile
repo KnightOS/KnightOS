@@ -4,7 +4,10 @@ ETCDIR:=$(OUTDIR)etc/
 
 DEPENDENCIES=../corelib/
 
-all: $(BINDIR)castle $(ETCDIR)castle.conf $(ETCDIR)launcher
+all: package
+
+package: $(BINDIR)castle $(ETCDIR)castle.conf $(ETCDIR)launcher
+	kpack castle-0.1.0.pkg $(OUTDIR)
 
 $(BINDIR)castle: castle.asm graphics.asm
 	mkdir -p $(BINDIR)
@@ -20,5 +23,9 @@ $(ETCDIR)launcher:
 
 clean:
 	rm -rf $(OUTDIR)
+	rm -rf castle-0.1.0.pkg
+
+install: package
+	kpack -e castle-0.1.0.pkg $(PREFIX)
 
 .PHONY: all clean

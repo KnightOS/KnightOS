@@ -3,7 +3,10 @@ BINDIR:=$(OUTDIR)bin/
 
 DEPENDENCIES=../corelib/;
 
-all: $(BINDIR)phoenix
+all: package
+	
+package: $(BINDIR)phoenix
+	kpack phoenix-0.1.0.pkg $(OUTDIR)
 
 $(BINDIR)phoenix: *.asm *.i
 	mkdir -p $(BINDIR)
@@ -11,5 +14,9 @@ $(BINDIR)phoenix: *.asm *.i
 
 clean:
 	rm -rf $(OUTDIR)
+	rm -rf phoenix-0.1.0.pkg
+
+install: package
+	kpack -e phoenix-0.1.0.pkg $(PREFIX)
 
 .PHONY: all clean

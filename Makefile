@@ -138,7 +138,7 @@ endif
 	make AS="$(PACKAGE_AS)" ASFLAGS="$(ASFLAGS)" PLATFORM="$(PLATFORM)" INCLUDE="$(PACKAGE_INCLUDE)" \
 				PACKAGEPATH="$(PACKAGEPATH)";
 	@cd $<; \
-	cp -r bin/* "$(PKGREL)temp";
+	make PREFIX=$(PKGREL)temp install || cp -r bin/* "$(PKGREL)temp";
 
 buildpkgs: directories $(PACKBUF)
 

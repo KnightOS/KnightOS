@@ -12,3 +12,4 @@
 bin/
 temp/
 *.swp
+*.pkg
