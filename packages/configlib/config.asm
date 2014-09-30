@@ -155,9 +155,8 @@ closeConfig:
 ;;  Z: set on success, reset on failure
 ;; Notes:
 ;;  Remember to free HL when you're done with it !
-;;  Destroys AF, BC, HL, IX
 readOption:
-    push de
+    push bc \ ld b, a \ push bc \ push de \ push ix
         ld e, 0
         ld b, e
         ld c, e
@@ -184,7 +183,7 @@ readOption:
         pop ix
         pcall(free)
 .exit:
-    pop de
+    pop ix \ pop de \ pop bc \ ld a, b \ pop bc
     ret
     
 ;; readOption_8 [configlib]
@@ -196,14 +195,16 @@ readOption:
 ;;  A: signed byte value on success
 ;;  Z: set on success, reset on failure
 ;; Notes:
-;;  The command will only read the first three digits it will encounter.
-;;  Destroys BC, HL, IX, BC', DE', HL'
+;;  The command will only read the first 3 digits it will encounter.
+;;  Destroys BC', DE', HL'
 readOption_8:
-    ld b, 3
-    push de
-        icall(readOption_asNum)
-    pop de
-    ld a, l
+    push bc \ push hl \ push ix
+        ld b, 3
+        push de
+            icall(readOption_asNum)
+        pop de
+        ld a, l
+    pop ix \ pop hl \ pop bc
     ret
     
 ;; readOption_16 [configlib]
@@ -216,12 +217,14 @@ readOption_8:
 ;;  Z: set on success, reset on failure
 ;; Notes:
 ;;  The command will only read the first 5 digits it will encounter.
-;   Destroys AF, BC, IX, BC', DE', HL'
+;   Destroys BC', DE', HL'
 readOption_16:
-    ld b, 5
-    push de
-        icall(readOption_asNum)
-    pop de
+    push bc \ ld b, a \ push bc \ push ix
+        ld b, 5
+        push de
+            icall(readOption_asNum)
+        pop de
+    pop ix \ pop bc \ ld a, b \ pop bc
     ret
     
 ;; readOption_32 [configlib]
@@ -233,12 +236,15 @@ readOption_16:
 ;;  DEHL: signed 32-bits value on success
 ;;  Z: set on success, reset on failure
 ;; Notes:
-;;  Make sure to save D before calling this if it contains the stream ID.
-;;  The command will only read the first 5 digits it will encounter.
-;;  Destroys AF, BC, IX, BC', DE', HL'
+;;  Make sure to save D before calling this, as it will hold the read value.
+;;  The command will only read the first 10 digits it will encounter.
+;;  Destroys BC', DE', HL'
 readOption_32:
-    ld b, 10
-    ijp(readOption_asNum)
+    push bc \ ld b, a \ push bc \ push ix
+        ld b, 10
+        icall(readOption_asNum)
+    pop ix \ pop bc \ ld a, b \ pop bc
+    ret
     
 ; readOption_asNum
 ;  Takes a number of digits to read an option as a number.
@@ -273,9 +279,96 @@ readOption_asNum:
 .exit:
     pop bc
     ret
+
+;; readOption_bool [configlib]
+;;  Reads an option as a boolean value in an opened config file.
+;; Inputs:
+;;  D: stream ID
+;;  HL: pointer to name of option
+;; Outputs:
+;;  Z: set on success, reset on failure
+;;  Carry: set if option read as true, reset if read as false
+;; Notes:
+;;  Any other number than 0, "true" and "yes" will read as a boolean value of "true".
+;;  0, "false" and "no" will read as a boolean value of "false".
+;;  Destroys BC', DE', HL'.
+readOption_bool:
+    push bc \ ld b, a \ push bc \ push de \ push ix
+        ld e, 0
+        ld b, e
+        ld c, e
+        pcall(seek)
+        jr nz, .exit
+        icall(findVar)
+        jr nz, .exit
+        push ix \ pop hl
+        ld b, '='
+        pcall(strchr)
+        jr nz, .free
+        inc hl
+        icall(skipSpaces)
+        push hl
+            ild(de, .optionTrue1)
+            pcall(strcmp)
+        pop hl
+        jr z, .foundTrueValue
+        push hl
+            ild(de, .optionTrue2)
+            pcall(strcmp)
+        pop hl
+        jr z, .foundTrueValue
+        push hl
+            ild(de, .optionTrue3)
+            pcall(strcmp)
+        pop hl
+        jr z, .foundTrueValue
+        push hl
+            ild(de, .optionFalse1)
+            pcall(strcmp)
+        pop hl
+        jr z, .foundFalseValue
+        push hl
+            ild(de, .optionFalse2)
+            pcall(strcmp)
+        pop hl
+        jr z, .foundFalseValue
+        push hl
+            ild(de, .optionFalse3)
+            pcall(strcmp)
+        pop hl
+        jr z, .foundFalseValue
+        ; error occured, value can't be read as a boolean
+        xor a
+        inc a
+        jr .free
+.foundTrueValue:
+        xor a
+        ccf
+        jr .free
+.foundFalseValue:
+        xor a
+.free:
+        pcall(free)
+.exit:
+    pop ix \ pop de \ pop bc \ ld a, b \ pop bc
+    ret
+    
+.optionTrue1:
+    .db "true",0
+.optionTrue2:
+    .db "yes", 0
+.optionTrue3:
+    ; much, much faster to compare strings than to strtoi
+    .db "1", 0
+.optionFalse1:
+    .db "false", 0
+.optionFalse2:
+    .db "no", 0
+.optionFalse3:
+    .db "0", 0
+    
     
 readOption_float:
-readOption_bool:
 writeOption:
 writeOption_u8:
 writeOption_u16:
