@@ -113,20 +113,20 @@ drawWindow:
         jr nz, _
             ild(hl, castleSprite)
             ld b, 5
-            ld de, 0x013A
+            ld de, 256 + 58
             pcall(putSpriteOR)
 _:      pop af \ push af
         bit 1, a
         jr nz, _
             ild(hl, threadListSprite)
-            ld de, 89 * 256 + 58
+            ld d, 89
             ld b, 6
             pcall(putSpriteOR)
 _:      pop af \ push af
         bit 2, a
         jr z, _
             ild(hl, menuText)
-            ld de, 40 * 256 + 58
+            ld d, 40
             pcall(drawStr)
 
             ild(hl, menuSprite)
@@ -158,7 +158,7 @@ drawScrollBar:
             ld c, 49
             pcall(drawVLine)
             ; Clear right side
-            ld a, 95
+            inc a
             pcall(drawVLineAND)
         ; Draw bar
         pop bc
