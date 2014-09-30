@@ -64,6 +64,8 @@ doListing:
     jr z, _
 
     ; Add a .. entry if this is not the root
+    kld(hl, directoryIcon)
+    kld((dotdot), hl)
     kld(hl, (directoryList))
     kld(de, dotdot)
     ld (hl), e
@@ -118,10 +120,7 @@ _:      ld d, h \ ld e, l
         ex hl, de
         dec de \ dec de
         ld bc, 2
-        ; This is weird. We know this pcall is on page 0x00, so this
-        ; just takes it apart and gets the address in the jump table
-        ; directly so that we can offer it to callbackSort
-        ld ix, 0x4000 - (((strcmp_sort >> 8) + 1) * 3)
+        kld(ix, sort_callback)
         pcall(callbackSort) ; Sort directory list
     pop bc \ push bc
         ld a, c
@@ -138,7 +137,7 @@ _:      ld d, h \ ld e, l
         ex hl, de
         dec de \ dec de
         ld bc, 2
-        ld ix, 0x4000 - (((strcmp_sort >> 8) + 1) * 3)
+        kld(ix, sort_callback)
         pcall(callbackSort) ; Sort file list
 _:  pop bc
     ld a, b
@@ -216,6 +215,8 @@ _:  pop af
 _:  pop af
     ld l, (ix)
     ld h, (ix + 1)
+    inc hl
+    inc hl
     pcall(drawStr)
     push bc
         or a
@@ -223,26 +224,31 @@ _:  pop af
         ; File size
         pcall(strlen)
         or a
-        adc hl, bc
-        inc hl
-        push af
-            push de
-                ld e, (hl)
-                inc hl
-                ld d, (hl)
-                inc hl
-                ld a, (hl)
-                ex de, hl
-            pop de
-            kcall(drawFileSize)
-        pop af
+        push hl
+            adc hl, bc
+            inc hl
+            push af
+                push de
+                    ld e, (hl)
+                    inc hl
+                    ld d, (hl)
+                    inc hl
+                    ld a, (hl)
+                    ex de, hl
+                pop de
+                cp 0xFF ; TODO: Check all of AHL
+                kcall(nz, drawFileSize)
+            pop af
+        pop hl
 _:      ld b, 6
-        or a
-        jr z, _
-        kld(hl, fileIcon)
-        jr ++_
-_:      kld(hl, directoryIcon)
-_:      ld d, 2
+        push de
+            dec hl \ dec hl
+            ld e, (hl)
+            inc hl
+            ld d, (hl)
+            ex de, hl
+        pop de
+        ld d, 2
         pcall(putSpriteOR)
         ld d, 8
         ld b, 8
@@ -409,6 +415,7 @@ idleLoop:
     ld e, (hl)
     inc hl
     ld d, (hl)
+    inc de \ inc de ; Skip icon
     ld a, (de)
     cp '.'
     kjp(z, .handleParent_noPop)
@@ -459,6 +466,7 @@ idleLoop:
     ld e, (hl)
     inc hl
     ld d, (hl)
+    inc de \ inc de
     kld(hl, (currentPath))
     xor a
     ld bc, 0
@@ -551,6 +559,7 @@ openFile:
     ld e, (hl)
     inc hl
     ld d, (hl)
+    inc de \ inc de
     ; Copy DE into the current path, but not for long
     kld(hl, (currentPath))
     xor a
@@ -628,14 +637,20 @@ listCallback:
     pop hl
         push bc
             cp fsFile
-            jr z, _
+            jr z, .handleFile
+            cp fsSymLink
+            kjp(z, .handleLink)
+            cp fsDirectory
+            kjp(nz, .handleUnknown)
 
             ; Handle directory
             ld hl, kernelGarbage
             pcall(strlen)
-            inc bc ; Include delimiter
+            inc bc \ inc bc \ inc bc ; Include delimiter and icon
             pcall(malloc) ; TODO: Handle out of memory (how?)
-            push ix \ pop de
+            kld(de, directoryIcon)
+            ld (ix), e \ ld (ix + 1), d
+            push ix \ pop de \ inc de \ inc de
             ldir
 
             kld(hl, (directoryList))
@@ -649,15 +664,17 @@ listCallback:
         inc b
     exx
     ret
-_:          ; Handle file
+.handleFile:
             push hl
                 ld hl, kernelGarbage
                 pcall(strlen)
-                ld a, 4
-                add c \ ld c, a \ jr nc, $+3 \ inc b ; Add delimter, file size
+                ld a, 6
+                add c \ ld c, a \ jr nc, $+3 \ inc b ; Add delimter, file size, icon
                 pcall(malloc) ; TODO: Handle out of memory (how?)
-                push ix \ pop de
-                dec bc \ dec bc \ dec bc
+                kld(de, fileIcon)
+                ld (ix), e \ ld (ix + 1), d
+                push ix \ pop de \ inc de \ inc de
+                dec bc \ dec bc \ dec bc \ dec bc \ dec bc
                 ldir
             pop hl
             ; File size
@@ -684,6 +701,44 @@ _:          ; Handle file
         inc c
     exx
     ret
+.handleLink:
+            push hl
+                ld hl, kernelGarbage
+                pcall(strlen)
+                ld a, 6
+                add c \ ld c, a \ jr nc, $+3 \ inc b ; Add delimter, file size, icon
+                pcall(malloc) ; TODO: Handle out of memory (how?)
+                kld(de, symlinkIcon)
+                ld (ix), e \ ld (ix + 1), d
+                push ix \ pop de \ inc de \ inc de
+                dec bc \ dec bc \ dec bc \ dec bc \ dec bc
+                ldir
+            pop hl
+            ; File size
+            ; Symlinks need to be sorted with files so there's some workarounds
+            ; One of these is that the file size is set to 0xFFFFF
+            ld a, 0xFF
+            ld (de), a
+            inc de
+            ld (de), a
+            inc de
+            ld (de), a
+
+            kld(hl, (fileList))
+            push ix \ pop de
+            ld (hl), e
+            inc hl
+            ld (hl), d
+            inc hl
+            kld((fileList), hl)
+        pop bc
+        inc c
+    exx
+    ret
+.handleUnknown:
+        pop bc
+    exx
+    ret
 
 trampoline:
     ld a, 0 ; Thread ID will be loaded here
@@ -694,6 +749,17 @@ trampoline:
     pcall(resumeThread)
     pcall(killCurrentThread)
 trampoline_end:
+
+sort_callback:
+    push de
+    push hl
+        pcall(indirect16HLDE)
+        inc hl \ inc hl
+        inc de \ inc de
+        pcall(strcmp)
+    pop hl
+    pop de
+    ret
 
 currentPath:
     .dw 0
@@ -717,6 +783,7 @@ configlibPath:
 upText:
     .db "..\n", 0
 dotdot:
+    .dw 0
     .db "..", 0
 titlePrefix:
     .db "File Manager: "
@@ -736,6 +803,13 @@ fileIcon:
     .db 0b10001000
     .db 0b10001000
     .db 0b11111000
+    .db 0
+symlinkIcon:
+    .db 0b00100000
+    .db 0b00110000
+    .db 0b01111000
+    .db 0b10110000
+    .db 0b00100000
     .db 0
 downCaretIcon:
     .db 0b11111000
