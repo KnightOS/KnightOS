@@ -1,6 +1,7 @@
 OUTDIR:=bin/
 BINDIR:=$(OUTDIR)bin/
 ETCDIR:=$(OUTDIR)etc/
+APPDIR:=$(OUTDIR)var/applications/
 
 DEPENDENCIES=../corelib/;../configlib
 
@@ -11,7 +12,9 @@ package: $(BINDIR)fileman $(ETCDIR)fileman.conf
 
 $(BINDIR)fileman: fileman.asm
 	mkdir -p $(BINDIR)
+	mkdir -p $(APPDIR)
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/fileman/;$(DEPENDENCIES)" fileman.asm $(BINDIR)fileman
+	cp fileman.app $(APPDIR)
 
 $(ETCDIR)fileman.conf: fileman.conf
 	mkdir -p $(ETCDIR)

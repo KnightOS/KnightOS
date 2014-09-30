@@ -1,6 +1,7 @@
 OUTDIR:=bin/
 BINDIR:=$(OUTDIR)bin/
 ETCDIR:=$(OUTDIR)etc/
+APPDIR:=$(OUTDIR)var/applications/
 
 DEPENDENCIES=../corelib/
 
@@ -11,7 +12,9 @@ package: $(BINDIR)textview $(ETCDIR)editor
 
 $(BINDIR)textview: textview.asm
 	mkdir -p $(BINDIR)
+	mkdir -p $(APPDIR)
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/base/;$(DEPENDENCIES)" textview.asm $(BINDIR)textview
+	cp textview.app $(APPDIR)
 
 $(ETCDIR)editor:
 	mkdir -p $(ETCDIR)

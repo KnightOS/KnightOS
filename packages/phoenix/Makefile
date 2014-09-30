@@ -1,5 +1,6 @@
 OUTDIR:=bin/
 BINDIR:=$(OUTDIR)bin/
+APPDIR:=$(OUTDIR)var/applications/
 
 DEPENDENCIES=../corelib/;
 
@@ -10,7 +11,9 @@ package: $(BINDIR)phoenix
 
 $(BINDIR)phoenix: *.asm *.i
 	mkdir -p $(BINDIR)
+	mkdir -p $(APPDIR)
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/phoenix/;$(DEPENDENCIES)" phoenix.asm $(BINDIR)phoenix
+	cp phoenix.app $(APPDIR)
 
 clean:
 	rm -rf $(OUTDIR)
