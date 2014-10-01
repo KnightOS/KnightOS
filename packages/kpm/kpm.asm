@@ -1,5 +1,4 @@
-; KnightOS corelib
-; General purpose application library
+; KnightOS Package Management (kpm) library
 
 .nolist
 libId .equ 0x05
