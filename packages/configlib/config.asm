@@ -287,14 +287,13 @@ readOption_asNum:
 ;;  HL: pointer to name of option
 ;; Outputs:
 ;;  Z: set on success, reset on failure
-;;  A: 1 for true, 0 for false
 ;;  Carry: set if option read as true, reset if read as false
 ;; Notes:
 ;;  Any other number than 0, "true" and "yes" will read as a boolean value of "true".
 ;;  0, "false" and "no" will read as a boolean value of "false".
 ;;  Destroys BC', DE', HL'.
 readOption_bool:
-    push bc \ ld b, a \ push bc \ push de \ push ix
+    push bc \ ld b, a \ push bc \ push de \ push hl \ push ix
         ld e, 0
         ld b, e
         ld c, e
@@ -351,7 +350,7 @@ readOption_bool:
 .free:
         pcall(free)
 .exit:
-    pop ix \ pop de \ pop bc \ ld a, b \ pop bc
+    pop ix \ pop hl \ pop de \ pop bc \ ld a, b \ pop bc
     ld a, 0
     jr nc, _
     inc a
