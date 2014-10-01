@@ -25,6 +25,7 @@ start:
     kcall(loadConfiguration)
 
     pcall(allocScreenBuffer)
+    pcall(clearBuffer)
 
     ; Set current path
     ld bc, 1024
@@ -49,13 +50,33 @@ _:      ex de, hl
     pop de
     ex de, hl
     kld((currentPath), hl)
+    pcall(directoryExists)
+    jr z, _
+    ; Move us back to / cause this doesn't exist
+    ld a, '/'
+    ld (hl), a
+    inc hl
+    xor a
+    ld (hl), a
+    dec hl
+    push hl
+    push de
+        xor a
+        ld b, a
+        kld(hl, startNotFound)
+        kld(de, openFailOptions)
+        corelib(showMessage)
+    pop de
+    pop hl
 
-    ; Allocate space for fileList and directoryList
+_:  ; Allocate space for fileList and directoryList
     ld bc, 512 ; Max 256 subdirectories and 256 files per directory
     pcall(malloc)
+    corelib(showErrorAndQuit)
     push ix \ pop hl
     kld((fileList), hl)
     pcall(malloc)
+    corelib(showErrorAndQuit)
     push ix \ pop hl
     kld((directoryList), hl)
 
@@ -937,6 +958,8 @@ openFailMessage:
 openFailOptions:
     .db 1
     .db "Dismiss", 0
+startNotFound:
+    .db "Start-up\ndirectory not\nfound.", 0
 
 ; Settings
 showHidden:

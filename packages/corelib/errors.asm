@@ -9,6 +9,13 @@ errorMessages:
     .dw msg_tooManyLibraries
     .dw msg_unsupported
     .dw msg_tooManySignals
+    .dw msg_filesystemFull
+    .dw msg_nameTooLong
+    .dw msg_alreadyExists
+    .dw msg_noMagic
+    .dw msg_noHeader
+    .dw msg_noEntryPoint
+    .dw msg_kernelMismatch
     .dw 0xFFFF
 
 msg_outOfMem:
@@ -31,6 +38,20 @@ msg_unsupported:
     .db "This is not\nsupported on\nyour device.", 0
 msg_tooManySignals:
     .db "Error:\nToo many\nsignals", 0
+msg_filesystemFull:
+    .db "Error:\nOut of\nspace.", 0
+msg_nameTooLong:
+    .db "Name is\ntoo long.", 0
+msg_alreadyExists:
+    .db "File\nalready\nexists.", 0
+msg_noMagic:
+    .db "Error:\nNo magic\nnumber.", 0
+msg_noHeader:
+    .db "Error:\nNo header.", 0
+msg_noEntryPoint:
+    .db "Error\nNo entry\npoint.", 0
+msg_kernelMismatch:
+    .db "Error:\nUpgrade your\nkernel.", 0
 
 dismissOption:
     .db 1
