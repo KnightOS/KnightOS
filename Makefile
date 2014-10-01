@@ -157,7 +157,6 @@ directories:
 	mkdir -p temp/home
 	mkdir -p temp/lib
 	mkdir -p temp/share
-	mkdir -p temp/include
 	mkdir -p temp/var
 
 castle_links:
