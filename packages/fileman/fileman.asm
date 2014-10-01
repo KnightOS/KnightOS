@@ -91,30 +91,32 @@ _:  kld(hl, (currentPath))
     pop bc
     ; B: Num directories
     ; C: Num files
-    ; Sort results
-    kld(hl, (currentPath))
-    inc hl
-    ld a, (hl)
-    or a
-    jr z, _ 
-    inc b ; Add the imaginary '..' entry
-_:  push bc
-        ld a, b
-        or a
-        jr z, ++_
+    ; Add the imaginary .. entry to the list
+    push de
         kld(ix, (directoryList))
         pcall(memSeekToStart)
         kld((directoryList), ix)
+        ld l, (ix)
+        ld h, (ix + 1)
+        kld(de, dotdot)
+        pcall(cpHLDE)
+    pop de
+    jr nz, _ 
+    inc b
+_:  push bc ; Sort results
+        ld a, b
+        or a
+        jr z, ++_
         ld a, b
         ld b, 0
         ld c, a
         ; Check for root and move past the .. if not
-        kld(hl, (currentPath))
-        inc hl
-        ld a, (hl)
+        ld l, (ix)
+        ld h, (ix + 1)
+        kld(de, dotdot)
+        pcall(cpHLDE)
         push ix \ pop hl
-        or a ; cp 0
-        jr z, _
+        jr nz, _
         ; We are not on the root, so skip the .. entry for sorting
         inc hl \ inc hl
         dec bc
