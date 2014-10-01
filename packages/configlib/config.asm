@@ -287,6 +287,7 @@ readOption_asNum:
 ;;  HL: pointer to name of option
 ;; Outputs:
 ;;  Z: set on success, reset on failure
+;;  A: 1 for true, 0 for false
 ;;  Carry: set if option read as true, reset if read as false
 ;; Notes:
 ;;  Any other number than 0, "true" and "yes" will read as a boolean value of "true".
@@ -351,7 +352,10 @@ readOption_bool:
         pcall(free)
 .exit:
     pop ix \ pop de \ pop bc \ ld a, b \ pop bc
-    ret
+    ld a, 0
+    jr nc, _
+    inc a
+_:  ret
     
 .optionTrue1:
     .db "true",0

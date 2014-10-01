@@ -9,9 +9,10 @@
     .db KEXC_KERNEL_VER
     .db 0, 6
     .db KEXC_NAME
-name_ptr:
-    .dw titlePrefix
+    .dw window_title
     .db KEXC_HEADER_END
+window_title:
+    .db "File Manager", 0
 start:
     pcall(getLcdLock)
     pcall(getKeypadLock)
@@ -21,30 +22,33 @@ start:
     kld(de, configlibPath)
     pcall(loadLibrary)
 
+    kcall(loadConfiguration)
+
     pcall(allocScreenBuffer)
 
     ; Set current path
-    ld bc, 1024 + (titlePrefixEnd - titlePrefix)
+    ld bc, 1024
     pcall(malloc)
     push ix \ pop de
-    kld(hl, titlePrefix)
-    ld bc, titlePrefixEnd - titlePrefix
-    ldir
+    push de
+        kld(hl, (config_initialPath))
+        pcall(strlen)
+        inc bc
+        ldir
+        dec de \ dec de
+        ex de, hl
+        ld a, '/'
+        cp (hl)
+        jr z, _
+        inc hl
+        ld (hl), a
+        xor a
+        inc hl
+        ld (hl), a
+_:      ex de, hl
+    pop de
     ex de, hl
-    ld a, '/'
-    ld bc, 0
-    cpdr \ cpdr ; Note: this prevents us from having / be the initial path
-    inc hl
     kld((currentPath), hl)
-    push ix \ pop hl
-    push hl
-        pcall(getCurrentThreadId)
-        pcall(getEntryPoint)
-        ld b, h \ ld c, l
-    pop hl
-    or a
-    sbc hl, bc
-    kld((name_ptr), hl)
 
     ; Allocate space for fileList and directoryList
     ld bc, 512 ; Max 256 subdirectories and 256 files per directory
@@ -148,15 +152,7 @@ _:  pop bc
 drawList:
     pcall(clearBuffer)
     kld(hl, (currentPath))
-    push hl \ pop ix
-    pcall(memSeekToStart)
-    push ix \ pop hl
     ld a, 0b00000100
-    push bc
-        ld bc, initialPath - titlePrefix
-        or a
-        add hl, bc
-    pop bc
     corelib(drawWindow)
 
     ld de, 0x0808
@@ -219,6 +215,9 @@ _:  pop af
     inc hl
     pcall(drawStr)
     push bc
+        or a
+        jr z, _
+        kld(a, (config_showSize))
         or a
         jr z, _
         ; File size
@@ -645,7 +644,13 @@ listCallback:
 
             ; Handle directory
             ld hl, kernelGarbage
-            pcall(strlen)
+            kld(a, (config_showHidden))
+            or a
+            jr nz, _
+            ld a, (hl)
+            cp '.'
+            kjp(z, .handleUnknown) ; Skip hidden directory
+_:          pcall(strlen)
             inc bc \ inc bc \ inc bc ; Include delimiter and icon
             pcall(malloc) ; TODO: Handle out of memory (how?)
             kld(de, directoryIcon)
@@ -660,14 +665,22 @@ listCallback:
             ld (hl), d
             inc hl
             kld((directoryList), hl)
-        pop bc
+            pop bc
         inc b
     exx
     ret
 .handleFile:
             push hl
                 ld hl, kernelGarbage
-                pcall(strlen)
+                kld(a, (config_showHidden))
+                or a
+                jr nz, _
+                ld a, (hl)
+                cp '.'
+                jr nz, _
+            pop hl
+            kjp(.handleUnknown) ; Skip hidden file
+_:              pcall(strlen)
                 ld a, 6
                 add c \ ld c, a \ jr nc, $+3 \ inc b ; Add delimter, file size, icon
                 pcall(malloc) ; TODO: Handle out of memory (how?)
@@ -702,9 +715,18 @@ listCallback:
     exx
     ret
 .handleLink:
-            push hl
+_:          push hl
                 ld hl, kernelGarbage
-                pcall(strlen)
+                ld hl, kernelGarbage
+                kld(a, (config_showHidden))
+                or a
+                jr nz, _
+                ld a, (hl)
+                cp '.'
+                jr nz, _
+            pop hl
+            kjp(.handleUnknown) ; Skip hidden file
+_:              pcall(strlen)
                 ld a, 6
                 add c \ ld c, a \ jr nc, $+3 \ inc b ; Add delimter, file size, icon
                 pcall(malloc) ; TODO: Handle out of memory (how?)
@@ -761,6 +783,65 @@ sort_callback:
     pop de
     ret
 
+loadConfiguration:
+    ; Set defaults
+    kld(hl, initialPath)
+    kld((config_initialPath), hl)
+    ; Load actual
+    kld(de, configPath)
+    config(openConfigRead)
+    ret nz
+
+    kld(hl, config_browseRoot_s)
+    config(readOption_bool)
+    kld((config_browseRoot), a)
+
+    kld(hl, config_editSymLinks_s)
+    config(readOption_bool)
+    kld((config_editSymLinks), a)
+    
+    kld(hl, config_showHidden_s)
+    config(readOption_bool)
+    kld((config_showHidden), a)
+    
+    kld(hl, config_showSize_s)
+    config(readOption_bool)
+    kld((config_showSize), a)
+
+    kld(hl, config_initialPath_s)
+    config(readOption)
+    kld((config_initialPath), hl)
+
+    config(closeConfig)
+    ret
+
+; Config options
+config_initialPath:
+    .dw initialPath
+config_browseRoot:
+    .db 0
+config_editSymLinks:
+    .db 0
+config_showHidden:
+    .db 0
+config_showSize:
+    .db 0
+
+config_initialPath_s:
+    .db "startdir", 0
+config_browseRoot_s:
+    .db "browseroot", 0
+config_editSymLinks_s:
+    .db "editsymlinks", 0
+config_showHidden_s:
+    .db "showhidden", 0
+config_showSize_s:
+    .db "showsize", 0
+
+configPath:
+    .db "/etc/fileman.conf", 0
+
+; Variables
 currentPath:
     .dw 0
 fileList:
@@ -779,17 +860,14 @@ scrollTop:
 corelibPath:
     .db "/lib/core", 0
 configlibPath:
-    .db "/lib/core", 0
+    .db "/lib/config", 0
 upText:
     .db "..\n", 0
 dotdot:
     .dw 0
     .db "..", 0
-titlePrefix:
-    .db "File Manager: "
 initialPath:
     .db "/home/", 0
-titlePrefixEnd:
 directoryIcon:
     .db 0b11100000
     .db 0b10011000
