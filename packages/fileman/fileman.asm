@@ -60,14 +60,22 @@ _:      ex de, hl
     kld((directoryList), hl)
 
 doListing:
+    kld(a, (config_browseRoot))
+    or a
+    jr nz, _
     kld(hl, (currentPath))
+    kld(de, (config_initialPath))
+    pcall(strcmp)
+    jr z, +++_
+
+_:  kld(hl, (currentPath))
     inc hl
     ld a, (hl)
     dec hl
     or a ; cp 0 (basically, test if we're at the root
-    jr z, _
+    jr z, ++_
 
-    ; Add a .. entry if this is not the root
+_:  ; Add a .. entry if this is not the root
     kld(hl, directoryIcon)
     kld((dotdot), hl)
     kld(hl, (directoryList))
@@ -156,8 +164,18 @@ drawList:
     kld(hl, (currentPath))
     ld a, 0b00000100
     corelib(drawWindow)
+    xor a
+    cp b
+    jr nz, _
+    cp c
+    jr nz, _
+    ; There are no files or folders here
+    ld de, 0x0208
+    kld(hl, nothingHereText)
+    pcall(drawStr)
+    kjp(.done)
 
-    ld de, 0x0808
+_:  ld de, 0x0808
     kld(a, (scrollTop))
     ld h, a
     push bc
@@ -268,6 +286,9 @@ _:      ld b, 6
         jr nc, $+3
         inc b
         push bc
+            ld hl, 0
+            pcall(cpHLBC)
+            jr z, idleLoop
 
             ; Draw remainder of UI
             kld(a, (scrollTop))
@@ -302,6 +323,12 @@ idleLoop:
             corelib(appWaitKey)
             jr nz, idleLoop
 
+            cp kMode
+            kjp(z, .exit)
+            ld hl, 0
+            pcall(cpHLBC)
+            jr z, idleLoop
+
             cp kDown
             kjp(z, .handleDown)
             cp kUp
@@ -318,8 +345,6 @@ idleLoop:
             kjp(z, .handleEnter)
             cp kDel
             kjp(z, .handleDelete)
-            cp kMode
-            kjp(z, .exit)
             jr idleLoop
 .handleDown:
         pop bc
@@ -899,6 +924,8 @@ upCaretIcon:
     .db 0b00100000
     .db 0b01110000
     .db 0b11111000
+nothingHereText:
+    .db "Nothing here!", 0
 deletionMessage:
     .db "Are you sure\nyou want to\ndelete this?", 0
 deletionOptions:
