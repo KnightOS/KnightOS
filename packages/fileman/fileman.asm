@@ -50,7 +50,8 @@ _:      ex de, hl
     pop de
     ex de, hl
     kld((currentPath), hl)
-    pcall(directoryExists)
+    ;pcall(directoryExists) ; TODO: Fix trailing slashes in directoryExists
+    cp a
     jr z, _
     ; Move us back to / cause this doesn't exist
     ld a, '/'
@@ -842,25 +843,31 @@ loadConfiguration:
 
     kld(hl, config_browseRoot_s)
     config(readOption_bool)
+    jr nz, _
     kld((config_browseRoot), a)
 
-    kld(hl, config_editSymLinks_s)
+_:  kld(hl, config_editSymLinks_s)
     config(readOption_bool)
+    jr nz, _
     kld((config_editSymLinks), a)
     
-    kld(hl, config_showHidden_s)
+_:  kld(hl, config_showHidden_s)
     config(readOption_bool)
+    jr nz, _
     kld((config_showHidden), a)
     
-    kld(hl, config_showSize_s)
+_:  kld(hl, config_showSize_s)
     config(readOption_bool)
+    jr nz, _
     kld((config_showSize), a)
 
-    kld(hl, config_initialPath_s)
+    kld(hl, config_initialPath)
+_:  kld(hl, config_initialPath_s)
     config(readOption)
+    jr nz, _
     kld((config_initialPath), hl)
 
-    config(closeConfig)
+_:  config(closeConfig)
     ret
 
 ; Config options

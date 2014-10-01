@@ -69,7 +69,7 @@ corelib_streamReadLine:
 ;  IX: pointer on line containing the variable (free after usage)
 ;  Z: set if variable found
 findVar:
-    ld bc, 256
+    ld bc, 512
     pcall(malloc)
     push ix
         push hl
@@ -353,7 +353,7 @@ readOption_bool:
     pop ix \ pop hl \ pop de \ pop bc \ ld a, b \ pop bc
     ld a, 0
     jr nc, _
-    inc a
+    ld a, 1
 _:  ret
     
 .optionTrue1:
