@@ -12,7 +12,7 @@ $(LIBDIR)kpm: $(INCDIR)kpm.inc kpm.asm
 	mkdir -p $(LIBDIR)
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/base/" kpm.asm $(LIBDIR)kpm
 
-$(BINDIR)kpm-gui: $(INCDIR)kpm.inc main.asm
+$(BINDIR)kpm-gui: $(INCDIR)kpm.inc main.asm kpm-gui/*.asm
 	mkdir -p $(BINDIR)
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/base/" main.asm $(BINDIR)kpm-gui
 

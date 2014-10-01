@@ -1,12 +1,13 @@
+libkpmId .equ 0x05
+
 .macro libkpm(addr)
-    lcall(corelibId, addr)
+    lcall(libkpmId, addr)
 .endmacro
 .macro libkpm(cc, addr)
-    lcall(corelibId, cc, addr)
+    lcall(libkpmId, cc, addr)
 .endmacro
-
-libkpmId .equ 0x04
 
 getPackageList .equ 6
 packageDetail .equ 9
 removePackage .equ 12
+freePackageList .equ 15

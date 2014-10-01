@@ -4,7 +4,7 @@
     .db KEXC_ENTRY_POINT
     .dw start
     .db KEXC_STACK_SIZE
-    .dw 20
+    .dw 100
     .db KEXC_KERNEL_VER
     .db 0, 6
     .db KEXC_NAME
@@ -15,6 +15,14 @@ name:
 start:
     kld(de, kpmPath)
     pcall(loadLibrary)
-    ret
+
+    pcall(getLcdLock)
+    pcall(getKeypadLock)
+
+    pcall(allocScreenBuffer)
+
+    kjp(showlist)
 kpmPath:
     .db "/lib/kpm", 0
+
+#include "kpm-gui/list.asm"
