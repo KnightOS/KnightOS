@@ -1,0 +1,55 @@
+                           KnightOS Kernel Changelog
+
+                              === Kernel 0.7.0 ===
+
+Kernel 0.7.0 is largely focused on a writable filesystem but also adds a number
+of other useful changes. The major changes here are:
+
+- Complete driver for KFS 1.0.0
+    - Reading from and writing to files is supported
+    - Tree manipulation such as deleting files and renaming nodes is supported
+    - Symbolic links are supported both by the kernel and by genkfs 1.2.1
+    - listDirectory is supported, which provides a similar mechanism to readdir
+      in POSIX systems
+- Flash driver improved and tested on all calculators except for the CSE
+- Improved random number generation
+- Decimal number printing functions added
+- More standard string manipulation implemented (strtoi, strstr, etc)
+- Better integer math support (faster, more complete)
+
+In addition to changes in the kernel, there have also been improvements in the
+rest of the KnightOS world. Interesting ones include:
+
+- Toolchain improvements, new tools:
+    - z80e: TI calculator emulator and debugger
+    - kpack: POSIX tool for manipulating KnightOS packages
+    - sdk: New SDK for KnightOS userspace program development
+    - mktiupgrade: Packages and signs OS upgrade files for supported platforms
+    - patchrom: Patches kernel ROMs with a jump table
+    - mkrom: Generates ROM files from individual pages
+- KnightOS improvements
+    - Support for Unix-style configuration files via configlib
+    - New file manager
+    - Package management support
+    - applib renamed to corelib
+    - Phoenix video game ported to KnightOS
+
+This kernel is the culmination of effort by an even larger number of people than
+before. Thank you to those who helped out with this release:
+
+- Drew DeVault
+- Mattias "matrefeytontias" Refeyton
+- "puckipedia"
+- Sijmen "Vijfhoek" Schoon
+- Dan "Streetwalrus" Elkouby
+- "minus"
+- Jose Diez
+- "aeTIos"
+- Tyler "unlimitedbacon" Anderson
+- "dragontux"
+- "Alkoou"
+
+Looking forward to kernel 0.8.0, we plan to have support for communicating with
+PCs both over USB (via MTP) and I/O (via libticables). We also hope to have
+support for userspace programs written in C for kernel 0.8.0. If you want to
+help out, come get involved at http://www.knightos.org.
