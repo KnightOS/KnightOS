@@ -841,27 +841,19 @@ loadConfiguration:
     ret nz
 
     kld(hl, config_browseRoot_s)
-    xor a
     config(readOption_bool)
-    adc a, a
     kld((config_browseRoot), a)
 
     kld(hl, config_editSymLinks_s)
-    xor a
     config(readOption_bool)
-    adc a, a
     kld((config_editSymLinks), a)
     
     kld(hl, config_showHidden_s)
-    xor a
     config(readOption_bool)
-    adc a, a
     kld((config_showHidden), a)
     
     kld(hl, config_showSize_s)
-    xor a
     config(readOption_bool)
-    adc a, a
     kld((config_showSize), a)
 
     kld(hl, config_initialPath_s)
