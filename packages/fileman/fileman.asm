@@ -531,6 +531,7 @@ idleLoop:
     add hl, bc
     ld a, '/'
     cpdr
+    inc hl ; preserve trailing slash
     inc hl
     xor a
     ld (hl), a
