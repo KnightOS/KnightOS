@@ -492,15 +492,15 @@ open:
         ; Check for KEXC
         push de
             pcall(openFileRead)
-            ijp(nz, .fail)
+            ijp(nz, .isKEXCfail)
 
             ld bc, 5
             pcall(malloc)
-            ijp(nz, .fail)
+            ijp(nz, .isKEXCfail)
 
             dec bc
             pcall(streamReadBuffer)
-            ijp(nz, .fail)
+            ijp(nz, .isKEXCfail)
             pcall(closeStream)
 
             ld (ix + 4), 0
@@ -535,7 +535,7 @@ open:
             ; Read the editor executable from /etc/editor
             ild(de, editorPath)
             pcall(openFileRead)
-            jr nz, .fail
+            jr nz, .notKEXCfail
             
             ; Get the size of the file contents and allocate memory for it
             pcall(getStreamInfo)
@@ -570,6 +570,12 @@ open:
 
         jr .end
 
+.notKEXCfail:
+        pop ix
+        jr .fail
+.isKEXCfail:
+        pop de
+        ;jr .fail
 .fail:
     pop af
     ld a, (kernelGarbage)
