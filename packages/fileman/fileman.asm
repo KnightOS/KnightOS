@@ -28,7 +28,7 @@ start:
     pcall(clearBuffer)
 
     ; Set current path
-    ld bc, 1024
+    ld bc, 512
     pcall(malloc)
     push ix \ pop de
     push de

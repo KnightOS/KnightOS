@@ -3,7 +3,7 @@
     .db KEXC_ENTRY_POINT
     .dw start
     .db KEXC_STACK_SIZE
-    .dw 20
+    .dw 50
     .db KEXC_KERNEL_VER
     .db 0, 6
     .db KEXC_NAME
