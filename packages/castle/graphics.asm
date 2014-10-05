@@ -35,6 +35,11 @@ _:  ld a, 8
     pcall(putSpriteOR)
 
     pcall(getBatteryLevel)
+    ld d, b
+    ld e, 85
+    pcall(div8by8)
+    ld b, d
+    inc b
     xor a
     cp b
     jr z, ++_

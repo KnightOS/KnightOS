@@ -814,7 +814,7 @@ _:              pcall(strlen)
 
 trampoline:
     ld a, 0 ; Thread ID will be loaded here
-    pcall(getThreadEntry)
+    pcall(checkThread)
     corelib(nz, launchCastle)
     ld (hwLockLCD), a
     ld (hwLockKeypad), a

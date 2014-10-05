@@ -62,17 +62,17 @@ _:  ld iy, 0b0000000000011111 ; Blue
 _:  pcall(flushKeys)
     ld h, 0
     ld d, 0
-    pcall(randA)
+    pcall(getRandom)
     ld l, a
-    pcall(randA)
+    pcall(getRandom)
     ld e, a
-    pcall(randA)
+    pcall(getRandom)
     ld b, a
-    pcall(randA)
+    pcall(getRandom)
     ld c, a
-    pcall(randA)
+    pcall(getRandom)
     ld iyl, a
-    pcall(randA)
+    pcall(getRandom)
     ld iyh, a
     pcall(clipColorRectangle)
     corelib(appGetKey)
@@ -318,19 +318,19 @@ InitSetupLoop:
     inc hl
     ld (hl), d ;x
     inc hl
-    pcall(randA)
+    pcall(getRandom)
     and 0x02
     dec a
     ld (hl), a ;x velocity
     inc hl
-    pcall(randA)
+    pcall(getRandom)
     cp 240 - 16
     jr c,InitSetupLoop_XOK
     and 0x7F
 InitSetupLoop_XOK:
     ld (hl), a ;y
     inc hl
-    pcall(randA)
+    pcall(getRandom)
     and 0x02
     dec a
     ld (hl), a ;y velocity
