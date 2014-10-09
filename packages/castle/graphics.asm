@@ -79,7 +79,7 @@ drawHome:
     pcall(putSpriteOR)
 
     ld de, 0x093A
-    kld(hl, moreString)
+    kld(hl, appsString)
     pcall(drawStr)
 
     ld de, 0x253A
@@ -279,6 +279,46 @@ drawPowerMenu:
     pcall(putSpriteOR)
     ret
 
+drawAppsChrome:
+    pcall(clearBuffer)
+    ; Castle top
+    xor a
+    ld l, 2
+    pcall(setPixel)
+    kld(hl, castleTopSprite)
+    ld b, 12
+    ld de, 0x0100
+_:  ld a, 8
+    push bc
+        ld b, 3
+        pcall(putSpriteOR)
+    pop bc
+    add a, d
+    ld d, a
+    djnz -_
+
+    kld(hl, hotkeyLeftSprite)
+    ld b, 8
+    ld de, 0x0038
+    pcall(putSpriteOR)
+
+    ld hl, 0x000A
+    ld de, 0x5F0A
+    pcall(drawLine)
+    ret
+
+drawAppsHome:
+    kld(hl, hotkeyArrowLeftSprite)
+    ld b, 5
+    ld de, 0x003A
+    pcall(putSpriteOR)
+    
+    ld de, 0x093A
+    kld(hl, backString)
+    pcall(drawStr)
+    
+    ret
+
 castleTopSprite: ; 8x3
     .db 0b11110000
     .db 0b10010000
@@ -391,6 +431,8 @@ emptySlotIcon: ; 16x16
     .db 0b10000000, 0b00000000
     .db 0b11010101, 0b01010101
 
+appsString:
+    .db "Apps", 0
 moreString:
     .db "More", 0
 runningString:

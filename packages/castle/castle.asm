@@ -47,6 +47,8 @@ _:  pcall(flushKeys)
     jr z, homeUpKey
     cp kDown
     jr z, homeDownKey
+    cp kYEqu
+    kjp(z, displayApps)
     cp kZoom
     kjp(z, powerMenu)
     cp kEnter
@@ -196,55 +198,170 @@ castleReturnHandler_path:
     .db "/bin/castle", 0
 castleReturnHandler_end:
 
-powerMenu:
-    push de
-    kcall(drawPowerMenu)
-    ld e, 38
-powerMenuLoop:
+displayApps:
+    ; calculate the total number of apps
+    xor a
+    kld((dispApps_filesNb), a)
+    kld(de, appsLocation)
+    kld(hl, dispApps_calcSize)
+    pcall(listDirectory)
+    ; display a scrolling list of all apps
+    xor a
+    kld((dispApps_userCursor), a)
+    kld((dispApps_offset), a)
+dispApps_redraw:
+    pcall(clearBuffer)
+    kcall(drawAppsChrome)
+    kcall(drawAppsHome)
+    ld de, (1 << 8) + 4
+    kld(hl, dispApps_name)
+    pcall(drawStr)
+    ld hl, (5 << 8) + 12
+    kld((dispApps_textCursor), hl)
+    xor a
+    kld((dispApps_computed), a)
+    kld(de, appsLocation)
+    kld(hl, dispApps_callback)
+    pcall(listDirectory)
     pcall(fastCopy)
+    ; TODO : let the user select an app and launch it
+dispApps_loop:
     pcall(flushKeys)
     pcall(waitKey)
-
-    cp kUp
-    jr z, powerMenuUp
-    cp kDown
-    jr z, powerMenuDown
-    cp k2nd
-    jr z, powerMenuSelect
+    cp kMode
+    kjp(z, resetToHome)
+    cp kYEqu
+    kjp(z, resetToHome)
     cp kEnter
-    jr z, powerMenuSelect
-    cp kClear
-    kjp(z, pop_resetToHome)
-    cp kZoom
-    kjp(z, pop_resetToHome)
+    kjp(z, dispApps_launchApp)
+    cp kUp
+    jr z, dispApps_doUp
+    cp kDown
+    jr z, dispApps_doDown
+    jr dispApps_loop
+    
+dispApps_calcSize:
+    cp fsFile
+    ret nz
+    push hl
+        kld(hl, dispApps_filesNb)
+        inc (hl)
+    pop hl
+    ret
+    
+dispApps_callback:
+    cp fsFile
+    ret nz
+    push af \ push bc \ push de \ push hl
+        kld(a, (dispApps_offset))
+        or a
+        jr z, .doDisplay
+        kld(hl, dispApps_computed)
+        dec a
+        cp (hl)
+        jr nc, .doneDisplaying
+        ; skip entries because scrolling
+.doDisplay:
+        kld(de, (dispApps_textCursor))
+        ld a, 58
+        cp e
+        jr c, .doneDisplaying
+        ; draw carret if needed
+        kld(a, (dispApps_userCursor))
+        kld(hl, dispApps_computed)
+        cp (hl)
+        jr nz, .noCarret
+        kld(hl, dispApps_cursorSprite)
+        ld b, d
+        ld d, 0
+        pcall(putSpriteOR)
+        ld d, b
+.noCarret:
+        ld hl, kernelGarbage
+        push hl
+            ld b, '.'
+            pcall(strchr)
+            ld (hl), 0
+        pop hl
+        ld b, d
+        pcall(drawStr)
+        pcall(newline)
+        kld((dispApps_textCursor), de)
+.doneDisplaying:
+        kld(hl, dispApps_computed)
+        inc (hl)
+    pop hl \ pop de \ pop bc \ pop af
+    ret
 
-    jr powerMenuLoop
+dispApps_doDown:
+    kld(hl, dispApps_userCursor)
+    kld(a, (dispApps_filesNb))
+    dec a
+    cp (hl)
+    jr z, $ + 3
+    inc (hl)
+    kjp(dispApps_redraw)
+    
+dispApps_doUp:
+    kld(hl, dispApps_userCursor)
+    xor a
+    or (hl)
+    jr z, $ + 3
+    dec (hl)
+    kjp(dispApps_redraw)
+
+dispApps_launchApp:
+    kjp(dispApps_redraw)
+
+powerMenu:
+    push de
+        kcall(drawPowerMenu)
+        ld e, 38
+powerMenuLoop:
+        pcall(fastCopy)
+        pcall(flushKeys)
+        pcall(waitKey)
+        
+        cp kUp
+        jr z, powerMenuUp
+        cp kDown
+        jr z, powerMenuDown
+        cp k2nd
+        jr z, powerMenuSelect
+        cp kEnter
+        jr z, powerMenuSelect
+        cp kMode
+        kjp(z, pop_resetToHome)
+        cp kZoom
+        kjp(z, pop_resetToHome)
+        
+        jr powerMenuLoop
 
 powerMenuUp:
-    ld a, 38
-    cp e
-    jr z, powerMenuLoop
-    pcall(putSpriteAND)
-    ld a, e
-    ld e, 6
-    sub e
-    ld e, a
-    pcall(putSpriteOR)
-    jr powerMenuLoop
+        ld a, 38
+        cp e
+        jr z, powerMenuLoop
+        pcall(putSpriteAND)
+        ld a, e
+        ld e, 6
+        sub e
+        ld e, a
+        pcall(putSpriteOR)
+        jr powerMenuLoop
 
 powerMenuDown:
-    ld a, 50
-    cp e
-    jr z, powerMenuLoop
-    pcall(putSpriteAND)
-    ld a, 6
-    add a, e
-    ld e, a
-    pcall(PutSpriteOR)
-    jr powerMenuLoop
+        ld a, 50
+        cp e
+        jr z, powerMenuLoop
+        pcall(putSpriteAND)
+        ld a, 6
+        add a, e
+        ld e, a
+        pcall(PutSpriteOR)
+        jr powerMenuLoop
 
 powerMenuSelect:
-    ld a, e
+        ld a, e
     pop de
     cp 44
     jr z, confirmShutDown
@@ -289,3 +406,23 @@ shutdownOptions:
     .db 2
     .db "No", 0
     .db "Yes", 0
+dispApps_name:
+    .db "Installed apps", 0
+dispApps_cursorSprite:
+    .db 0x80
+    .db 0xc0
+    .db 0xe0
+    .db 0xc0
+    .db 0x80
+dispApps_textCursor:
+    .db 0, 0
+dispApps_userCursor:
+    .db 0
+dispApps_offset:
+    .db 0
+dispApps_computed:
+    .db 0
+dispApps_filesNb:
+    .db 0
+appsLocation:
+    .db "/var/applications/", 0
