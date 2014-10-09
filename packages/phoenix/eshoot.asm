@@ -46,7 +46,7 @@ select_weapon:
         ; A /= 3
         ld d, a
         ld e, 3
-        pcall(div8by8)
+        pcall(div8By8)
         ld a, d
         ; A *= 4
         sla a \ sla a

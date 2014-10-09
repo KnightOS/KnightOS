@@ -37,7 +37,7 @@ _:  ld a, 8
     pcall(getBatteryLevel)
     ld d, b
     ld e, 85
-    pcall(div8by8)
+    pcall(div8By8)
     ld b, d
     inc b
     xor a
