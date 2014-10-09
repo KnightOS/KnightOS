@@ -67,6 +67,9 @@ prepare_new_game:
     kld((weapon_5), a)
     ; End TEMP
 
+    pcall(colorSupported)
+    kcall(z, setColorParameters)
+
 pre_main_loop:
     kcall(convert_settings)    ; decode configuration
     ; This does some SMC to load the current stack pointer (less 3 PUSHes)
@@ -76,6 +79,13 @@ pre_main_loop:
     add hl, sp
     kld((collision_done + 1), hl)
     xor a
+    kld((x_offset), a)
+
+    pcall(colorSupported)
+    jr nz, main_loop
+    xor a
+    kld((scroll_flag), a)
+    ld a, 16
     kld((x_offset), a)
     
 ;############## Game main loop
@@ -103,7 +113,9 @@ main_loop:
 
     kcall(display_money)
     kcall(synchronize)       ; Slow things down a bit
-    kcall(display_screen)    ; Copy display buffer to video memory
+    pcall(colorSupported)
+    kcall(z,  display_screen_cse)
+    kcall(nz, display_screen)    ; Copy display buffer to video memory
 
     kld(a, (scroll_flag))
     or a
@@ -134,7 +146,7 @@ no_scrolling:
     kld(a, (enemies_left))
     or a
     kcall(z, load_level)
-    jr main_loop
+    kjp(main_loop)
 
 ;;############## TI-82 library
 

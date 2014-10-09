@@ -34,7 +34,7 @@ start:
 
     pcall(getLcdLock)
     pcall(getKeypadLock)
-    ld bc, 16*64 ; Larger screen size than usual
+    ld bc, 16*64 ; Larger screen size than usual (16 columns)
     pcall(malloc)
     jr nz, .quit
     push ix \ pop iy

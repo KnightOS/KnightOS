@@ -45,6 +45,8 @@ DO_CP_HL_DE:
 synchronize:
     ; TODO: Change this by difficulty
     ; TODO: Change this by clock speed
+    pcall(colorSupported)
+    ret z
     push bc
     push af
         ld b, 0xB0

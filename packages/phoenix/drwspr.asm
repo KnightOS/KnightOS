@@ -78,6 +78,7 @@ drw_spr:
     ld d, a
     cp 112
     ret nc
+drw_spr_skip_offset:
     and 7
     ld b, a ; NOTE: Is this needed after I changed the logic to *= 4?
     add a, a \ add a, a
