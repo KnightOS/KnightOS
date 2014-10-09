@@ -14,6 +14,8 @@
 ;############## Main title screen
 
 title_screen:
+    pcall(colorSupported)
+    kjp(z, initialize_game)
     pcall(flushKeys)
     kcall(convert_settings)
 redraw_title:
