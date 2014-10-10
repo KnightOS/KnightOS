@@ -27,10 +27,10 @@ $(BINDIR)gfxdemo: gfxdemo.asm
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/;$(DEPENDENCIES)" gfxdemo.asm $(BINDIR)gfxdemo
 	cp gfxdemo.app $(APPDIR)
 
-$(BINDIR)pixelMadness:  pixelMadness/*.asm
+$(BINDIR)pixelMadness: pixelMadness/*.asm
 	mkdir -p $(BINDIR)
 	mkdir -p $(APPDIR)
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/;$(DEPENDENCIES)" pixelmad.z80 $(BINDIR)pixelMadness
+	$(AS) $(ASFLAGS) --symbols test.inc --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/;$(DEPENDENCIES);pixelMadness/" pixelMadness/pixelmad.asm $(BINDIR)pixelMadness
 	cp pixelMadness.app $(APPDIR)
 
 clean:
