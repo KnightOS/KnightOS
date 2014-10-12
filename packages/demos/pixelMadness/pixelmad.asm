@@ -162,11 +162,9 @@ Not_Time_Swap_Text:
     
     kjp(Intro_Text_Loop)
 
-
 ; ==================================================================================================
 ; Roll the demos
 ; ==================================================================================================
-
 
 Start_Demos:
     pcall(flushKeys)
@@ -186,20 +184,24 @@ Start_Demos:
     kcall(Display_Text_Screen)
     pcall(flushKeys)
     kcall(Effect_Globe)
-
-    ; ld hl,48*32*2
-    ; bcall(_enoughmem)
-    ; jr nc,Can_Run_Tunnel
-    ; ld hl,text_Low_RAM
-    ; call Display_Text_Screen
-    ; jr Done_Tunnel
-; Can_Run_Tunnel:
-    ; ld hl,text_Tunnel
-    ; call Display_Text_Screen
-    ; call Effect_Tunnel
-; Done_Tunnel:
-
-
+    
+    ld bc, 48 * 32 * 2
+    pcall(malloc)
+    jr z, Can_Run_Tunnel
+    pcall(flushKeys)
+    kld(hl, text_Low_RAM)
+    kcall(Display_Text_Screen)
+    jr Done_Tunnel
+Can_Run_Tunnel:
+    ; LUT_Loc is in tunnel.asm
+    kld((LUT_Loc), ix)
+    kld(hl, text_Tunnel)
+    pcall(flushKeys)
+    kcall(Display_Text_Screen)
+    pcall(flushKeys)
+    kcall(Effect_Tunnel)
+Done_Tunnel:
+    
     ; ld hl,text_Water
     ; call Display_Text_Screen
     ; call Effect_Water
@@ -223,7 +225,7 @@ Text_To_Display:
 
 
 ; TUNNEL EFFECT
-; #include "tunnel.asm"
+#include "tunnel.asm"
 
 
 ; WATER EFFECT
