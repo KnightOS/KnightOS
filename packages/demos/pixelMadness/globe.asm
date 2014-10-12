@@ -110,9 +110,9 @@ No_Masking:
     inc a
     kld((xRot), a)
     
-Key_Loop:
+Key_Loop_globe:
     corelib(appGetKey)
-    jr nz, Key_Loop
+    jr nz, Key_Loop_globe
     cp kClear
     ret z
     cp k2nd

@@ -202,9 +202,11 @@ Can_Run_Tunnel:
     kcall(Effect_Tunnel)
 Done_Tunnel:
     
-    ; ld hl,text_Water
-    ; call Display_Text_Screen
-    ; call Effect_Water
+    pcall(flushKeys)
+    kld(hl, text_Water)
+    kcall(Display_Text_Screen)
+    pcall(flushKeys)
+    kcall(Effect_Water)
 
     ; ld hl,text_Plasma
     ; call Display_Text_Screen
@@ -229,7 +231,7 @@ Text_To_Display:
 
 
 ; WATER EFFECT
-; #include "water.asm"
+#include "water.asm"
 
 
 
@@ -263,7 +265,7 @@ text_Low_RAM:
 ; Global include files
 ; ==================================================================================================
 
-; #include "ripple.asm"
+#include "ripple.asm"
 #include "shifts.asm"
 #include "general.asm"
 
