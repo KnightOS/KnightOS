@@ -5,7 +5,7 @@
     .db KEXC_ENTRY_POINT
     .dw Init_All
     .db KEXC_STACK_SIZE
-    .dw 50
+    .dw 100
     .db KEXC_NAME
     .dw programName
     .db KEXC_DESCRIPTION
@@ -25,22 +25,22 @@ saveSScreen:
 appBackupScreen:
     .fill 768
 
-    .equ plasmaMem appBackupScreen
-    .equ plasma_Y plasmaMem + 0
-    .equ plasma_Scroll plasmaMem + 1
-    .equ plasma_X plasmaMem + 2
-    .equ textX plasmaMem + 3
-    .equ textY plasmaMem + 4
-    .equ plasmaBuffer plasmaMem + 50
+.equ plasmaMem appBackupScreen
+.equ plasma_Y plasmaMem + 0
+.equ plasma_Scroll plasmaMem + 1
+.equ plasma_X plasmaMem + 2
+.equ textX plasmaMem + 3
+.equ textY plasmaMem + 4
+.equ plasmaBuffer plasmaMem + 50
 
-    .equ introMem appBackupScreen
-    .equ introTextPosY introMem + 0
-    .equ introTextPosX introMem + 1
-    .equ demoLoop introMem + 2
-    .equ whichText introMem + 3 ; word
-    .equ intro_Screen introMem + 5
+.equ introMem appBackupScreen
+.equ introTextPosY introMem + 0
+.equ introTextPosX introMem + 1
+.equ demoLoop introMem + 2
+.equ whichText introMem + 3 ; word
+.equ intro_Screen introMem + 5
 
-    .equ textSwapDelay 150
+.equ textSwapDelay 150
 
 ; ==================================================================================================
 ; Start demo!
@@ -172,11 +172,11 @@ Start_Demos:
     kld(hl, text_Field)
     kcall(Display_Text_Screen)
     kcall(Effect_Field)
-    ret
 
-    ; ld hl,text_Flag
-    ; call Display_Text_Screen
-    ; call Effect_Flag
+    kld(hl, text_Flag)
+    kcall(Display_Text_Screen)
+    kcall(Effect_Flag)
+    ret
 
     ; ld hl,text_Globe
     ; call Display_Text_Screen
@@ -232,7 +232,7 @@ Text_To_Display:
 
 
 ; FLAG EFFECT
-; #include "flag.asm"
+#include "flag.asm"
 
 
 ; CHECKERBOARD FIELD EFFECT
