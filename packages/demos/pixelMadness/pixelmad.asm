@@ -20,7 +20,8 @@ description:
 ; ==================================================================================================
 ; Variables
 ; ==================================================================================================
-
+saveSScreen:
+    .fill 768
 appBackupScreen:
     .fill 768
 
@@ -36,7 +37,7 @@ appBackupScreen:
     .equ introTextPosY introMem + 0
     .equ introTextPosX introMem + 1
     .equ demoLoop introMem + 2
-    .equ whichText introMem + 3
+    .equ whichText introMem + 3 ; word
     .equ intro_Screen introMem + 5
 
     .equ textSwapDelay 150
@@ -170,11 +171,8 @@ Not_Time_Swap_Text:
 Start_Demos:
     kld(hl, text_Field)
     kcall(Display_Text_Screen)
+    kcall(Effect_Field)
     ret
-    ; #######
-    ; TODO
-    ; #######
-    ; call Effect_Field
 
     ; ld hl,text_Flag
     ; call Display_Text_Screen
@@ -220,25 +218,25 @@ Text_To_Display:
 
 
 ; TUNNEL EFFECT
-; #include "tunnel.z80"
+; #include "tunnel.asm"
 
 
 ; WATER EFFECT
-; #include "water.z80"
+; #include "water.asm"
 
 
 
 ; 3D GLOBE EFFECT
-; #include "globe.z80"
+; #include "globe.asm"
 ; #include "linedraw.asm"
 
 
 ; FLAG EFFECT
-; #include "flag.z80"
+; #include "flag.asm"
 
 
 ; CHECKERBOARD FIELD EFFECT
-; #include "field.z80"
+#include "field.asm"
 
 
 
@@ -259,7 +257,7 @@ text_Low_RAM:
 ; ==================================================================================================
 
 ; #include "ripple.asm"
-; #include "shifts.asm"
+#include "shifts.asm"
 #include "general.asm"
 
 ; ==================================================================================================
@@ -305,8 +303,8 @@ Display_Text_Screen:
 Plasma_Text_Loop:
     ; Render background
     pcall(clearBuffer)
+    ; ld ix, PlotsScreen
     push iy \ pop ix
-    ; kld(ix, PlotsScreen)
     ld a, 32
     kld((Plasma_Done_Count + 1), a)
 Draw_Next_Plasma_ScanLine:
@@ -511,8 +509,8 @@ drawMaskedAlignedSprite:
     ld e, l
     add hl, hl
     add hl, de
+    ; ld de, PlotsScreen
     push iy \ pop de
-    ; kld(de, PlotsScreen)
     add hl, de
     ld e, a
     ld d, 0
@@ -857,5 +855,3 @@ text_SeenPlasma:
     .db "here|press"
     .db "}~ to quit"
     .db "from here|", 0
-PlotsScreen:
-    .fill 768
