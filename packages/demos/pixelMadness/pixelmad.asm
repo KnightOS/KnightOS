@@ -169,18 +169,23 @@ Not_Time_Swap_Text:
 
 
 Start_Demos:
+    pcall(flushKeys)
     kld(hl, text_Field)
     kcall(Display_Text_Screen)
+    pcall(flushKeys)
     kcall(Effect_Field)
-
+    
+    pcall(flushKeys)
     kld(hl, text_Flag)
     kcall(Display_Text_Screen)
+    pcall(flushKeys)
     kcall(Effect_Flag)
-    ret
-
-    ; ld hl,text_Globe
-    ; call Display_Text_Screen
-    ; call Effect_Globe
+    
+    pcall(flushKeys)
+    kld(hl, text_Globe)
+    kcall(Display_Text_Screen)
+    pcall(flushKeys)
+    kcall(Effect_Globe)
 
     ; ld hl,48*32*2
     ; bcall(_enoughmem)
@@ -206,7 +211,7 @@ Start_Demos:
     ; ld hl,text_SeenPlasma
     ; call Display_Text_Screen
 
-    ; ret
+    ret
 
 Text_To_Display:
 
@@ -227,7 +232,7 @@ Text_To_Display:
 
 
 ; 3D GLOBE EFFECT
-; #include "globe.asm"
+#include "globe.asm"
 ; #include "linedraw.asm"
 
 
@@ -299,7 +304,6 @@ intro_Screens:
 
 Display_Text_Screen:
     kld((Text_Offset + 1), hl)
-    pcall(flushKeys)
 Plasma_Text_Loop:
     ; Render background
     pcall(clearBuffer)
