@@ -168,6 +168,7 @@ castle_links:
 	ln -s /var/applications/settings.app temp/var/castle/pin-4
 	ln -s /var/applications/phoenix.app temp/var/castle/pin-5
 	echo -ne "icon=/share/icons/copyright.kio\nname=License\nexec=/etc/LICENSE" > temp/var/castle/pin-9
+	cp castle.conf temp/etc/
 
 clean:
 	@for f in $(PACKAGES) ; do \
