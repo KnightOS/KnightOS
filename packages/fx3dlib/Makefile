@@ -5,7 +5,7 @@ INCDIR:=$(OUTDIR)include/
 all: package
 
 package: $(LIBDIR)fx3d $(INCDIR)fx3dlib.inc
-	kpack fx3dlib-0.1.0.pkg $(OUTDIR)
+	kpack fx3dlib-1.0.0.pkg $(OUTDIR)
 
 $(LIBDIR)fx3d: fx3dlib.asm
 	mkdir -p $(LIBDIR)
@@ -17,9 +17,9 @@ $(INCDIR)fx3dlib.inc:
 
 clean:
 	rm -rf $(OUTDIR)
-	rm -rf fx3dlib-0.1.0.pkg
+	rm -rf fx3dlib-1.0.0.pkg
 
 install: package
-	kpack -e -s fx3dlib-0.1.0.pkg $(PREFIX)
+	kpack -e -s fx3dlib-1.0.0.pkg $(PREFIX)
 
 .PHONY: all clean
