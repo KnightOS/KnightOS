@@ -301,7 +301,7 @@ intro_Screens:
 
 Display_Text_Screen:
     kld((Text_Offset + 1), hl)
-
+    pcall(flushKeys)
 Plasma_Text_Loop:
     ; Render background
     pcall(clearBuffer)
@@ -443,25 +443,22 @@ Draw_In_White:
 Not_Looped_Plasma_Bitmask:
     kjp(Calculate_Next_Plasma)
 Done_Plasma_Line:
-    jr $
-    push ix \ pop hl
     ld de, 12
-    add hl, de
-    push hl \ pop ix
+    add ix, de
 
 
 Plasma_Done_Count:
     ld a, 0
     dec a
-    kld((Plasma_Done_Count + 1),a)
+    kld((Plasma_Done_Count + 1), a)
     or a
     kjp(nz, Draw_Next_Plasma_ScanLine)
     kld(a, (plasma_Scroll))
     add a, 5
     kld((plasma_Scroll), a)
-    kld(a, (Grey_Plasma+1))
+    kld(a, (Grey_Plasma + 1))
     xor 0xff
-    kld((Grey_Plasma + 1),a)
+    kld((Grey_Plasma + 1), a)
     ;Draw in text
     ld hl, 1 + (256 * 8)
     kld((textX), hl)
@@ -500,7 +497,7 @@ Not_Next_Row_Text:
     jr Draw_Next_Letter_Loop
 Done_All_Text_Tiled:
     pcall(fastCopy)
-    pcall(appGetKey)
+    corelib(appGetKey)
     jr nz, Done_All_Text_Tiled
     or a
     ret nz
