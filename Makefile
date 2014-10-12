@@ -1,22 +1,9 @@
 # makefile for KnightOS
 
-# Common variables
-
-# Package configuration
-#
-# To manually specify packages to build, uncomment this: 
-# PACKAGES=demos
-#
-# Or to automatically build all packages, uncomment this:
-PACKAGES=$(wildcard packages/*)
-# End config.
-
-PACKBUF=$(patsubst %, %.package, $(PACKAGES))
-
-# Paths
-PACKAGEPATH=packages
-# Where packages are placed relative to the top directory
-PKGREL=../../
+PACKAGES:=core/init core/corelib core/configlib core/textview core/castle core/threadlist core/settings extra/fileman ports/phoenix
+KERNELVER:=0.6.3
+# This can be a path to the root of a kernel source tree to use a development kernel
+KERNEL:=download
 
 TI73: PLATFORM := TI73
 TI73: DEVICE := TI-73
@@ -84,40 +71,44 @@ TI84pCSE: EXPLOIT_ADDRESS_FAT := 4046848
 TI84pCSE: EXPLOIT_ADDRESS_FAT_BACKUP := 3850240
 TI84pCSE: userland
 
+PACKBUF=$(patsubst %, packages/%.pkg, $(PACKAGES))
+
 AS:=sass
 EMU:=wabbitemu
 EMUFLAGS:=
-ASFLAGS:=--encoding "Windows-1252"
-INCLUDE:=kernel/bin;temp/include/;
 .DEFAULT_GOAL=TI84pSE
+OUTDIR:=bin/
 
-PACKAGE_AS:=sass
-PACKAGE_INCLUDE:=$(PKGREL)inc/;$(PKGREL)kernel/bin/;
-
-.PHONY: kernel userland run runcolor buildpkgs license directories clean %.package exploit castle_links \
-	TI73 TI83p TI83pSE TI84p TI84pSE TI84pCSE
+.PHONY: userland clean exploit kernel run install_userspace directories configs \
+	TI73 TI83p TI83pSE TI84p TI84pSE TI84pCSE \
+	packages/%.pkg
 
 run: TI84pSE
 	$(EMU) $(EMUFLAGS) bin/TI84pSE/KnightOS-TI84pSE.rom
 
-runcolor: TI84pCSE
-	$(EMU) $(EMUFLAGS) bin/TI84pCSE/KnightOS-TI84pCSE.rom
-
-kernel: directories
-	cd kernel && make $(PLATFORM)
-
-exploit:
+$(OUTDIR)exploit.bin:
 	if [ $(EXPLOIT) -eq 1 ]; then\
 		$(AS) $(ASFLAGS) --include "$(INCLUDE)" --define "$(PLATFORM)" exploit/exploit.asm bin/exploit.bin;\
 	fi
 
-userland: kernel directories buildpkgs license exploit castle_links
-	cp kernel/bin/$(PLATFORM)/kernel.rom bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom
-	git describe --dirty=+ > temp/etc/version
-	genkfs bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom temp
-ifndef savemockfs
-	@rm -rf temp
-endif
+kernel:
+	if [ -e "$(KERNEL)" ]; then\
+		cd "$(KERNEL)" && make $(PLATFORM);\
+		cp "$(KERNEL)/bin/$(PLATFORM)" kernels/;\
+	else\
+		wget -nc -O kernels/kernel-$(PLATFORM).rom "https://github.com/KnightOS/kernel/releases/download/$(KERNELVER)/kernel-$(PLATFORM).rom" || true;\
+	fi
+
+packages/%.pkg:
+	wget -nc -O $@ "https://packages.knightos.org/$$(echo -n "$@" | cut -c 10- | rev | cut -c 5- | rev)/download"
+
+install_userspace:
+	find packages -exec kpack -s -e {} root/ \;
+
+userland: directories kernel packages $(OUTDIR)exploit.bin $(PACKBUF) install_userspace configs
+	cp kernels/kernel-$(PLATFORM).rom bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom
+	git describe --dirty=+ > root/etc/version
+	genkfs bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom root
 	if [ $(EXPLOIT) -eq 1 ]; then\
 		cp bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom temp.rom;\
 		dd bs=1 if=temp.rom of=bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom skip=$(EXPLOIT_ADDRESS_FAT) seek=$(EXPLOIT_ADDRESS_FAT_BACKUP) conv=notrunc;\
@@ -130,51 +121,42 @@ endif
 				bin/$(PLATFORM)/KnightOS-$(PLATFORM).$(UPGRADEEXT) 00 01 02 03 04 05 06 $(PRIVEDGED) $(EXPLOIT_PAGES);\
 		rm temp.rom;\
 	else\
-		mktiupgrade -p -d $(DEVICE) -k kernel/keys/$(KEY).key -n $(KEY) bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom \
+		mktiupgrade -p -d $(DEVICE) -k keys/$(KEY).key -n $(KEY) bin/$(PLATFORM)/KnightOS-$(PLATFORM).rom \
 			bin/$(PLATFORM)/KnightOS-$(PLATFORM).$(UPGRADEEXT) 00 01 02 03 04 05 06 $(FAT) $(PRIVEDGED);\
 	fi
 
-%.package: %
-	@cd $<; \
-	make AS="$(PACKAGE_AS)" ASFLAGS="$(ASFLAGS)" PLATFORM="$(PLATFORM)" INCLUDE="$(PACKAGE_INCLUDE)" \
-				PACKAGEPATH="$(PACKAGEPATH)";
-	@cd $<; \
-	make PREFIX=$(PKGREL)temp install || cp -r bin/* "$(PKGREL)temp";
-
-buildpkgs: directories $(PACKBUF)
-
-license: directories
-	mkdir -p temp/etc/
-	cp LICENSE temp/etc/LICENSE
-	cp THANKS temp/etc/THANKS
+configs:
+	ln -s /var/applications/fileman.app root/var/castle/pin-0
+	ln -s /var/applications/gfxdemo.app root/var/castle/pin-1
+	ln -s /var/applications/hello.app root/var/castle/pin-2
+	ln -s /var/applications/count.app root/var/castle/pin-3
+	ln -s /var/applications/settings.app root/var/castle/pin-4
+	ln -s /var/applications/phoenix.app root/var/castle/pin-5
+	echo -ne "icon=/share/icons/copyright.kio\nname=License\nexec=/etc/LICENSE" > root/var/castle/pin-9
+	cp inittab root/etc/
+	cp castle.conf root/etc/
+	cp THANKS root/etc/
+	cp LICENSE root/etc/
 
 directories:
+	mkdir -p kernels
 	mkdir -p bin/$(PLATFORM)
-	rm -rf temp
-	mkdir -p temp
-	mkdir -p temp/bin
-	mkdir -p temp/etc
-	mkdir -p temp/home
-	mkdir -p temp/lib
-	mkdir -p temp/share
-	mkdir -p temp/var
-
-castle_links:
-	mkdir -p temp/var/castle/
-	ln -s /var/applications/fileman.app temp/var/castle/pin-0
-	ln -s /var/applications/gfxdemo.app temp/var/castle/pin-1
-	ln -s /var/applications/hello.app temp/var/castle/pin-2
-	ln -s /var/applications/count.app temp/var/castle/pin-3
-	ln -s /var/applications/settings.app temp/var/castle/pin-4
-	ln -s /var/applications/phoenix.app temp/var/castle/pin-5
-	echo -ne "icon=/share/icons/copyright.kio\nname=License\nexec=/etc/LICENSE" > temp/var/castle/pin-9
-	cp castle.conf temp/etc/
-	cp inittab temp/etc/
+	mkdir -p packages/
+	mkdir -p packages/core
+	mkdir -p packages/extra
+	mkdir -p packages/community
+	mkdir -p packages/ports
+	rm -rf root
+	mkdir -p root
+	mkdir -p root/bin
+	mkdir -p root/etc
+	mkdir -p root/home
+	mkdir -p root/lib
+	mkdir -p root/share
+	mkdir -p root/var
+	mkdir -p root/var
+	mkdir -p root/var/castle
 
 clean:
-	@for f in $(PACKAGES) ; do \
-		cd $$f ; make clean ; cd $(PKGREL); \
-	done
-	cd kernel && make clean
 	rm -rf bin
-	rm -rf temp
+	rm -rf root
