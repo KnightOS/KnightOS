@@ -18,8 +18,8 @@ Shift_Line_Right:
 
 Shift_Line_Left:
 	kld(hl, (Start_Of_Line))
-	ld de,11
-	add hl,de
+	ld de, 11
+	add hl, de
 	xor a
 	rl (hl) \ dec hl
 	rl (hl) \ dec hl

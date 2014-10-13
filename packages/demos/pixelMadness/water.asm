@@ -151,6 +151,7 @@ Add_Char:
         ret z
         or a
         jr nz, Not_End_Text_List
+        ; throw the RET address away
     pop hl
     kjp(Start_Water_Effect)
 

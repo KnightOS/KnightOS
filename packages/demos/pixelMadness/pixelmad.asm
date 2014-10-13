@@ -207,14 +207,16 @@ Done_Tunnel:
     kcall(Display_Text_Screen)
     pcall(flushKeys)
     kcall(Effect_Water)
-
-    ; ld hl,text_Plasma
-    ; call Display_Text_Screen
-    ; ld hl,text_ShowPlasma
-    ; call Display_Text_Screen
-    ; ld hl,text_SeenPlasma
-    ; call Display_Text_Screen
-
+    
+    pcall(flushKeys)
+    kld(hl, text_Plasma)
+    kcall(Display_Text_Screen)
+    pcall(flushKeys)
+    kld(hl, text_ShowPlasma)
+    kcall(Display_Text_Screen)
+    pcall(flushKeys)
+    kld(hl, text_SeenPlasma)
+    kcall(Display_Text_Screen)
     ret
 
 Text_To_Display:

@@ -69,7 +69,7 @@ No_Extra_Bit:
             jr Shift_Done
 Is_Left_Shift:
             ld a, (ix)
-            and 0b01111111		
+            and 0b01111111
             ld b, a
             kcall(get_Scaled_Val)
             ld a, h
@@ -97,7 +97,7 @@ Shift_Done:
 	kld(de, Ripple_Table)
 	ld bc, 31
 	ldir
-	kld((Ripple_Table+31), a)
+	kld((Ripple_Table + 31), a)
 Not_Shift_Ripple:
 	ret
     
@@ -117,41 +117,40 @@ Calc_Scale_Loop:
 	add hl, de
 	dec a
 	jr Calc_Scale_Loop
-
-
+    
 Ripple_Table:
-.db 	0
-.db 	6
-.db 	9
-.db 	10
-.db 	7
-.db 	2
-.db 	132
-.db 	136
-.db 	138
-.db 	136
-.db 	132
-.db 	2
-.db 	7
-.db 	10
-.db 	9
-.db 	6
-.db 	0
-.db 	134
-.db 	137
-.db 	138
-.db 	135
-.db 	130
-.db 	4
-.db 	8
-.db 	10
-.db 	8
-.db 	4
-.db 	130
-.db 	135
-.db 	138
-.db 	137
-.db 	134
+.db 0
+.db 6
+.db 9
+.db 10
+.db 7
+.db 2
+.db 132
+.db 136
+.db 138
+.db 136
+.db 132
+.db 2
+.db 7
+.db 10
+.db 9
+.db 6
+.db 0
+.db 134
+.db 137
+.db 138
+.db 135
+.db 130
+.db 4
+.db 8
+.db 10
+.db 8
+.db 4
+.db 130
+.db 135
+.db 138
+.db 137
+.db 134
 
 Dither_Pattern:
 .db %11111111
@@ -163,37 +162,36 @@ Dither_Pattern:
 .db %00100100
 .db %00000000
 
-
 Scale_Val:
-.db 	0
-.db 	8
-.db 	16
-.db 	24
-.db 	32
-.db 	40
-.db 	48
-.db 	56
-.db 	64
-.db 	72
-.db 	80
-.db 	88
-.db 	96
-.db 	104
-.db 	112
-.db 	120
-.db 	128
-.db 	136
-.db 	144
-.db 	152
-.db 	160
-.db 	168
-.db 	176
-.db 	184
-.db 	192
-.db 	200
-.db 	208
-.db 	216
-.db 	224
-.db 	232
-.db 	240
-.db 	248
+.db 0
+.db 8
+.db 16
+.db 24
+.db 32
+.db 40
+.db 48
+.db 56
+.db 64
+.db 72
+.db 80
+.db 88
+.db 96
+.db 104
+.db 112
+.db 120
+.db 128
+.db 136
+.db 144
+.db 152
+.db 160
+.db 168
+.db 176
+.db 184
+.db 192
+.db 200
+.db 208
+.db 216
+.db 224
+.db 232
+.db 240
+.db 248
