@@ -6,7 +6,7 @@ DEPENDENCIES=../corelib/;../fx3dlib/
 
 all: package
 
-package: $(BINDIR)count $(BINDIR)hello $(BINDIR)gfxdemo
+package: $(BINDIR)count $(BINDIR)hello $(BINDIR)gfxdemo $(BINDIR)pixelMadness
 	kpack demos-0.1.0.pkg $(OUTDIR)
 
 $(BINDIR)count: count.asm
@@ -26,6 +26,12 @@ $(BINDIR)gfxdemo: gfxdemo.asm
 	mkdir -p $(APPDIR)
 	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/;$(DEPENDENCIES)" gfxdemo.asm $(BINDIR)gfxdemo
 	cp gfxdemo.app $(APPDIR)
+
+$(BINDIR)pixelMadness: pixelMadness/*.asm
+	mkdir -p $(BINDIR)
+	mkdir -p $(APPDIR)
+	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/;$(DEPENDENCIES);pixelMadness/" pixelMadness/pixelmad.asm $(BINDIR)pixelmad
+	cp pixelmad.app $(APPDIR)
 
 clean:
 	rm -rf $(OUTDIR)
