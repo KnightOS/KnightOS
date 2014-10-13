@@ -156,7 +156,7 @@ Lines_Done_Count:
     
     kld(ix, rot_Tunnel)
     ; ld a, KeyRow_Pad
-    ld a, 0xfd
+    ld a, 0xfe
     out (1), a
     in a, (1)
     

@@ -30,8 +30,8 @@ $(BINDIR)gfxdemo: gfxdemo.asm
 $(BINDIR)pixelMadness: pixelMadness/*.asm
 	mkdir -p $(BINDIR)
 	mkdir -p $(APPDIR)
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/;$(DEPENDENCIES);pixelMadness/" pixelMadness/pixelmad.asm $(BINDIR)pixelMadness
-	cp pixelMadness.app $(APPDIR)
+	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/demos/;$(DEPENDENCIES);pixelMadness/" pixelMadness/pixelmad.asm $(BINDIR)pixelmad
+	cp pixelmad.app $(APPDIR)
 
 clean:
 	rm -rf $(OUTDIR)
