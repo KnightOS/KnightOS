@@ -7,7 +7,7 @@ DEPENDENCIES=../corelib/;../fx3dlib/
 all: package
 
 package: $(BINDIR)count $(BINDIR)hello $(BINDIR)gfxdemo $(BINDIR)pixelMadness
-	kpack demos-0.1.0.pkg $(OUTDIR)
+	kpack demos-1.0.0.pkg $(OUTDIR)
 
 $(BINDIR)count: count.asm
 	mkdir -p $(BINDIR)
@@ -35,9 +35,9 @@ $(BINDIR)pixelMadness: pixelMadness/*.asm
 
 clean:
 	rm -rf $(OUTDIR)
-	rm -rf demos-0.1.0.pkg
+	rm -rf demos-1.0.0.pkg
 
 install: package
-	kpack -e -s demos-0.1.0.pkg $(PREFIX)
+	kpack -e -s demos-1.0.0.pkg $(PREFIX)
 
 .PHONY: all clean
