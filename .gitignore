@@ -1,3 +1,5 @@
+bin/
+.knightos/
 *.8xu
 *.rom
 *.suo
@@ -9,8 +11,5 @@
 *.vshost.exe
 *.pdb
 *.mdb
-bin/
 *.swp
 *.pkg
-root/
-packages/
