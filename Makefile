@@ -40,6 +40,8 @@ links:
 	ln -s /var/applications/settings.app $(VAR)castle/pin-4
 	ln -s /var/applications/phoenix.app $(VAR)castle/pin-5
 	echo -ne "icon=/share/icons/copyright.kio\nname=License\nexec=/etc/LICENSE" > $(VAR)castle/pin-9
+	knightos query version > $(ETC)version
+	echo -ne "\n" >> $(ETC)version # TODO: Fix core/settings
 
 rom: all
 	cp $(SDK)debug.rom $(OUT)KnightOS-$(PLATFORM).rom
