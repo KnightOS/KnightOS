@@ -1,9 +1,20 @@
 include .knightos/variables.make
 
+# 84+ CSE exploit constants
+EXPLOIT_PAGES := F3 F4 EB
+EXPLOIT_ADDRESS := 3988095
+EXPLOIT_ADDRESS_F3 := 3981312
+EXPLOIT_ADDRESS_F4 := 3997696
+EXPLOIT_ADDRESS_FAT := 4046848
+EXPLOIT_ADDRESS_FAT_BACKUP := 3850240
+
 .PHONY: links rom upgrade
 INIT=/bin/castle
 
 ALL_TARGETS:=$(ETC)castle.conf $(ETC)LICENSE $(ETC)THANKS links
+
+$(OUT)exploit.bin: exploit/exploit.asm
+	$(AS) $(ASFLAGS) exploit/exploit.asm $(OUT)exploit.bin
 
 $(ETC)castle.conf: config/castle.conf
 	mkdir -p $(ETC)
@@ -33,8 +44,22 @@ links:
 rom: all
 	cp $(SDK)debug.rom $(OUT)KnightOS-$(PLATFORM).rom
 
-upgrade: rom
-	mktiupgrade -p -d $(PLATFORM) -k keys/$(KEY).key -n $(KEY) bin/KnightOS-$(PLATFORM).rom \
-		bin/KnightOS-$(PLATFORM).$(UPGRADEEXT) 00 01 02 03 04 05 06 $(FAT) $(PRIVEDGED)
+upgrade: rom $(OUT)exploit.bin
+	# Applies exploit on models that require it
+	if [[ "$(PLATFORM)" == "TI84pCSE" ]]; then\
+		cp $(OUT)/KnightOS-$(PLATFORM).rom temp.rom;\
+		dd bs=1 if=temp.rom of=$(OUT)KnightOS-$(PLATFORM).rom skip=$(EXPLOIT_ADDRESS_FAT) seek=$(EXPLOIT_ADDRESS_FAT_BACKUP) conv=notrunc;\
+		dd bs=1 if=exploit/pageF3_exploit.bin of=$(OUT)KnightOS-$(PLATFORM).rom seek=$(EXPLOIT_ADDRESS_F3) conv=notrunc;\
+		dd bs=1 if=exploit/pageF4_exploit.bin of=$(OUT)KnightOS-$(PLATFORM).rom seek=$(EXPLOIT_ADDRESS_F4) conv=notrunc;\
+		dd bs=1 if=bin/exploit.bin of=$(OUT)KnightOS-$(PLATFORM).rom seek=$(EXPLOIT_ADDRESS) conv=notrunc;\
+		echo -ne "\xFF" | dd bs=1 of=$(OUT)KnightOS-$(PLATFORM).rom seek=38 conv=notrunc;\
+		echo -ne "\xFF" | dd bs=1 of=$(OUT)KnightOS-$(PLATFORM).rom seek=86 conv=notrunc;\
+		mktiupgrade -p -s exploit/signature.bin -d $(PLATFORM) -n $(KEY) $(OUT)KnightOS-$(PLATFORM).rom \
+				$(OUT)KnightOS-$(PLATFORM).$(UPGRADEEXT) 00 01 02 03 04 05 06 $(PRIVLEDGED) $(EXPLOIT_PAGES);\
+		rm temp.rom;\
+	else\
+		mktiupgrade -p -d $(PLATFORM) -k keys/$(KEY).key -n $(KEY) $(OUT)KnightOS-$(PLATFORM).rom \
+			$(OUT)KnightOS-$(PLATFORM).$(UPGRADEEXT) 00 01 02 03 04 05 06 $(FAT) $(PRIVLEDGED);\
+	fi
 
 include .knightos/sdk.make
