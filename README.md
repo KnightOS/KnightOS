@@ -1,9 +1,9 @@
 # KnightOS
 
 KnightOS is a third-party operating system for TI calculators. It provides a
-passable Unix system for z80 systems. KnightOS is built on top of [the KnightOS
-kernel](https://github.com/KnightOS/kernel) - this repository is the official
-userspace. KnightOS runs on the following calculators:
+passable Unix-like system for calculators. KnightOS is built on top of [the
+KnightOS kernel](https://github.com/KnightOS/kernel) - this repository is the
+official userspace. KnightOS runs on the following calculators:
 
 * TI-73
 * TI-83+
