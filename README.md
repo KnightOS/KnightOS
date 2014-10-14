@@ -28,6 +28,10 @@ that. Additionally, this builds upgrade files and applies any required exploits.
 To compile KnightOS, first install the KnightOS SDK. Instructions for the SDK
 installation can be found at http://www.knightos.org/sdk
 
+In addition to the SDK, you will need
+[mktiupgrade](https://github.com/KnightOS/mktiupgrade) and
+[sass](https://github.com/KnightOS/sass).
+
 Then, run the following:
 
     knightos init --platform=<platform>
@@ -56,6 +60,12 @@ Then you can use various make targets to compile the system:
 If you just want something you can install on your calculator, try `make
 upgrade` and check the `bin/` directory. Installation instructions are available
 online at http://www.knightos.org/download.
+
+## Custom Kernels
+
+You can use a custom kernel during development if you like. Add
+`--kernel-source=/path/to/your/kernel` to `knightos init`. You will, of course,
+need to install all of the kernel's dependencies for this to work.
 
 ## Help, Bugs, Feedback
 
