@@ -52,10 +52,10 @@ Change `<platform>` to the appropriate platform for your needs:
 
 Then you can use various make targets to compile the system:
 
-    make # Compiles and places a ROM file in bin/
-    make upgrade # Compiles and places an upgrade file in bin/
-    make run # Compiles and runs in an emulator
-    make debug # Compiles and runs in a debugger
+    make            # Compiles and places a ROM file in bin/
+    make upgrade    # Compiles and places an upgrade file in bin/
+    make run        # Compiles and runs in an emulator
+    make debug      # Compiles and runs in a debugger
 
 If you just want something you can install on your calculator, try `make
 upgrade` and check the `bin/` directory. Installation instructions are available
