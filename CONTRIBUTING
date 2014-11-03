@@ -94,7 +94,7 @@ example of each is shown here.
 * Opening braces on the same line
 * C99 is alright but we don't mind tradition
 * Tabs instead of spaces
-* `char * foobar` instead of `char* foobar`
+* `char *foobar` instead of `char* foobar`
 * Single-line statments get braces anyway
 
 ## Python
