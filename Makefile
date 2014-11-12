@@ -57,11 +57,11 @@ upgrade: rom $(OUT)exploit.bin
 		echo -ne "\xFF" | dd bs=1 of=$(OUT)KnightOS-$(PLATFORM).rom seek=38 conv=notrunc;\
 		echo -ne "\xFF" | dd bs=1 of=$(OUT)KnightOS-$(PLATFORM).rom seek=86 conv=notrunc;\
 		mktiupgrade -p -s exploit/signature.bin -d $(PLATFORM) -n $(KEY) $(OUT)KnightOS-$(PLATFORM).rom \
-				$(OUT)KnightOS-$(PLATFORM).$(UPGRADEEXT) 00 01 02 03 04 05 06 $(PRIVLEDGED) $(EXPLOIT_PAGES);\
+				$(OUT)KnightOS-$(PLATFORM).$(UPGRADEEXT) 00 01 02 03 04 05 06 $(PRIVILEGED) $(EXPLOIT_PAGES);\
 		rm temp.rom;\
 	else\
 		mktiupgrade -p -d $(PLATFORM) -k keys/$(KEY).key -n $(KEY) $(OUT)KnightOS-$(PLATFORM).rom \
-			$(OUT)KnightOS-$(PLATFORM).$(UPGRADEEXT) 00 01 02 03 04 05 06 $(FAT) $(PRIVLEDGED);\
+			$(OUT)KnightOS-$(PLATFORM).$(UPGRADEEXT) 00 01 02 03 04 05 06 $(FAT) $(PRIVILEGED);\
 	fi
 
 include .knightos/sdk.make
