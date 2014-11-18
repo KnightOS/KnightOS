@@ -14,7 +14,7 @@ INIT=/bin/castle
 ALL_TARGETS:=$(ETC)castle.conf $(ETC)LICENSE $(ETC)THANKS links
 
 $(OUT)exploit.bin: exploit/exploit.asm
-	$(AS) $(ASFLAGS) exploit/exploit.asm $(OUT)exploit.bin
+	$(AS) $(ASFLAGS) --define $(PLATFORM) exploit/exploit.asm $(OUT)exploit.bin
 
 $(ETC)castle.conf: config/castle.conf
 	mkdir -p $(ETC)
