@@ -1,5 +1,7 @@
 include .knightos/variables.make
 
+SHELL:=/bin/bash
+
 # 84+ CSE exploit constants
 EXPLOIT_PAGES := F3 F4 EB
 EXPLOIT_ADDRESS := 3988095
