@@ -32,6 +32,7 @@ $(ETC)THANKS: THANKS
 
 links:
 	mkdir -p $(SHARE)
+	mkdir -p $(BIN)
 	mkdir -p $(ROOT)home
 	rm -rf $(VAR)castle
 	mkdir -p $(VAR)castle
@@ -42,6 +43,15 @@ links:
 	ln -s /var/applications/settings.app $(VAR)castle/pin-4
 	ln -s /var/applications/phoenix.app $(VAR)castle/pin-5
 	echo -ne "icon=/share/icons/copyright.kio\nname=License\nexec=/etc/LICENSE" > $(VAR)castle/pin-9
+	cp defaults $(ETC)defaults
+	rm -rf $(BIN)launcher
+	ln -s /bin/castle $(BIN)launcher
+	rm -rf $(BIN)switcher
+	ln -s /bin/fileman $(BIN)switcher
+	rm -rf $(BIN)browser
+	ln -s /bin/fileman $(BIN)browser
+	rm -rf $(BIN)editor
+	ln -s /bin/bed $(BIN)editor
 	knightos query version > $(ETC)version
 	echo -ne "\n" >> $(ETC)version # TODO: Fix core/settings
 
