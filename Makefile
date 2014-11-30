@@ -47,7 +47,7 @@ links:
 	rm -rf $(BIN)launcher
 	ln -s /bin/castle $(BIN)launcher
 	rm -rf $(BIN)switcher
-	ln -s /bin/fileman $(BIN)switcher
+	ln -s /bin/threadlist $(BIN)switcher
 	rm -rf $(BIN)browser
 	ln -s /bin/fileman $(BIN)browser
 	rm -rf $(BIN)editor
