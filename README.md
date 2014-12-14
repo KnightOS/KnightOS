@@ -71,11 +71,8 @@ need to install all of the kernel's dependencies for this to work.
 
 If you need help with KnightOS, want to keep up with progress, chat with
 developers, or ask any other questions about KnightOS, you can hang out in the
-IRC channel: [#knightos on
-irc.freenode.net](http://webchat.freenode.net/?channels=knightos).
+IRC channel: [#knightos on irc.freenode.net](http://webchat.freenode.net/?channels=knightos).
 
-To report bugs, please create [a GitHub
-issue](https://github.com/KnightOS/KnightOS/issues/new) or contact us on IRC.
-Please try to report bugs to the right project - your bug is likely an issue
-with a specific piece of software that *runs* on KnightOS, rather than a bug in
-KnightOS itself.
+To report bugs, please create [a GitHub issue](https://github.com/KnightOS/KnightOS/issues/new) or contact us on IRC.
+
+If you'd like to contribute to the project, please see the [contribution guidelines](http://www.knightos.org/contributing).
