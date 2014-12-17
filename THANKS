@@ -1,7 +1,6 @@
 
 Thanks to the following people for helping make KnightOS possible:
-
-    Drew DeVault <sir@cmpwn.com>
+Drew DeVault <sir@cmpwn.com>
     - Project oversight
     - Most of the kernel
     - Most of userspace
@@ -58,6 +57,13 @@ Thanks to the following people for helping make KnightOS possible:
 
     James Montelongo
     - Random number generation in the kernel
+
+    altbdoor <lancersupraskyline@gmail.com>
+    - Help with design and refactoring of knightos.org
+
+    Justin "Jnesselr" Nesselrotte
+    - Improvements to genkfs
+    - Project-wide asthetic changes
 
 Additional thanks go out to our indirect contributors:
 
