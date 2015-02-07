@@ -84,6 +84,9 @@ Thanks to the following people for helping make KnightOS possible:
     Francis Lewis <francislewis@users.noreply.github.com>
     - Several improvements to documentation
 
+    Bjorn Neergaard <bjorn@neersighted.com>
+    - Debugging and identifying problems with TI-83+ port
+
 Additional thanks go out to our indirect contributors:
 
 - Benjamin Moody for making third party OSes possible
