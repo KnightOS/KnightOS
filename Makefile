@@ -13,14 +13,14 @@ EXPLOIT_ADDRESS_FAT_BACKUP := 3850240
 .PHONY: links rom upgrade
 INIT=/bin/castle
 
-ALL_TARGETS:=$(ETC)castle.conf $(ETC)LICENSE $(ETC)THANKS links
+ALL_TARGETS:=$(SHARE)icons/copyright.img $(ETC)LICENSE $(ETC)THANKS links
 
 $(OUT)exploit.bin: exploit/exploit.asm
 	$(AS) $(ASFLAGS) --define $(PLATFORM) exploit/exploit.asm $(OUT)exploit.bin
 
-$(ETC)castle.conf: config/castle.conf
-	mkdir -p $(ETC)
-	cp config/castle.conf $(ETC)castle.conf
+$(SHARE)icons/copyright.img: config/copyright.png
+	mkdir -p $(SHARE)icons
+	kimg -c config/copyright.png $(SHARE)icons/copyright.img
 
 $(ETC)LICENSE: LICENSE
 	mkdir -p $(ETC)
@@ -37,12 +37,13 @@ links:
 	rm -rf $(VAR)castle
 	mkdir -p $(VAR)castle
 	ln -s /var/applications/fileman.app $(VAR)castle/pin-0
-	ln -s /var/applications/gfxdemo.app $(VAR)castle/pin-1
-	ln -s /var/applications/hello.app $(VAR)castle/pin-2
-	ln -s /var/applications/count.app $(VAR)castle/pin-3
+	ln -s /var/applications/bed.app $(VAR)castle/pin-1
+	ln -s /var/applications/calendar.app $(VAR)castle/pin-2
+	ln -s /var/applications/calcsys.app $(VAR)castle/pin-3
 	ln -s /var/applications/settings.app $(VAR)castle/pin-4
 	ln -s /var/applications/phoenix.app $(VAR)castle/pin-5
-	echo -ne "icon=/share/icons/copyright.kio\nname=License\nexec=/etc/LICENSE" > $(VAR)castle/pin-9
+	ln -s /var/applications/periodic.app $(VAR)castle/pin-6
+	echo -ne "icon=/share/icons/copyright.img\nname=License\nexec=/etc/LICENSE" > $(VAR)castle/pin-9
 	cp defaults $(ETC)defaults
 	rm -rf $(BIN)launcher
 	ln -s /bin/castle $(BIN)launcher
