@@ -29,8 +29,8 @@ To compile KnightOS, first install the KnightOS SDK. Instructions for the SDK
 installation can be found at http://www.knightos.org/sdk
 
 In addition to the SDK, you will need
-[mktiupgrade](https://github.com/KnightOS/mktiupgrade) and
-[sass](https://github.com/KnightOS/sass).
+[mktiupgrade](https://github.com/KnightOS/mktiupgrade),
+[sass](https://github.com/KnightOS/sass) and [kimg](https://github.com/KnightOS/kimg).
 
 Then, run the following:
 
