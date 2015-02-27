@@ -87,6 +87,10 @@ Thanks to the following people for helping make KnightOS possible:
     Bjorn Neergaard <bjorn@neersighted.com>
     - Debugging and identifying problems with TI-83+ port
 
+    Andrew Boos <boos1993@gmail.com>
+    - Improvements to kernel math support
+    - Improvements to z80e
+
 Additional thanks go out to our indirect contributors:
 
 - Benjamin Moody for making third party OSes possible
