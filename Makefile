@@ -53,8 +53,6 @@ links:
 	ln -s /bin/fileman $(BIN)browser
 	rm -rf $(BIN)editor
 	ln -s /bin/bed $(BIN)editor
-	knightos query version > $(ETC)version
-	echo -ne "\n" >> $(ETC)version # TODO: Fix core/settings
 
 rom: all
 	cp $(SDK)debug.rom $(OUT)KnightOS-$(PLATFORM).rom
