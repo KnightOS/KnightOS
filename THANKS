@@ -93,6 +93,10 @@ Thanks to the following people for helping make KnightOS possible:
     - Improvements to kernel math support
     - Improvements to z80e
 
+    Willem "willem3141" Sonke <w.m.sonke@student.tue.nl>
+    - Date/time support in the kernel
+    - Improvements to settings
+
 Additional thanks go out to our indirect contributors:
 
 - Benjamin Moody for making third party OSes possible
