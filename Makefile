@@ -43,8 +43,6 @@ links:
 	ln -s /var/applications/settings.app $(VAR)castle/pin-4
 	ln -s /var/applications/phoenix.app $(VAR)castle/pin-5
 	ln -s /var/applications/periodic.app $(VAR)castle/pin-6
-	ln -s /var/applications/rubik.app $(VAR)castle/pin-7
-	ln -s /var/applications/ztetris.app $(VAR)castle/pin-8
 	echo -ne "icon=/share/icons/copyright.img\nname=License\nexec=/etc/LICENSE" > $(VAR)castle/pin-9
 	cp defaults $(ETC)defaults
 	rm -rf $(BIN)launcher
