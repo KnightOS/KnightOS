@@ -1,6 +1,6 @@
 # KnightOS
 
-KnightOS is a third-party operating system for TI calculators. It provides a
+**KnightOS** is a third-party operating system for TI calculators. It provides a
 passable Unix-like system for calculators. KnightOS is built on top of [the
 KnightOS kernel](https://github.com/KnightOS/kernel) - this repository is the
 official userspace. KnightOS runs on the following calculators:
@@ -74,6 +74,6 @@ developers, or ask any other questions about KnightOS, you can hang out in the
 IRC channel: [#knightos on irc.freenode.net](https://webchat.freenode.net/?channels=knightos).
 You can also subscribe to our [mailing list](http://lists.knightos.org/).
 
-To report bugs, please create [a GitHub issue](https://github.com/KnightOS/KnightOS/issues/new) or contact us on IRC.
+To report bugs, please create [a GitHub issue](https://github.com/KnightOS/KnightOS/issues/new) or contact us on [IRC](https://webchat.freenode.net/?channels=knightosRC](https://webchat.freenode.net/?channels=knightos).
 
 If you'd like to contribute to the project, please see the [contribution guidelines](http://www.knightos.org/contributing).
