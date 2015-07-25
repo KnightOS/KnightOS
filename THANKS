@@ -1,107 +1,107 @@
 Thanks to the following people for helping make KnightOS possible:
 
-    Drew DeVault <sir@cmpwn.com>
-    - Project oversight
-    - Most of the kernel
-    - Most of userspace
+ Drew DeVault <sir@cmpwn.com>
+ - Project oversight
+ - Most of the kernel
+ - Most of userspace
 
-    George "thirtythreeforty" Hilliard <gh403@msstate.edu>
-    - Sorting
-    - Compression
-    - Cryptography
-    - Various bug fixes and small features
+ George "thirtythreeforty" Hilliard <gh403@msstate.edu>
+ - Sorting
+ - Compression
+ - Cryptography
+ - Various bug fixes and small features
 
-    Mattias "matrefeytontias" Refeyton <mattias@refeyton.fr>
-    - Mathematical functions
-    - Graphical functions and color support
-    - Early support of userspace
-    - Various bug fixes and small features
+ Mattias "matrefeytontias" Refeyton <mattias@refeyton.fr>
+ - Mathematical functions
+ - Graphical functions and color support
+ - Early support of userspace
+ - Various bug fixes and small features
 
-    Sijmen "Vijfhoek" Schoon <me@libvijfhoek.so>
-    - Low-level filesystem features
-    - Various bug fixes and small features
+ Sijmen "Vijfhoek" Schoon <me@libvijfhoek.so>
+ - Low-level filesystem features
+ - Various bug fixes and small features
 
-    Sorunume
-    - Hosting nightly builds
+ Sorunume
+ - Hosting nightly builds
 
-    Dan "Streetwalrus" Elkouby <streetwalkermc@gmail.com>
-    - Maintaining build server
-    - Automated documentation generation
+ Dan "Streetwalrus" Elkouby <streetwalkermc@gmail.com>
+ - Maintaining build server
+ - Automated documentation generation
 
-    minus
-    - Toolchain enhancements
+ minus
+ - Toolchain enhancements
 
-    Jose Diez <me@jdiez.me>
-    - Automated documentation generation
+ Jose Diez <me@jdiez.me>
+ - Automated documentation generation
 
-    Kevin "klange" Lange <k@dakko.us>
-    - SDL frontend for z80e
+ Kevin "klange" Lange <k@dakko.us>
+ - SDL frontend for z80e
 
-    persalteas
-    - Font enhancements
+ persalteas
+ - Font enhancements
 
-    dragontux
-    - Partial time/date support
+ dragontux
+ - Partial time/date support
 
-    Christopher "KermM" Mitchell <admin@cemetech.net>
-    - Color graphics demo
+ Christopher "KermM" Mitchell <admin@cemetech.net>
+ - Color graphics demo
 
-    Brandon Wilson <brandonlw@gmail.com>
-    - Exploit for installing on the TI-84+ CSE
+ Brandon Wilson <brandonlw@gmail.com>
+ - Exploit for installing on the TI-84+ CSE
 
-    AssemblyBandit
-    - Assistance with color LCD support
+ AssemblyBandit
+ - Assistance with color LCD support
 
-    Quigibo and Runer112
-    - Graphics functions taken from Axe Parser
+ Quigibo and Runer112
+ - Graphics functions taken from Axe Parser
 
-    Patrick Davidson
-    - Original author of Phoenix
+ Patrick Davidson
+ - Original author of Phoenix
 
-    James Montelongo
-    - Random number generation in the kernel
+ James Montelongo
+ - Random number generation in the kernel
 
-    altbdoor <lancersupraskyline@gmail.com>
-    - Help with design and refactoring of knightos.org
+ altbdoor <lancersupraskyline@gmail.com>
+ - Help with design and refactoring of knightos.org
 
-    Justin "Jnesselr" Nesselrotte
-    - Improvements to genkfs
-    - Project-wide asthetic changes
+ Justin "Jnesselr" Nesselrotte
+ - Improvements to genkfs
+ - Project-wide asthetic changes
 
-    Taryn "Phrohdoh" Hill <Phrohdoh@gmail.com>
-    - OS X specific improvements
-    - Improved documentation
+ Taryn "Phrohdoh" Hill <Phrohdoh@gmail.com>
+ - OS X specific improvements
+ - Improved documentation
 
-    Noah "Ivoah" Rosamilia <ivoahivoah@gmail.com>
-    - Improved documentation
+ Noah "Ivoah" Rosamilia <ivoahivoah@gmail.com>
+ - Improved documentation
 
-    kedarbramhe <kedar.brahme@gmail.com>
-    - Blank ROM generation in mkrom
-    
-    Hugo "s0r00t" Courtial
-    - Improvements to SDK
+ kedarbramhe <kedar.brahme@gmail.com>
+ - Blank ROM generation in mkrom
+ 
+ Hugo "s0r00t" Courtial
+ - Improvements to SDK
 
-    Francis Lewis <francislewis@users.noreply.github.com>
-    - Several improvements to documentation
+ Francis Lewis <francislewis@users.noreply.github.com>
+ - Several improvements to documentation
 
-    Bjorn Neergaard <bjorn@neersighted.com>
-    - Debugging and identifying problems with TI-83+ port
+ Bjorn Neergaard <bjorn@neersighted.com>
+ - Debugging and identifying problems with TI-83+ port
 
-    Andrew Boos <boos1993@gmail.com>
-    - Significant improvements to PKO
-    - Hosting and maintaining the wiki
-    - Improvements to kernel math support
-    - Improvements to z80e
+ Andrew Boos <boos1993@gmail.com>
+ - Significant improvements to PKO
+ - Hosting and maintaining the wiki
+ - Improvements to kernel math support
+ - Improvements to z80e
 
-    Willem "willem3141" Sonke <w.m.sonke@student.tue.nl>
-    - Date/time support in the kernel
-    - Improvements to settings
+ Willem "willem3141" Sonke <w.m.sonke@student.tue.nl>
+ - Date/time support in the kernel
+ - Improvements to settings
 
-    Nicholas "primis" Sargente <primis@primiscomputers.com>
-    - Improvements to scas
+ Nicholas "primis" Sargente <primis@primiscomputers.com>
+ - Improvements to scas
 
-    William Shipley <willrandship@gmail.com>
-    - Implemented math.h for libc
+ William Shipley <willrandship@gmail.com>
+ - Implemented math.h for libc
 
 Additional thanks go out to our indirect contributors:
 
