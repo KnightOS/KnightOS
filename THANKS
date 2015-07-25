@@ -74,6 +74,8 @@ Thanks to the following people for helping make KnightOS possible:
 
  Noah "Ivoah" Rosamilia <ivoahivoah@gmail.com>
  - Improved documentation
+ - Corelib bugfixes
+ - Castle enhancements
 
  kedarbramhe <kedar.brahme@gmail.com>
  - Blank ROM generation in mkrom
