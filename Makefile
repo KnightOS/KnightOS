@@ -44,7 +44,6 @@ links:
 	ln -s /var/applications/phoenix.app $(VAR)castle/pin-5
 	ln -s /var/applications/periodic.app $(VAR)castle/pin-6
 	echo -ne "icon=/share/icons/copyright.img\nname=License\nexec=/etc/LICENSE" > $(VAR)castle/pin-9
-	cp defaults $(ETC)defaults
 	rm -rf $(BIN)launcher
 	ln -s /bin/castle $(BIN)launcher
 	rm -rf $(BIN)switcher
