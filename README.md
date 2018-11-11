@@ -26,7 +26,7 @@ that. Additionally, this builds upgrade files and applies any required exploits.
 ## Compiling
 
 To compile KnightOS, first install the KnightOS SDK. Instructions for the SDK
-installation can be found [on the wiki](http://wiki.knightos.org/index.php/Tutorials/General/KnightOS_SDK).
+installation can be found [on the website](https://knightos.org/sdk).
 
 In addition to the SDK, you will need
 [mktiupgrade](https://github.com/KnightOS/mktiupgrade),
