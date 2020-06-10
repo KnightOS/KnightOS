@@ -7,7 +7,7 @@ packages:
   - genkfs
   - mkrom
   - patchrom
-  - kpack
+  - kpack-git
   - kimg
   - z80e
   - scas
