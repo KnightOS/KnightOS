@@ -1,0 +1,44 @@
+image: archlinux
+packages:
+  - mono
+  - make
+  - sass
+  - mktiupgrade
+  - genkfs
+  - mkrom
+  - patchrom
+  - kpack
+  - kimg
+  - z80e
+  - scas
+  - knightos-kcc
+  - python-pip
+  - knightos-sdk
+sources:
+  - https://github.com/KnightOS/KnightOS
+environment:
+  project: KnightOS
+tasks:
+  - ti73: |
+      cd ${project}
+      make PLATFORM=TI73 upgrade
+  - ti83p: |
+      cd ${project}
+      make clean
+      make PLATFORM=TI83p upgrade
+  - ti83pse: |
+      cd ${project}
+      make clean
+      make PLATFORM=TI83pSE upgrade
+  - ti84p: |
+      cd ${project}
+      make clean
+      make PLATFORM=TI84p upgrade
+  - ti84pse: |
+      cd ${project}
+      make clean
+      make PLATFORM=TI84pSE upgrade
+  - ti84pcse: |
+      cd ${project}
+      make clean
+      make PLATFORM=TI84pCSE upgrade
