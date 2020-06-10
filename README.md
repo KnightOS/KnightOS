@@ -1,5 +1,7 @@
 # KnightOS
 
+[![builds.sr.ht status](https://builds.sr.ht/~pixelherodev/knightos/pulls/.build.yml.svg)](https://builds.sr.ht/~pixelherodev/knightos/pulls/.build.yml?)
+
 **KnightOS** is a third-party operating system for TI calculators. It provides a
 passable Unix-like system for calculators. KnightOS is built on top of [the
 KnightOS kernel](https://github.com/KnightOS/kernel) - this repository is the
