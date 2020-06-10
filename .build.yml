@@ -21,24 +21,30 @@ environment:
 tasks:
   - ti73: |
       cd ${project}
-      make PLATFORM=TI73 upgrade
+      knightos init --platform=TI73
+      make upgrade
   - ti83p: |
       cd ${project}
+      knightos init --platform=TI83p
       make clean
-      make PLATFORM=TI83p upgrade
+      make upgrade
   - ti83pse: |
       cd ${project}
+      knightos init --platform=TI83pSE
       make clean
-      make PLATFORM=TI83pSE upgrade
+      make upgrade
   - ti84p: |
       cd ${project}
+      knightos init --platform=TI84p
       make clean
-      make PLATFORM=TI84p upgrade
+      make upgrade
   - ti84pse: |
       cd ${project}
+      knightos init --platform=TI84pSE
       make clean
-      make PLATFORM=TI84pSE upgrade
+      make upgrade
   - ti84pcse: |
       cd ${project}
+      knightos init --platform=TI84pCSE
       make clean
-      make PLATFORM=TI84pCSE upgrade
+      make upgrade
