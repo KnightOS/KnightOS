@@ -19,12 +19,12 @@ sources:
 environment:
   project: KnightOS
 artifacts:
-  - bin/KnightOS-TI73.8xu
-  - bin/KnightOS-TI83p.8xu
-  - bin/KnightOS-TI83pSE.8xu
-  - bin/KnightOS-TI84p.8xu
-  - bin/KnightOS-TI84pSE.8xu
-  - bin/KnightOS-TI84pCSE.8xu
+  - KnightOS/bin/KnightOS-TI73.8xu
+  - KnightOS/bin/KnightOS-TI83p.8xu
+  - KnightOS/bin/KnightOS-TI83pSE.8xu
+  - KnightOS/bin/KnightOS-TI84p.8xu
+  - KnightOS/bin/KnightOS-TI84pSE.8xu
+  - KnightOS/bin/KnightOS-TI84pCSE.8cu
 tasks:
   - ti73: |
       cd ${project}
