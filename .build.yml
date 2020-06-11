@@ -19,7 +19,7 @@ sources:
 environment:
   project: KnightOS
 artifacts:
-  - KnightOS/out/KnightOS-TI73.8xu
+  - KnightOS/out/KnightOS-TI73.73u
   - KnightOS/out/KnightOS-TI83p.8xu
   - KnightOS/out/KnightOS-TI83pSE.8xu
   - KnightOS/out/KnightOS-TI84p.8xu
@@ -27,38 +27,38 @@ artifacts:
   - KnightOS/out/KnightOS-TI84pCSE.8cu
 tasks:
   - ti73: |
-    cd ${project}
-    mkdir out
-    knightos init --platform=TI73
-    make upgrade
-    cp bin/KnightOS-TI73.8xu out/
+      cd ${project}
+      mkdir out
+      knightos init --platform=TI73
+      make upgrade
+      cp bin/KnightOS-TI73.73u out/
   - ti83p: |
-    cd ${project}
-    knightos init --platform=TI83p
-    make clean
-    make upgrade
-    cp bin/KnightOS-TI83p.8xu out/
+      cd ${project}
+      knightos init --platform=TI83p
+      make clean
+      make upgrade
+      cp bin/KnightOS-TI83p.8xu out/
   - ti83pse: |
-    cd ${project}
-    knightos init --platform=TI83pSE
-    make clean
-    make upgrade
-    cp bin/KnightOS-TI83pSE.8xu out/
+      cd ${project}
+      knightos init --platform=TI83pSE
+      make clean
+      make upgrade
+      cp bin/KnightOS-TI83pSE.8xu out/
   - ti84p: |
-    cd ${project}
-    knightos init --platform=TI84p
-    make clean
-    make upgrade
-    cp bin/KnightOS-TI84p.8xu out/
+      cd ${project}
+      knightos init --platform=TI84p
+      make clean
+      make upgrade
+      cp bin/KnightOS-TI84p.8xu out/
   - ti84pse: |
-    cd ${project}
-    knightos init --platform=TI84pSE
-    make clean
-    make upgrade
-    cp bin/KnightOS-TI84pSE.8xu out/
+      cd ${project}
+      knightos init --platform=TI84pSE
+      make clean
+      make upgrade
+      cp bin/KnightOS-TI84pSE.8xu out/
   - ti84pcse: |
-    cd ${project}
-    knightos init --platform=TI84pCSE
-    make clean
-    make upgrade
-    cp bin/KnightOS-TI84pCSE.8cu out/
+      cd ${project}
+      knightos init --platform=TI84pCSE
+      make clean
+      make upgrade
+      cp bin/KnightOS-TI84pCSE.8cu out/
