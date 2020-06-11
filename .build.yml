@@ -18,6 +18,13 @@ sources:
   - https://github.com/KnightOS/KnightOS
 environment:
   project: KnightOS
+artifacts:
+  - bin/KnightOS-TI73.8xu
+  - bin/KnightOS-TI83p.8xu
+  - bin/KnightOS-TI83pSE.8xu
+  - bin/KnightOS-TI84p.8xu
+  - bin/KnightOS-TI84pSE.8xu
+  - bin/KnightOS-TI84pCSE.8xu
 tasks:
   - ti73: |
       cd ${project}
