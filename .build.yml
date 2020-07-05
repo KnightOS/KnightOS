@@ -10,7 +10,7 @@ packages:
   - kpack-git
   - kimg
   - z80e
-  - sdl
+  - sdl2
   - scas
   - knightos-kcc
   - python-pip
