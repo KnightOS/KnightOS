@@ -20,7 +20,7 @@ $(OUT)exploit.bin: exploit/exploit.asm
 
 $(SHARE)icons/copyright.img: config/copyright.png
 	mkdir -p $(SHARE)icons
-	kimg -c config/copyright.png $(SHARE)icons/copyright.img
+	kimg  config/copyright.png $(SHARE)icons/copyright.img
 
 $(ETC)LICENSE: LICENSE
 	mkdir -p $(ETC)
