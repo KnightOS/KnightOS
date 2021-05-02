@@ -5,7 +5,6 @@ packages:
   - knightos-sass
   - mktiupgrade
   - genkfs
-  - mkrom
   - patchrom
   - kpack-git
   - kimg
@@ -17,6 +16,7 @@ packages:
   - knightos-sdk
 sources:
   - https://github.com/KnightOS/KnightOS
+  - https://github.com/KnightOS/mkrom
 environment:
   project: KnightOS
 artifacts:
@@ -27,6 +27,10 @@ artifacts:
   - KnightOS/out/KnightOS-TI84pSE.8xu
   - KnightOS/out/KnightOS-TI84pCSE.8cu
 tasks:
+  - mkrom: |
+      cd mkrom
+      make
+      sudo make install
   - ti73: |
       cd ${project}
       mkdir out
