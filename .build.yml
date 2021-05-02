@@ -3,6 +3,7 @@ packages:
   - make
   - knightos-sass
   - mktiupgrade
+  - sdl2
   - genkfs
   - patchrom
   - kpack-git
