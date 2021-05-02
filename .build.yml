@@ -1,6 +1,5 @@
 image: archlinux
 packages:
-  - mono
   - make
   - knightos-sass
   - mktiupgrade
@@ -8,8 +7,6 @@ packages:
   - patchrom
   - kpack-git
   - kimg
-  - z80e
-  - sdl2
   - scas
   - knightos-kcc
   - python-pip
