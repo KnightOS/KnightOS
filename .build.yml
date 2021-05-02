@@ -2,7 +2,7 @@ image: archlinux
 packages:
   - mono
   - make
-  - sass
+  - knightos-sass
   - mktiupgrade
   - genkfs
   - mkrom
