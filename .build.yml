@@ -31,7 +31,7 @@ tasks:
   - scas: |
       cd scas
       make
-      sudo make install install_man
+      sudo make install install_man install_lib
   - ti73: |
       cd ${project}
       mkdir out
