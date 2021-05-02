@@ -7,13 +7,13 @@ packages:
   - patchrom
   - kpack-git
   - kimg
-  - scas
   - knightos-kcc
   - python-pip
   - knightos-sdk
 sources:
   - https://github.com/KnightOS/KnightOS
   - https://github.com/KnightOS/mkrom
+  - https://github.com/KnightOS/scas
 environment:
   project: KnightOS
 artifacts:
@@ -28,6 +28,10 @@ tasks:
       cd mkrom
       make
       sudo make install
+  - scas: |
+      cd scas
+      make
+      sudo make install install_man
   - ti73: |
       cd ${project}
       mkdir out
